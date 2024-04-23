@@ -118,3 +118,15 @@ void AxisAlignedBoundingBox::GetDimensions(double& xSize, double& ySize, double&
 	ySize = this->maxCorner.y - this->minCorner.y;
 	zSize = this->maxCorner.z - this->minCorner.z;
 }
+
+void AxisAlignedBoundingBox::SetToBoundPointCloud(const std::vector<Vector3>& pointCloud)
+{
+	if (pointCloud.size() == 0)
+		return;
+
+	this->minCorner = pointCloud[0];
+	this->maxCorner = this->minCorner;
+
+	for (int i = 1; i < (signed)pointCloud.size(); i++)
+		this->Expand(pointCloud[i]);
+}

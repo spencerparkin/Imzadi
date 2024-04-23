@@ -66,6 +66,7 @@ AddShapeCommand::AddShapeCommand()
 
 RemoveShapeCommand::RemoveShapeCommand()
 {
+	this->shapeID = 0;
 }
 
 /*virtual*/ RemoveShapeCommand::~RemoveShapeCommand()

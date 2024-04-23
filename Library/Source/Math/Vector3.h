@@ -208,6 +208,7 @@ namespace Collision
 		 */
 		Vector3 Rotated(const Vector3& unitAxis, double angle) const;
 
+	public:
 		double x, y, z;
 	};
 

@@ -100,11 +100,6 @@ Result* System::ObtainQueryResult(TaskID taskID)
 	return nullptr;
 }
 
-void System::FreeQueryResult(Result* result)
-{
-	Result::Free(result);
-}
-
 void System::FlushAllTasks()
 {
 }

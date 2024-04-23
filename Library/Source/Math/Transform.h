@@ -116,6 +116,7 @@ namespace Collision
 		 */
 		bool Invert(const Transform& transform);
 
+	public:
 		Matrix3x3 matrix;
 		Vector3 translation;
 	};

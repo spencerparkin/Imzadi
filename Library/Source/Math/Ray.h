@@ -67,6 +67,7 @@ namespace Collision
 		 */
 		bool CastAgainst(const Plane& plane, double& alpha) const;
 
+	public:
 		Vector3 origin;
 		Vector3 unitDirection;
 	};

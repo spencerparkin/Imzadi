@@ -204,6 +204,7 @@ namespace Collision
 		 */
 		double Determinant() const;
 
+	public:
 		double ele[3][3];
 	};
 

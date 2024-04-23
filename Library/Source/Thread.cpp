@@ -206,3 +206,20 @@ void Thread::StoreResult(Result* result, TaskID taskID)
 		iter->second = result;
 	}
 }
+
+void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
+{
+	if ((drawFlags & COLL_SYS_DRAW_FLAG_SHAPES) != 0)
+	{
+		for (auto pair : *this->shapeMap)
+		{
+			const Shape* shape = pair.second;
+			shape->DebugRender(renderResult);
+		}
+	}
+
+	if ((drawFlags & COLL_SYS_DRAW_FLAG_AABB_TREE) != 0)
+	{
+		// TODO: Visualize the AABB tree here.
+	}
+}

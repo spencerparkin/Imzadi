@@ -62,6 +62,7 @@ namespace Collision
 		 */
 		double SignedDistanceTo(const Vector3& point) const;
 
+	public:
 		Vector3 center;
 		Vector3 unitNormal;
 	};

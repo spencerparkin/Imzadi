@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector3.h"
+#include <vector>
 
 namespace Collision
 {
@@ -12,7 +13,7 @@ namespace Collision
 	 * face points of the box are members of the set.  Note that all methods are left
 	 * undefined if the stored corners of this AABB are invalid.
 	 */
-	class AxisAlignedBoundingBox
+	class COLLISION_LIB_API AxisAlignedBoundingBox
 	{
 	public:
 		AxisAlignedBoundingBox();
@@ -77,6 +78,15 @@ namespace Collision
 		 */
 		void GetDimensions(double& xSize, double& ySize, double& zSize) const;
 
+		/**
+		 * Calculate this AABB as the one that most tightly fits the given set of points.
+		 * Nothing is done if the given array is empty.
+		 * 
+		 * @param pointCloud This is the set of points to use for the operation.
+		 */
+		void SetToBoundPointCloud(const std::vector<Vector3>& pointCloud);
+
+	public:
 		Vector3 minCorner;
 		Vector3 maxCorner;
 	};

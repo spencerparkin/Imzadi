@@ -2,15 +2,13 @@
 
 #include "Shape.h"
 #include "Math/Vector3.h"
-#include "Math/Transform.h"
 
 namespace Collision
 {
 	/**
-	 * This collision shape is a box that can be oriented and positioned in anyway.
-	 * (Unlike an AABB, it need not be axis-aligned.)  In object-space, the box is
-	 * centered at origin having a width in the x-dimension, height in the y-dimension,
-	 * and depth in the z-dimension.
+	 * This collision shape is simply a box with a given width, height and depth.
+	 * In object-space, the box is centered at origin having a width in the x-dimension,
+	 * height in the y-dimension, and depth in the z-dimension.
 	 */
 	class COLLISION_LIB_API BoxShape : public Shape
 	{
@@ -22,33 +20,25 @@ namespace Collision
 		virtual void CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
+		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 		/**
-		 * Set this box's width, height, and depth.
+		 * Set this box's half-width, half-height, and half-depth.  You can think of the
+		 * extent vector as pointing from the center of the box to one of its corners.
+		 * All components of the given vector should be non-zero and non-negative.
 		 * 
-		 * @param[in] extents Here, the x-component is the size of the box in the x-dimension while in object space.  The same goes for the other components.
+		 * @param[in] extents Here, the x-component is the half-size of the box in the x-dimension while in object space.  The same goes for the other components.
 		 */
 		void SetExtents(const Vector3& extents) { this->extents = extents; }
 
 		/**
-		 * Get this box's width, height, and depth.
+		 * Get this box's half-width, half-height, and half-depth.
 		 * 
-		 * @return The width, height, and depth of the box, in object space, are returned as the components of the returned vector.
+		 * @return See the description for SetExtents.
 		 */
 		const Vector3& GetExtents() const { return this->extents; }
 
-		/**
-		 * Set this box's object-space to world-space transform.
-		 */
-		void SetTransform(const Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
-
-		/**
-		 * Get this box's object-space to world-space transform.
-		 */
-		const Transform& GetTransform() const { return this->objectToWorld; }
-
 	private:
 		Vector3 extents;
-		Transform objectToWorld;
 	};
 }

@@ -22,6 +22,11 @@ namespace Collision
 	 * efficiency is gained through parallelism.
 	 * 
 	 * See the GetError function for error handling and error information.
+	 * 
+	 * Note that the collision system does not resolve collisions or satisfy constraints based on
+	 * any kind of physics-based simulation.  Those details are left to the user.  Our only goal
+	 * here is to facilitate the complex problem of collision detection.  Physics is a seperate
+	 * problem.
 	 */
 	class COLLISION_LIB_API System
 	{
@@ -71,9 +76,11 @@ namespace Collision
 		bool IssueCommand(Command* command);
 
 		/**
-		 * Make a collision query against the system.  Call an API function to allocate a query.  You should
+		 * Make a collision query against the system.  Call an API function to allocate the given query.  You should
 		 * never allocate it yourself.  Allocators are typically static methods of the desired Query command
-		 * class derivative.
+		 * class derivative, but you can also use the Create and Free method of the System class.
+		 * 
+		 * Note that queries are always processed in the same order that they are made.
 		 * 
 		 * @param[in] query This is a pointer to Query object derivative.  Ownership of the memory is taken by the system.
 		 * @return A handle to the query is returned.  Use it in a call to ObtainQueryResult.
@@ -87,17 +94,33 @@ namespace Collision
 		 * all queries are complete.  See the FlushAllTasks function.
 		 * 
 		 * @param[in] taskID This is a handle to the collision query that was made; what is returned by the MakeQuery function.
-		 * @return A Result object derivative is returned.  The caller takes ownership of the memory.
+		 * @return A Result object derivative is returned.  The caller takes ownership of the memory.  See the Free function.
 		 */
 		Result* ObtainQueryResult(TaskID taskID);
 
 		/**
-		 * Free the memory associated with the given query result.  Note that no heap-allocated object
-		 * used by the collision system should ever be created or destroyed by the collision system user.
-		 * This is because the user's heap and the collision system's heap may not be the same.  The collision
-		 * system might even impliment it's own high-performance heap.
+		 * Free the memory associated with the given object.  Note that no heap-allocated object
+		 * used by the collision system should ever be created or destroyed by the collision system user
+		 * using the standard new and delete operators.  Rather, they should be created or destroyed by
+		 * the collision system user using the Create or Free methods, respectively.  This is because the
+		 * user's heap and the collision system's heap may not be the same.  The collision system might
+		 * even impliment it's own high-performance heap to boost efficiency.
 		 */
-		void FreeQueryResult(Result* result);
+		template<typename T>
+		void Free(T* object)
+		{
+			T::Free(object);
+		}
+
+		/**
+		 * Allocate and construct a new object of the given type.  This can be a Shape, a Query, a Command, etc.
+		 * See the corresponding Free function.
+		 */
+		template<typename T>
+		T* Create()
+		{
+			return T::Create();
+		}
 
 		/**
 		 * Stall until all collision tasks (queries or commands) are complete.  Once this function has returned,

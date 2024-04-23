@@ -1,13 +1,15 @@
 #pragma once
 
 #include "Shape.h"
-#include "Math/Vector3.h"
+#include "Math/LineSegment.h"
 
 namespace Collision
 {
 	/**
-	 * This is a collision shape defined as all points withina given radius of a line-segment.
-	 * You can think of it like a cylinder with hemi-spheres on both ends.
+	 * This is a collision shape defined as all points within a given radius of a line-segment.
+	 * You can think of it like a cylinder with hemi-spheres on both ends.  The line-segment
+	 * is stored in object space, and an object-to-world transform is used to realize the
+	 * capsule in world space.
 	 */
 	class COLLISION_LIB_API CapsuleShape : public Shape
 	{
@@ -19,9 +21,10 @@ namespace Collision
 		virtual void CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
+		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 		/**
-		 * Set one of the two vertices of this capsule.
+		 * Set one of the two object-space vertices of this capsule.
 		 * 
 		 * @param[in] i If even, the first vertex is set; the other, if odd.
 		 * @param[in] point This point is assigned to vertex i.
@@ -29,7 +32,7 @@ namespace Collision
 		void SetVertex(int i, const Vector3& point);
 
 		/**
-		 * Get one of the two vertices of this capsule.
+		 * Get one of the two object-space vertices of this capsule.
 		 * 
 		 * @param[in] i If even, the first vertex is returned; the other, if odd.
 		 * @return The point assigned to vertex i is returned.
@@ -47,7 +50,7 @@ namespace Collision
 		double GetRadius() const { return this->radius; }
 
 	private:
-		Vector3 vertex[2];
+		LineSegment lineSegment;
 		double radius;
 	};
 }

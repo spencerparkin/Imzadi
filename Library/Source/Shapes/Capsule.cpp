@@ -19,23 +19,29 @@ CapsuleShape::CapsuleShape()
 
 /*virtual*/ void CapsuleShape::CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const
 {
-	boundingBox.minCorner = this->vertex[0];
-	boundingBox.maxCorner = boundingBox.minCorner;
+	Vector3 pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
+	Vector3 pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
+
+	boundingBox.minCorner = pointA;
+	boundingBox.maxCorner = pointA;
 
 	Vector3 delta(this->radius, this->radius, this->radius);
 
-	boundingBox.Expand(this->vertex[0] + delta);
-	boundingBox.Expand(this->vertex[0] - delta);
-	boundingBox.Expand(this->vertex[1] + delta);
-	boundingBox.Expand(this->vertex[1] - delta);
+	boundingBox.Expand(pointA + delta);
+	boundingBox.Expand(pointA - delta);
+	boundingBox.Expand(pointB + delta);
+	boundingBox.Expand(pointB - delta);
 }
 
 /*virtual*/ bool CapsuleShape::IsValid() const
 {
+	if (!Shape::IsValid())
+		return false;
+
 	if (::isnan(this->radius) || ::isinf(this->radius))
 		return false;
 
-	if (!this->vertex[0].IsValid() || !this->vertex[1].IsValid())
+	if (!this->lineSegment.point[0].IsValid() || !this->lineSegment.point[1].IsValid())
 		return false;
 
 	if (this->radius <= 0.0)
@@ -47,20 +53,24 @@ CapsuleShape::CapsuleShape()
 /*virtual*/ double CapsuleShape::CalcSize() const
 {
 	return(
-		M_PI * this->radius * this->radius * (this->vertex[0] - this->vertex[1]).Length() +
+		M_PI * this->radius * this->radius * this->lineSegment.Length() +
 		(4.0 / 3.0) * M_PI * this->radius * this->radius * this->radius
 	);
+}
+
+/*virtual*/ void CapsuleShape::DebugRender(DebugRenderResult* renderResult) const
+{
 }
 
 void CapsuleShape::SetVertex(int i, const Vector3& point)
 {
 	if (i % 2 == 0)
-		this->vertex[0] = point;
+		this->lineSegment.point[0] = point;
 	else
-		this->vertex[1] = point;
+		this->lineSegment.point[1] = point;
 }
 
 const Vector3& CapsuleShape::GetVertex(int i) const
 {
-	return (i % 2 == 0) ? this->vertex[0] : this->vertex[1];
+	return (i % 2 == 0) ? this->lineSegment.point[0] : this->lineSegment.point[1];
 }

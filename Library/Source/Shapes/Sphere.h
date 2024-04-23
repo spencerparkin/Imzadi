@@ -20,14 +20,14 @@ namespace Collision
 		virtual double CalcSize() const override;
 
 		/**
-		 * Set the center location of the sphere.
+		 * Set the center location of the sphere in object space.
 		 * 
 		 * @param[in] center The sphere will be all points within at most the stored radius of this point.
 		 */
 		void SetCenter(const Vector3& center) { this->center = center; }
 
 		/**
-		 * Get the center location of the sphere.
+		 * Get the center location of the sphere in object space.
 		 */
 		const Vector3& GetCenter() const { return this->center; }
 
@@ -42,6 +42,11 @@ namespace Collision
 		 * Get the radius of the sphere.
 		 */
 		double GetRadias() const { return this->radius; }
+
+		/**
+		 * Debug-draw this sphere shape in world-space.
+		 */
+		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 	private:
 		Vector3 center;

@@ -36,6 +36,8 @@ set(LIBRARY_SOURCES
     Source/Math/Ray.h
     Source/Math/Plane.cpp
     Source/Math/Plane.h
+    Source/Math/LineSegment.cpp
+    Source/Math/LineSegment.h
     Source/Math/Quaternion.cpp
     Source/Math/Quaternion.h
     Source/Shapes/Box.cpp

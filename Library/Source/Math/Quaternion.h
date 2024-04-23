@@ -146,6 +146,7 @@ namespace Collision
 		 */
 		Ray Rotate(const Ray& ray) const;
 
+	public:
 		double w, x, y, z;
 	};
 

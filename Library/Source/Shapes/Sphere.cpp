@@ -20,13 +20,17 @@ SphereShape::SphereShape()
 /*virtual*/ void SphereShape::CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const
 {
 	Vector3 delta(this->radius, this->radius, this->radius);
-	
-	boundingBox.minCorner = this->center + delta;
-	boundingBox.maxCorner = this->center - delta;
+	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->center);
+
+	boundingBox.minCorner = worldCenter + delta;
+	boundingBox.maxCorner = worldCenter - delta;
 }
 
 /*virtual*/ bool SphereShape::IsValid() const
 {
+	if (!Shape::IsValid())
+		return false;
+
 	if (::isnan(this->radius) || ::isinf(this->radius))
 		return false;
 
@@ -42,4 +46,8 @@ SphereShape::SphereShape()
 /*virtual*/ double SphereShape::CalcSize() const
 {
 	return (4.0 / 3.0) * M_PI * this->radius * this->radius * this->radius;
+}
+
+/*virtual*/ void SphereShape::DebugRender(DebugRenderResult* renderResult) const
+{
 }

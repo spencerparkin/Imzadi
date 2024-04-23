@@ -1,17 +1,22 @@
 #pragma once
 
 #include "Defines.h"
+#include "Math/Transform.h"
 #include <stdint.h>
 
 namespace Collision
 {
 	class AxisAlignedBoundingBox;
+	class DebugRenderResult;
 
 	typedef uint32_t ShapeID;
 
 	/**
 	 * Derivatives of this class represent all the kinds of shapes that the collision system supports.
-	 * These are all the shapes that can collide with one another.
+	 * These are all the shapes that can collide with one another.  A shape is described in object
+	 * space and is found in world space using an object-to-world transform.  The whole point of the
+	 * collision system is to let the user create shapes in the world, move them around, and query
+	 * to see which are in collision with which other shapes, and how.
 	 */
 	class COLLISION_LIB_API Shape
 	{
@@ -49,25 +54,34 @@ namespace Collision
 		ShapeID GetShapeID() const;
 
 		/**
-		 * Calculate and return the smallest AABB containing this shape.
+		 * Calculate and return the smallest AABB containing this shape in world space.
 		 * 
 		 * @param[out] boundingBox The AABB that best fits this shape in its current position and orientation.
 		 */
 		virtual void CalcBoundingBox(AxisAlignedBoundingBox& boundingbox) const = 0;
 
 		/**
-		 * Tell the caller if this collision shape has valid data.
+		 * Tell the caller if this collision shape has valid data.  Overrides should
+		 * call this base-class method.  This function is provided mainly for debugging
+		 * purposes, and is not meant to be called in a production use-case.
 		 * 
 		 * @return True is returned if the shape is valid; false, otherwise.
 		 */
-		virtual bool IsValid() const = 0;
+		virtual bool IsValid() const;
 
 		/**
 		 * Calculate and return the area or volume of this shape.
 		 */
 		virtual double CalcSize() const = 0;
 
-		//virtual bool ContainsPoint(const Vector3& point) = 0;
+		// TODO: virtual bool ContainsPoint(const Vector3& point) = 0;
+
+		/**
+		 * Overrides of this method should populate the given DebugRenderResult class instance
+		 * with lines of a consistent color for the purpose of debug visualzation of the collision system.
+		 * The lines added to the given result should be in world-space.
+		 */
+		virtual void DebugRender(DebugRenderResult* renderResult) const = 0;
 
 		/**
 		 * Free the memory used by the given shape.  You should never allocate or free a shape yourself,
@@ -80,8 +94,29 @@ namespace Collision
 		 */
 		static void Free(Shape* shape);
 
+		/**
+		 * Set this shape's transform taking it from object space to world space.
+		 */
+		void SetObjectToWorldTransform(const Transform& objectToWorld);
+
+		/**
+		 * Get this shape's transform taking it from object space to world space.
+		 */
+		const Transform& GetObjectToWorldTransform() const;
+
+		/**
+		 * Get the inverse of this shape's transform taking it from object space to world space.
+		 * The returned transform will take points from world space to object space.
+		 */
+		const Transform& GetWorldToObjectTransform() const;
+
 	private:
 		ShapeID shapeID;
 		static ShapeID nextShapeID;
+
+	protected:
+		Transform objectToWorld;
+		mutable Transform worldToObject;
+		mutable bool worldToObjectValid;
 	};
 }

@@ -72,7 +72,7 @@ void Matrix3x3::SetIdentity()
 {
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
-			this->ele[i][j] == (i == j) ? 1.0 : 0.0;
+			this->ele[i][j] = (i == j) ? 1.0 : 0.0;
 }
 
 void Matrix3x3::GetRowVectors(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) const

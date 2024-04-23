@@ -14,6 +14,7 @@ namespace Collision
 {
 	class Task;
 	class Result;
+	class DebugRenderResult;
 
 	/**
 	 * This class impliments, and provides an interface to, the collision thread.
@@ -95,6 +96,14 @@ namespace Collision
 		 * Wipe out all currently stored collision shapes.
 		 */
 		void ClearShapes();
+
+		/**
+		 * Produce a debug visualization of the collision system.
+		 * 
+		 * @param[out] renderResult This is populated with line-segments of various colors to produce a wire-frame rendering of the system.
+		 * @param[in] drawFlags An OR-ing of the COLL_SYS_DRAW_FLAG_* defines is given here to determine what's produced in the result.
+		 */
+		void DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags);
 
 	private:
 

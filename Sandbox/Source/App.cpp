@@ -1,15 +1,20 @@
 #include "App.h"
 #include "Frame.h"
+#include "Math/AxisAlignedBoundingBox.h"
 
 wxIMPLEMENT_APP(App);
+
+using namespace Collision;
 
 App::App()
 {
 	this->frame = nullptr;
+	this->collisionSystem = new Collision::System();
 }
 
 /*virtual*/ App::~App()
 {
+	delete this->collisionSystem;
 }
 
 /*virtual*/ bool App::OnInit(void)
@@ -17,7 +22,14 @@ App::App()
 	if (!wxApp::OnInit())
 		return false;
 
-	this->frame = new Frame(wxDefaultPosition, wxDefaultSize);
+	AxisAlignedBoundingBox worldBox;
+	worldBox.minCorner = Vector3(-100.0, -100.0, -100.0);
+	worldBox.maxCorner = Vector3(100.0, 100.0, 100.0);
+
+	if (!this->collisionSystem->Initialize(worldBox))
+		return false;
+
+	this->frame = new Frame(wxDefaultPosition, wxSize(800, 600));
 	this->frame->Show();
 
 	return true;
@@ -25,5 +37,7 @@ App::App()
 
 /*virtual*/ int App::OnExit(void)
 {
+	this->collisionSystem->Shutdown();
+
 	return 0;
 }

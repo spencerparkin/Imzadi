@@ -24,14 +24,17 @@ PolygonShape::PolygonShape()
 {
 	if (this->vertexArray->size() > 0)
 	{
-		boundingBox.minCorner = (*vertexArray)[0];
-		for (const Vector3& vertex : *this->vertexArray)
-			boundingBox.Expand(vertex);
+		boundingBox.minCorner = this->objectToWorld.TransformPoint((*this->vertexArray)[0]);
+		for (int i = 1; i < (signed)this->vertexArray->size(); i++)
+			boundingBox.Expand(this->objectToWorld.TransformPoint((*this->vertexArray)[i]));
 	}
 }
 
 /*virtual*/ bool PolygonShape::IsValid() const
 {
+	if (!Shape::IsValid())
+		return false;
+
 	for (const Vector3& vertex : *this->vertexArray)
 		if (!vertex.IsValid())
 			return false;
@@ -77,6 +80,10 @@ PolygonShape::PolygonShape()
 	}
 
 	return area;
+}
+
+/*virtual*/ void PolygonShape::DebugRender(DebugRenderResult* renderResult) const
+{
 }
 
 void PolygonShape::Clear()
@@ -134,7 +141,7 @@ int PolygonShape::ModIndex(int i) const
 {
 	int j = i % this->vertexArray->size();
 	if (j < 0)
-		j = -j;
+		j += this->vertexArray->size();
 	return j;
 }
 
