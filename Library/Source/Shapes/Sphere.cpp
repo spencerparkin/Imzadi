@@ -12,6 +12,11 @@ SphereShape::SphereShape()
 {
 }
 
+/*static*/ SphereShape* SphereShape::Create()
+{
+	return new SphereShape();
+}
+
 /*virtual*/ Shape::TypeID SphereShape::GetShapeTypeID() const
 {
 	return TypeID::SPHERE;

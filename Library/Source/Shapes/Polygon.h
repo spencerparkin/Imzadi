@@ -38,6 +38,11 @@ namespace Collision
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 		/**
+		 * Allocate and return a new PolygonShape class instance.
+		 */
+		static PolygonShape* Create();
+
+		/**
 		 * Remove all object-space vertices from this polygon.  Note that the
 		 * vacuous case is considered invalid.
 		 */

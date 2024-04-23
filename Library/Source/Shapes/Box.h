@@ -23,6 +23,11 @@ namespace Collision
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 		/**
+		 * Allocate and return a new BoxShape class instance.
+		 */
+		static BoxShape* Create();
+
+		/**
 		 * Set this box's half-width, half-height, and half-depth.  You can think of the
 		 * extent vector as pointing from the center of the box to one of its corners.
 		 * All components of the given vector should be non-zero and non-negative.

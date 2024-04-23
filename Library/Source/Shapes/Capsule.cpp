@@ -12,6 +12,11 @@ CapsuleShape::CapsuleShape()
 {
 }
 
+/*static*/ CapsuleShape* CapsuleShape::Create()
+{
+	return new CapsuleShape();
+}
+
 /*virtual*/ Shape::TypeID CapsuleShape::GetShapeTypeID() const
 {
 	return TypeID::POLYGON;

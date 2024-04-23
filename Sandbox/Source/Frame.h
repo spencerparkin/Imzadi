@@ -12,10 +12,17 @@ public:
 
 	enum
 	{
-		ID_Exit = wxID_HIGHEST
+		ID_Exit = wxID_HIGHEST,
+		ID_About,
+		ID_AddBox,
+		ID_AddCapsule,
+		ID_AddPolygon,
+		ID_AddSphere
 	};
 
 	void OnExit(wxCommandEvent& event);
+	void OnAbout(wxCommandEvent& event);
+	void OnAddShape(wxCommandEvent& event);
 
 private:
 	Canvas* canvas;

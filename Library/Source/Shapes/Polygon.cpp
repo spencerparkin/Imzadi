@@ -15,6 +15,11 @@ PolygonShape::PolygonShape()
 	delete this->vertexArray;
 }
 
+/*static*/ PolygonShape* PolygonShape::Create()
+{
+	return new PolygonShape();
+}
+
 /*virtual*/ Shape::TypeID PolygonShape::GetShapeTypeID() const
 {
 	return TypeID::POLYGON;

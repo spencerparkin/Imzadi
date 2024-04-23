@@ -12,6 +12,11 @@ BoxShape::BoxShape()
 {
 }
 
+/*static*/ BoxShape* BoxShape::Create()
+{
+	return new BoxShape();
+}
+
 /*virtual*/ Shape::TypeID BoxShape::GetShapeTypeID() const
 {
 	return TypeID::BOX;

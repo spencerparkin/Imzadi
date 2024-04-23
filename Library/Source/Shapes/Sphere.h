@@ -20,6 +20,11 @@ namespace Collision
 		virtual double CalcSize() const override;
 
 		/**
+		 * Allocate and return a new SphereShape class instance.
+		 */
+		static SphereShape* Create();
+
+		/**
 		 * Set the center location of the sphere in object space.
 		 * 
 		 * @param[in] center The sphere will be all points within at most the stored radius of this point.

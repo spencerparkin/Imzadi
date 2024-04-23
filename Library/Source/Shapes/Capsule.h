@@ -24,6 +24,11 @@ namespace Collision
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 		/**
+		 * Allocate and return a new CapsuleShape class instance.
+		 */
+		static CapsuleShape* Create();
+
+		/**
 		 * Set one of the two object-space vertices of this capsule.
 		 * 
 		 * @param[in] i If even, the first vertex is set; the other, if odd.
