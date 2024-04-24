@@ -60,3 +60,8 @@ double LineSegment::ShortestDistanceTo(const Plane& plane) const
 {
 	return 0.0;		// TODO: Write this.
 }
+
+Vector3 LineSegment::Lerp(double lambda) const
+{
+	return this->point[0] + lambda * (this->point[1] - this->point[0]);
+}
