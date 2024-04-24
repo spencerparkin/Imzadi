@@ -8,18 +8,16 @@
 namespace Collision
 {
 	/**
-	 * This collision shape is a polygon determined by a sequence of object-space points.
-	 * All points must be coplanar, and they must form a convex polygon.
-	 * If these constraints are not satisfied, then the results of using
-	 * this shape for collision purposes are all left undefined.  (Intermediate
-	 * uses of this class may contain point sequences that do not necessarily
-	 * satisfy these constraints.)  The winding of the polygon
-	 * is used to determine the "inside" and "outside" space of the polygon.
-	 * This is necessary for the penetration depth of a collision query
-	 * result to make any sense.  If viewing the polygon from a perspective
-	 * where the vertices are ordered counter-clock-wise, then the viewer
-	 * is in the "outside" space, and the "inside" space is on the other
-	 * side of the polygon.
+	 * This collision shape is a polygon determined by a sequence of object-space points
+	 * and an object-to-world transform.  All points must be coplanar, and they must form
+	 * a convex polygon.  If these constraints are not satisfied, then the results of using
+	 * this shape for collision purposes are all left undefined.  (Intermediate uses of
+	 * this class may contain point sequences that do not necessarily satisfy these constraints.)
+	 * The winding of the polygon will not matter as far as collision detection is concerned.
+	 * However, to remove any ambiguity in some operations, we consider the "front" space of
+	 * the polygon to be where, if you viewed the polygon, you'd see its points wound CCW.
+	 * The "back" space is where you would view the polygon's points wound clock-wise.
+	 * A "thickness" of the polygon is necessary for some calculations.
 	 * 
 	 * Note that the point-sequence is considered cyclical.  Modular arithematic
 	 * is often used to index into this sequence.  The polygon in world space
@@ -88,7 +86,7 @@ namespace Collision
 		 * polygon's set of vertices.  Note that the returned result is
 		 * cached so that subsequence calls to this function are faster.
 		 * 
-		 * @return The polygon's plane is returned in object-space.  Its normal will point toward the "outside" space of this polygon.
+		 * @return The polygon's plane is returned in object-space.  Its normal will point toward the "front" space of this polygon.
 		 */
 		const Plane& GetPlane() const;
 
@@ -99,12 +97,14 @@ namespace Collision
 		Vector3 GetCenter() const;
 
 		/**
-		 * Calculate and return a plane in object space that best fits this polygon's sequence vertices.
-		 * If this polygon is valid, then there is one and only one such plane.
+		 * Calculate and return a plane in object space that best fits this polygon's set of vertices,
+		 * which are not assumed to be a valid polygon.  They can be any cloud of points in 3D space.
+		 * If, however, this polygon is valid, then there is one and only one such plane, up to sign.
 		 * 
-		 * @return The best fit object-space plane is calcualted and returned using a linear least-squares method.
+		 * @param[out] plane The best fit object-space plane is calcualted and returned using a linear least-squares method.
+		 * @return True is returned if successful; false, otherwise.
 		 */
-		Plane CalculatePlaneOfBestFit() const;
+		bool CalculatePlaneOfBestFit(Plane& plane) const;
 
 		/**
 		 * Orthogonally project all vertices of this polygon onto the given object-space plane.

@@ -80,6 +80,7 @@ void Thread::Run()
 			this->taskQueue->erase(iter);
 		}
 
+		// Process the task.
 		if (task)
 		{
 			task->Execute(this);

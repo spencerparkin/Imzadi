@@ -1,6 +1,7 @@
 #include "Polygon.h"
 #include "Math/Plane.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "Math/Matrix3x3.h"
 
 using namespace Collision;
 
@@ -40,6 +41,9 @@ PolygonShape::PolygonShape()
 	if (!Shape::IsValid())
 		return false;
 
+	if (this->vertexArray->size() < 3)
+		return false;
+
 	for (const Vector3& vertex : *this->vertexArray)
 		if (!vertex.IsValid())
 			return false;
@@ -67,6 +71,10 @@ PolygonShape::PolygonShape()
 				return false;
 		}
 	}
+
+	// Make sure we have non-zero area.
+	if (this->CalcSize() == 0.0)
+		return false;
 
 	return true;
 }
@@ -118,9 +126,15 @@ const Vector3& PolygonShape::GetVertex(int i) const
 
 const Plane& PolygonShape::GetPlane() const
 {
-	if (!this->cachedPlaneValid)
+	if (!this->cachedPlaneValid && this->vertexArray->size() >= 3)
 	{
-		this->cachedPlane = this->CalculatePlaneOfBestFit();
+		this->CalculatePlaneOfBestFit(this->cachedPlane);
+
+		Vector3 center = this->GetCenter();
+		Vector3 frontDirection = ((*this->vertexArray)[0] - center).Cross((*this->vertexArray)[1] - (*this->vertexArray)[0]);
+		if (frontDirection.Dot(cachedPlane.unitNormal) < 0.0)
+			cachedPlane.unitNormal = -cachedPlane.unitNormal;
+
 		this->cachedPlaneValid = true;
 	}
 	
@@ -150,13 +164,100 @@ int PolygonShape::ModIndex(int i) const
 	return j;
 }
 
-Plane PolygonShape::CalculatePlaneOfBestFit() const
+bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 {
-	Plane plane;
+	plane.center = Vector3(0.0, 0.0, 0.0);
+	plane.unitNormal = Vector3(0.0, 0.0, 1.0);
 
-	// TODO: Write this.  Use linear least squares method.
+	double sum_x = 0.0;
+	double sum_y = 0.0;
+	double sum_z = 0.0;
+	double sum_xx = 0.0;
+	double sum_xy = 0.0;
+	double sum_xz = 0.0;
+	double sum_yy = 0.0;
+	double sum_yz = 0.0;
+	double sum_zz = 0.0;
+	
+	for (const Vector3& point : *this->vertexArray)
+	{
+		sum_x += point.x;
+		sum_y += point.y;
+		sum_z += point.z;
+		sum_xx += point.x * point.x;
+		sum_xy += point.x * point.y;
+		sum_xz += point.x * point.z;
+		sum_yy += point.y * point.y;
+		sum_yz += point.y * point.z;
+		sum_zz += point.z * point.z;
+	}
 
-	return plane;
+	Matrix3x3 matrix;
+
+	matrix.ele[0][0] = sum_xx;
+	matrix.ele[0][1] = sum_xy;
+	matrix.ele[0][1] = sum_x;
+	matrix.ele[1][0] = sum_xy;
+	matrix.ele[1][1] = sum_yy;
+	matrix.ele[1][2] = sum_y;
+	matrix.ele[2][0] = sum_x;
+	matrix.ele[2][1] = sum_y;
+	matrix.ele[2][2] = double(this->vertexArray->size());
+
+	Matrix3x3 matrixInv;
+	Vector3 normal;
+	double a, b, c;
+
+	// Solve for the coeficients of the the equation: z = ax + by + c.
+
+	if (matrixInv.Invert(matrix))
+	{
+		Vector3 coeficients = matrixInv * Vector3(sum_xz, sum_yz, sum_z);
+		
+		a = coeficients.x;
+		b = coeficients.y;
+		c = coeficients.z;
+
+		// Our plane equation is: z = ax + by + c <==> 0 = ax + by - z + c.
+
+		normal = Vector3(a, b, -1.0);
+	}
+	else
+	{
+		// Here, the norm of the plane has a z-component of zero.  So we'll try to solve for the coeficients of: x = ay + bz + c.
+
+		matrix.ele[0][0] = sum_yy;
+		matrix.ele[0][1] = sum_yz;
+		matrix.ele[0][2] = sum_y;
+		matrix.ele[1][0] = sum_yz;
+		matrix.ele[1][1] = sum_zz;
+		matrix.ele[1][2] = sum_z;
+		matrix.ele[2][0] = sum_y;
+		matrix.ele[2][1] = sum_z;
+		matrix.ele[2][2] = double(this->vertexArray->size());
+
+		if (!matrix.Invert(matrix))
+			return false;
+
+		Vector3 coeficients = matrixInv * Vector3(sum_xy, sum_xz, sum_x);
+
+		a = coeficients.x;
+		b = coeficients.y;
+		c = coeficients.z;
+
+		// Our plane equation is: x = ay + bz + c <==> 0 = -x + ay + bz + c.
+
+		normal = Vector3(-1.0, a, b);
+	}
+
+	double length = 0.0;
+	if (!normal.Normalize(&length))
+		return false;
+
+	plane.unitNormal = normal;
+	plane.center = -normal * c / length;
+
+	return true;
 }
 
 void PolygonShape::SnapToPlane(const Plane& plane)
@@ -174,8 +275,9 @@ void PolygonShape::SetAsConvexHull(const std::vector<Vector3>& pointCloud)
 	for (const Vector3& point : pointCloud)
 		polygon.AddVertex(point);
 
-	Plane plane = polygon.CalculatePlaneOfBestFit();
+	Plane plane;
+	polygon.CalculatePlaneOfBestFit(plane);
 	polygon.SnapToPlane(plane);
 
-	// TODO: Write this.  Perform Gram-Scan algorithm with plane and polygon.
+	// TODO: Write this.
 }
