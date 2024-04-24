@@ -279,5 +279,7 @@ void PolygonShape::SetAsConvexHull(const std::vector<Vector3>& pointCloud)
 	polygon.CalculatePlaneOfBestFit(plane);
 	polygon.SnapToPlane(plane);
 
+	// TODO: May want to cull redundant points at this point.
+
 	// TODO: Write this.
 }

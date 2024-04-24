@@ -107,6 +107,36 @@ namespace Collision
 		}
 
 		/**
+		 * Set the x, y and z components of this vector.  This method is provided merely
+		 * for convenience as the said components are made public in this class.
+		 * 
+		 * @param[in] x This is how far we go along the x-axis.
+		 * @param[in] y This is how far we go along the y-axis.
+		 * @param[in] z This is how far we go along the z-axis.
+		 */
+		void SetComponents(double x, double y, double z)
+		{
+			this->x = x;
+			this->y = y;
+			this->z = z;
+		}
+
+		/**
+		 * Get the x, y and z components of this vector.  This method is provided merely
+		 * for convenience and consistency as the said components are made public in this class.
+		 * 
+		 * @param[out] x This is how far we go along the x-axis.
+		 * @param[out] y This is how far we go along the y-axis.
+		 * @param[out] z This is how far we go along the z-axis.
+		 */
+		void GetComponents(double& x, double& y, double& z) const
+		{
+			x = this->x;
+			y = this->y;
+			z = this->z;
+		}
+
+		/**
 		 * Return the euclidean distance from tip to tail of this vector using
 		 * a generalization of the Pythagorean Theorem.
 		 */
