@@ -83,9 +83,10 @@ namespace Collision
 		 * Note that queries are always processed in the same order that they are made.
 		 * 
 		 * @param[in] query This is a pointer to Query object derivative.  Ownership of the memory is taken by the system.
-		 * @return A handle to the query is returned.  Use it in a call to ObtainQueryResult.
+		 * @param[out] taskID A handle to the query is returned.  Use it in a call to ObtainQueryResult.
+		 * @return True is returned on success; false, otherwise.
 		 */
-		TaskID MakeQuery(Query* query);
+		bool MakeQuery(Query* query, TaskID& taskID);
 
 		/**
 		 * Get the result of a collision query, if it is available.  Rather than call this
@@ -126,8 +127,10 @@ namespace Collision
 		 * Stall until all collision tasks (queries or commands) are complete.  Once this function has returned,
 		 * all previously issued commands will have been executed, and every call to ObtainQueryResult with a
 		 * valid query handle will succeed.
+		 * 
+		 * @return True is returned on success; false, otherwise.
 		 */
-		void FlushAllTasks();
+		bool FlushAllTasks();
 
 	private:
 		Thread* thread;

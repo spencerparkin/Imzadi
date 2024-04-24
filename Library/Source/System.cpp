@@ -2,6 +2,7 @@
 #include "Result.h"
 #include "Error.h"
 #include "Thread.h"
+#include "Query.h"
 #include "Command.h"
 
 using namespace Collision;
@@ -90,16 +91,37 @@ bool System::IssueCommand(Command* command)
 	return true;
 }
 
-TaskID System::MakeQuery(Query* query)
+bool System::MakeQuery(Query* query, TaskID& taskID)
 {
-	return 0;
+	if (!this->thread)
+	{
+		GetError()->AddErrorMessage("Can't submit query if the collision thread isn't running.");
+		return false;
+	}
+
+	taskID = this->thread->SendTask(query);
+	return true;
 }
 
 Result* System::ObtainQueryResult(TaskID taskID)
 {
-	return nullptr;
+	if (!this->thread)
+	{
+		GetError()->AddErrorMessage("Can't object any result if the collision thread isn't running.");
+		return nullptr;
+	}
+
+	return this->thread->ReceiveResult(taskID);
 }
 
-void System::FlushAllTasks()
+bool System::FlushAllTasks()
 {
+	if (!this->thread)
+	{
+		GetError()->AddErrorMessage("Collision thread not running!");
+		return false;
+	}
+
+	this->thread->WaitForAllTasksToComplete();
+	return true;
 }

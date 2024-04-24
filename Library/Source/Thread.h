@@ -105,6 +105,13 @@ namespace Collision
 		 */
 		void DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags);
 
+		/**
+		 * Block until all pending tasks have been processed by this thread.
+		 * This is not a busy wait, so it should not significantly consume any
+		 * CPU resources.
+		 */
+		void WaitForAllTasksToComplete();
+
 	private:
 
 		/**
@@ -130,6 +137,7 @@ namespace Collision
 		 */
 		void ClearResults();
 
+	private:
 		AxisAlignedBoundingBox collisionWorldExtents;
 		bool signaledToExit;
 		std::thread* thread;
@@ -139,5 +147,8 @@ namespace Collision
 		std::mutex* resultMapMutex;
 		std::unordered_map<TaskID, Result*>* resultMap;
 		std::unordered_map<ShapeID, Shape*>* shapeMap;
+		std::mutex* allTasksDoneMutex;
+		std::condition_variable* allTasksDoneCondVar;
+		bool allTasksDone;
 	};
 }

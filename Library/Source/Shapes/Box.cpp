@@ -76,8 +76,8 @@ BoxShape::BoxShape()
 				Vector3 cornerVector;
 
 				cornerVector.x = this->extents.x * ((i == 0) ? -1.0 : 1.0);
-				cornerVector.y = this->extents.y * ((i == 0) ? -1.0 : 1.0);
-				cornerVector.z = this->extents.z * ((i == 0) ? -1.0 : 1.0);
+				cornerVector.y = this->extents.y * ((j == 0) ? -1.0 : 1.0);
+				cornerVector.z = this->extents.z * ((k == 0) ? -1.0 : 1.0);
 
 				boxVertices[i][j][k] = this->objectToWorld.TransformPoint(cornerVector);
 			}

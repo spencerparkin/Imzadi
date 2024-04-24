@@ -19,6 +19,9 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents)
 	this->resultMap = new std::unordered_map<TaskID, Result*>();
 	this->resultMapMutex = new std::mutex();
 	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
+	this->allTasksDoneMutex = new std::mutex();
+	this->allTasksDoneCondVar = new std::condition_variable();
+	this->allTasksDone = true;
 }
 
 /*virtual*/ Thread::~Thread()
@@ -29,6 +32,8 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents)
 	delete this->resultMap;
 	delete this->resultMapMutex;
 	delete this->shapeMap;
+	delete this->allTasksDoneMutex;
+	delete this->allTasksDoneCondVar;
 }
 
 bool Thread::Startup()
@@ -39,6 +44,7 @@ bool Thread::Startup()
 		return false;
 	}
 
+	this->allTasksDone = true;
 	this->signaledToExit = false;
 	this->thread = new std::thread(&Thread::EntryFunc, this);
 
@@ -85,6 +91,14 @@ void Thread::Run()
 		{
 			task->Execute(this);
 			Task::Free(task);
+		}
+
+		// Signal the main thread if all tasks have been completed.
+		if (this->taskQueue->size() == 0)
+		{
+			std::lock_guard<std::mutex> guard(*this->allTasksDoneMutex);
+			this->allTasksDone = true;
+			this->allTasksDoneCondVar->notify_one();
 		}
 	}
 
@@ -165,6 +179,13 @@ TaskID Thread::SendTask(Task* task)
 {
 	TaskID taskId = task->GetTaskID();
 
+	// Update the flag indicating whether all tasks are complete, if necessary.
+	if (this->allTasksDone)
+	{
+		std::lock_guard<std::mutex> guard(*this->allTasksDoneMutex);
+		this->allTasksDone = false;
+	}
+
 	// Add the task to the queue.  Make the mutex scope-lock as tight as possible.
 	{
 		std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
@@ -223,4 +244,10 @@ void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 	{
 		// TODO: Visualize the AABB tree here.
 	}
+}
+
+void Thread::WaitForAllTasksToComplete()
+{
+	std::unique_lock<std::mutex> lock(*this->allTasksDoneMutex);
+	this->allTasksDoneCondVar->wait(lock, [=]() { return this->allTasksDone; });
 }
