@@ -78,7 +78,7 @@ SphereShape::SphereShape()
 		}
 	}
 
-	for (int i = 0; i < latitudeCount; i++)
+	for (int i = 1; i < latitudeCount - 1; i++)
 	{
 		for (int j = 0; j < longitudeCount; j++)
 		{

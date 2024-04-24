@@ -2,6 +2,7 @@
 #include "Math/Plane.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Matrix3x3.h"
+#include "Result.h"
 
 using namespace Collision;
 
@@ -97,6 +98,33 @@ PolygonShape::PolygonShape()
 
 /*virtual*/ void PolygonShape::DebugRender(DebugRenderResult* renderResult) const
 {
+	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	{
+		int j = (i + 1) % this->vertexArray->size();
+
+		DebugRenderResult::RenderLine renderLine;
+
+		renderLine.line.point[0] = (*this->vertexArray)[i];
+		renderLine.line.point[1] = (*this->vertexArray)[j];
+
+		renderLine.color.SetComponents(1.0, 1.0, 1.0);
+
+		renderResult->AddRenderLine(renderLine);
+	}
+
+	Vector3 center = this->GetCenter();
+
+	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	{
+		DebugRenderResult::RenderLine renderLine;
+
+		renderLine.line.point[0] = center;
+		renderLine.line.point[1] = (*this->vertexArray)[i];
+
+		renderLine.color.SetComponents(1.0, 1.0, 1.0);
+
+		renderResult->AddRenderLine(renderLine);
+	}
 }
 
 void PolygonShape::Clear()
