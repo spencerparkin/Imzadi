@@ -238,6 +238,21 @@ namespace Collision
 		 */
 		Vector3 Rotated(const Vector3& unitAxis, double angle) const;
 
+		/**
+		 * Set this vector as one orthogonal (perpendicular) to the given vector.
+		 * Exactly which vector we calculate here is defined only so far as to say
+		 * that it will be non-zero and orthogonal to the given vector, provided
+		 * the given vector is non-zero.  A vector is typically chosen to give the
+		 * best numerical stability.
+		 * 
+		 * This method is useful when the caller wants a vector perpendicular to
+		 * the given vector, and just doesn't care what vector it is, as long as
+		 * it's perpendicular.
+		 * 
+		 * @param[in] vector A vector perpendicular to this vector will be chosen.
+		 */
+		void SetAsOrthogonalTo(const Vector3& vector);
+
 	public:
 		double x, y, z;
 	};
