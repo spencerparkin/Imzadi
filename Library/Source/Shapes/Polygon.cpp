@@ -448,6 +448,9 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 		const LineSegment& edge = *iter;
 		this->AddVertex(edge.point[0]);
 
+		if (nextIter == edgeList.end())
+			break;
+
 		const LineSegment& nextEdge = *nextIter;
 		if (!edge.point[1].IsPoint(nextEdge.point[0]))
 			this->AddVertex(edge.point[1]);
