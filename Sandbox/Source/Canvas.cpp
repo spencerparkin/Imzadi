@@ -1,9 +1,10 @@
 #include "Canvas.h"
 #include "App.h"
-#include <gl/GLU.h>
 #include "System.h"
 #include "Query.h"
 #include "Result.h"
+#include <gl/GLU.h>
+#include <wx/utils.h>
 
 using namespace Collision;
 
@@ -15,6 +16,9 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 
 	this->Bind(wxEVT_PAINT, &Canvas::OnPaint, this);
 	this->Bind(wxEVT_SIZE, &Canvas::OnSize, this);
+
+	this->camera.SetCameraPosition(Vector3(20.0, 10.0, 20.0));
+	this->camera.SetCameraTarget(Vector3(0.0, 0.0, 0.0));
 }
 
 /*virtual*/ Canvas::~Canvas()
@@ -37,9 +41,22 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	glLoadIdentity();
 	gluPerspective(60.0, aspectRatio, 0.1, 1000.0);
 
+	Camera::ViewingParameters viewingParams;
+	this->camera.GetViewingParameters(viewingParams);
+
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
-	gluLookAt(0.0, 0.0, 30.0, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+	gluLookAt(
+		viewingParams.eyePoint.x,
+		viewingParams.eyePoint.y,
+		viewingParams.eyePoint.z,
+		viewingParams.lookAtPoint.x,
+		viewingParams.lookAtPoint.y,
+		viewingParams.lookAtPoint.z,
+		viewingParams.upVector.x,
+		viewingParams.upVector.y,
+		viewingParams.upVector.z
+	);
 
 	glBegin(GL_LINES);
 
@@ -93,6 +110,34 @@ void Canvas::OnSize(wxSizeEvent& event)
 
 	wxSize size = event.GetSize();
 	glViewport(0, 0, size.GetWidth(), size.GetHeight());
+
+	this->Refresh();
+}
+
+void Canvas::Tick()
+{
+	this->controller.Update();
+
+	double leftThumbSensativity = 0.8;
+	double rightThumbSensativity = 0.1;
+
+	Vector3 leftStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::LEFT);
+	Vector3 rightStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::RIGHT);
+
+	Vector3 xAxis, yAxis, zAxis;
+	this->camera.GetCameraFrame(xAxis, yAxis, zAxis);
+
+	Vector3 cameraPosition = this->camera.GetCameraPosition();
+	cameraPosition += (xAxis * leftStickVector.x - zAxis * leftStickVector.y) * leftThumbSensativity;
+	this->camera.SetCameraPosition(cameraPosition);
+
+	Quaternion pitchQuat, yawQuat;
+	pitchQuat.SetFromAxisAngle(xAxis, rightStickVector.y * rightThumbSensativity);
+	yawQuat.SetFromAxisAngle(Vector3(0.0, 1.0, 0.0), -rightStickVector.x * rightThumbSensativity);
+
+	Quaternion quat = this->camera.GetCameraOrientation();
+	quat = (pitchQuat * yawQuat * quat).Normalized();
+	this->camera.SetCameraOrientation(quat);
 
 	this->Refresh();
 }

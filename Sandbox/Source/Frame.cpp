@@ -10,7 +10,7 @@
 
 using namespace Collision;
 
-Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Sandbox", pos, size)
+Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Sandbox", pos, size), timer(this, ID_Timer)
 {
 	this->canvas = nullptr;
 
@@ -40,16 +40,32 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddCapsule);
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddPolygon);
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddSphere);
+	this->Bind(wxEVT_TIMER, &Frame::OnTimer, this, ID_Timer);
 
 	this->canvas = new Canvas(this);
 
 	wxBoxSizer* sizer = new wxBoxSizer(wxVERTICAL);
 	sizer->Add(this->canvas, 1, wxALL | wxGROW, 0);
 	this->SetSizer(sizer);
+
+	this->inTimer = false;
+	this->timer.Start(0);
 }
 
 /*virtual*/ Frame::~Frame()
 {
+}
+
+void Frame::OnTimer(wxTimerEvent& event)
+{
+	if (this->inTimer)
+		return;
+
+	this->inTimer = true;
+
+	this->canvas->Tick();
+
+	this->inTimer = false;
 }
 
 void Frame::OnExit(wxCommandEvent& event)

@@ -7,6 +7,10 @@ set(APP_SOURCES
     Source/Canvas.h
     Source/Frame.cpp
     Source/Frame.h
+    Source/Camera.cpp
+    Source/Camera.h
+    Source/Controller.cpp
+    Source/Controller.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${APP_SOURCES})
@@ -22,6 +26,7 @@ endif()
 
 target_link_libraries(SandboxApp PRIVATE
     CollisionLib
+    Xinput9_1_0.lib
 )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)

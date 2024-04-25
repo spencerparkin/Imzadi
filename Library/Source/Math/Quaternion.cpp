@@ -213,14 +213,17 @@ namespace Collision
 			quatA.x * quatB.x -
 			quatA.y * quatB.y -
 			quatA.z * quatB.z,
+
 			quatA.w * quatB.x +
 			quatA.x * quatB.w +
 			quatA.y * quatB.z -
 			quatA.z * quatB.y,
+
 			quatA.w * quatB.y -
-			quatA.x * quatB.w +
-			quatA.y * quatB.x +
-			quatA.z * quatB.z,
+			quatA.x * quatB.z +
+			quatA.y * quatB.w +
+			quatA.z * quatB.x,
+
 			quatA.w * quatB.z +
 			quatA.x * quatB.y -
 			quatA.y * quatB.x +
