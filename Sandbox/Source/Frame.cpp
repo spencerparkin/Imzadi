@@ -3,6 +3,7 @@
 #include "Canvas.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
+#include <wx/aboutdlg.h>
 #include "Shapes/Box.h"
 #include "Shapes/Capsule.h"
 #include "Shapes/Polygon.h"
@@ -64,6 +65,13 @@ void Frame::OnTimer(wxTimerEvent& event)
 	this->inTimer = true;
 
 	this->canvas->Tick();
+
+	static int tickCount = 0;
+	if (tickCount++ % 16 == 0)
+	{
+		double frameRateFPS = this->canvas->GetAverageFramerate();
+		this->GetStatusBar()->SetStatusText(wxString::Format("Frame-rate: %1.2f FPS", frameRateFPS));
+	}
 
 	this->inTimer = false;
 }
@@ -135,5 +143,10 @@ void Frame::OnAddShape(wxCommandEvent& event)
 
 void Frame::OnAbout(wxCommandEvent& event)
 {
-	//...
+	wxAboutDialogInfo aboutDialogInfo;
+
+	aboutDialogInfo.SetName("Sandbox");
+	aboutDialogInfo.SetDescription("This program is design to help test the CollisionLib library.");
+
+	wxAboutBox(aboutDialogInfo);
 }

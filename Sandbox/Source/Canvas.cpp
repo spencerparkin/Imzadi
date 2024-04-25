@@ -5,6 +5,7 @@
 #include "Result.h"
 #include <gl/GLU.h>
 #include <wx/utils.h>
+#include <time.h>
 
 using namespace Collision;
 
@@ -12,6 +13,8 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
+	this->renderTimeArrayMax = 32;
+
 	this->renderContext = new wxGLContext(this);
 
 	this->Bind(wxEVT_PAINT, &Canvas::OnPaint, this);
@@ -28,6 +31,8 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 
 void Canvas::OnPaint(wxPaintEvent& event)
 {
+	clock_t startTimeTicks = ::clock();
+
 	this->SetCurrent(*this->renderContext);
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
@@ -102,6 +107,13 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	glFlush();
 
 	this->SwapBuffers();
+
+	::clock_t stopTimeTicks = ::clock();
+	::clock_t elapsedTimeTicks = stopTimeTicks - startTimeTicks;
+	double elapsedTimeSeconds = double(elapsedTimeTicks) / double(CLOCKS_PER_SEC);
+	this->renderTimeArray.push_back(elapsedTimeSeconds);
+	if (this->renderTimeArray.size() > this->renderTimeArrayMax)
+		this->renderTimeArray.pop_front();
 }
 
 void Canvas::OnSize(wxSizeEvent& event)
@@ -140,4 +152,14 @@ void Canvas::Tick()
 	this->camera.SetCameraOrientation(quat);
 
 	this->Refresh();
+}
+
+double Canvas::GetAverageFramerate()
+{
+	double averageRenderTimeSeconds = 0.0;
+	for (double renderTimeSeconds : this->renderTimeArray)
+		averageRenderTimeSeconds += renderTimeSeconds;
+	averageRenderTimeSeconds /= double(this->renderTimeArray.size());
+	double frameRateFPS = 1.0 / averageRenderTimeSeconds;
+	return frameRateFPS;
 }
