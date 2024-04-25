@@ -1,8 +1,10 @@
 #include "Polygon.h"
 #include "Math/Plane.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "Math/LineSegment.h"
 #include "Math/Matrix3x3.h"
 #include "Result.h"
+#include <list>
 
 using namespace Collision;
 
@@ -307,7 +309,149 @@ void PolygonShape::SetAsConvexHull(const std::vector<Vector3>& pointCloud)
 	polygon.CalculatePlaneOfBestFit(plane);
 	polygon.SnapToPlane(plane);
 
-	// TODO: May want to cull redundant points at this point.
+	// This can be expensive, and there is an algorithm with better time-complexity, but do this for now.
+	// We don't want there to be any redundant points in the list.
+	std::vector<Vector3> planarPointCloud;
+	for (const Vector3& vertex : *polygon.vertexArray)
+		if (vertex.IsAnyPoint(planarPointCloud, 1e-5))
+			planarPointCloud.push_back(vertex);
 
-	// TODO: Write this.
+	this->CalculateConvexHullInternal(planarPointCloud, plane);
+}
+
+void PolygonShape::FixWindingOfTriangle(const Vector3& desiredNormal)
+{
+	if (this->vertexArray->size() == 3)
+	{
+		const Vector3& pointA = (*this->vertexArray)[0];
+		const Vector3& pointB = (*this->vertexArray)[1];
+		const Vector3& pointC = (*this->vertexArray)[2];
+
+		double determinant = (pointB - pointA).Cross(pointC - pointA).Dot(desiredNormal);
+		if (determinant < 0.0)
+		{
+			(*this->vertexArray)[0] = pointA;
+			(*this->vertexArray)[1] = pointC;
+			(*this->vertexArray)[2] = pointB;
+		}
+	}
+}
+
+void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& planarPointCloud, const Plane& plane)
+{
+	this->Clear();
+
+	// Handle the trivial cases first.  If they don't apply, then we divide and conquer.
+	if (planarPointCloud.size() <= 3)
+	{
+		for (const Vector3& point : planarPointCloud)
+			this->AddVertex(point);
+
+		this->FixWindingOfTriangle(plane.unitNormal);
+		return;
+	}
+	
+	// Find the center of the planar point-cloud.
+	Vector3 center(0.0, 0.0, 0.0);
+	for (const Vector3& point : planarPointCloud)
+		center += point;
+	center /= double(planarPointCloud.size());
+
+	// Find a point furthest from the center.
+	double largestDistance = 0.0;
+	Vector3 furthestPoint;
+	for (const Vector3& point : planarPointCloud)
+	{
+		double distance = (point - center).Length();
+		if (distance > largestDistance)
+		{
+			largestDistance = distance;
+			furthestPoint = point;
+		}
+	}
+
+	// I'm guessing this might be a good dividing plane.
+	Plane dividingPlane;
+	dividingPlane.center = center;
+	dividingPlane.unitNormal = (furthestPoint - center).Normalized();
+
+	// Break the planar-point-cloud into two smaller such sets.
+	std::vector<Vector3> planarPointCloudA, planarPointCloudB;
+	for (const Vector3& point : planarPointCloud)
+	{
+		double signedDistance = dividingPlane.SignedDistanceTo(point);
+		if (signedDistance < 0.0)
+			planarPointCloudA.push_back(point);
+		else
+			planarPointCloudB.push_back(point);
+	}
+
+	COLL_SYS_ASSERT(planarPointCloudA.size() > 0);
+	COLL_SYS_ASSERT(planarPointCloudB.size() > 0);
+
+	// Divided, go conquer.
+	PolygonShape polygonA, polygonB;
+	polygonA.CalculateConvexHullInternal(planarPointCloudA, plane);
+	polygonB.CalculateConvexHullInternal(planarPointCloudB, plane);
+
+	// The secret sauce is now the ability to simply combine two convex hulls into one.
+	for (const Vector3& vertex : *polygonA.vertexArray)
+		this->AddVertex(vertex);
+	for (const Vector3& vertex : *polygonB.vertexArray)
+		this->AddVertex(vertex);
+
+	// Handle some trivial cases first.
+	if (polygonA.vertexArray->size() + polygonB.vertexArray->size() <= 3)
+	{
+		this->FixWindingOfTriangle(plane.unitNormal);
+		return;
+	}
+
+	// Make a combined list of all edges concerned.  Note that the order of edges here is important.
+	// It doesn't matter that we started with polygonA, then did polygonB.  What matters is that
+	// generally, the edges go in a counter-clock-wise direction.
+	std::list<LineSegment> edgeList;
+	for (int i = 0; i < (signed)polygonA.vertexArray->size(); i++)
+		edgeList.push_back(LineSegment(polygonA.GetVertex(i), polygonA.GetVertex(i + 1)));
+	for (int i = 0; i < (signed)polygonB.vertexArray->size(); i++)
+		edgeList.push_back(LineSegment(polygonB.GetVertex(i), polygonB.GetVertex(i + 1)));
+
+	// Cull those that are not on the convex hull.
+	std::list<LineSegment>::iterator iter = edgeList.begin();
+	while (iter != edgeList.end())
+	{
+		std::list<LineSegment>::iterator nextIter(iter);
+		nextIter++;
+
+		const LineSegment& edge = *iter;
+
+		Plane edgePlane;
+		edgePlane.center = edge.point[0];
+		edgePlane.unitNormal = (edge.point[1] - edge.point[0]).Cross(plane.unitNormal).Normalized();
+
+		if (edgePlane.AnyPointOnSide(*this->vertexArray, Plane::Side::BACK))
+			edgeList.erase(iter);
+
+		iter = nextIter;
+	}
+
+	// Wipe the polygon; we're about to construct it.
+	this->Clear();
+
+	// Walk edges, making two new ones in the process.
+	iter = edgeList.begin();
+	while (iter != edgeList.end())
+	{
+		std::list<LineSegment>::iterator nextIter(iter);
+		nextIter++;
+
+		const LineSegment& edge = *iter;
+		this->AddVertex(edge.point[0]);
+
+		const LineSegment& nextEdge = *nextIter;
+		if (!edge.point[1].IsPoint(nextEdge.point[0]))
+			this->AddVertex(edge.point[1]);
+
+		iter = nextIter;
+	}
 }

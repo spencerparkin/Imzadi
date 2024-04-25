@@ -124,8 +124,28 @@ namespace Collision
 		void SetAsConvexHull(const std::vector<Vector3>& pointCloud);
 
 	private:
+		/**
+		 * Return the given index (or offset) mod N, where N is the number of vertices in this polygon.
+		 * The returned index will always be non-negative.
+		 */
 		int ModIndex(int i) const;
 
+		/**
+		 * This function is used internally and exclusively by the SetAsConvexHull function.
+		 * 
+		 * @param[in] planarPointCloud It is assumed that all points in this set are distinct and coplanar.
+		 * @param[in] plane It is assumed that all given points lie on this plane.
+		 */
+		void CalculateConvexHullInternal(const std::vector<Vector3>& planarPointCloud, const Plane& plane);
+
+		/**
+		 * This function is used internally and exclusively by the CalculateConvexHullInternal function.
+		 * It just makes sure that, in the case this polygon is a triangle, that its front-side has a normal
+		 * making an acute angle with the given normal.
+		 */
+		void FixWindingOfTriangle(const Vector3& desiredNormal);
+
+	private:
 		std::vector<Vector3>* vertexArray;
 		mutable Plane cachedPlane;
 		mutable bool cachedPlaneValid;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector3.h"
+#include <vector>
 
 namespace Collision
 {
@@ -61,6 +62,43 @@ namespace Collision
 		 * @return The said signed distance is returned.
 		 */
 		double SignedDistanceTo(const Vector3& point) const;
+
+		/**
+		 * We consider the front side of a plane to be the side to which the plane normal points.
+		 */
+		enum Side
+		{
+			FRONT,
+			BACK,
+			NEITHER
+		};
+
+		/**
+		 * Tell the caller which side of the plane the given point lies.
+		 * 
+		 * @param[in] point This is the point to test against this plane.
+		 * @param[in] planeThickness This is the thickness, if any, to given the plane, so that a point can approximately lie on the plane.
+		 * @return FRONT, BACK or NEITHER is returned.  See the Side enum.
+		 */
+		Side GetSide(const Vector3& point, double planeThickness = 0.0) const;
+
+		/**
+		 * Tell the caller if all given points lie on the given side.
+		 * 
+		 * @param[in] pointArray This is the set of points to test against this plane.
+		 * @param[in] side This is what side of the plane the caller wants to test.
+		 * @return True is returned if all given points lie on the given side; false, otherwise.
+		 */
+		bool AllPointsOnSide(const std::vector<Vector3>& pointArray, Side side) const;
+
+		/**
+		 * Tell the caller if any one given point lies on the given side.
+		 * 
+		 * @param[in] pointArray This is the set of points to test against this plane.
+		 * @param[in] side This is what side of the plane the caller wants to test.
+		 * @return True is returned if any given point lies on the given side; false, otherwise.
+		 */
+		bool AnyPointOnSide(const std::vector<Vector3>& pointArray, Side side) const;
 
 	public:
 		Vector3 center;

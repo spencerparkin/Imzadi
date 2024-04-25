@@ -2,6 +2,7 @@
 
 #include "Defines.h"
 #include <math.h>
+#include <vector>
 
 namespace Collision
 {
@@ -252,6 +253,24 @@ namespace Collision
 		 * @param[in] vector A vector perpendicular to this vector will be chosen.
 		 */
 		void SetAsOrthogonalTo(const Vector3& vector);
+
+		/**
+		 * Tell the caller if the given point is approximately equal to this point.
+		 * 
+		 * @param[in] point This is the point to check against this point.
+		 * @param[in] tolerance The points are approximately equal if they are within this distance of one another.
+		 * @return True is returned if the points are approximately the same point; false, otherwise.
+		 */
+		bool IsPoint(const Vector3& point, double tolerance = 0.0) const;
+
+		/**
+		 * Tell the caller if this point is approximately equal to any of the given points.
+		 * 
+		 * @param[in] pointArray This is the set of points to check against this point.
+		 * @param[in] tolerance A point is approximately equal to this one if it is within this distance of it.
+		 * @return True is returned if any given point is approximately the same as this point; false, otherwise.
+		 */
+		bool IsAnyPoint(const std::vector<Vector3>& pointArray, double tolerance = 0.0) const;
 
 	public:
 		double x, y, z;

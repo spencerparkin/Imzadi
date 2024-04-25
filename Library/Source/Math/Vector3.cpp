@@ -68,3 +68,17 @@ void Vector3::SetAsOrthogonalTo(const Vector3& vector)
 		this->z = vector.x;
 	}
 }
+
+bool Vector3::IsPoint(const Vector3& point, double tolerance /*= 0.0*/) const
+{
+	return (*this - point).Length() <= tolerance;
+}
+
+bool Vector3::IsAnyPoint(const std::vector<Vector3>& pointArray, double tolerance /*= 0.0*/) const
+{
+	for (const Vector3& point : pointArray)
+		if (point.IsPoint(*this, tolerance))
+			return true;
+
+	return false;
+}

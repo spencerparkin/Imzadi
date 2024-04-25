@@ -49,3 +49,30 @@ double Plane::SignedDistanceTo(const Vector3& point) const
 {
 	return (point - this->center).Dot(this->unitNormal);
 }
+
+Plane::Side Plane::GetSide(const Vector3& point, double planeThickness /*= 0.0*/) const
+{
+	double signedDistance = this->SignedDistanceTo(point);
+	if (::fabs(signedDistance) <= planeThickness)
+		return Side::NEITHER;
+
+	return signedDistance > 0.0 ? Side::FRONT : Side::BACK;
+}
+
+bool Plane::AllPointsOnSide(const std::vector<Vector3>& pointArray, Side side) const
+{
+	for (const Vector3& point : pointArray)
+		if (side != this->GetSide(point))
+			return false;
+
+	return true;
+}
+
+bool Plane::AnyPointOnSide(const std::vector<Vector3>& pointArray, Side side) const
+{
+	for (const Vector3& point : pointArray)
+		if (side == this->GetSide(point))
+			return true;
+
+	return false;
+}
