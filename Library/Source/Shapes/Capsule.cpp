@@ -96,7 +96,7 @@ CapsuleShape::CapsuleShape()
 
 			vertex.x = this->radius * ::cos(angle);
 			vertex.y = this->radius * ::sin(angle);
-			vertex.z = cylinderLength * double(i) / double(numSlices);
+			vertex.z = cylinderLength * double(i) / double(numSlices - 1);
 
 			cylinderVertices[i][j] = renderTransform.TransformPoint(vertex);
 		}
@@ -113,7 +113,20 @@ CapsuleShape::CapsuleShape()
 			int k = (j + 1) % numSegments;
 
 			renderLine.line.point[0] = cylinderVertices[i][j];
-			renderLine.line.point[0] = cylinderVertices[i][k];
+			renderLine.line.point[1] = cylinderVertices[i][k];
+
+			renderResult->AddRenderLine(renderLine);
+		}
+	}
+
+	for (int i = 0; i < numSegments; i++)
+	{
+		for (int j = 0; j < numSlices - 1; j++)
+		{
+			int k = j + 1;
+
+			renderLine.line.point[0] = cylinderVertices[j][i];
+			renderLine.line.point[1] = cylinderVertices[k][i];
 
 			renderResult->AddRenderLine(renderLine);
 		}
@@ -124,7 +137,7 @@ CapsuleShape::CapsuleShape()
 
 	for (int i = 0; i < numCapSlices; i++)
 	{
-		double latitudeAngle = (M_PI / 2.0) * double(i) / double(numSlices - 1);
+		double latitudeAngle = (M_PI / 2.0) * double(i) / double(numCapSlices - 1);
 
 		for (int j = 0; j < numSegments; j++)
 		{
@@ -146,7 +159,7 @@ CapsuleShape::CapsuleShape()
 				int k = (j + 1) % numSegments;
 
 				renderLine.line.point[0] = renderTransform.TransformPoint(capVertices[i][j]);
-				renderLine.line.point[0] = renderTransform.TransformPoint(capVertices[i][k]);
+				renderLine.line.point[1] = renderTransform.TransformPoint(capVertices[i][k]);
 
 				renderResult->AddRenderLine(renderLine);
 			}
@@ -159,7 +172,7 @@ CapsuleShape::CapsuleShape()
 				int k = i + 1;
 
 				renderLine.line.point[0] = renderTransform.TransformPoint(capVertices[i][j]);
-				renderLine.line.point[0] = renderTransform.TransformPoint(capVertices[k][j]);
+				renderLine.line.point[1] = renderTransform.TransformPoint(capVertices[k][j]);
 
 				renderResult->AddRenderLine(renderLine);
 			}

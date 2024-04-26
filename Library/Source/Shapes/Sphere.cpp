@@ -63,7 +63,7 @@ SphereShape::SphereShape()
 
 	for (int i = 0; i < latitudeCount; i++)
 	{
-		double latitudeAngle = M_PI * double(i) / double(latitudeCount - 1);
+		double latitudeAngle = -M_PI / 2.0 + M_PI * double(i) / double(latitudeCount - 1);
 
 		for (int j = 0; j < longitudeCount; j++)
 		{

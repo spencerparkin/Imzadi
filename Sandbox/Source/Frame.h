@@ -14,6 +14,7 @@ public:
 	enum
 	{
 		ID_Exit = wxID_HIGHEST,
+		ID_ClearWorld,
 		ID_About,
 		ID_AddBox,
 		ID_AddCapsule,
@@ -25,6 +26,7 @@ public:
 	void OnExit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnAddShape(wxCommandEvent& event);
+	void OnClearWorld(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
 
 private:

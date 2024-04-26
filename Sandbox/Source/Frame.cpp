@@ -8,6 +8,7 @@
 #include "Shapes/Capsule.h"
 #include "Shapes/Polygon.h"
 #include "Shapes/Sphere.h"
+#include "Command.h"
 
 using namespace Collision;
 
@@ -16,6 +17,8 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->canvas = nullptr;
 
 	wxMenu* programMenu = new wxMenu();
+	programMenu->Append(new wxMenuItem(programMenu, ID_ClearWorld, "Clear World", "Remove all shapes from the collision world."));
+	programMenu->AppendSeparator();
 	programMenu->Append(new wxMenuItem(programMenu, ID_Exit, "Exit", "Go skiing."));
 
 	wxMenu* shapeMenu = new wxMenu();
@@ -36,6 +39,7 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->SetStatusBar(new wxStatusBar(this));
 
 	this->Bind(wxEVT_MENU, &Frame::OnExit, this, ID_Exit);
+	this->Bind(wxEVT_MENU, &Frame::OnClearWorld, this, ID_ClearWorld);
 	this->Bind(wxEVT_MENU, &Frame::OnAbout, this, ID_About);
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddBox);
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddCapsule);
@@ -81,6 +85,13 @@ void Frame::OnExit(wxCommandEvent& event)
 	this->Close(true);
 }
 
+void Frame::OnClearWorld(wxCommandEvent& event)
+{
+	System* system = wxGetApp().GetCollisionSystem();
+	system->IssueCommand(system->Create<RemoveAllShapesCommand>());
+	this->canvas->Refresh();
+}
+
 // TODO: It should be possible to click on a shape to move it with the mouse.
 //       This is a good test of the ray-cast query capability of the collision system.
 void Frame::OnAddShape(wxCommandEvent& event)
@@ -101,8 +112,8 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		case ID_AddCapsule:
 		{
 			auto capsule = system->Create<CapsuleShape>();
-			capsule->SetRadius(4.0);
-			capsule->SetVertex(0, Vector3(-3.0, 0.0, 0.0));
+			capsule->SetRadius(2.0);
+			capsule->SetVertex(0, Vector3(-5.0, 0.0, 0.0));
 			capsule->SetVertex(1, Vector3(3.0, 0.0, 0.0));
 			shape = capsule;
 			break;

@@ -144,8 +144,8 @@ void Canvas::Tick()
 		}
 	}
 
-	double leftThumbSensativity = 0.8;
-	double rightThumbSensativity = 0.1;
+	double leftThumbSensativity = 0.5;
+	double rightThumbSensativity = 0.05;
 
 	Vector3 leftStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::LEFT);
 	Vector3 rightStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::RIGHT);
