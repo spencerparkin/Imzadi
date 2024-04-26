@@ -24,6 +24,44 @@ const XINPUT_STATE* Controller::GetCurrentState()
 	return &this->stateBuffer[1 - this->stateIndex];
 }
 
+const XINPUT_STATE* Controller::GetPreviousState()
+{
+	return &this->stateBuffer[this->stateIndex];
+}
+
+bool Controller::ButtonPressed(DWORD buttonFlag)
+{
+	DWORD currentButtonFlags = 0, previousButtonFlags = 0;
+	this->GetCurrentAndPreviousButtonFlags(currentButtonFlags, previousButtonFlags);
+	return((currentButtonFlags & buttonFlag) != 0 && (previousButtonFlags & buttonFlag) == 0);
+}
+
+bool Controller::ButtonReleased(DWORD buttonFlag)
+{
+	DWORD currentButtonFlags = 0, previousButtonFlags = 0;
+	this->GetCurrentAndPreviousButtonFlags(currentButtonFlags, previousButtonFlags);
+	return((currentButtonFlags & buttonFlag) != 0 && (previousButtonFlags & buttonFlag) == 0);
+}
+
+void Controller::GetCurrentAndPreviousButtonFlags(DWORD& currentButtonFlags, DWORD& previousButtonFlags)
+{
+	const XINPUT_STATE* currentState = this->GetCurrentState();
+	const XINPUT_STATE* previousState = this->GetPreviousState();
+
+	currentButtonFlags = currentState->Gamepad.wButtons;
+	previousButtonFlags = previousState->Gamepad.wButtons;
+}
+
+bool Controller::ButtonDown(DWORD buttonFlag)
+{
+	return((this->GetCurrentState()->Gamepad.wButtons & buttonFlag) != 0);
+}
+
+bool Controller::ButtonUp(DWORD buttonFlag)
+{
+	return((this->GetCurrentState()->Gamepad.wButtons & buttonFlag) == 0);
+}
+
 Vector3 Controller::GetAnalogJoyStick(JoyStick joyStick)
 {
 	const XINPUT_STATE* currentState = this->GetCurrentState();

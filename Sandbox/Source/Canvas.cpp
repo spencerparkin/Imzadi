@@ -13,6 +13,7 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
+	this->strafeMode = StrafeMode::XZ_PLANE;
 	this->renderTimeArrayMax = 32;
 
 	this->renderContext = new wxGLContext(this);
@@ -130,6 +131,19 @@ void Canvas::Tick()
 {
 	this->controller.Update();
 
+	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	{
+		switch (this->strafeMode)
+		{
+		case StrafeMode::XZ_PLANE:
+			this->strafeMode = StrafeMode::XY_PLANE;
+			break;
+		case StrafeMode::XY_PLANE:
+			this->strafeMode = StrafeMode::XZ_PLANE;
+			break;
+		}
+	}
+
 	double leftThumbSensativity = 0.8;
 	double rightThumbSensativity = 0.1;
 
@@ -140,7 +154,21 @@ void Canvas::Tick()
 	this->camera.GetCameraFrame(xAxis, yAxis, zAxis);
 
 	Vector3 cameraPosition = this->camera.GetCameraPosition();
-	cameraPosition += (xAxis * leftStickVector.x - zAxis * leftStickVector.y) * leftThumbSensativity;
+
+	Vector3 axisA, axisB;
+	switch (this->strafeMode)
+	{
+	case StrafeMode::XZ_PLANE:
+		axisA = xAxis;
+		axisB = -zAxis;
+		break;
+	case StrafeMode::XY_PLANE:
+		axisA = xAxis;
+		axisB = yAxis;
+		break;
+	}
+
+	cameraPosition += (axisA * leftStickVector.x + axisB * leftStickVector.y) * leftThumbSensativity;
 	this->camera.SetCameraPosition(cameraPosition);
 
 	Quaternion pitchQuat, yawQuat;

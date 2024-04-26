@@ -19,10 +19,18 @@ public:
 	double GetAverageFramerate();
 
 private:
+
+	enum StrafeMode
+	{
+		XZ_PLANE,
+		XY_PLANE
+	};
+
 	wxGLContext* renderContext;
 	static int attributeList[];
 	Camera camera;
 	Controller controller;
 	std::list<double> renderTimeArray;
 	unsigned int renderTimeArrayMax;
+	StrafeMode strafeMode;
 };

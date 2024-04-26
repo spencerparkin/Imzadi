@@ -21,8 +21,16 @@ public:
 
 	Collision::Vector3 GetAnalogJoyStick(JoyStick joyStick);
 
+	bool ButtonPressed(DWORD buttonFlag);
+	bool ButtonReleased(DWORD buttonFlag);
+	bool ButtonDown(DWORD buttonFlag);
+	bool ButtonUp(DWORD buttonFlag);
+
 private:
 	const XINPUT_STATE* GetCurrentState();
+	const XINPUT_STATE* GetPreviousState();
+
+	void GetCurrentAndPreviousButtonFlags(DWORD& currentButtonFlags, DWORD& previousButtonFlags);
 
 	XINPUT_STATE stateBuffer[2];
 	int stateIndex;
