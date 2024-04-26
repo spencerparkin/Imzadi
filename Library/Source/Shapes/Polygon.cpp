@@ -108,8 +108,7 @@ PolygonShape::PolygonShape()
 
 		renderLine.line.point[0] = (*this->vertexArray)[i];
 		renderLine.line.point[1] = (*this->vertexArray)[j];
-
-		renderLine.color.SetComponents(1.0, 1.0, 1.0);
+		renderLine.color = this->debugColor;
 
 		renderResult->AddRenderLine(renderLine);
 	}
@@ -122,8 +121,7 @@ PolygonShape::PolygonShape()
 
 		renderLine.line.point[0] = center;
 		renderLine.line.point[1] = (*this->vertexArray)[i];
-
-		renderLine.color.SetComponents(1.0, 1.0, 1.0);
+		renderLine.color = this->debugColor;
 
 		renderResult->AddRenderLine(renderLine);
 	}

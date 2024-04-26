@@ -88,7 +88,7 @@ SphereShape::SphereShape()
 
 			renderLine.line.point[0] = sphereVertices[i][j];
 			renderLine.line.point[1] = sphereVertices[i][k];
-			renderLine.color.SetComponents(1.0, 1.0, 1.0);
+			renderLine.color = this->debugColor;
 
 			renderResult->AddRenderLine(renderLine);
 		}
@@ -104,7 +104,7 @@ SphereShape::SphereShape()
 
 			renderLine.line.point[0] = sphereVertices[j][i];
 			renderLine.line.point[1] = sphereVertices[k][i];
-			renderLine.color.SetComponents(1.0, 1.0, 1.0);
+			renderLine.color = this->debugColor;
 
 			renderResult->AddRenderLine(renderLine);
 		}

@@ -42,6 +42,31 @@ namespace Collision
 	};
 
 	/**
+	 * Not meant to be used directly, this class is the base class for any
+	 * shape-oriented command.  That is, any command that operates on a
+	 * particular shape.
+	 */
+	class COLLISION_LIB_API ShapeCommand : public Command
+	{
+	public:
+		ShapeCommand();
+		virtual ~ShapeCommand();
+
+		/**
+		 * Set the shape ID of the shape to be operated upon.
+		 */
+		void SetShapeID(ShapeID shapeID) { this->shapeID = shapeID; }
+
+		/**
+		 * Get the shape ID of the shape to be operated upon.
+		 */
+		ShapeID GetShapeID() const { return this->shapeID; }
+
+	protected:
+		ShapeID shapeID;
+	};
+
+	/**
 	 * This command is used to add a collision shape to the system.
 	 */
 	class COLLISION_LIB_API AddShapeCommand : public Command
@@ -52,6 +77,8 @@ namespace Collision
 
 		/**
 		 * Set the shape that is to be added to the collision system.
+		 * Use the Create method of the System class with the desired shape class
+		 * to create the argument.
 		 */
 		void SetShape(Shape* shape) { this->shape = shape; }
 
@@ -77,21 +104,11 @@ namespace Collision
 	/**
 	 * This command is used to remove a shape from the system.
 	 */
-	class COLLISION_LIB_API RemoveShapeCommand : public Command
+	class COLLISION_LIB_API RemoveShapeCommand : public ShapeCommand
 	{
 	public:
 		RemoveShapeCommand();
 		virtual ~RemoveShapeCommand();
-
-		/**
-		 * Set the shape ID of the shape to be removed from the collision system.
-		 */
-		void SetShapeID(ShapeID shapeID) { this->shapeID = shapeID; }
-
-		/**
-		 * Get the shape ID of the shape tob e removed from the collision system.
-		 */
-		ShapeID GetShapeID() const { return this->shapeID; }
 
 		/**
 		 * Perform the removal of the set shape from the collision system.
@@ -102,9 +119,6 @@ namespace Collision
 		 * Allocate an instance of the RemoveShapeCommand.
 		 */
 		static RemoveShapeCommand* Create();
-
-	private:
-		ShapeID shapeID;
 	};
 
 	/**
@@ -119,5 +133,34 @@ namespace Collision
 		virtual void Execute(Thread* thread) override;
 
 		static RemoveAllShapesCommand* Create();
+	};
+
+	/**
+	 * This command can be used to change the debug render color of a collision shape.
+	 * It is not meant to be used in production; just debug.
+	 */
+	class COLLISION_LIB_API SetDebugRenderColorCommand : public ShapeCommand
+	{
+	public:
+		SetDebugRenderColorCommand();
+		virtual ~SetDebugRenderColorCommand();
+
+		/**
+		 * Perform the debug render color assignment.
+		 */
+		virtual void Execute(Thread* thread) override;
+
+		/**
+		 * Set the color to be applied to the desired shape.
+		 */
+		void SetColor(const Vector3& color) { this->color = color; }
+
+		/**
+		 * Get the color to be applied to the desired shape.
+		 */
+		const Vector3& GetColor() const { return this->color; }
+
+	private:
+		Vector3 color;
 	};
 }

@@ -6,6 +6,7 @@ ShapeID Shape::nextShapeID = 0;
 
 Shape::Shape()
 {
+	this->debugColor.SetComponents(1.0, 1.0, 1.0);
 	this->shapeID = nextShapeID++;
 	this->worldToObjectValid = false;
 }

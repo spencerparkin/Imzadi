@@ -1,6 +1,7 @@
 #include "Command.h"
 #include "Thread.h"
 #include "Error.h"
+#include <format>
 
 using namespace Collision;
 
@@ -33,6 +34,17 @@ ExitThreadCommand::ExitThreadCommand()
 /*static*/ ExitThreadCommand* ExitThreadCommand::Create()
 {
 	return new ExitThreadCommand();
+}
+
+//------------------------------- ShapeCommand -------------------------------
+
+ShapeCommand::ShapeCommand()
+{
+	this->shapeID = 0;
+}
+
+/*virtual*/ ShapeCommand::~ShapeCommand()
+{
 }
 
 //------------------------------- AddShapeCommand -------------------------------
@@ -101,4 +113,23 @@ RemoveAllShapesCommand::RemoveAllShapesCommand()
 /*static*/ RemoveAllShapesCommand* RemoveAllShapesCommand::Create()
 {
 	return new RemoveAllShapesCommand();
+}
+
+//------------------------------- RemoveAllShapesCommand -------------------------------
+
+SetDebugRenderColorCommand::SetDebugRenderColorCommand()
+{
+}
+
+/*virtual*/ SetDebugRenderColorCommand::~SetDebugRenderColorCommand()
+{
+}
+
+/*virtual*/ void SetDebugRenderColorCommand::Execute(Thread* thread)
+{
+	Shape* shape = thread->FindShape(this->shapeID);
+	if (!shape)
+		GetError()->AddErrorMessage(std::format("Failed to find shape with ID {}.", this->shapeID));
+	else
+		shape->SetDebugRenderColor(this->color);
 }

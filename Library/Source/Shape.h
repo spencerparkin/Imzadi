@@ -110,6 +110,20 @@ namespace Collision
 		 */
 		const Transform& GetWorldToObjectTransform() const;
 
+		/**
+		 * Set the color of this shape when it is drawn for debugging/visualization purposes.
+		 * 
+		 * @param[in] color Here, the x, y and z components are used for red, green and blue, respectively.
+		 */
+		void SetDebugRenderColor(const Vector3& color) { this->debugColor = color; }
+
+		/**
+		 * Get the color of this shape that is used for debug drawing purposes.
+		 * 
+		 * @return The color is returned as a vector, the x, y and z components representing red, green and blue, respectively.
+		 */
+		const Vector3& GetDebugRenderColor() const { return this->debugColor; }
+
 	private:
 		ShapeID shapeID;
 		static ShapeID nextShapeID;
@@ -118,5 +132,6 @@ namespace Collision
 		Transform objectToWorld;
 		mutable Transform worldToObject;
 		mutable bool worldToObjectValid;
+		Vector3 debugColor;
 	};
 }

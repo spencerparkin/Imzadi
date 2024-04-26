@@ -175,6 +175,19 @@ void Thread::RemoveShape(ShapeID shapeID)
 	}
 }
 
+Shape* Thread::FindShape(ShapeID shapeID)
+{
+	Shape* shape = nullptr;
+	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->find(shapeID);
+	if (iter != this->shapeMap->end())
+	{
+		shape = iter->second;
+		COLL_SYS_ASSERT(shape->GetShapeID() == shapeID);
+	}
+
+	return shape;
+}
+
 TaskID Thread::SendTask(Task* task)
 {
 	TaskID taskId = task->GetTaskID();

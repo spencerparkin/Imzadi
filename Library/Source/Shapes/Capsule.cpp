@@ -103,8 +103,7 @@ CapsuleShape::CapsuleShape()
 	}
 
 	DebugRenderResult::RenderLine renderLine;
-
-	renderLine.color.SetComponents(1.0, 1.0, 1.0);
+	renderLine.color = this->debugColor;
 
 	for (int i = 0; i < numSlices; i++)
 	{
