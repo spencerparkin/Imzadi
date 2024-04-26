@@ -154,7 +154,7 @@ namespace Collision
 		std::counting_semaphore<4096>* taskQueueSemaphore;
 		std::mutex* resultMapMutex;
 		std::unordered_map<TaskID, Result*>* resultMap;
-		std::unordered_map<ShapeID, Shape*>* shapeMap;
+		std::unordered_map<ShapeID, Shape*>* shapeMap;	// TODO: Maybe this points into the spacial-partitioning tree also?
 		std::mutex* allTasksDoneMutex;
 		std::condition_variable* allTasksDoneCondVar;
 		bool allTasksDone;
