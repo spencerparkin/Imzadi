@@ -1,5 +1,6 @@
 #include "Ray.h"
 #include "Plane.h"
+#include "AxisAlignedBoundingBox.h"
 
 using namespace Collision;
 
@@ -68,5 +69,31 @@ bool Ray::CastAgainst(const Plane& plane, double& alpha) const
 	if (::isnan(alpha) || ::isinf(alpha))
 		return false;
 
-	return true;
+	return alpha >= 0.0;
+}
+
+bool Ray::CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const
+{
+	std::vector<Plane> sidePlaneArray;
+	box.GetSidePlanes(sidePlaneArray);
+	if (sidePlaneArray.size() == 0)
+		return false;
+
+	alpha = std::numeric_limits<double>::max();
+
+	for (const Plane& sidePlane : sidePlaneArray)
+	{
+		double planeHitAlpha = 0.0;
+		if (this->CastAgainst(sidePlane, planeHitAlpha))
+		{
+			Vector3 hitPoint = this->CalculatePoint(planeHitAlpha);
+			if (box.ContainsPoint(hitPoint))
+			{
+				if (planeHitAlpha < alpha)
+					planeHitAlpha = alpha;
+			}
+		}
+	}
+
+	return alpha != std::numeric_limits<double>::max();
 }

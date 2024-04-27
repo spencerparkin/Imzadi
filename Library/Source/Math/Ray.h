@@ -5,6 +5,7 @@
 namespace Collision
 {
 	class Plane;
+	class AxisAlignedBoundingBox;
 
 	/**
 	 * A ray here is described by a point and unit-length vector pair.  The ray starts
@@ -49,8 +50,12 @@ namespace Collision
 		double CalculateAlpha(const Vector3& rayPoint) const;
 
 		/**
-		 * Calculate and return the alpha value for the ray point of
-		 * this ray intersecting the given plane.
+		 * Calculate and return the alpha value for the ray-point of
+		 * this ray intersecting the given plane.  Unlike the other
+		 * overload of this method also taking a plane as an argument,
+		 * here we can return a negative alpha-value.  In effect, we're
+		 * telling you where the infinite line determined by this ray
+		 * intersects the given plane.
 		 * 
 		 * @param[in] plane The plain against which to cast the ray.
 		 * @return The said alpha value is returned.  We lave the result undefined if there is no intersection.
@@ -59,13 +64,26 @@ namespace Collision
 
 		/**
 		 * Calculate and return the alpha value for the ray point of
-		 * this ray intersecting the given plane, if any.
+		 * this ray intersecting the given plane, if any.  If the ray
+		 * direction is orthogonal to the plane origin, then the ray
+		 * doesn't hit the plane unless the ray origin is ont he plane.
 		 * 
 		 * @param[in] plane The plain against which to cast the ray.
 		 * @param[out] alpha The said alpha value is returned in this.
 		 * @return True is returned if the ray hits the plane; false, otherwise.
 		 */
 		bool CastAgainst(const Plane& plane, double& alpha) const;
+
+		/**
+		 * Calculate and return the alpha value for the ray point of
+		 * this ray intersecting the given AABB.  If the ray originates
+		 * somewhere inside the box, then false is returned.
+		 * 
+		 * @param[in] box This is the rain against which to cast the ray.
+		 * @param[out] alpha The said alpah value is returned in this.
+		 * @return True is returned if the ray hits the AABB; false, otherwise.
+		 */
+		bool CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const;
 
 	public:
 		Vector3 origin;

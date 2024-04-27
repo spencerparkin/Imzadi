@@ -5,6 +5,8 @@
 
 namespace Collision
 {
+	class Plane;
+
 	/**
 	 * An AABB for short, these boxes whose sides are parallel to the XY, YZ or XZ planes.
 	 * Being axis-aligned, many operations can be performed between them more efficiently.
@@ -36,10 +38,14 @@ namespace Collision
 
 		/**
 		 * Tell the caller if the given point is a member of this AABB's point-set.
+		 * This box is considered a closed set in that the sides, edges and corners
+		 * are considered members of the set.  A border thickness can be given to
+		 * extend the box outward a distance equal to the thickness value.
 		 * 
+		 * @param[in] borderThickness If non-zero, this allows a point to approximately lie on the sides, edges or corners of the box.
 		 * @return True is returned if the given point is interior to, or on the edge of, this AABB.
 		 */
-		bool ContainsPoint(const Vector3& point) const;
+		bool ContainsPoint(const Vector3& point, double borderThickness = 0.0) const;
 
 		/**
 		 * Tell the caller if the given AABB is contained within this AABB.
@@ -89,9 +95,20 @@ namespace Collision
 		 * Calculate this AABB as the one that most tightly fits the given set of points.
 		 * Nothing is done if the given array is empty.
 		 * 
-		 * @param pointCloud This is the set of points to use for the operation.
+		 * @param[in] pointCloud This is the set of points to use for the operation.
 		 */
 		void SetToBoundPointCloud(const std::vector<Vector3>& pointCloud);
+
+		/**
+		 * Calculate and return the 6 planes that form the sides of this box.
+		 * If, for example, the box has no depth, but it does have width and
+		 * height, then only 4 planes are returned.  The results are left
+		 * undefined if this AABB is invalid.  The plane normals always
+		 * face away from the box.
+		 * 
+		 * @param[out] This array is populated with the planes containing the sides of this box.
+		 */
+		void GetSidePlanes(std::vector<Plane>& sidePlaneArray) const;
 
 	public:
 		Vector3 minCorner;
