@@ -23,20 +23,22 @@ CapsuleShape::CapsuleShape()
 	return TypeID::POLYGON;
 }
 
-/*virtual*/ void CapsuleShape::CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const
+/*virtual*/ void CapsuleShape::RecalculateCache() const
 {
+	Shape::RecalculateCache();
+
 	Vector3 pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
 	Vector3 pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
 
-	boundingBox.minCorner = pointA;
-	boundingBox.maxCorner = pointA;
+	this->cache.boundingBox.minCorner = pointA;
+	this->cache.boundingBox.maxCorner = pointA;
 
 	Vector3 delta(this->radius, this->radius, this->radius);
 
-	boundingBox.Expand(pointA + delta);
-	boundingBox.Expand(pointA - delta);
-	boundingBox.Expand(pointB + delta);
-	boundingBox.Expand(pointB - delta);
+	this->cache.boundingBox.Expand(pointA + delta);
+	this->cache.boundingBox.Expand(pointA - delta);
+	this->cache.boundingBox.Expand(pointB + delta);
+	this->cache.boundingBox.Expand(pointB - delta);
 }
 
 /*virtual*/ bool CapsuleShape::IsValid() const

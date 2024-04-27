@@ -30,7 +30,7 @@ namespace Collision
 		virtual ~PolygonShape();
 
 		virtual TypeID GetShapeTypeID() const override;
-		virtual void CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const override;
+		virtual void RecalculateCache() const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;

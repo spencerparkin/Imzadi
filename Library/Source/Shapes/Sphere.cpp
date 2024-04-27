@@ -23,13 +23,15 @@ SphereShape::SphereShape()
 	return TypeID::SPHERE;
 }
 
-/*virtual*/ void SphereShape::CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const
+/*virtual*/ void SphereShape::RecalculateCache() const
 {
+	Shape::RecalculateCache();
+
 	Vector3 delta(this->radius, this->radius, this->radius);
 	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->center);
 
-	boundingBox.minCorner = worldCenter + delta;
-	boundingBox.maxCorner = worldCenter - delta;
+	this->cache.boundingBox.minCorner = worldCenter + delta;
+	this->cache.boundingBox.maxCorner = worldCenter - delta;
 }
 
 /*virtual*/ bool SphereShape::IsValid() const

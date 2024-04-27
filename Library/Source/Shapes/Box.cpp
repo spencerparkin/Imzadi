@@ -23,8 +23,10 @@ BoxShape::BoxShape()
 	return TypeID::BOX;
 }
 
-/*virtual*/ void BoxShape::CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const
+/*virtual*/ void BoxShape::RecalculateCache() const
 {
+	Shape::RecalculateCache();
+
 	std::vector<Vector3> boxPoints;
 
 	for (int i = 0; i < 2; i++)
@@ -35,16 +37,16 @@ BoxShape::BoxShape()
 			{
 				Vector3 cornerVector;
 
-				cornerVector.x = this->extents.x * (i == 0) ? -1.0 : 1.0;
-				cornerVector.y = this->extents.y * (j == 0) ? -1.0 : 1.0;
-				cornerVector.z = this->extents.z * (k == 0) ? -1.0 : 1.0;
+				cornerVector.x = this->extents.x * ((i == 0) ? -1.0 : 1.0);
+				cornerVector.y = this->extents.y * ((j == 0) ? -1.0 : 1.0);
+				cornerVector.z = this->extents.z * ((k == 0) ? -1.0 : 1.0);
 
 				boxPoints.push_back(this->objectToWorld.TransformPoint(cornerVector));
 			}
 		}
 	}
 
-	boundingBox.SetToBoundPointCloud(boxPoints);
+	this->cache.boundingBox.SetToBoundPointCloud(boxPoints);
 }
 
 /*virtual*/ bool BoxShape::IsValid() const

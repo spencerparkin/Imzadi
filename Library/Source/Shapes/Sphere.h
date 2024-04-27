@@ -15,7 +15,7 @@ namespace Collision
 		virtual ~SphereShape();
 
 		virtual TypeID GetShapeTypeID() const override;
-		virtual void CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const override;
+		virtual void RecalculateCache() const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
 

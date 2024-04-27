@@ -56,11 +56,22 @@ bool AxisAlignedBoundingBox::ContainsPoint(const Vector3& point) const
 	return true;
 }
 
+bool AxisAlignedBoundingBox::ContainsBox(const AxisAlignedBoundingBox& box) const
+{
+	return this->ContainsPoint(box.minCorner) && this->ContainsPoint(box.maxCorner);
+}
+
 bool AxisAlignedBoundingBox::Intersect(const AxisAlignedBoundingBox& aabbA, const AxisAlignedBoundingBox& aabbB)
 {
-	// TODO: Write this.
+	this->minCorner.x = COLL_SYS_MAX(aabbA.minCorner.x, aabbB.minCorner.x);
+	this->minCorner.y = COLL_SYS_MAX(aabbA.minCorner.y, aabbB.minCorner.y);
+	this->minCorner.z = COLL_SYS_MAX(aabbA.minCorner.z, aabbB.minCorner.z);
 
-	return false;
+	this->maxCorner.x = COLL_SYS_MIN(aabbA.maxCorner.x, aabbB.maxCorner.x);
+	this->maxCorner.y = COLL_SYS_MIN(aabbA.maxCorner.y, aabbB.maxCorner.y);
+	this->maxCorner.z = COLL_SYS_MIN(aabbA.maxCorner.z, aabbB.maxCorner.z);
+
+	return this->IsValid();
 }
 
 void AxisAlignedBoundingBox::Expand(const Vector3& point)
@@ -92,19 +103,19 @@ void AxisAlignedBoundingBox::Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBou
 	aabbA = *this;
 	aabbB = *this;
 
-	if (xSize > ySize && xSize > zSize)
+	if (xSize >= ySize && xSize >= zSize)
 	{
 		double middle = (this->minCorner.x + this->maxCorner.x) / 2.0;
 		aabbA.maxCorner.x = middle;
 		aabbB.minCorner.x = middle;
 	}
-	else if (ySize > xSize && ySize > zSize)
+	else if (ySize >= xSize && ySize >= zSize)
 	{
 		double middle = (this->minCorner.y + this->maxCorner.y) / 2.0;
 		aabbA.maxCorner.y = middle;
 		aabbB.minCorner.y = middle;
 	}
-	else //if(zSize > xSize && zSize > xSize)
+	else //if(zSize >= xSize && zSize >= ySize)
 	{
 		double middle = (this->minCorner.z + this->maxCorner.z) / 2.0;
 		aabbA.maxCorner.z = middle;

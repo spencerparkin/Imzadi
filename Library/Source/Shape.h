@@ -2,12 +2,13 @@
 
 #include "Defines.h"
 #include "Math/Transform.h"
+#include "Math/AxisAlignedBoundingBox.h"
 #include <stdint.h>
 
 namespace Collision
 {
-	class AxisAlignedBoundingBox;
 	class DebugRenderResult;
+	class BoundingBoxNode;
 
 	typedef uint32_t ShapeID;
 
@@ -20,6 +21,9 @@ namespace Collision
 	 */
 	class COLLISION_LIB_API Shape
 	{
+		friend class BoundingBoxTree;
+		friend class BoundingBoxNode;
+
 	public:
 		Shape();
 		virtual ~Shape();
@@ -54,11 +58,11 @@ namespace Collision
 		ShapeID GetShapeID() const;
 
 		/**
-		 * Calculate and return the smallest AABB containing this shape in world space.
-		 * 
-		 * @param[out] boundingBox The AABB that best fits this shape in its current position and orientation.
+		 * Derivatives must override this method to recalculate this shape's internal cache.
+		 * See the Cache structure.  Derivatives must also be careful to invalidate this
+		 * cache whenever necessary, and they should call this base method in their override.
 		 */
-		virtual void CalcBoundingBox(AxisAlignedBoundingBox& boundingbox) const = 0;
+		virtual void RecalculateCache() const;
 
 		/**
 		 * Tell the caller if this collision shape has valid data.  Overrides should
@@ -95,6 +99,12 @@ namespace Collision
 		static void Free(Shape* shape);
 
 		/**
+		 * This calls the RecalculateCache() method if the cache is not currently valid.
+		 * The cache is flagged as valid after this call.
+		 */
+		void RegenerateCacheIfNeeded() const;
+
+		/**
 		 * Set this shape's transform taking it from object space to world space.
 		 */
 		void SetObjectToWorldTransform(const Transform& objectToWorld);
@@ -111,6 +121,11 @@ namespace Collision
 		const Transform& GetWorldToObjectTransform() const;
 
 		/**
+		 * Return the smallest AABB containing this shape.
+		 */
+		const AxisAlignedBoundingBox& GetBoundingBox() const;
+
+		/**
 		 * Set the color of this shape when it is drawn for debugging/visualization purposes.
 		 * 
 		 * @param[in] color Here, the x, y and z components are used for red, green and blue, respectively.
@@ -125,13 +140,25 @@ namespace Collision
 		const Vector3& GetDebugRenderColor() const { return this->debugColor; }
 
 	private:
-		ShapeID shapeID;
-		static ShapeID nextShapeID;
+
+		ShapeID shapeID;				//< This is a unique identifier that can be used to safely refer to this node on any thread.
+		static ShapeID nextShapeID;		//< This is the ID of the next shape to be allocated by the system.
+		BoundingBoxNode* node;			//< This is the node of the bounding-box tree that contains this shape.
 
 	protected:
-		Transform objectToWorld;
-		mutable Transform worldToObject;
-		mutable bool worldToObjectValid;
-		Vector3 debugColor;
+
+		/**
+		 * Any redundant data about the shape should be stored here.
+		 */
+		struct Cache
+		{
+			Transform worldToObject;			//< This should be calculated as the inverse of this shape's object-to-world transform.
+			AxisAlignedBoundingBox boundingBox;	//< This should be calculated as the smallest AABB that contains this shape.
+		};
+
+		Transform objectToWorld;	//< A shape is described in object space and then realized in world space using this transform.
+		Vector3 debugColor;			//< This color is used to render the shape for debugging purposes.
+		mutable Cache cache;		//< This is cached data about the shape that can be gleaned as a function of the shape's defining characteristics.  The cache is used for efficiency purposes.
+		mutable bool cacheValid;	//< This flag indicates whethere our cache is currently valid.  It becomes invalid whenever our object-to-world transform changes, or other defining characteristics of the shape.
 	};
 }

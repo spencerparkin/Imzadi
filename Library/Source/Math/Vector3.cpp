@@ -39,11 +39,11 @@ Vector3 Vector3::Rotated(const Vector3& unitAxis, double angle) const
 {
 	Vector3 projection = this->ProjectedOnto(unitAxis);
 	Vector3 rejection = *this - projection;
-
-	Vector3 xAxis = rejection.Normalized();
+	Vector3 xAxis = rejection;
+	double length = 0.0;
+	xAxis.Normalize(&length);
 	Vector3 yAxis = unitAxis.Cross(xAxis);
-
-	rejection = ::cos(angle) * xAxis + ::sin(angle) * yAxis;
+	rejection = length * (::cos(angle) * xAxis + ::sin(angle) * yAxis);
 	return projection + rejection;
 }
 

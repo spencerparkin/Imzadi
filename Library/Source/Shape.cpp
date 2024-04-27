@@ -6,9 +6,10 @@ ShapeID Shape::nextShapeID = 0;
 
 Shape::Shape()
 {
-	this->debugColor.SetComponents(1.0, 1.0, 1.0);
+	this->node = nullptr;
+	this->debugColor.SetComponents(1.0, 0.0, 0.0);
 	this->shapeID = nextShapeID++;
-	this->worldToObjectValid = false;
+	this->cacheValid = false;
 }
 
 /*virtual*/ Shape::~Shape()
@@ -25,14 +26,28 @@ ShapeID Shape::GetShapeID() const
 	delete shape;
 }
 
+/*virtual*/ void Shape::RecalculateCache() const
+{
+	this->cache.worldToObject.Invert(this->objectToWorld);
+}
+
+void Shape::RegenerateCacheIfNeeded() const
+{
+	if (!this->cacheValid)
+	{
+		this->RecalculateCache();
+		this->cacheValid = true;
+	}
+}
+
 /*virtual*/ bool Shape::IsValid() const
 {
 	if (!this->objectToWorld.IsValid())
 		return false;
 
-	this->GetWorldToObjectTransform();
+	this->RegenerateCacheIfNeeded();
 
-	if (!this->worldToObject.IsValid())
+	if (!this->cache.worldToObject.IsValid())
 		return false;
 
 	return true;
@@ -41,7 +56,7 @@ ShapeID Shape::GetShapeID() const
 void Shape::SetObjectToWorldTransform(const Transform& objectToWorld)
 {
 	this->objectToWorld = objectToWorld;
-	this->worldToObjectValid = false;
+	this->cacheValid = false;
 }
 
 const Transform& Shape::GetObjectToWorldTransform() const
@@ -51,11 +66,14 @@ const Transform& Shape::GetObjectToWorldTransform() const
 
 const Transform& Shape::GetWorldToObjectTransform() const
 {
-	if (!this->worldToObjectValid)
-	{
-		this->worldToObject = this->objectToWorld.Inverted();
-		this->worldToObjectValid = true;
-	}
+	this->RegenerateCacheIfNeeded();
 
-	return this->worldToObject;
+	return this->cache.worldToObject;
+}
+
+const AxisAlignedBoundingBox& Shape::GetBoundingBox() const
+{
+	this->RegenerateCacheIfNeeded();
+
+	return this->cache.boundingBox;
 }

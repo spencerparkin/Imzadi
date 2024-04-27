@@ -8,9 +8,8 @@
 
 using namespace Collision;
 
-Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents)
+Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(collisionWorldExtents)
 {
-	this->collisionWorldExtents = collisionWorldExtents;
 	this->thread = nullptr;
 	this->signaledToExit = false;
 	this->taskQueue = new std::list<Task*>();
@@ -133,7 +132,7 @@ void Thread::ClearResults()
 
 void Thread::ClearShapes()
 {
-	// TODO: Blow away spacial-partitioning tree too.
+	this->boxTree.Clear();
 
 	while (this->shapeMap->size() > 0)
 	{
@@ -150,7 +149,7 @@ void Thread::AddShape(Shape* shape)
 	if (iter == this->shapeMap->end())
 	{
 		this->shapeMap->insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
-		// TODO: Account for spacial-partitionining tree insertion/removal.
+		this->boxTree.Insert(shape);
 	}
 	else
 	{
@@ -165,7 +164,7 @@ void Thread::RemoveShape(ShapeID shapeID)
 	if (iter != this->shapeMap->end())
 	{
 		Shape* shape = iter->second;
-		// TODO: Acount for spacial-partitioning tree insertion/removal.
+		this->boxTree.Remove(shape);
 		Shape::Free(shape);
 		this->shapeMap->erase(iter);
 	}
@@ -250,13 +249,14 @@ void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 		{
 			const Shape* shape = pair.second;
 			shape->DebugRender(renderResult);
+
+			if ((drawFlags & COLL_SYS_DRAW_FLAG_SHAPE_BOXES) != 0)
+				renderResult->AddLinesForBox(shape->GetBoundingBox(), Vector3(1.0, 1.0, 1.0) - shape->GetDebugRenderColor());
 		}
 	}
 
 	if ((drawFlags & COLL_SYS_DRAW_FLAG_AABB_TREE) != 0)
-	{
-		// TODO: Visualize the AABB tree here.
-	}
+		this->boxTree.DebugRender(renderResult);
 }
 
 void Thread::WaitForAllTasksToComplete()

@@ -14,7 +14,8 @@
 #define COLL_SYS_SIGN(x)		((x) < 0.0 ? -1.0 : 1.0)
 
 #define COLL_SYS_DRAW_FLAG_SHAPES				0x00000001
-#define COLL_SYS_DRAW_FLAG_AABB_TREE			0x00000002
+#define COLL_SYS_DRAW_FLAG_SHAPE_BOXES			0x00000002
+#define COLL_SYS_DRAW_FLAG_AABB_TREE			0x00000004
 
 // TODO: Give this a meaningful definition.
 #define COLL_SYS_ASSERT(condition)

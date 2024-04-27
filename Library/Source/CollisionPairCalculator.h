@@ -9,7 +9,8 @@ namespace Collision
 
 	/**
 	 * Derivatives of this class know how to calculate the collision information, if any, between
-	 * a specific pair of collision shapes.
+	 * a specific pair of collision shapes.  Such calculations constitute the narrow phase of
+	 * collision detection.
 	 */
 	class COLLISION_LIB_API CollisionPairCalculator
 	{

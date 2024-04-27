@@ -4,6 +4,7 @@
 #include "Task.h"
 #include "Shape.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "BoundingBoxTree.h"
 #include <thread>
 #include <mutex>
 #include <list>
@@ -146,7 +147,7 @@ namespace Collision
 		void ClearResults();
 
 	private:
-		AxisAlignedBoundingBox collisionWorldExtents;
+		BoundingBoxTree boxTree;
 		bool signaledToExit;
 		std::thread* thread;
 		std::mutex* taskQueueMutex;
@@ -154,7 +155,7 @@ namespace Collision
 		std::counting_semaphore<4096>* taskQueueSemaphore;
 		std::mutex* resultMapMutex;
 		std::unordered_map<TaskID, Result*>* resultMap;
-		std::unordered_map<ShapeID, Shape*>* shapeMap;	// TODO: Maybe this points into the spacial-partitioning tree also?
+		std::unordered_map<ShapeID, Shape*>* shapeMap;
 		std::mutex* allTasksDoneMutex;
 		std::condition_variable* allTasksDoneCondVar;
 		bool allTasksDone;

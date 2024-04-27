@@ -29,13 +29,15 @@ PolygonShape::PolygonShape()
 	return TypeID::POLYGON;
 }
 
-/*virtual*/ void PolygonShape::CalcBoundingBox(AxisAlignedBoundingBox& boundingBox) const
+/*virtual*/ void PolygonShape::RecalculateCache() const
 {
+	Shape::RecalculateCache();
+
 	if (this->vertexArray->size() > 0)
 	{
-		boundingBox.minCorner = this->objectToWorld.TransformPoint((*this->vertexArray)[0]);
+		this->cache.boundingBox.minCorner = this->objectToWorld.TransformPoint((*this->vertexArray)[0]);
 		for (int i = 1; i < (signed)this->vertexArray->size(); i++)
-			boundingBox.Expand(this->objectToWorld.TransformPoint((*this->vertexArray)[i]));
+			this->cache.boundingBox.Expand(this->objectToWorld.TransformPoint((*this->vertexArray)[i]));
 	}
 }
 
@@ -106,21 +108,21 @@ PolygonShape::PolygonShape()
 
 		DebugRenderResult::RenderLine renderLine;
 
-		renderLine.line.point[0] = (*this->vertexArray)[i];
-		renderLine.line.point[1] = (*this->vertexArray)[j];
+		renderLine.line.point[0] = this->objectToWorld.TransformPoint((*this->vertexArray)[i]);
+		renderLine.line.point[1] = this->objectToWorld.TransformPoint((*this->vertexArray)[j]);
 		renderLine.color = this->debugColor;
 
 		renderResult->AddRenderLine(renderLine);
 	}
 
-	Vector3 center = this->GetCenter();
+	Vector3 center = this->objectToWorld.TransformPoint(this->GetCenter());
 
 	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
 	{
 		DebugRenderResult::RenderLine renderLine;
 
 		renderLine.line.point[0] = center;
-		renderLine.line.point[1] = (*this->vertexArray)[i];
+		renderLine.line.point[1] = this->objectToWorld.TransformPoint((*this->vertexArray)[i]);
 		renderLine.color = this->debugColor;
 
 		renderResult->AddRenderLine(renderLine);

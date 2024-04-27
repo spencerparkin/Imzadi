@@ -23,8 +23,8 @@ App::App()
 		return false;
 
 	AxisAlignedBoundingBox worldBox;
-	worldBox.minCorner = Vector3(-100.0, -100.0, -100.0);
-	worldBox.maxCorner = Vector3(100.0, 100.0, 100.0);
+	worldBox.minCorner = Vector3(-200.0, -200.0, -200.0);
+	worldBox.maxCorner = Vector3(200.0, 200.0, 200.0);
 
 	if (!this->collisionSystem->Initialize(worldBox))
 		return false;

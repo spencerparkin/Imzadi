@@ -6,6 +6,8 @@
 
 namespace Collision
 {
+	class AxisAlignedBoundingBox;
+
 	/**
 	 * Derivatives of this class are collision query results; or, in other words,
 	 * responses to collision queries.  There is not necessarily a one-to-one correspondance
@@ -64,6 +66,14 @@ namespace Collision
 		 * This is typically just used internally by the collision system.
 		 */
 		void AddRenderLine(const RenderLine& renderLine);
+
+		/**
+		 * Add 12 lines for the given AABB.
+		 * 
+		 * @param[in] box This is the box to render as wire-frame.
+		 * @param[in] color This is the color to use for the box.
+		 */
+		void AddLinesForBox(const AxisAlignedBoundingBox& box, const Vector3& color);
 
 		/**
 		 * Allocate and return a new DebugRenderResult object.

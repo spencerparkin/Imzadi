@@ -20,6 +20,9 @@ public:
 		ID_AddCapsule,
 		ID_AddPolygon,
 		ID_AddSphere,
+		ID_DrawBoxTree,
+		ID_DrawShapes,
+		ID_DrawShapeBoxes,
 		ID_Timer,
 	};
 
@@ -27,6 +30,8 @@ public:
 	void OnAbout(wxCommandEvent& event);
 	void OnAddShape(wxCommandEvent& event);
 	void OnClearWorld(wxCommandEvent& event);
+	void OnDebugDrawToggle(wxCommandEvent& event);
+	void OnUpdateUI(wxUpdateUIEvent& event);
 	void OnTimer(wxTimerEvent& event);
 
 private:

@@ -18,6 +18,9 @@ public:
 
 	double GetAverageFramerate();
 
+	uint32_t GetDebugDrawFlags() const { return this->debugDrawFlags; }
+	void SetDebugDrawFlags(uint32_t drawFlags) { this->debugDrawFlags = drawFlags; }
+
 private:
 
 	enum StrafeMode
@@ -33,4 +36,5 @@ private:
 	std::list<double> renderTimeArray;
 	unsigned int renderTimeArrayMax;
 	StrafeMode strafeMode;
+	uint32_t debugDrawFlags;
 };

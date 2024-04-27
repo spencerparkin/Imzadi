@@ -13,6 +13,8 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
+	this->debugDrawFlags = COLL_SYS_DRAW_FLAG_SHAPES;
+
 	this->strafeMode = StrafeMode::XZ_PLANE;
 	this->renderTimeArrayMax = 32;
 
@@ -38,6 +40,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
 
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -83,7 +86,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	System* system = wxGetApp().GetCollisionSystem();
 
 	auto renderQuery = system->Create<DebugRenderQuery>();
-	renderQuery->SetDrawFlags(COLL_SYS_DRAW_FLAG_SHAPES);
+	renderQuery->SetDrawFlags(this->debugDrawFlags);
 	TaskID taskID = 0;
 	system->MakeQuery(renderQuery, taskID);
 	system->FlushAllTasks();

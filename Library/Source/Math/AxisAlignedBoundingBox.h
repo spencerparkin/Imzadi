@@ -42,6 +42,13 @@ namespace Collision
 		bool ContainsPoint(const Vector3& point) const;
 
 		/**
+		 * Tell the caller if the given AABB is contained within this AABB.
+		 * 
+		 * @return True is returned if the given box is a sub-box of this box; false, otherwise.
+		 */
+		bool ContainsBox(const AxisAlignedBoundingBox& box) const;
+
+		/**
 		 * Set this AABB to be the intersection, if any, of the two given AABBs.
 		 * This is a commutative operation.
 		 * 
@@ -61,7 +68,7 @@ namespace Collision
 		/**
 		 * Cut this AABB exactly in half along a plane such that the resulting two
 		 * halfs are as close to cubical as possible.  That is, the longest dimension
-		 * of this AABB is determined, and then the code is made orthogonal to this
+		 * of this AABB is determined, and then the plane is made orthogonal to this
 		 * dimension.
 		 * 
 		 * @param[out] aabbA This will hold the first half.
