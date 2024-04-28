@@ -2,7 +2,7 @@
 
 using namespace Collision;
 
-ShapeID Shape::nextShapeID = 0;
+ShapeID Shape::nextShapeID = 1;
 
 Shape::Shape()
 {

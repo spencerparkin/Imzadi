@@ -129,6 +129,12 @@ PolygonShape::PolygonShape()
 	}
 }
 
+/*virtual*/ bool PolygonShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
+{
+	// TODO: Write this.
+	return false;
+}
+
 void PolygonShape::Clear()
 {
 	this->vertexArray->clear();
@@ -221,6 +227,10 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 		sum_yz += point.y * point.z;
 		sum_zz += point.z * point.z;
 	}
+
+	// TODO: Maybe a better thing to do is create 3 different matrices,
+	//       then check their determinants.  Use the one with the largest
+	//       absolute value.
 
 	Matrix3x3 matrix;
 

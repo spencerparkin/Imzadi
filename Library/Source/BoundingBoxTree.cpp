@@ -1,6 +1,7 @@
 #include "BoundingBoxTree.h"
 #include "Error.h"
 #include "Result.h"
+#include "Math/Ray.h"
 
 using namespace Collision;
 
@@ -102,6 +103,82 @@ void BoundingBoxTree::DebugRender(DebugRenderResult* renderResult) const
 {
 	if (this->rootNode)
 		this->rootNode->DebugRender(renderResult);
+}
+
+void BoundingBoxTree::RayCast(const Ray& ray, std::vector<const Shape*>& shapeArray) const
+{
+	shapeArray.clear();
+
+	if (!this->rootNode)
+		return;
+
+	AxisAlignedBoundingBox shapeArrayBox;
+	double smallestAlpha = std::numeric_limits<double>::max();
+
+	// Use a non-recursive, breadth-first traversal of the tree.
+	std::list<const BoundingBoxNode*> nodeQueue;
+	nodeQueue.push_back(this->rootNode);
+	while (nodeQueue.size() > 0)
+	{
+		// Grab our next node off the queue for processing.
+		std::list<const BoundingBoxNode*>::iterator iter = nodeQueue.begin();
+		const BoundingBoxNode* node = *iter;
+		nodeQueue.erase(iter);
+
+		// We can skip this branch of the tree if the ray doesn't intersect it.
+		if (!ray.HitsOrOriginatesIn(node->box))
+			continue;
+		
+		// Queue up this node's branches for later.
+		for (const BoundingBoxNode* childNode : *node->childNodeArray)
+			nodeQueue.push_back(childNode);
+
+		// For now, we need to process all this node's shapes.
+		for (auto pair : *node->shapeMap)
+		{
+			const Shape* shape = pair.second;
+
+			// If the ray doesn't hit the shape's bounding box, then it doesn't hit the shape.
+			double alpha = 0.0;
+			if (!ray.CastAgainst(shape->GetBoundingBox(), alpha))
+				continue;
+			
+			// In this case, it's the first hit, so add it to our list.
+			if (shapeArray.size() == 0)
+			{
+				shapeArray.push_back(shape);
+				shapeArrayBox = shape->GetBoundingBox();
+				smallestAlpha = alpha;
+				continue;
+			}
+			
+			// In this case, even if the ray hits the box closer, a shape in our
+			// existing list may still hit the ray closer than the shape in the
+			// newly hit box, and that is why we add to the list.
+			AxisAlignedBoundingBox intersection;
+			if (intersection.Intersect(shapeArrayBox, shape->GetBoundingBox()))
+			{
+				shapeArray.push_back(shape);
+				shapeArrayBox.Expand(shape->GetBoundingBox());
+				if (alpha < smallestAlpha)
+					smallestAlpha = alpha;
+				continue;
+			}
+			
+			// In this case, we can conclude that a shape in our existing list
+			// hits closer than whatever is in the box we just hit.
+			if (alpha > smallestAlpha)
+				continue;
+
+			// In this case, we can conclude that the shape in the box we just hit
+			// must hit closer than anything in our current list of shapes, so start
+			// the list over again with the new shape.
+			shapeArray.clear();
+			shapeArray.push_back(shape);
+			shapeArrayBox = shape->GetBoundingBox();
+			smallestAlpha = alpha;
+		}
+	}
 }
 
 //--------------------------------- BoundingBoxNode ---------------------------------

@@ -67,9 +67,23 @@ namespace Collision
 		/**
 		 * Minimally expand this AABB so that it includes the given point.
 		 * 
-		 * @param[in] point This is the point to include in the box.
+		 * @param[in] point This is the point to include in this box.
 		 */
 		void Expand(const Vector3& point);
+
+		/**
+		 * Minimally expand this AABB so that it includes the given set of points.
+		 * 
+		 * @param[in] pointArray This is the set of points to include in this box.
+		 */
+		void Expand(const std::vector<Vector3>& pointArray);
+
+		/**
+		 * Minimally expand this AABB so that it includes the given AABB.
+		 * 
+		 * @param[in] box This is the AABB to include in this box.
+		 */
+		void Expand(const AxisAlignedBoundingBox& box);
 
 		/**
 		 * Cut this AABB exactly in half along a plane such that the resulting two

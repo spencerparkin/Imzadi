@@ -112,3 +112,9 @@ SphereShape::SphereShape()
 		}
 	}
 }
+
+/*virtual*/ bool SphereShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
+{
+	// TODO: Write this.
+	return false;
+}

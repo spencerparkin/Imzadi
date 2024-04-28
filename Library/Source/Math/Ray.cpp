@@ -87,7 +87,7 @@ bool Ray::CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const
 		if (this->CastAgainst(sidePlane, planeHitAlpha))
 		{
 			Vector3 hitPoint = this->CalculatePoint(planeHitAlpha);
-			if (box.ContainsPoint(hitPoint))
+			if (box.ContainsPoint(hitPoint, 1e-5))
 			{
 				if (planeHitAlpha < alpha)
 					planeHitAlpha = alpha;
@@ -96,4 +96,13 @@ bool Ray::CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const
 	}
 
 	return alpha != std::numeric_limits<double>::max();
+}
+
+bool Ray::HitsOrOriginatesIn(const AxisAlignedBoundingBox& box) const
+{
+	if (box.ContainsPoint(this->origin))
+		return true;
+
+	double alpha = 0.0;
+	return this->CastAgainst(box, alpha);
 }

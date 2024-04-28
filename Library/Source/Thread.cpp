@@ -18,9 +18,7 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(co
 	this->resultMap = new std::unordered_map<TaskID, Result*>();
 	this->resultMapMutex = new std::mutex();
 	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
-	this->allTasksDoneMutex = new std::mutex();
 	this->allTasksDoneCondVar = new std::condition_variable();
-	this->allTasksDone = true;
 }
 
 /*virtual*/ Thread::~Thread()
@@ -31,7 +29,6 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(co
 	delete this->resultMap;
 	delete this->resultMapMutex;
 	delete this->shapeMap;
-	delete this->allTasksDoneMutex;
 	delete this->allTasksDoneCondVar;
 }
 
@@ -43,7 +40,6 @@ bool Thread::Startup()
 		return false;
 	}
 
-	this->allTasksDone = true;
 	this->signaledToExit = false;
 	this->thread = new std::thread(&Thread::EntryFunc, this);
 
@@ -76,28 +72,34 @@ void Thread::Run()
 		// The semaphore count mirrors the size of the task queue.
 		this->taskQueueSemaphore->acquire();
 
-		// Grab a task off the queue.  Make the mutex scope-lock as tight as possible.
+		// Grab the next task, but don't pull it off the queue just yet.
 		Task* task = nullptr;
+		if (this->taskQueue->size() > 0)
 		{
 			std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
-			std::list<Task*>::iterator iter = this->taskQueue->begin();
-			task = *iter;
-			this->taskQueue->erase(iter);
+			if (this->taskQueue->size() > 0)
+			{
+				std::list<Task*>::iterator iter = this->taskQueue->begin();
+				task = *iter;
+			}
 		}
 
-		// Process the task.
 		if (task)
 		{
+			// Process the task.
 			task->Execute(this);
 			Task::Free(task);
-		}
-
-		// Signal the main thread if all tasks have been completed.
-		if (this->taskQueue->size() == 0)
-		{
-			std::lock_guard<std::mutex> guard(*this->allTasksDoneMutex);
-			this->allTasksDone = true;
-			this->allTasksDoneCondVar->notify_one();
+			task = nullptr;
+		
+			// Once processed, we can remove it from the queue.  This way, our wait
+			// operation returns when all tasks are truely completed.
+			{
+				std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
+				std::list<Task*>::iterator iter = this->taskQueue->begin();
+				this->taskQueue->erase(iter);
+				if (this->taskQueue->size() == 0)
+					this->allTasksDoneCondVar->notify_one();
+			}
 		}
 	}
 
@@ -191,13 +193,6 @@ TaskID Thread::SendTask(Task* task)
 {
 	TaskID taskId = task->GetTaskID();
 
-	// Update the flag indicating whether all tasks are complete, if necessary.
-	if (this->allTasksDone)
-	{
-		std::lock_guard<std::mutex> guard(*this->allTasksDoneMutex);
-		this->allTasksDone = false;
-	}
-
 	// Add the task to the queue.  Make the mutex scope-lock as tight as possible.
 	{
 		std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
@@ -261,6 +256,6 @@ void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 
 void Thread::WaitForAllTasksToComplete()
 {
-	std::unique_lock<std::mutex> lock(*this->allTasksDoneMutex);
-	this->allTasksDoneCondVar->wait(lock, [=]() { return this->allTasksDone; });
+	std::unique_lock<std::mutex> lock(*this->taskQueueMutex);
+	this->allTasksDoneCondVar->wait(lock, [=]() { return this->taskQueue->size() == 0; });
 }

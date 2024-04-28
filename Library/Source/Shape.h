@@ -10,7 +10,7 @@ namespace Collision
 	class DebugRenderResult;
 	class BoundingBoxNode;
 
-	typedef uint32_t ShapeID;
+	typedef uint64_t ShapeID;
 
 	/**
 	 * Derivatives of this class represent all the kinds of shapes that the collision system supports.
@@ -51,7 +51,9 @@ namespace Collision
 		/**
 		 * All shape instances have a unique shape ID that can be used to safely refer
 		 * to a shape, whether it still exists in the system or has gone extinct.
-		 * It is often needed in other API calls.
+		 * It is often needed in other API calls.  The number zero is reserved as an
+		 * ID no shape will ever have, and represents the absense of a shape, or "null",
+		 * if you will.
 		 * 
 		 * @return The shape's ID is returned for reference purposes.
 		 */
@@ -86,6 +88,18 @@ namespace Collision
 		 * The lines added to the given result should be in world-space.
 		 */
 		virtual void DebugRender(DebugRenderResult* renderResult) const = 0;
+
+		/**
+		 * Overrides of this method should perform a ray-cast operation of the
+		 * given ray against this shape in world space.  If the ray originates
+		 * within the shape, then false should be returned.
+		 * 
+		 * @param[in] ray This is the ray to cast against this shape.
+		 * @param[out] alpha This is distance along the given ray from its origin to the surface point, if any, where this shape is hit; undefined if no hit occurs.
+		 * @param[out] unitSurfaceNormal This should be the normal to the shape's surface at the point of ray impact, if any; undefined if not hit occurs.
+		 * @return True is returned if the given ray hits this shape; false, otherwise.
+		 */
+		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const = 0;
 
 		/**
 		 * Free the memory used by the given shape.  You should never allocate or free a shape yourself,

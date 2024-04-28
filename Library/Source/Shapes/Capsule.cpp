@@ -193,6 +193,12 @@ CapsuleShape::CapsuleShape()
 	renderCap();
 }
 
+/*virtual*/ bool CapsuleShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
+{
+	// TODO: Write this.
+	return false;
+}
+
 void CapsuleShape::SetVertex(int i, const Vector3& point)
 {
 	if (i % 2 == 0)

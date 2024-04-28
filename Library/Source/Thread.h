@@ -121,6 +121,11 @@ namespace Collision
 		 */
 		void WaitForAllTasksToComplete();
 
+		/**
+		 * Return the AABB tree being used to spatially sort all shapes in the collision world.
+		 */
+		const BoundingBoxTree& GetBoundingBoxTree() { return this->boxTree; }
+
 	private:
 
 		/**
@@ -156,8 +161,6 @@ namespace Collision
 		std::mutex* resultMapMutex;
 		std::unordered_map<TaskID, Result*>* resultMap;
 		std::unordered_map<ShapeID, Shape*>* shapeMap;
-		std::mutex* allTasksDoneMutex;
 		std::condition_variable* allTasksDoneCondVar;
-		bool allTasksDone;
 	};
 }

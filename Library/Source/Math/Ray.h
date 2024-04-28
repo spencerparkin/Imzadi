@@ -22,6 +22,9 @@ namespace Collision
 		Ray(const Ray& ray);
 		virtual ~Ray();
 
+		/**
+		 * Make this ray a copy of the given ray.
+		 */
 		void operator=(const Ray& ray);
 		
 		/**
@@ -84,6 +87,13 @@ namespace Collision
 		 * @return True is returned if the ray hits the AABB; false, otherwise.
 		 */
 		bool CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const;
+
+		/**
+		 * Tell the caller if this ray hits or originates inside the given AABB.
+		 * 
+		 * @return True is returned if any part of this ray intersects the given box; false, otherwise.
+		 */
+		bool HitsOrOriginatesIn(const AxisAlignedBoundingBox& box) const;
 
 	public:
 		Vector3 origin;

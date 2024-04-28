@@ -93,3 +93,19 @@ void DebugRenderResult::AddLinesForBox(const AxisAlignedBoundingBox& box, const 
 	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.maxCorner.y, box.maxCorner.z);
 	this->AddRenderLine(renderLine);
 }
+
+//-------------------------------- RayCastResult --------------------------------
+
+RayCastResult::RayCastResult()
+{
+	this->hitData.shapeID = 0;
+}
+
+/*virtual*/ RayCastResult::~RayCastResult()
+{
+}
+
+/*static*/ RayCastResult* RayCastResult::Create()
+{
+	return new RayCastResult();
+}

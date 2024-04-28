@@ -53,6 +53,16 @@ namespace Collision
 		 */
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
+		/**
+		 * Perform a ray-cast against this sphere.
+		 * 
+		 * @param[in] ray This is the ray to cast against this sphere.
+		 * @param[out] alpha This is the distance from ray origin to the hit sphere point, if any.
+		 * @param[out] unitSurfaceNormal This will be the surface normal of the sphere at the point of ray impact, if any.
+		 * @return True is returned if the given ray hits this sphere; false, otherwise.
+		 */
+		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
+
 	private:
 		Vector3 center;
 		double radius;

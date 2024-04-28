@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Task.h"
+#include "Math/Ray.h"
 #include <stdint.h>
 
 namespace Collision
@@ -65,7 +66,41 @@ namespace Collision
 		uint32_t drawFlags;
 	};
 
-	//RayCastQuery -- What shape, if any, does this ray hit, and where?
+	/**
+	 * Use this class to submit a ray-cast query against the entire physics world.
+	 */
+	class RayCastQuery : public Query
+	{
+	public:
+		RayCastQuery();
+		virtual ~RayCastQuery();
+
+		/**
+		 * Perform the ray-cast query on the collision thread.
+		 */
+		virtual Result* ExecuteQuery(Thread* thread) override;
+
+		/**
+		 * Specify the ray to use in this ray-query.
+		 * 
+		 * @param[in] ray This ray will be cast against the collision world in this query.
+		 */
+		void SetRay(const Ray& ray) { this->ray = ray; }
+
+		/**
+		 * The ray being used in this query is returned.
+		 */
+		const Ray& GetRay() { return this->ray; }
+
+		/**
+		 * Allocate and return a new RayCastQuery instance.
+		 */
+		static RayCastQuery* Create();
+
+	private:
+		Ray ray;
+	};
+
 	//ShapeQuery -- What other shapes is this shape in collision with and how?
 	// Note that if the underlying system is smart, work to see if A collides with B will not be duplicated to find that B collides with A.
 }

@@ -22,6 +22,7 @@ namespace Collision
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
+		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
 		/**
 		 * Allocate and return a new CapsuleShape class instance.

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.h"
+#include "Shape.h"
 #include "Math/LineSegment.h"
 #include <vector>
 
@@ -82,5 +83,46 @@ namespace Collision
 
 	private:
 		std::vector<RenderLine>* renderLineArray;
+	};
+
+	/**
+	 * An instance of this class is returned as the result of a ray-cast query
+	 * using the RayCastQuery class.
+	 */
+	class RayCastResult : public Result
+	{
+	public:
+		RayCastResult();
+		virtual ~RayCastResult();
+
+		/**
+		 * This structure organizes the characteristics of a ray-cast hit against a shape in the collision world.
+		 */
+		struct HitData
+		{
+			ShapeID shapeID;			//< This is the ID of the collision shape that was hit by the ray, if any.  It is zero if not hit occured.
+			Vector3 surfacePoint;		//< This is the point on the surface of the shape where the ray hit it.
+			Vector3 surfaceNormal;		//< This is the normal to the surface of the shape where it was hit.
+		};
+
+		/**
+		 * Get the particular of the ray-cast result in the returned structure.
+		 * If the returned hit-data has zero for the shape ID, then the ray did
+		 * not hit any shape in the collision world.
+		 */
+		const HitData& GetHitData() const { return this->hitData; }
+
+		/**
+		 * This is used internally to set the hit-data on the ray-cast result object.
+		 */
+		void SetHitData(const HitData& hitData) { this->hitData = hitData; }
+
+		/**
+		 * Allocate and return a new RayCastResult instance.
+		 */
+		static RayCastResult* Create();
+
+	private:
+		HitData hitData;
 	};
 }

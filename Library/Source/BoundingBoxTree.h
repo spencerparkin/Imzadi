@@ -19,9 +19,7 @@ namespace Collision
 	 */
 	class COLLISION_LIB_API BoundingBoxTree
 	{
-		friend class Thread;
-
-	private:
+	public:
 		BoundingBoxTree(const AxisAlignedBoundingBox& collisionWorldExtents);
 		virtual ~BoundingBoxTree();
 
@@ -57,6 +55,15 @@ namespace Collision
 		 * Provide a visualization of the tree for debugging purposes.
 		 */
 		void DebugRender(DebugRenderResult* renderResult) const;
+
+		/**
+		 * Calculate and return a minimal set of shapes, all of which have their bounding box
+		 * hit by the given ray, but (most likely) only one of which is hit by that ray before
+		 * any of the others.  The caller can ray-cast each of the returned shapes individually
+		 * to determine which one is hit soonest by the ray.  We do not go that far in
+		 * our calculations here, because we only consider the bounding boxes of the shapes.
+		 */
+		void RayCast(const Ray& ray, std::vector<const Shape*>& shapeArray) const;
 
 	private:
 		BoundingBoxNode* rootNode;

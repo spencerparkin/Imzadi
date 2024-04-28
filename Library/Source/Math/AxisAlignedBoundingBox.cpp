@@ -96,6 +96,24 @@ void AxisAlignedBoundingBox::Expand(const Vector3& point)
 		this->maxCorner.z = point.z;
 }
 
+void AxisAlignedBoundingBox::Expand(const std::vector<Vector3>& pointArray)
+{
+	for (const Vector3& point : pointArray)
+		this->Expand(point);
+}
+
+void AxisAlignedBoundingBox::Expand(const AxisAlignedBoundingBox& box)
+{
+	this->Expand(Vector3(box.minCorner.x, box.minCorner.y, box.minCorner.z));
+	this->Expand(Vector3(box.maxCorner.x, box.minCorner.y, box.minCorner.z));
+	this->Expand(Vector3(box.minCorner.x, box.maxCorner.y, box.minCorner.z));
+	this->Expand(Vector3(box.maxCorner.x, box.maxCorner.y, box.minCorner.z));
+	this->Expand(Vector3(box.minCorner.x, box.minCorner.y, box.maxCorner.z));
+	this->Expand(Vector3(box.maxCorner.x, box.minCorner.y, box.maxCorner.z));
+	this->Expand(Vector3(box.minCorner.x, box.maxCorner.y, box.maxCorner.z));
+	this->Expand(Vector3(box.maxCorner.x, box.maxCorner.y, box.maxCorner.z));
+}
+
 void AxisAlignedBoundingBox::Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBoundingBox& aabbB) const
 {
 	double xSize = 0.0, ySize = 0.0, zSize = 0.0;
