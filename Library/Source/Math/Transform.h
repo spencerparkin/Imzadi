@@ -50,6 +50,9 @@ namespace Collision
 		 */
 		Transform(const Transform& transform);
 
+		/**
+		 * The destructor doesn't do anything.
+		 */
 		virtual ~Transform();
 
 		/**

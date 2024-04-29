@@ -264,6 +264,17 @@ namespace Collision
 		bool IsPoint(const Vector3& point, double tolerance = 0.0) const;
 
 		/**
+		 * This is like the IsPoint function, but uses a taxi-cab metric instead of a euclidean distance metric,
+		 * and you can provide a mask of which components to check.
+		 * 
+		 * @param[in] point This is the point to check against this point.
+		 * @param[in] componentFlags This is an OR-ing of the COLL_SYS_*_DIM_FLAG flags.
+		 * @param[in] tolerance This points are approximately equal if they are within a taxy-cab distance of one another in the given dimensions.
+		 * @return True is returned if the points are approximately the same point; false, otherwise.
+		 */
+		bool IsSameAs(const Vector3& point, uint32_t componentFlags, double tolerance = 0.0) const;
+
+		/**
 		 * Tell the caller if this point is approximately equal to any of the given points.
 		 * 
 		 * @param[in] pointArray This is the set of points to check against this point.
@@ -329,6 +340,19 @@ namespace Collision
 			vector.x / scalar,
 			vector.y / scalar,
 			vector.z / scalar
+		);
+	}
+
+	/**
+	 * This is a component-wise multiply of the given vectors, not to be mistaken
+	 * with something like the outer product, or the geometric product.
+	 */
+	inline Vector3 operator*(const Vector3& vectorA, const Vector3& vectorB)
+	{
+		return Vector3(
+			vectorA.x * vectorB.x,
+			vectorA.y * vectorB.y,
+			vectorA.z * vectorB.z
 		);
 	}
 }

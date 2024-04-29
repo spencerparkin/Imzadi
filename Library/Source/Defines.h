@@ -17,5 +17,9 @@
 #define COLL_SYS_DRAW_FLAG_SHAPE_BOXES			0x00000002
 #define COLL_SYS_DRAW_FLAG_AABB_TREE			0x00000004
 
+#define COLL_SYS_X_DIM_FLAG						0x00000001
+#define COLL_SYS_Y_DIM_FLAG						0x00000002
+#define COLL_SYS_Z_DIM_FLAG						0x00000004
+
 // TODO: Give this a meaningful definition.
 #define COLL_SYS_ASSERT(condition)
