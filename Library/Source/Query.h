@@ -69,7 +69,7 @@ namespace Collision
 	/**
 	 * Use this class to submit a ray-cast query against the entire physics world.
 	 */
-	class RayCastQuery : public Query
+	class COLLISION_LIB_API RayCastQuery : public Query
 	{
 	public:
 		RayCastQuery();

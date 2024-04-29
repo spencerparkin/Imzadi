@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Controller.h"
+#include "Math/LineSegment.h"
 #include <wx/glcanvas.h>
 #include <list>
 
@@ -38,4 +39,5 @@ private:
 	StrafeMode strafeMode;
 	uint32_t debugDrawFlags;
 	bool targetShapes;
+	Collision::LineSegment* targetShapeHitLine;
 };

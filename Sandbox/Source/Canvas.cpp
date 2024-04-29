@@ -14,6 +14,8 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
 	this->targetShapes = false;
+	this->targetShapeHitLine = nullptr;
+
 	this->debugDrawFlags = COLL_SYS_DRAW_FLAG_SHAPES;
 
 	this->strafeMode = StrafeMode::XZ_PLANE;
@@ -31,6 +33,7 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 /*virtual*/ Canvas::~Canvas()
 {
 	delete this->renderContext;
+	delete this->targetShapeHitLine;
 }
 
 void Canvas::OnPaint(wxPaintEvent& event)
@@ -129,6 +132,17 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		for (int i = 0; i < 4; i++)
 			glVertex3d(points[i].x, points[i].y, points[i].z);
 		glEnd();
+
+		// Draw a line in space representing the hit-normal and hit-point, if any.
+
+		if (this->targetShapeHitLine)
+		{
+			glBegin(GL_LINES);
+			glColor3d(1.0, 1.0, 1.0);
+			glVertex2dv(&this->targetShapeHitLine->point[0].x);
+			glVertex2dv(&this->targetShapeHitLine->point[1].x);
+			glEnd();
+		}
 	}
 
 	glFlush();
@@ -207,6 +221,42 @@ void Canvas::Tick()
 	Quaternion quat = this->camera.GetCameraOrientation();
 	quat = (pitchQuat * yawQuat * quat).Normalized();
 	this->camera.SetCameraOrientation(quat);
+
+	if (this->targetShapes)
+	{
+		Ray ray;
+		ray.origin.SetComponents(0.0, 0.0, 0.0);
+		ray.unitDirection.SetComponents(0.0, 0.0, -1.0);
+
+		Transform cameraToWorld = this->camera.GetCameraToWorldTransform();
+		ray = cameraToWorld.TransformRay(ray);
+
+		System* system = wxGetApp().GetCollisionSystem();
+
+		auto rayCastQuery = system->Create<RayCastQuery>();
+		rayCastQuery->SetRay(ray);
+
+		TaskID taskID = 0;
+		if (system->MakeQuery(rayCastQuery, taskID))
+		{
+			system->FlushAllTasks();
+			auto result = (RayCastResult*)system->ObtainQueryResult(taskID);
+
+			const RayCastResult::HitData& hitData = result->GetHitData();
+
+			delete this->targetShapeHitLine;
+			this->targetShapeHitLine = nullptr;
+
+			if (hitData.shapeID != 0)
+			{
+				this->targetShapeHitLine = new LineSegment();
+				this->targetShapeHitLine->point[0] = hitData.surfacePoint;
+				this->targetShapeHitLine->point[1] = hitData.surfacePoint + hitData.surfaceNormal;
+			}
+
+			system->Free<RayCastResult>(result);
+		}
+	}
 
 	this->Refresh();
 }
