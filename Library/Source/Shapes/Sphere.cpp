@@ -1,5 +1,7 @@
 #include "Sphere.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "Math/Quadratic.h"
+#include "Math/Ray.h"
 #include "Result.h"
 
 using namespace Collision;
@@ -115,6 +117,43 @@ SphereShape::SphereShape()
 
 /*virtual*/ bool SphereShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
-	// TODO: Write this.
-	return false;
+	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->center);
+	Vector3 delta = ray.origin - worldCenter;
+
+	Quadratic quadratic;
+	quadratic.A = 1.0;
+	quadratic.B = 2.0 * delta.Dot(ray.unitDirection);
+	quadratic.C = delta.Dot(delta) - this->radius * this->radius;
+
+	std::vector<double> realRoots;
+	quadratic.Solve(realRoots);
+
+	// The ray misses the sphere.
+	if (realRoots.size() == 0)
+		return false;
+
+	if (realRoots.size() == 1)
+	{
+		// The ray hits the sphere on a tangent.
+		alpha = realRoots[0];
+		if (alpha < 0.0)
+			return false;	// The ray is pointing away from the sphere.
+	}
+	else if (realRoots.size() == 2)
+	{
+		// The ray enters and exits the sphere.
+		if (realRoots[0] > 0.0 && realRoots[1] > 0.0)
+			alpha = COLL_SYS_MIN(realRoots[0], realRoots[1]);
+		else
+		{
+			// Here, the ray either originates within the sphere (which we
+			// do not allow), or the line of the ray hits the sphere, but
+			// the ray points away from the sphere.
+			return false;
+		}
+	}
+
+	Vector3 hitPoint = ray.CalculatePoint(alpha);
+	unitSurfaceNormal = (hitPoint - worldCenter).Normalized();
+	return true;
 }

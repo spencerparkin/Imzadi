@@ -40,6 +40,8 @@ set(LIBRARY_SOURCES
     Source/Math/LineSegment.h
     Source/Math/Quaternion.cpp
     Source/Math/Quaternion.h
+    Source/Math/Quadratic.cpp
+    Source/Math/Quadratic.h
     Source/Shapes/Box.cpp
     Source/Shapes/Box.h
     Source/Shapes/Capsule.cpp
