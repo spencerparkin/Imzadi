@@ -10,6 +10,7 @@ Shape::Shape()
 	this->debugColor.SetComponents(1.0, 0.0, 0.0);
 	this->shapeID = nextShapeID++;
 	this->cacheValid = false;
+	this->objectToWorld.SetIdentity();
 }
 
 /*virtual*/ Shape::~Shape()

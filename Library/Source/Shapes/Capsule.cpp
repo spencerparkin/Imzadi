@@ -1,5 +1,8 @@
 #include "Capsule.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "Math/Quadratic.h"
+#include "Math/Ray.h"
+#include "Sphere.h"
 #include "Result.h"
 
 using namespace Collision;
@@ -195,7 +198,50 @@ CapsuleShape::CapsuleShape()
 
 /*virtual*/ bool CapsuleShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
-	// TODO: Write this.
+	const Vector3& pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
+	const Vector3& pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
+
+	Vector3 unitVector = (pointB - pointA).Normalized();
+
+	Quadratic tubeQuadratic;
+	tubeQuadratic.A = 1.0;
+	tubeQuadratic.B = -ray.unitDirection.Dot(unitVector);
+	tubeQuadratic.C = (ray.origin + pointA).Dot(unitVector) - this->radius * this->radius + pointA.Dot(pointA) + ray.origin.Dot(ray.origin) - 2.0 * ray.origin.Dot(ray.unitDirection);
+
+	std::vector<double> tubeRoots;
+	tubeQuadratic.Solve(tubeRoots);
+
+	double tolerance = 1e-5;
+
+	if ((tubeRoots.size() == 1 && tubeRoots[0] > 0.0) || (tubeRoots.size() == 2 && tubeRoots[0] > 0.0 && tubeRoots[1] > 0.0))
+	{
+		alpha = (tubeRoots.size() == 1) ? tubeRoots[0] : COLL_SYS_MIN(tubeRoots[0], tubeRoots[1]);
+		Vector3 hitPoint = ray.CalculatePoint(alpha);
+		double distance = this->lineSegment.ShortestDistanceTo(hitPoint);
+		if (::fabs(distance - this->radius) < tolerance)
+		{
+			unitSurfaceNormal = (hitPoint - pointA + (hitPoint - pointA).ProjectedOnto(unitVector)).Normalized();
+			return true;
+		}
+	}
+	
+	// If we get here, then we don't hite the cylindrical part of the capsule,
+	// but we may hit one of the two hemisphere caps.  We can safely treat them
+	// as full spheres, because we've eliminated the possibility of half of those
+	// spheres getting hit by the ray.
+
+	SphereShape capA;
+	capA.SetCenter(pointA);
+	capA.SetRadius(this->radius);
+	if (capA.RayCast(ray, alpha, unitSurfaceNormal))
+		return true;
+
+	SphereShape capB;
+	capB.SetCenter(pointB);
+	capB.SetRadius(this->radius);
+	if (capB.RayCast(ray, alpha, unitSurfaceNormal))
+		return true;
+
 	return false;
 }
 
