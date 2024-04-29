@@ -124,7 +124,7 @@ namespace Collision
 		/**
 		 * Return the AABB tree being used to spatially sort all shapes in the collision world.
 		 */
-		const BoundingBoxTree& GetBoundingBoxTree() { return this->boxTree; }
+		BoundingBoxTree& GetBoundingBoxTree() { return this->boxTree; }
 
 	private:
 

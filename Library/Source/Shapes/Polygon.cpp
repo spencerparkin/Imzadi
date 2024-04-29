@@ -1,5 +1,6 @@
 #include "Polygon.h"
 #include "Math/Plane.h"
+#include "Math/Ray.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/LineSegment.h"
 #include "Math/Matrix3x3.h"
@@ -91,13 +92,61 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 
 	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
 	{
+		int j = (i + 1) % this->vertexArray->size();
+
 		const Vector3& vertexA = (*this->vertexArray)[i];
-		const Vector3& vertexB = (*this->vertexArray)[(i + 1) % this->vertexArray->size()];
+		const Vector3& vertexB = (*this->vertexArray)[j];
 
 		area += (vertexA - center).Cross(vertexB - center).Length() / 2.0;
 	}
 
 	return area;
+}
+
+void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) const
+{
+	for (const Vector3& vertex : *this->vertexArray)
+		worldVertexArray.push_back(this->objectToWorld.TransformPoint(vertex));
+}
+
+/*virtual*/ bool PolygonShape::ContainsPoint(const Vector3& point) const
+{
+	// Is the point on the plane of the polygon?
+	Plane plane = this->objectToWorld.TransformPlane(this->GetPlane());
+	double tolerance = 1e-5;
+	if (plane.GetSide(point, tolerance) != Plane::Side::NEITHER)
+		return false;
+
+	std::vector<Vector3> worldVertexArray;
+	this->GetWorldVertices(worldVertexArray);
+
+	// Is the point on an edge of the polygon?
+	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
+	{
+		int j = (i + 1) % worldVertexArray.size();
+
+		const Vector3& vertexA = worldVertexArray[i];
+		const Vector3& vertexB = worldVertexArray[j];
+
+		LineSegment edgeSegment(vertexA, vertexB);
+		if (edgeSegment.ShortestDistanceTo(point) < tolerance)
+			return true;
+	}
+
+	// Is the point an interior point of the polygon?
+	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
+	{
+		int j = (i + 1) % worldVertexArray.size();
+
+		const Vector3& vertexA = worldVertexArray[i];
+		const Vector3& vertexB = worldVertexArray[j];
+
+		double determinant = (vertexA - point).Cross(vertexB - point).Dot(plane.unitNormal);
+		if (determinant < 0.0)
+			return false;
+	}
+
+	return true;
 }
 
 /*virtual*/ void PolygonShape::DebugRender(DebugRenderResult* renderResult) const
@@ -131,8 +180,22 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ bool PolygonShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
-	// TODO: Write this.
-	return false;
+	if (this->ContainsPoint(ray.origin))
+		return false;
+
+	Plane plane = this->objectToWorld.TransformPlane(this->GetPlane());
+	if (!ray.CastAgainst(plane, alpha) || alpha < 0.0)
+		return false;
+
+	Vector3 hitPoint = ray.CalculatePoint(alpha);
+	if (!this->ContainsPoint(hitPoint))
+		return false;
+
+	unitSurfaceNormal = plane.unitNormal;
+	if (unitSurfaceNormal.Dot(ray.unitDirection) < 0.0)
+		unitSurfaceNormal = -unitSurfaceNormal;
+
+	return true;
 }
 
 void PolygonShape::Clear()
@@ -228,55 +291,80 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 		sum_zz += point.z * point.z;
 	}
 
-	// TODO: Maybe a better thing to do is create 3 different matrices,
-	//       then check their determinants.  Use the one with the largest
-	//       absolute value.
+	Matrix3x3 matrixXY, matrixXZ, matrixYZ;
 
-	Matrix3x3 matrix;
+	// z = ax + by + c
+	matrixXY.ele[0][0] = sum_xx;
+	matrixXY.ele[0][1] = sum_xy;
+	matrixXY.ele[0][1] = sum_x;
+	matrixXY.ele[1][0] = sum_xy;
+	matrixXY.ele[1][1] = sum_yy;
+	matrixXY.ele[1][2] = sum_y;
+	matrixXY.ele[2][0] = sum_x;
+	matrixXY.ele[2][1] = sum_y;
+	matrixXY.ele[2][2] = double(this->vertexArray->size());
 
-	matrix.ele[0][0] = sum_xx;
-	matrix.ele[0][1] = sum_xy;
-	matrix.ele[0][1] = sum_x;
-	matrix.ele[1][0] = sum_xy;
-	matrix.ele[1][1] = sum_yy;
-	matrix.ele[1][2] = sum_y;
-	matrix.ele[2][0] = sum_x;
-	matrix.ele[2][1] = sum_y;
-	matrix.ele[2][2] = double(this->vertexArray->size());
+	// y = ax + bz + c
+	matrixXZ.ele[0][0] = sum_xx;
+	matrixXZ.ele[0][1] = sum_xz;
+	matrixXZ.ele[0][2] = sum_x;
+	matrixXZ.ele[1][0] = sum_xz;
+	matrixXZ.ele[1][1] = sum_zz;
+	matrixXZ.ele[1][2] = sum_z;
+	matrixXZ.ele[2][0] = sum_x;
+	matrixXZ.ele[2][1] = sum_z;
+	matrixXZ.ele[2][2] = double(this->vertexArray->size());
 
-	Matrix3x3 matrixInv;
-	Vector3 normal;
+	// x = ay + bz + c
+	matrixYZ.ele[0][0] = sum_yy;
+	matrixYZ.ele[0][1] = sum_yz;
+	matrixYZ.ele[0][2] = sum_y;
+	matrixYZ.ele[1][0] = sum_yz;
+	matrixYZ.ele[1][1] = sum_zz;
+	matrixYZ.ele[1][2] = sum_z;
+	matrixYZ.ele[2][0] = sum_y;
+	matrixYZ.ele[2][1] = sum_z;
+	matrixYZ.ele[2][2] = double(this->vertexArray->size());
+
+	double volXY = ::abs(matrixXY.Determinant());
+	double volXZ = ::abs(matrixXZ.Determinant());
+	double volYZ = ::abs(matrixYZ.Determinant());
+
 	double a, b, c;
+	Vector3 normal;
 
-	// Solve for the coeficients of the the equation: z = ax + by + c.
-
-	if (matrixInv.Invert(matrix))
+	if (volXY >= volXZ && volXY >= volYZ)
 	{
-		Vector3 coeficients = matrixInv * Vector3(sum_xz, sum_yz, sum_z);
+		Matrix3x3 matrixInv;
+		if (!matrixInv.Invert(matrixXY))
+			return false;
 		
+		Vector3 coeficients = matrixInv * Vector3(sum_xz, sum_yz, sum_z);
+
 		a = coeficients.x;
 		b = coeficients.y;
 		c = coeficients.z;
 
-		// Our plane equation is: z = ax + by + c <==> 0 = ax + by - z + c.
-
 		normal = Vector3(a, b, -1.0);
 	}
-	else
+	else if (volXZ >= volXY && volXZ >= volYZ)
 	{
-		// Here, the norm of the plane has a z-component of zero.  So we'll try to solve for the coeficients of: x = ay + bz + c.
+		Matrix3x3 matrixInv;
+		if (!matrixInv.Invert(matrixXZ))
+			return false;
 
-		matrix.ele[0][0] = sum_yy;
-		matrix.ele[0][1] = sum_yz;
-		matrix.ele[0][2] = sum_y;
-		matrix.ele[1][0] = sum_yz;
-		matrix.ele[1][1] = sum_zz;
-		matrix.ele[1][2] = sum_z;
-		matrix.ele[2][0] = sum_y;
-		matrix.ele[2][1] = sum_z;
-		matrix.ele[2][2] = double(this->vertexArray->size());
+		Vector3 coeficients = matrixInv * Vector3(sum_xy, sum_yz, sum_y);
 
-		if (!matrix.Invert(matrix))
+		a = coeficients.x;
+		b = coeficients.y;
+		c = coeficients.z;
+
+		normal = Vector3(a, -1.0, b);
+	}
+	else //if (volYZ > volXY && volYZ > volXZ)
+	{
+		Matrix3x3 matrixInv;
+		if (!matrixInv.Invert(matrixYZ))
 			return false;
 
 		Vector3 coeficients = matrixInv * Vector3(sum_xy, sum_xz, sum_x);
@@ -284,8 +372,6 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 		a = coeficients.x;
 		b = coeficients.y;
 		c = coeficients.z;
-
-		// Our plane equation is: x = ay + bz + c <==> 0 = -x + ay + bz + c.
 
 		normal = Vector3(-1.0, a, b);
 	}
@@ -296,7 +382,6 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 
 	plane.unitNormal = normal;
 	plane.center = -normal * c / length;
-
 	return true;
 }
 

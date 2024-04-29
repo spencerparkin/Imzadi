@@ -58,6 +58,11 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	return (4.0 / 3.0) * M_PI * this->radius * this->radius * this->radius;
 }
 
+/*virtual*/ bool SphereShape::ContainsPoint(const Vector3& point) const
+{
+	return (point - this->objectToWorld.TransformPoint(this->center)).Length() <= this->radius;
+}
+
 /*virtual*/ void SphereShape::DebugRender(DebugRenderResult* renderResult) const
 {
 	const int latitudeCount = 8;

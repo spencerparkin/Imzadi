@@ -14,9 +14,9 @@ namespace Collision
 	 * this shape for collision purposes are all left undefined.  (Intermediate uses of
 	 * this class may contain point sequences that do not necessarily satisfy these constraints.)
 	 * The winding of the polygon will not matter as far as collision detection is concerned.
-	 * However, to remove any ambiguity in some operations, we consider the "front" space of
-	 * the polygon to be where, if you viewed the polygon, you'd see its points wound CCW.
-	 * The "back" space is where you would view the polygon's points wound clock-wise.
+	 * However, the correctness of many operations requires that we consider the "front" space of
+	 * the polygon to be where, if you viewed the polygon from this place, you'd see its points
+	 * wound CCW.  The "back" space is where you would view the polygon's points wound clock-wise.
 	 * A "thickness" of the polygon is necessary for some calculations.
 	 * 
 	 * Note that the point-sequence is considered cyclical.  Modular arithematic
@@ -33,6 +33,7 @@ namespace Collision
 		virtual void RecalculateCache() const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
+		virtual bool ContainsPoint(const Vector3& point) const override;
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
@@ -123,6 +124,13 @@ namespace Collision
 		 * @param[in] pointCloud This is the set of points, in object-space, to use in the operation.
 		 */
 		void SetAsConvexHull(const std::vector<Vector3>& pointCloud);
+
+		/**
+		 * Return the vertices of this polygon (in CCW order) transformed into world space.
+		 * 
+		 * @param[out] worldVertexArray This array is populated with this polygon's transformed vertices.
+		 */
+		void GetWorldVertices(std::vector<Vector3>& worldVertexArray) const;
 
 	private:
 		/**

@@ -1,6 +1,7 @@
 #include "Transform.h"
 #include "Plane.h"
 #include "Ray.h"
+#include "LineSegment.h"
 
 using namespace Collision;
 
@@ -57,6 +58,14 @@ Vector3 Transform::TransformPoint(const Vector3& point) const
 Vector3 Transform::TransformNormal(const Vector3& normal) const
 {
 	return this->matrix * normal;
+}
+
+LineSegment Transform::TransformLineSegment(const LineSegment& lineSegment) const
+{
+	return LineSegment(
+		this->TransformPoint(lineSegment.point[0]),
+		this->TransformPoint(lineSegment.point[1])
+	);
 }
 
 Plane Transform::TransformPlane(const Plane& plane) const

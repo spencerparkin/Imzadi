@@ -90,7 +90,14 @@ namespace Collision
 		 */
 		virtual double CalcSize() const = 0;
 
-		// TODO: virtual bool ContainsPoint(const Vector3& point) = 0;
+		/**
+		 * Tell the caller if this shape contains the given point as
+		 * a surface point or interior point.
+		 * 
+		 * @param[in] point This is the point to test against this shape.
+		 * @return True is returned if the given point is contained within this shape; false, otherwise.
+		 */
+		virtual bool ContainsPoint(const Vector3& point) const = 0;
 
 		/**
 		 * Overrides of this method should populate the given DebugRenderResult class instance

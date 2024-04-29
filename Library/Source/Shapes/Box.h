@@ -40,6 +40,11 @@ namespace Collision
 		virtual double CalcSize() const override;
 
 		/**
+		 * Tell the caller if the given point is contain within or on the surface of this box.
+		 */
+		virtual bool ContainsPoint(const Vector3& point) const override;
+
+		/**
 		 * Render this box as wire-frame in the given result.
 		 */
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;

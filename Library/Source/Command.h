@@ -163,4 +163,22 @@ namespace Collision
 	private:
 		Vector3 color;
 	};
+
+	/**
+	 * Use this command to change the object-to-world transform of a collision shape.
+	 */
+	class COLLISION_LIB_API MoveShapeCommand : public ShapeCommand
+	{
+	public:
+		MoveShapeCommand();
+		virtual ~MoveShapeCommand();
+
+		/**
+		 * Alter the object-to-world transform of the target shape.
+		 */
+		virtual void Execute(Thread* thread) override;
+
+	public:
+		Transform objectToWorld;		//< This transform is what's assigned to the target shape's object-to-world transform.
+	};
 }

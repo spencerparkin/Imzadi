@@ -18,6 +18,7 @@ namespace Collision
 		virtual void RecalculateCache() const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
+		virtual bool ContainsPoint(const Vector3& point) const override;
 
 		/**
 		 * Allocate and return a new SphereShape class instance.

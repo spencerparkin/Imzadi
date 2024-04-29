@@ -21,6 +21,7 @@ namespace Collision
 		virtual void RecalculateCache() const override;
 		virtual bool IsValid() const override;
 		virtual double CalcSize() const override;
+		virtual bool ContainsPoint(const Vector3& point) const override;
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 

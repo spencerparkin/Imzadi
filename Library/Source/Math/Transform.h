@@ -7,6 +7,7 @@ namespace Collision
 {
 	class Plane;
 	class Ray;
+	class LineSegment;
 
 	/**
 	 * These are affine transformations and can be considered vector-valued functions of a vector variable.
@@ -77,13 +78,21 @@ namespace Collision
 
 		/**
 		 * Apply our matrix to the given normal, but not the translation, and then return the result.
-		 * Note that if there is shear in the matrix, then it's the inverse-transpose that really needs to be applied
-		 * to a normal.  We don't do that here.
+		 * Note that if there is any shear or non-uniform scale in the matrix, then it's the
+		 * inverse-transpose that really needs to be applied to a normal.  We don't do that here.
 		 * 
 		 * @param[in] normal This is the normal to be transformed.
 		 * @return The transformed normal is returned.
 		 */
 		Vector3 TransformNormal(const Vector3& normal) const;
+
+		/**
+		 * Transform the two points of the given line-segment and return them as a new line-segment.
+		 * 
+		 * @param[in] lineSegment This is the line-segment to transform.
+		 * @return The transformed line-segment is returned.
+		 */
+		LineSegment TransformLineSegment(const LineSegment& lineSegment) const;
 
 		/**
 		 * Transform the center and normal of the given plane using TransformPoint and TransformNormal, respectively.

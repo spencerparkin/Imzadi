@@ -1,6 +1,7 @@
 #include "Command.h"
 #include "Thread.h"
 #include "Error.h"
+#include "BoundingBoxTree.h"
 #include <format>
 
 using namespace Collision;
@@ -132,4 +133,33 @@ SetDebugRenderColorCommand::SetDebugRenderColorCommand()
 		GetError()->AddErrorMessage(std::format("Failed to find shape with ID {}.", this->shapeID));
 	else
 		shape->SetDebugRenderColor(this->color);
+}
+
+//------------------------------- MoveShapeCommand -------------------------------
+
+MoveShapeCommand::MoveShapeCommand()
+{
+	this->objectToWorld.SetIdentity();
+}
+
+/*virtual*/ MoveShapeCommand::~MoveShapeCommand()
+{
+}
+
+/*virtual*/ void MoveShapeCommand::Execute(Thread* thread)
+{
+	Shape* shape = thread->FindShape(this->shapeID);
+	if (!shape)
+	{
+		GetError()->AddErrorMessage(std::format("Failed to find shape with ID {}.", this->shapeID));
+		return;
+	}
+
+	shape->SetObjectToWorldTransform(this->objectToWorld);
+
+	BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
+	if (!boxTree.Insert(shape))
+	{
+		GetError()->AddErrorMessage(std::format("Failed to re-insert shape {} into AABB tree.", this->shapeID));
+	}
 }

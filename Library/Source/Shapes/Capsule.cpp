@@ -69,6 +69,12 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 	);
 }
 
+/*virtual*/ bool CapsuleShape::ContainsPoint(const Vector3& point) const
+{
+	LineSegment worldSegment = this->GetWorldToObjectTransform().TransformLineSegment(this->lineSegment);
+	return worldSegment.ShortestDistanceTo(point) <= this->radius;
+}
+
 /*virtual*/ void CapsuleShape::DebugRender(DebugRenderResult* renderResult) const
 {
 	Transform axisAlignedToObject;

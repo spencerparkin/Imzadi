@@ -70,6 +70,19 @@ void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool 
 	return 8.0 * this->extents.x * this->extents.y * this->extents.z;
 }
 
+/*virtual*/ bool BoxShape::ContainsPoint(const Vector3& point) const
+{
+	Transform worldToObject = this->GetWorldToObjectTransform();
+
+	Vector3 objectSpacePoint = worldToObject.TransformPoint(point);
+
+	AxisAlignedBoundingBox box;
+	box.minCorner = -this->extents;
+	box.maxCorner = this->extents;
+
+	return box.ContainsPoint(objectSpacePoint);
+}
+
 /*virtual*/ void BoxShape::DebugRender(DebugRenderResult* renderResult) const
 {
 	Vector3 boxVertices[2][2][2];

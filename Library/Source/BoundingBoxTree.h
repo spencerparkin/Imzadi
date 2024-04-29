@@ -25,14 +25,16 @@ namespace Collision
 
 		/**
 		 * Insert the given shape into this bounding-box tree.  Note that
-		 * it is fine for the shape to already be in this tree; in which case,
-		 * the position of the shape in this tree is adjusted.  The ideal
+		 * it is fine for the shape to already be in the tree; in which case,
+		 * the position of the shape in the tree is adjusted.  The ideal
 		 * location of a shape in our tree is for it to be as deep into the
 		 * tree as it can possibly fit.  Also note that it is up to the
 		 * caller to know when to re-insert a shape when its bounding box
 		 * changes.  This class is non-the-wiser about changes made to
 		 * shapes outside of its scope that would effect their bounding boxes,
-		 * and therefore, their ideal positioning within this tree.
+		 * and therefore, their ideal positioning within this tree.  If a shape
+		 * is changed without re-insertion, then the results of algorithms
+		 * that operate on this tree are left undefined.
 		 * 
 		 * @param[in] shape This is the shape to insert into this tree.  It must not be a member of some other tree.  I can already be a member of this tree.
 		 * @return True is returned on success; false, otherwise.
