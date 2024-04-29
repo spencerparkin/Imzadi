@@ -25,7 +25,7 @@ Transform::Transform(const Matrix3x3& matrix, const Vector3& translation)
 Transform::Transform(const Transform& transform)
 {
 	this->matrix = transform.matrix;
-	this->translation = translation;
+	this->translation = transform.translation;
 }
 
 /*virtual*/ Transform::~Transform()

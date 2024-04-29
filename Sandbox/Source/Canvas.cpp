@@ -13,6 +13,7 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
+	this->targetShapes = false;
 	this->debugDrawFlags = COLL_SYS_DRAW_FLAG_SHAPES;
 
 	this->strafeMode = StrafeMode::XZ_PLANE;
@@ -108,6 +109,28 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		system->Free<Result>(renderResult);
 	}
 
+	if (this->targetShapes)
+	{
+		// Draw a cross-hair center screen.
+
+		Transform cameraToWorld = this->camera.GetCameraToWorldTransform();
+
+		Vector3 points[4];
+		points[0].SetComponents(-0.5 , 0.0, -10.0);
+		points[1].SetComponents(0.5, 0.0, -10.0);
+		points[2].SetComponents(0.0, -0.5, -10.0);
+		points[3].SetComponents(0.0, 0.5, -10.0);
+
+		for (int i = 0; i < 4; i++)
+			points[i] = cameraToWorld.TransformPoint(points[i]);
+
+		glBegin(GL_LINES);
+		glColor3d(0.5, 0.5, 0.5);
+		for (int i = 0; i < 4; i++)
+			glVertex3d(points[i].x, points[i].y, points[i].z);
+		glEnd();
+	}
+
 	glFlush();
 
 	this->SwapBuffers();
@@ -133,6 +156,9 @@ void Canvas::OnSize(wxSizeEvent& event)
 void Canvas::Tick()
 {
 	this->controller.Update();
+
+	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_X))
+		this->targetShapes = !this->targetShapes;
 
 	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_RIGHT_SHOULDER))
 	{

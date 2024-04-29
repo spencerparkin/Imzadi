@@ -37,4 +37,5 @@ private:
 	unsigned int renderTimeArrayMax;
 	StrafeMode strafeMode;
 	uint32_t debugDrawFlags;
+	bool targetShapes;
 };
