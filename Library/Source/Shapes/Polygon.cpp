@@ -8,7 +8,7 @@
 
 using namespace Collision;
 
-PolygonShape::PolygonShape()
+PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 {
 	this->vertexArray = new std::vector<Vector3>();
 	this->cachedPlaneValid = false;
@@ -21,7 +21,7 @@ PolygonShape::PolygonShape()
 
 /*static*/ PolygonShape* PolygonShape::Create()
 {
-	return new PolygonShape();
+	return new PolygonShape(false);
 }
 
 /*virtual*/ Shape::TypeID PolygonShape::GetShapeTypeID() const
@@ -311,7 +311,7 @@ void PolygonShape::SnapToPlane(const Plane& plane)
 
 void PolygonShape::SetAsConvexHull(const std::vector<Vector3>& pointCloud)
 {
-	PolygonShape polygon;
+	PolygonShape polygon(true);
 	for (const Vector3& point : pointCloud)
 		polygon.AddVertex(point);
 
@@ -400,7 +400,7 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 	COLL_SYS_ASSERT(planarPointCloudB.size() > 0);
 
 	// Divided, go conquer.
-	PolygonShape polygonA, polygonB;
+	PolygonShape polygonA(true), polygonB(true);
 	polygonA.CalculateConvexHullInternal(planarPointCloudA, plane);
 	polygonB.CalculateConvexHullInternal(planarPointCloudB, plane);
 

@@ -13,7 +13,7 @@ namespace Collision
 	class COLLISION_LIB_API BoxShape : public Shape
 	{
 	public:
-		BoxShape();
+		BoxShape(bool temporary);
 		virtual ~BoxShape();
 
 		virtual TypeID GetShapeTypeID() const override;

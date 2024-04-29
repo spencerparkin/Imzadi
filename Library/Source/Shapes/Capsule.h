@@ -14,7 +14,7 @@ namespace Collision
 	class COLLISION_LIB_API CapsuleShape : public Shape
 	{
 	public:
-		CapsuleShape();
+		CapsuleShape(bool temporary);
 		virtual ~CapsuleShape();
 
 		virtual TypeID GetShapeTypeID() const override;

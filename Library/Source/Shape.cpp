@@ -4,11 +4,11 @@ using namespace Collision;
 
 ShapeID Shape::nextShapeID = 1;
 
-Shape::Shape()
+Shape::Shape(bool temporary)
 {
 	this->node = nullptr;
 	this->debugColor.SetComponents(1.0, 0.0, 0.0);
-	this->shapeID = nextShapeID++;
+	this->shapeID = temporary ? 0 : nextShapeID++;
 	this->cacheValid = false;
 	this->objectToWorld.SetIdentity();
 }

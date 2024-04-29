@@ -7,7 +7,7 @@
 
 using namespace Collision;
 
-CapsuleShape::CapsuleShape()
+CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 {
 	this->radius = 1.0;
 }
@@ -18,7 +18,7 @@ CapsuleShape::CapsuleShape()
 
 /*static*/ CapsuleShape* CapsuleShape::Create()
 {
-	return new CapsuleShape();
+	return new CapsuleShape(false);
 }
 
 /*virtual*/ Shape::TypeID CapsuleShape::GetShapeTypeID() const
@@ -230,13 +230,13 @@ CapsuleShape::CapsuleShape()
 	// as full spheres, because we've eliminated the possibility of half of those
 	// spheres getting hit by the ray.
 
-	SphereShape capA;
+	SphereShape capA(true);
 	capA.SetCenter(pointA);
 	capA.SetRadius(this->radius);
 	if (capA.RayCast(ray, alpha, unitSurfaceNormal))
 		return true;
 
-	SphereShape capB;
+	SphereShape capB(true);
 	capB.SetCenter(pointB);
 	capB.SetRadius(this->radius);
 	if (capB.RayCast(ray, alpha, unitSurfaceNormal))

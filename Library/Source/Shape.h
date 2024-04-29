@@ -25,7 +25,17 @@ namespace Collision
 		friend class BoundingBoxNode;
 
 	public:
-		Shape();
+		/**
+		 * Construct a new shape.  If temporary, it means that the shape is not
+		 * intended for long-term use in the collision system.  For example, the
+		 * shape is being allocated on the callstack.  If not temporary, the shape
+		 * is assigned an ID that can be used to safely refer to it on any thread.
+		 */
+		Shape(bool temporary);
+
+		/**
+		 * Destruct the shape.  It's important this is virtual, of course.
+		 */
 		virtual ~Shape();
 
 		/**
@@ -53,7 +63,7 @@ namespace Collision
 		 * to a shape, whether it still exists in the system or has gone extinct.
 		 * It is often needed in other API calls.  The number zero is reserved as an
 		 * ID no shape will ever have, and represents the absense of a shape, or "null",
-		 * if you will.
+		 * if you will, in contexts where a shape ID can show up.
 		 * 
 		 * @return The shape's ID is returned for reference purposes.
 		 */

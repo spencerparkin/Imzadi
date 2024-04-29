@@ -6,7 +6,7 @@
 
 using namespace Collision;
 
-SphereShape::SphereShape()
+SphereShape::SphereShape(bool temporary) : Shape(temporary)
 {
 	this->radius = 1.0;
 }
@@ -17,7 +17,7 @@ SphereShape::SphereShape()
 
 /*static*/ SphereShape* SphereShape::Create()
 {
-	return new SphereShape();
+	return new SphereShape(false);
 }
 
 /*virtual*/ Shape::TypeID SphereShape::GetShapeTypeID() const

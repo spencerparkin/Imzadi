@@ -11,7 +11,7 @@ namespace Collision
 	class COLLISION_LIB_API SphereShape : public Shape
 	{
 	public:
-		SphereShape();
+		SphereShape(bool temporary);
 		virtual ~SphereShape();
 
 		virtual TypeID GetShapeTypeID() const override;

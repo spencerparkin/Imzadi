@@ -26,7 +26,7 @@ namespace Collision
 	class COLLISION_LIB_API PolygonShape : public Shape
 	{
 	public:
-		PolygonShape();
+		PolygonShape(bool temporary);
 		virtual ~PolygonShape();
 
 		virtual TypeID GetShapeTypeID() const override;

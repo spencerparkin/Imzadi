@@ -5,7 +5,7 @@
 
 using namespace Collision;
 
-BoxShape::BoxShape()
+BoxShape::BoxShape(bool temporary) : Shape(temporary)
 {
 }
 
@@ -15,7 +15,7 @@ BoxShape::BoxShape()
 
 /*static*/ BoxShape* BoxShape::Create()
 {
-	return new BoxShape();
+	return new BoxShape(false);
 }
 
 /*virtual*/ Shape::TypeID BoxShape::GetShapeTypeID() const
