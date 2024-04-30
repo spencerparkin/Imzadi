@@ -204,8 +204,6 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ bool CapsuleShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
-	// TODO: Revise this to do the ray-cast in object-space.
-
 	const Vector3& pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
 	const Vector3& pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
 

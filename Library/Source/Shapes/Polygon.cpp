@@ -180,8 +180,6 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 
 /*virtual*/ bool PolygonShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
-	// TODO: Revise this to do the ray-cast in object-space.
-
 	if (this->ContainsPoint(ray.origin))
 		return false;
 

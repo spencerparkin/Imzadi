@@ -122,8 +122,6 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ bool SphereShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
-	// TODO: Revise this to perform the case in object-space.
-
 	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->center);
 	Vector3 delta = ray.origin - worldCenter;
 

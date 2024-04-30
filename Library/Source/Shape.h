@@ -109,10 +109,7 @@ namespace Collision
 		/**
 		 * Overrides of this method should perform a ray-cast operation of the
 		 * given world-space ray against this shape in world space.  If the ray
-		 * originates within the shape, then false should be returned.  Note that
-		 * implimentations should perform their calcuations in object-space,
-		 * because the object-to-world transform of the shape might have shear or
-		 * non-uniform scale.
+		 * originates within the shape, then false should be returned.
 		 * 
 		 * @param[in] ray This is the ray to cast against this shape.
 		 * @param[out] alpha This is distance along the given ray from its origin to the surface point, if any, where this shape is hit; undefined if no hit occurs.
@@ -140,9 +137,9 @@ namespace Collision
 
 		/**
 		 * Set this shape's transform taking it from object space to world space.
-		 * Note that some collision calculations will not work if the transform
-		 * has any shear or non-uniform scale.  Other calculations, such as ray-casts,
-		 * should work just fine.
+		 * Note that to keep things simple, all calculations assume that there
+		 * is no shear or non-uniform scale in the matrix part of the given transform.
+		 * If this is not the case, then we leave the results of all calculations undefined.
 		 */
 		void SetObjectToWorldTransform(const Transform& objectToWorld);
 
