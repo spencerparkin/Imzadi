@@ -102,7 +102,9 @@ void Frame::OnTimer(wxTimerEvent& event)
 	if (tickCount++ % 16 == 0)
 	{
 		double frameRateFPS = this->canvas->GetAverageFramerate();
-		this->GetStatusBar()->SetStatusText(wxString::Format("Frame-rate: %1.2f FPS", frameRateFPS));
+		wxString statusText = wxString::Format("Frame-rate: %02.2f FPS", frameRateFPS);
+		statusText += " | " + this->canvas->GetStatusMessage();
+		this->GetStatusBar()->SetStatusText(statusText);
 	}
 
 	this->inTimer = false;

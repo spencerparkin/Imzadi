@@ -17,7 +17,7 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 	this->targetShapeHitLine = nullptr;
 
 	this->debugDrawFlags = COLL_SYS_DRAW_FLAG_SHAPES;
-
+	this->controllerSensativity = ControllerSensativity::MEDIUM;
 	this->strafeMode = StrafeMode::XZ_PLANE;
 	this->renderTimeArrayMax = 32;
 
@@ -139,8 +139,8 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		{
 			glBegin(GL_LINES);
 			glColor3d(1.0, 1.0, 1.0);
-			glVertex2dv(&this->targetShapeHitLine->point[0].x);
-			glVertex2dv(&this->targetShapeHitLine->point[1].x);
+			glVertex3dv(&this->targetShapeHitLine->point[0].x);
+			glVertex3dv(&this->targetShapeHitLine->point[1].x);
 			glEnd();
 		}
 	}
@@ -167,6 +167,59 @@ void Canvas::OnSize(wxSizeEvent& event)
 	this->Refresh();
 }
 
+void Canvas::GetSensativityParams(SensativityParams& sensativityParams)
+{
+	switch (this->controllerSensativity)
+	{
+	case ControllerSensativity::LOW:
+		sensativityParams.leftThumbSensativity = 0.1;
+		sensativityParams.rightThumbSensativity = 0.01;
+		break;
+	case ControllerSensativity::MEDIUM:
+		sensativityParams.leftThumbSensativity = 0.5;
+		sensativityParams.rightThumbSensativity = 0.05;
+		break;
+	case ControllerSensativity::HIGH:
+		sensativityParams.leftThumbSensativity = 3.0;
+		sensativityParams.rightThumbSensativity = 0.08;
+		break;
+	default:
+		sensativityParams.leftThumbSensativity = 0.0;
+		sensativityParams.rightThumbSensativity = 0.0;
+		break;
+	}
+}
+
+wxString Canvas::GetStatusMessage()
+{
+	wxString message;
+
+	switch (this->strafeMode)
+	{
+	case StrafeMode::XZ_PLANE:
+		message += "Strafe XZ";
+		break;
+	case StrafeMode::XY_PLANE:
+		message += "Strafe XY";
+		break;
+	}
+
+	switch (this->controllerSensativity)
+	{
+	case ControllerSensativity::LOW:
+		message += " | Sensativity LOW";
+		break;
+	case ControllerSensativity::MEDIUM:
+		message += " | Sensativity MEDIUM";
+		break;
+	case ControllerSensativity::HIGH:
+		message += " | Sensativity HIGH";
+		break;
+	}
+
+	return message;
+}
+
 void Canvas::Tick()
 {
 	this->controller.Update();
@@ -187,8 +240,24 @@ void Canvas::Tick()
 		}
 	}
 
-	double leftThumbSensativity = 0.5;
-	double rightThumbSensativity = 0.05;
+	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+	{
+		switch (this->controllerSensativity)
+		{
+		case ControllerSensativity::LOW:
+			this->controllerSensativity = ControllerSensativity::MEDIUM;
+			break;
+		case ControllerSensativity::MEDIUM:
+			this->controllerSensativity = ControllerSensativity::HIGH;
+			break;
+		case ControllerSensativity::HIGH:
+			this->controllerSensativity = ControllerSensativity::LOW;
+			break;
+		}
+	}
+
+	SensativityParams sensativityParams;
+	this->GetSensativityParams(sensativityParams);
 
 	Vector3 leftStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::LEFT);
 	Vector3 rightStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::RIGHT);
@@ -211,12 +280,12 @@ void Canvas::Tick()
 		break;
 	}
 
-	cameraPosition += (axisA * leftStickVector.x + axisB * leftStickVector.y) * leftThumbSensativity;
+	cameraPosition += (axisA * leftStickVector.x + axisB * leftStickVector.y) * sensativityParams.leftThumbSensativity;
 	this->camera.SetCameraPosition(cameraPosition);
 
 	Quaternion pitchQuat, yawQuat;
-	pitchQuat.SetFromAxisAngle(xAxis, rightStickVector.y * rightThumbSensativity);
-	yawQuat.SetFromAxisAngle(Vector3(0.0, 1.0, 0.0), -rightStickVector.x * rightThumbSensativity);
+	pitchQuat.SetFromAxisAngle(xAxis, rightStickVector.y * sensativityParams.rightThumbSensativity);
+	yawQuat.SetFromAxisAngle(Vector3(0.0, 1.0, 0.0), -rightStickVector.x * sensativityParams.rightThumbSensativity);
 
 	Quaternion quat = this->camera.GetCameraOrientation();
 	quat = (pitchQuat * yawQuat * quat).Normalized();

@@ -89,8 +89,8 @@ bool Ray::CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const
 			Vector3 hitPoint = this->CalculatePoint(planeHitAlpha);
 			if (box.ContainsPoint(hitPoint, 1e-5))
 			{
-				if (planeHitAlpha < alpha)
-					planeHitAlpha = alpha;
+				if (alpha > planeHitAlpha)
+					alpha = planeHitAlpha;
 			}
 		}
 	}

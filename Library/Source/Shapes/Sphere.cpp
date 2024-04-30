@@ -32,8 +32,8 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	Vector3 delta(this->radius, this->radius, this->radius);
 	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->center);
 
-	this->cache.boundingBox.minCorner = worldCenter + delta;
-	this->cache.boundingBox.maxCorner = worldCenter - delta;
+	this->cache.boundingBox.minCorner = worldCenter - delta;
+	this->cache.boundingBox.maxCorner = worldCenter + delta;
 }
 
 /*virtual*/ bool SphereShape::IsValid() const

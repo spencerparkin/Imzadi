@@ -22,13 +22,30 @@ public:
 	uint32_t GetDebugDrawFlags() const { return this->debugDrawFlags; }
 	void SetDebugDrawFlags(uint32_t drawFlags) { this->debugDrawFlags = drawFlags; }
 
+	wxString GetStatusMessage();
+
 private:
+
+	enum ControllerSensativity
+	{
+		LOW,
+		MEDIUM,
+		HIGH
+	};
 
 	enum StrafeMode
 	{
 		XZ_PLANE,
 		XY_PLANE
 	};
+
+	struct SensativityParams
+	{
+		double leftThumbSensativity;
+		double rightThumbSensativity;
+	};
+
+	void GetSensativityParams(SensativityParams& sensativityParams);
 
 	wxGLContext* renderContext;
 	static int attributeList[];
@@ -37,6 +54,7 @@ private:
 	std::list<double> renderTimeArray;
 	unsigned int renderTimeArrayMax;
 	StrafeMode strafeMode;
+	ControllerSensativity controllerSensativity;
 	uint32_t debugDrawFlags;
 	bool targetShapes;
 	Collision::LineSegment* targetShapeHitLine;

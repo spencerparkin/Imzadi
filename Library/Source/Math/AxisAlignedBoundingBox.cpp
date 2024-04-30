@@ -170,33 +170,33 @@ void AxisAlignedBoundingBox::GetSidePlanes(std::vector<Plane>& sidePlaneArray) c
 
 	if (xSize > 0.0 && ySize > 0.0)
 	{
-		plane.unitNormal = Vector3(0.0, 0.0, 1.0);
-		plane.center.SetComponents(this->minCorner.x, this->minCorner.y, this->maxCorner.z);
-		sidePlaneArray.push_back(plane);
-
 		plane.unitNormal = Vector3(0.0, 0.0, -1.0);
 		plane.center.SetComponents(this->minCorner.x, this->minCorner.y, this->minCorner.z);
+		sidePlaneArray.push_back(plane);
+
+		plane.unitNormal = Vector3(0.0, 0.0, 1.0);
+		plane.center.SetComponents(this->minCorner.x, this->minCorner.y, this->maxCorner.z);
 		sidePlaneArray.push_back(plane);
 	}
 
 	if (xSize > 0.0 && zSize > 0.0)
 	{
-		plane.unitNormal = Vector3(0.0, 1.0, 0.0);
+		plane.unitNormal = Vector3(0.0, -1.0, 0.0);
 		plane.center.SetComponents(this->minCorner.x, this->minCorner.y, this->minCorner.z);
 		sidePlaneArray.push_back(plane);
 
-		plane.unitNormal = Vector3(0.0, -1.0, 0.0);
+		plane.unitNormal = Vector3(0.0, 1.0, 0.0);
 		plane.center.SetComponents(this->minCorner.x, this->maxCorner.y, this->minCorner.z);
 		sidePlaneArray.push_back(plane);
 	}
 
 	if (ySize > 0.0 && zSize > 0.0)
 	{
-		plane.unitNormal = Vector3(1.0, 0.0, 0.0);
+		plane.unitNormal = Vector3(-1.0, 0.0, 0.0);
 		plane.center.SetComponents(this->minCorner.x, this->minCorner.y, this->minCorner.z);
 		sidePlaneArray.push_back(plane);
 
-		plane.unitNormal = Vector3(-1.0, 0.0, 0.0);
+		plane.unitNormal = Vector3(1.0, 0.0, 0.0);
 		plane.center.SetComponents(this->maxCorner.x, this->minCorner.y, this->minCorner.z);
 		sidePlaneArray.push_back(plane);
 	}
