@@ -135,6 +135,11 @@ SetDebugRenderColorCommand::SetDebugRenderColorCommand()
 		shape->SetDebugRenderColor(this->color);
 }
 
+/*static*/ SetDebugRenderColorCommand* SetDebugRenderColorCommand::Create()
+{
+	return new SetDebugRenderColorCommand();
+}
+
 //------------------------------- MoveShapeCommand -------------------------------
 
 MoveShapeCommand::MoveShapeCommand()

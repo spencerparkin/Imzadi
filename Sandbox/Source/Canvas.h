@@ -2,6 +2,7 @@
 
 #include "Camera.h"
 #include "Controller.h"
+#include "Shape.h"
 #include "Math/LineSegment.h"
 #include <wx/glcanvas.h>
 #include <list>
@@ -46,6 +47,7 @@ private:
 	};
 
 	void GetSensativityParams(SensativityParams& sensativityParams);
+	void SetSelectedShape(Collision::ShapeID shapeID);
 
 	wxGLContext* renderContext;
 	static int attributeList[];
@@ -58,4 +60,5 @@ private:
 	uint32_t debugDrawFlags;
 	bool targetShapes;
 	Collision::LineSegment* targetShapeHitLine;
+	Collision::ShapeID selectedShapeID;
 };

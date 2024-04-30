@@ -130,8 +130,14 @@ namespace Collision
 		RemoveAllShapesCommand();
 		virtual ~RemoveAllShapesCommand();
 
+		/**
+		 * Perform the removal of all collision shapes from the collision world.
+		 */
 		virtual void Execute(Thread* thread) override;
 
+		/**
+		 * Create a new instance of the RemoveAllShapesCommand class.
+		 */
 		static RemoveAllShapesCommand* Create();
 	};
 
@@ -159,6 +165,11 @@ namespace Collision
 		 * Get the color to be applied to the desired shape.
 		 */
 		const Vector3& GetColor() const { return this->color; }
+
+		/**
+		 * Create a new instance of the SetDebugRenderColorCommand class.
+		 */
+		static SetDebugRenderColorCommand* Create();
 
 	private:
 		Vector3 color;

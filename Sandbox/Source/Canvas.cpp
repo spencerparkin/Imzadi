@@ -1,6 +1,7 @@
 #include "Canvas.h"
 #include "App.h"
 #include "System.h"
+#include "Command.h"
 #include "Query.h"
 #include "Result.h"
 #include <gl/GLU.h>
@@ -20,6 +21,7 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 	this->controllerSensativity = ControllerSensativity::MEDIUM;
 	this->strafeMode = StrafeMode::XZ_PLANE;
 	this->renderTimeArrayMax = 32;
+	this->selectedShapeID = 0;
 
 	this->renderContext = new wxGLContext(this);
 
@@ -145,7 +147,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		{
 			glLineWidth(2.0);
 			glBegin(GL_LINES);
-			glColor3d(0.0, 1.0, 0.0);
+			glColor3d(0.0, 1.0, 1.0);
 			glVertex3dv(&this->targetShapeHitLine->point[0].x);
 			glVertex3dv(&this->targetShapeHitLine->point[1].x);
 			glEnd();
@@ -313,17 +315,19 @@ void Canvas::Tick()
 		rayCastQuery->SetRay(ray);
 
 		TaskID taskID = 0;
+		ShapeID hitShapeID = 0;
 		if (system->MakeQuery(rayCastQuery, taskID))
 		{
 			system->FlushAllTasks();
 			auto result = (RayCastResult*)system->ObtainQueryResult(taskID);
 
 			const RayCastResult::HitData& hitData = result->GetHitData();
+			hitShapeID = hitData.shapeID;
 
 			delete this->targetShapeHitLine;
 			this->targetShapeHitLine = nullptr;
 
-			if (hitData.shapeID != 0)
+			if (hitShapeID != 0)
 			{
 				this->targetShapeHitLine = new LineSegment();
 				this->targetShapeHitLine->point[0] = hitData.surfacePoint;
@@ -332,9 +336,40 @@ void Canvas::Tick()
 
 			system->Free<RayCastResult>(result);
 		}
+
+		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_Y))
+		{
+			this->SetSelectedShape(hitShapeID);
+		}
 	}
 
 	this->Refresh();
+}
+
+void Canvas::SetSelectedShape(Collision::ShapeID shapeID)
+{
+	if (shapeID != this->selectedShapeID)
+	{
+		System* system = wxGetApp().GetCollisionSystem();
+
+		if (this->selectedShapeID != 0)
+		{
+			auto setColorCommand = system->Create<SetDebugRenderColorCommand>();
+			setColorCommand->SetColor(Vector3(1.0, 0.0, 0.0));
+			setColorCommand->SetShapeID(this->selectedShapeID);
+			system->IssueCommand(setColorCommand);
+		}
+
+		this->selectedShapeID = shapeID;
+
+		if (this->selectedShapeID != 0)
+		{
+			auto setColorCommand = system->Create<SetDebugRenderColorCommand>();
+			setColorCommand->SetColor(Vector3(0.0, 1.0, 0.0));
+			setColorCommand->SetShapeID(this->selectedShapeID);
+			system->IssueCommand(setColorCommand);
+		}
+	}
 }
 
 double Canvas::GetAverageFramerate()
