@@ -204,15 +204,26 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ bool CapsuleShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
 {
+	// Note that if we tried to take the ray to object space (rather than take the capsule to world space),
+	// then we could handle object-to-world transforms with shear and/or non-uniform scale.  However, to
+	// keep things simpler for now, I'm just going to do the calculations in world space and assume we don't
+	// have any shear or non-uniform scale in the transform.
+
 	const Vector3& pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
 	const Vector3& pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
 
 	Vector3 unitVector = (pointB - pointA).Normalized();
+	Vector3 delta = ray.origin - pointA;
+
+	double dotA = ray.unitDirection.Dot(unitVector);
+	double dotB = delta.Dot(ray.unitDirection);
+	double dotC = delta.Dot(unitVector);
+	double dotD = delta.Dot(delta);
 
 	Quadratic tubeQuadratic;
-	tubeQuadratic.A = 1.0;
-	tubeQuadratic.B = -ray.unitDirection.Dot(unitVector);
-	tubeQuadratic.C = (ray.origin + pointA).Dot(unitVector) - this->radius * this->radius + pointA.Dot(pointA) + ray.origin.Dot(ray.origin) - 2.0 * ray.origin.Dot(ray.unitDirection);
+	tubeQuadratic.A = 1.0 - dotA * dotA;
+	tubeQuadratic.B = 2.0 * (dotB - dotC * dotA);
+	tubeQuadratic.C = dotD - dotC * dotC - this->radius * this->radius;
 
 	std::vector<double> tubeRoots;
 	tubeQuadratic.Solve(tubeRoots);
@@ -226,7 +237,7 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 		double distance = this->lineSegment.ShortestDistanceTo(hitPoint);
 		if (::fabs(distance - this->radius) < tolerance)
 		{
-			unitSurfaceNormal = (hitPoint - pointA + (hitPoint - pointA).ProjectedOnto(unitVector)).Normalized();
+			unitSurfaceNormal = (hitPoint - pointA - (hitPoint - pointA).ProjectedOnto(unitVector)).Normalized();
 			return true;
 		}
 	}
