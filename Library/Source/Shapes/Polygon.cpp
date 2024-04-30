@@ -36,9 +36,9 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 
 	if (this->vertexArray->size() > 0)
 	{
-		this->cache.boundingBox.minCorner = this->objectToWorld.TransformPoint((*this->vertexArray)[0]);
-		for (int i = 1; i < (signed)this->vertexArray->size(); i++)
-			this->cache.boundingBox.Expand(this->objectToWorld.TransformPoint((*this->vertexArray)[i]));
+		std::vector<Vector3> worldVertexArray;
+		this->GetWorldVertices(worldVertexArray);
+		this->cache.boundingBox.SetToBoundPointCloud(worldVertexArray);
 	}
 }
 
@@ -192,7 +192,7 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 		return false;
 
 	unitSurfaceNormal = plane.unitNormal;
-	if (unitSurfaceNormal.Dot(ray.unitDirection) < 0.0)
+	if (unitSurfaceNormal.Dot(ray.unitDirection) > 0.0)
 		unitSurfaceNormal = -unitSurfaceNormal;
 
 	return true;

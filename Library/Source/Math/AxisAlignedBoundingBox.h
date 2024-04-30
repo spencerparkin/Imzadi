@@ -18,8 +18,24 @@ namespace Collision
 	class COLLISION_LIB_API AxisAlignedBoundingBox
 	{
 	public:
+		/**
+		 * The default box is at origin with zero volume.
+		 */
 		AxisAlignedBoundingBox();
+
+		/**
+		 * Construct a box containing the given point and only the given point.
+		 */
+		AxisAlignedBoundingBox(const Vector3& point);
+
+		/**
+		 * Construct a box that is a copy of the given AABB.
+		 */
 		AxisAlignedBoundingBox(const AxisAlignedBoundingBox& aabb);
+
+		/**
+		 * Do nothing.
+		 */
 		virtual ~AxisAlignedBoundingBox();
 
 		/**

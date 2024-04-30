@@ -5,6 +5,14 @@ using namespace Collision;
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox()
 {
+	this->minCorner.SetComponents(0.0, 0.0, 0.0);
+	this->maxCorner.SetComponents(0.0, 0.0, 0.0);
+}
+
+AxisAlignedBoundingBox::AxisAlignedBoundingBox(const Vector3& point)
+{
+	this->minCorner = point;
+	this->maxCorner = point;
 }
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox(const AxisAlignedBoundingBox& aabb)
@@ -77,22 +85,22 @@ bool AxisAlignedBoundingBox::Intersect(const AxisAlignedBoundingBox& aabbA, cons
 
 void AxisAlignedBoundingBox::Expand(const Vector3& point)
 {
-	if (this->minCorner.x < point.x)
+	if (this->minCorner.x > point.x)
 		this->minCorner.x = point.x;
 
-	if (this->maxCorner.x > point.x)
+	if (this->maxCorner.x < point.x)
 		this->maxCorner.x = point.x;
 
-	if (this->minCorner.y < point.y)
+	if (this->minCorner.y > point.y)
 		this->minCorner.y = point.y;
 
-	if (this->maxCorner.y > point.y)
+	if (this->maxCorner.y < point.y)
 		this->maxCorner.y = point.y;
 
-	if (this->minCorner.z < point.z)
+	if (this->minCorner.z > point.z)
 		this->minCorner.z = point.z;
 
-	if (this->maxCorner.z > point.z)
+	if (this->maxCorner.z < point.z)
 		this->maxCorner.z = point.z;
 }
 

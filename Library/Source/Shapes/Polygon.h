@@ -29,12 +29,48 @@ namespace Collision
 		PolygonShape(bool temporary);
 		virtual ~PolygonShape();
 
+		/**
+		 * See Shape::GetShapeTypeID.
+		 */
 		virtual TypeID GetShapeTypeID() const override;
+
+		/**
+		 * See Shape::RecalculateCache.
+		 */
 		virtual void RecalculateCache() const override;
+
+		/**
+		 * Tell the caller if this polygon is valid.  A valid polygon
+		 * is convex with all its points coplanar.  This implies that
+		 * the points are wound correctly too and that no edge crosses
+		 * another edge.
+		 *
+		 * @return True is returened if valid; false, otherwise.
+		 */
 		virtual bool IsValid() const override;
+
+		/**
+		 * Calculate and return the area of this polygon.
+		 */
 		virtual double CalcSize() const override;
+
+		/**
+		 * Tell the caller if the given point is contained within this polygon or on one of its edges.
+		 */
 		virtual bool ContainsPoint(const Vector3& point) const override;
+
+		/**
+		 * Render this polygon as wire-frame in the given result.
+		 */
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
+
+		/**
+		 * Perform a ray-cast against this polygon.
+		 *
+		 * @param[in] ray This is the ray to use in the ray-cast.
+		 * @param[out] alpha This is the distance from the ray origin along the ray-direction to the point where the polygon is hit, if any.
+		 * @param[out] unitSurfaceNormal This is the surface normal of the polygon at the ray hit-point, if any.  It will always make an obtuse angle with the ray direction vector.
+		 */
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
 		/**

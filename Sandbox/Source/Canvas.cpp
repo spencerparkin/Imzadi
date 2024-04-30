@@ -45,6 +45,9 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_LINE_SMOOTH);
+	glEnable(GL_ALPHA);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 	GLint viewport[4];
 	glGetIntegerv(GL_VIEWPORT, viewport);
@@ -71,6 +74,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		viewingParams.upVector.z
 	);
 
+	glLineWidth(2.0);
 	glBegin(GL_LINES);
 
 	glColor3d(1.0, 0.0, 0.0);
@@ -97,6 +101,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	DebugRenderResult* renderResult = (DebugRenderResult*)system->ObtainQueryResult(taskID);
 	if (renderResult)
 	{
+		glLineWidth(1.0);
 		glBegin(GL_LINES);
 
 		const std::vector<DebugRenderResult::RenderLine>& renderLineArray = renderResult->GetRenderLineArray();
@@ -119,16 +124,17 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		Transform cameraToWorld = this->camera.GetCameraToWorldTransform();
 
 		Vector3 points[4];
-		points[0].SetComponents(-0.5 , 0.0, -10.0);
-		points[1].SetComponents(0.5, 0.0, -10.0);
-		points[2].SetComponents(0.0, -0.5, -10.0);
-		points[3].SetComponents(0.0, 0.5, -10.0);
+		points[0].SetComponents(-0.1 , 0.0, -1.0);
+		points[1].SetComponents(0.1, 0.0, -1.0);
+		points[2].SetComponents(0.0, -0.1, -1.0);
+		points[3].SetComponents(0.0, 0.1, -1.0);
 
 		for (int i = 0; i < 4; i++)
 			points[i] = cameraToWorld.TransformPoint(points[i]);
 
+		glLineWidth(2.0);
 		glBegin(GL_LINES);
-		glColor3d(0.5, 0.5, 0.5);
+		glColor3d(1.0, 0.0, 1.0);
 		for (int i = 0; i < 4; i++)
 			glVertex3d(points[i].x, points[i].y, points[i].z);
 		glEnd();
@@ -137,8 +143,9 @@ void Canvas::OnPaint(wxPaintEvent& event)
 
 		if (this->targetShapeHitLine)
 		{
+			glLineWidth(2.0);
 			glBegin(GL_LINES);
-			glColor3d(1.0, 1.0, 1.0);
+			glColor3d(0.0, 1.0, 0.0);
 			glVertex3dv(&this->targetShapeHitLine->point[0].x);
 			glVertex3dv(&this->targetShapeHitLine->point[1].x);
 			glEnd();
@@ -320,7 +327,7 @@ void Canvas::Tick()
 			{
 				this->targetShapeHitLine = new LineSegment();
 				this->targetShapeHitLine->point[0] = hitData.surfacePoint;
-				this->targetShapeHitLine->point[1] = hitData.surfacePoint + hitData.surfaceNormal;
+				this->targetShapeHitLine->point[1] = hitData.surfacePoint + 3.0 * hitData.surfaceNormal;
 			}
 
 			system->Free<RayCastResult>(result);

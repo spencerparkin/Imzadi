@@ -17,12 +17,45 @@ namespace Collision
 		CapsuleShape(bool temporary);
 		virtual ~CapsuleShape();
 
+		/**
+		 * See Shape::GetShapeTypeID.
+		 */
 		virtual TypeID GetShapeTypeID() const override;
+
+		/**
+		 * See Shape::RecalculateCache.
+		 */
 		virtual void RecalculateCache() const override;
+
+		/**
+		 * Tell the caller if this capsule is valid.
+		 * 
+		 * @return True is returened if valid; false, otherwise.
+		 */
 		virtual bool IsValid() const override;
+
+		/**
+		 * Calculate and return the volume of this capsule.
+		 */
 		virtual double CalcSize() const override;
+
+		/**
+		 * Tell the caller if the given point is contained within this capsule or on its surface.
+		 */
 		virtual bool ContainsPoint(const Vector3& point) const override;
+
+		/**
+		 * Render this capsule as wire-frame in the given result.
+		 */
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
+
+		/**
+		 * Perform a ray-cast against this capsule.
+		 * 
+		 * @param[in] ray This is the ray to use in the ray-cast.
+		 * @param[out] alpha This is the distance from the ray origin along the ray-direction to the point where the capsule is hit, if any.
+		 * @param[out] unitSurfaceNormal This is the surface normal of the capsule at the ray hit-point, if any.
+		 */
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
 		/**

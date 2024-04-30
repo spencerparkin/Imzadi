@@ -14,10 +14,32 @@ namespace Collision
 		SphereShape(bool temporary);
 		virtual ~SphereShape();
 
+		/**
+		 * See Shape::GetShapeTypeID.
+		 */
 		virtual TypeID GetShapeTypeID() const override;
+
+		/**
+		 * See Shape::RecalculateCache.
+		 */
 		virtual void RecalculateCache() const override;
+
+		/**
+		 * Tell the caller if this sphere is valid.  The radius must be
+		 * non-zero and non-negative.
+		 *
+		 * @return True is returened if valid; false, otherwise.
+		 */
 		virtual bool IsValid() const override;
+
+		/**
+		 * Calculate and return the volume of this sphere.
+		 */
 		virtual double CalcSize() const override;
+
+		/**
+		 * Tell the caller if the given point is contained within this sphere or on its surface.
+		 */
 		virtual bool ContainsPoint(const Vector3& point) const override;
 
 		/**
