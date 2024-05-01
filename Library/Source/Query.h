@@ -156,6 +156,17 @@ namespace Collision
 	 * leading up to this!  What other shapes, if any, is this shape presently
 	 * in collision with, and how?  A CollisionQueryResult class instance is
 	 * returned by this query.
+	 * 
+	 * Note that, for the sake of simplicity, we do nothing to account for tunneling
+	 * here, nor do we try to solve for the moment of impact between two shapes.
+	 * In other words, time is not a variable that we consider here at all.
+	 * Rather, what we do is determine which shapes are touching or in non-zero overlap
+	 * with one another, and then the minimum movement necessary on the part of either
+	 * shape in order to get them into a state where they are at most touching.
+	 * The recommended direction either shape could move in order to separate may not
+	 * correspond to the direction they moved to come in contact with one another in
+	 * the first place.  A more sophisticated query may be written later that does
+	 * try to take time into account.
 	 */
 	class COLLISION_LIB_API CollisionQuery : public ShapeQuery
 	{
