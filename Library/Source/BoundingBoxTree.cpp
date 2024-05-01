@@ -112,9 +112,6 @@ void BoundingBoxTree::RayCast(const Ray& ray, std::vector<const Shape*>& shapeAr
 	if (!this->rootNode)
 		return;
 
-	AxisAlignedBoundingBox shapeArrayBox;
-	double smallestAlpha = std::numeric_limits<double>::max();
-
 	// Use a non-recursive, breadth-first traversal of the tree.
 	std::list<const BoundingBoxNode*> nodeQueue;
 	nodeQueue.push_back(this->rootNode);
@@ -138,45 +135,14 @@ void BoundingBoxTree::RayCast(const Ray& ray, std::vector<const Shape*>& shapeAr
 		{
 			const Shape* shape = pair.second;
 
-			// If the ray doesn't hit the shape's bounding box, then it doesn't hit the shape.
+			// Some boxes might hit before other boxes, contain other boxes, or otherwise
+			// obscur other boxes that we also hit, etc., but since we don't know the exact
+			// contents of the boxes, we have to include any box we hit.
 			double alpha = 0.0;
-			if (!ray.CastAgainst(shape->GetBoundingBox(), alpha))
-				continue;
-			
-			// In this case, it's the first hit, so add it to our list.
-			if (shapeArray.size() == 0)
+			if (ray.CastAgainst(shape->GetBoundingBox(), alpha))
 			{
 				shapeArray.push_back(shape);
-				shapeArrayBox = shape->GetBoundingBox();
-				smallestAlpha = alpha;
-				continue;
 			}
-			
-			// In this case, even if the ray hits the box closer, a shape in our
-			// existing list may still hit the ray closer than the shape in the
-			// newly hit box, and that is why we add to the list.
-			AxisAlignedBoundingBox intersection;
-			if (intersection.Intersect(shapeArrayBox, shape->GetBoundingBox()))
-			{
-				shapeArray.push_back(shape);
-				shapeArrayBox.Expand(shape->GetBoundingBox());
-				if (alpha < smallestAlpha)
-					smallestAlpha = alpha;
-				continue;
-			}
-			
-			// In this case, we can conclude that a shape in our existing list
-			// hits closer than whatever is in the box we just hit.
-			if (alpha > smallestAlpha)
-				continue;
-
-			// In this case, we can conclude that the shape in the box we just hit
-			// must hit closer than anything in our current list of shapes, so start
-			// the list over again with the new shape.
-			shapeArray.clear();
-			shapeArray.push_back(shape);
-			shapeArrayBox = shape->GetBoundingBox();
-			smallestAlpha = alpha;
 		}
 	}
 }
