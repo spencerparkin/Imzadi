@@ -178,11 +178,11 @@ namespace Collision
 	/**
 	 * Use this command to change the object-to-world transform of a collision shape.
 	 */
-	class COLLISION_LIB_API MoveShapeCommand : public ShapeCommand
+	class COLLISION_LIB_API ObjectToWorldCommand : public ShapeCommand
 	{
 	public:
-		MoveShapeCommand();
-		virtual ~MoveShapeCommand();
+		ObjectToWorldCommand();
+		virtual ~ObjectToWorldCommand();
 
 		/**
 		 * Alter the object-to-world transform of the target shape.

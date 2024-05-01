@@ -127,12 +127,9 @@ namespace Collision
 
 	/**
 	 * Query for a collision shape's object-to-world transform.  This query is added
-	 * for completeness and perhaps debugging, but I don't see it being reasonably
-	 * used in most production use-cases.  Rather, the collision system user should
-	 * track their own positioning and orientation information and then dictate to
-	 * the collision system each frame where they would like the collision shape to
-	 * be, and there really shouldn't be a need, at least not continually, to query
-	 * for a shape's transform.
+	 * for completeness and perhaps debugging, but I don't see it really being needed in
+	 * practice, because shape pointers are returned as part of the result of a collision
+	 * query, from which you have access to a shape's object-to-world transform.
 	 * 
 	 * A TransformResult class instance is returned by this query.
 	 */
@@ -148,6 +145,28 @@ namespace Collision
 		virtual Result* ExecuteQuery(Thread* thread) override;
 	};
 
-	//ShapeQuery -- What other shapes is this shape in collision with and how?
-	// Note that if the underlying system is smart, work to see if A collides with B will not be duplicated to find that B collides with A.
+	/**
+	 * Perform a query into the collision status of a given collision shape.
+	 * This is the main feature of the entire collision system!  It's all been
+	 * leading up to this!  What other shapes, if any, is this shape presently
+	 * in collision with, and how?  A CollisionQueryResult class instance is
+	 * returned by this query.
+	 */
+	class COLLISION_LIB_API CollisionQuery : public ShapeQuery
+	{
+	public:
+		CollisionQuery();
+		virtual ~CollisionQuery();
+
+		/**
+		 * Perform the collision query, calculating and collecting all
+		 * collision pairs involving the given shape.
+		 */
+		virtual Result* ExecuteQuery(Thread* thread) override;
+
+		/**
+		 * Create an instance of the CollisionQuery class.
+		 */
+		static CollisionQuery* Create();
+	};
 }

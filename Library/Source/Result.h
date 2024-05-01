@@ -174,4 +174,33 @@ namespace Collision
 	public:
 		Transform transform;		//< This is the returned transform.
 	};
+
+	/**
+	 * Instances of this class contain all the information returned by a
+	 * collision query, which is simply a list of collision pairs.  Each pair
+	 * details a collision between two shapes.  One of these shapes will always
+	 * be the shape specified in the collision query.  Additional information,
+	 * such as contact points and penetration depths will be provided.
+	 * 
+	 * Important: The results presented here are not thread-safe!  You will
+	 * be given raw const-pointers to collision shape instances, but these
+	 * are only valid if no queries or commands are pending or in flight.
+	 * The best practice is for the application to make all necessary queries,
+	 * go do other important work, then, only when the results of the queries
+	 * are absolutely necessary before the application can continue, the collision
+	 * system should be stalled (or flushed, if you will), at which point, you
+	 * can safely examine all query results, and then act upon them (e.g., resolving
+	 * constraints or collisions or generating impulses, etc.)  All this would
+	 * typically happen in a single frame.
+	 */
+	class COLLISION_LIB_API CollisionQueryResult : public Result
+	{
+	public:
+		CollisionQueryResult();
+		virtual ~CollisionQueryResult();
+
+		static CollisionQueryResult* Create();
+
+		// TODO: Add collision pair list here.
+	};
 }

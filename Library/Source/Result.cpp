@@ -141,3 +141,18 @@ TransformResult::TransformResult()
 {
 	return new TransformResult();
 }
+
+//-------------------------------- CollisionQueryResult --------------------------------
+
+CollisionQueryResult::CollisionQueryResult()
+{
+}
+
+/*virtual*/ CollisionQueryResult::~CollisionQueryResult()
+{
+}
+
+/*static*/ CollisionQueryResult* CollisionQueryResult::Create()
+{
+	return new CollisionQueryResult();
+}

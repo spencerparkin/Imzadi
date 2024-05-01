@@ -140,18 +140,18 @@ SetDebugRenderColorCommand::SetDebugRenderColorCommand()
 	return new SetDebugRenderColorCommand();
 }
 
-//------------------------------- MoveShapeCommand -------------------------------
+//------------------------------- ObjectToWorldCommand -------------------------------
 
-MoveShapeCommand::MoveShapeCommand()
+ObjectToWorldCommand::ObjectToWorldCommand()
 {
 	this->objectToWorld.SetIdentity();
 }
 
-/*virtual*/ MoveShapeCommand::~MoveShapeCommand()
+/*virtual*/ ObjectToWorldCommand::~ObjectToWorldCommand()
 {
 }
 
-/*virtual*/ void MoveShapeCommand::Execute(Thread* thread)
+/*virtual*/ void ObjectToWorldCommand::Execute(Thread* thread)
 {
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)

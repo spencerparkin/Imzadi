@@ -129,3 +129,25 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 	result->transform = shape->GetObjectToWorldTransform();
 	return result;
 }
+
+//--------------------------------- CollisionQuery ---------------------------------
+
+CollisionQuery::CollisionQuery()
+{
+}
+
+/*virtual*/ CollisionQuery::~CollisionQuery()
+{
+}
+
+/*virtual*/ Result* CollisionQuery::ExecuteQuery(Thread* thread)
+{
+	// TODO: Write this.
+	// TODO: Note that if the underlying system is smart, work to see if A collides with B will not be duplicated to find that B collides with A.
+	return nullptr;
+}
+
+/*static*/ CollisionQuery* CollisionQuery::Create()
+{
+	return new CollisionQuery();
+}
