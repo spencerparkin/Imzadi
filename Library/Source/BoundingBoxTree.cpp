@@ -2,6 +2,7 @@
 #include "Error.h"
 #include "Result.h"
 #include "Math/Ray.h"
+#include <algorithm>
 
 using namespace Collision;
 
@@ -105,46 +106,16 @@ void BoundingBoxTree::DebugRender(DebugRenderResult* renderResult) const
 		this->rootNode->DebugRender(renderResult);
 }
 
-void BoundingBoxTree::RayCast(const Ray& ray, std::vector<const Shape*>& shapeArray) const
+void BoundingBoxTree::RayCast(const Ray& ray, RayCastResult* rayCastResult) const
 {
-	shapeArray.clear();
+	RayCastResult::HitData hitData;
+	hitData.shapeID = 0;
+	hitData.alpha = std::numeric_limits<double>::max();
 
-	if (!this->rootNode)
-		return;
+	if (this->rootNode && ray.HitsOrOriginatesIn(this->rootNode->box))
+		this->rootNode->RayCast(ray, hitData);
 
-	// Use a non-recursive, breadth-first traversal of the tree.
-	std::list<const BoundingBoxNode*> nodeQueue;
-	nodeQueue.push_back(this->rootNode);
-	while (nodeQueue.size() > 0)
-	{
-		// Grab our next node off the queue for processing.
-		std::list<const BoundingBoxNode*>::iterator iter = nodeQueue.begin();
-		const BoundingBoxNode* node = *iter;
-		nodeQueue.erase(iter);
-
-		// We can skip this branch of the tree if the ray doesn't intersect it.
-		if (!ray.HitsOrOriginatesIn(node->box))
-			continue;
-		
-		// Queue up this node's branches for later.
-		for (const BoundingBoxNode* childNode : *node->childNodeArray)
-			nodeQueue.push_back(childNode);
-
-		// For now, we need to process all this node's shapes.
-		for (auto pair : *node->shapeMap)
-		{
-			const Shape* shape = pair.second;
-
-			// Some boxes might hit before other boxes, contain other boxes, or otherwise
-			// obscur other boxes that we also hit, etc., but since we don't know the exact
-			// contents of the boxes, we have to include any box we hit.
-			double alpha = 0.0;
-			if (ray.CastAgainst(shape->GetBoundingBox(), alpha))
-			{
-				shapeArray.push_back(shape);
-			}
-		}
-	}
+	rayCastResult->SetHitData(hitData);
 }
 
 //--------------------------------- BoundingBoxNode ---------------------------------
@@ -211,4 +182,58 @@ void BoundingBoxNode::DebugRender(DebugRenderResult* renderResult) const
 
 	for (const BoundingBoxNode* childNode : *this->childNodeArray)
 		childNode->DebugRender(renderResult);
+}
+
+bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) const
+{
+	struct ChildHit
+	{
+		const BoundingBoxNode* childNode;
+		double alpha;
+	};
+
+	std::vector<ChildHit> childHitArray;
+	for (const BoundingBoxNode* childNode : *this->childNodeArray)
+	{
+		if (childNode->box.ContainsPoint(ray.origin))
+			childHitArray.push_back(ChildHit{ childNode, 0.0 });
+		else
+		{
+			double boxHitAlpha = 0.0;
+			if (ray.CastAgainst(childNode->box, boxHitAlpha))
+				childHitArray.push_back(ChildHit{ childNode, boxHitAlpha });
+		}
+	}
+
+	std::sort(childHitArray.begin(), childHitArray.end(), [](const ChildHit& childHitA, const ChildHit& childHitB) -> bool {
+		return childHitA.alpha < childHitB.alpha;
+	});
+
+	// The main optimization here is the early-out, which allows us to disregard branches of the tree.
+	for (const ChildHit& childHit : childHitArray)
+	{
+		const BoundingBoxNode* childNode = childHit.childNode;
+		if (childNode->RayCast(ray, hitData))
+			break;
+	}
+
+	// What remains is to check the current hit, if any, against what's at this node.
+	bool hitOccurredAtThisNode = false;
+	for (auto pair : *this->shapeMap)
+	{
+		const Shape* shape = pair.second;
+
+		double shapeAlpha = 0.0;
+		Vector3 unitSurfaceNormal;
+		if (shape->RayCast(ray, shapeAlpha, unitSurfaceNormal) && 0.0 <= shapeAlpha && shapeAlpha < hitData.alpha)
+		{
+			hitOccurredAtThisNode = true;
+			hitData.shapeID = shape->GetShapeID();
+			hitData.surfaceNormal = unitSurfaceNormal;
+			hitData.surfacePoint = ray.CalculatePoint(shapeAlpha);
+			hitData.alpha = shapeAlpha;
+		}
+	}
+
+	return hitOccurredAtThisNode;
 }

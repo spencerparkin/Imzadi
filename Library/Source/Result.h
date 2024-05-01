@@ -137,6 +137,7 @@ namespace Collision
 			ShapeID shapeID;			//< This is the ID of the collision shape that was hit by the ray, if any.  It is zero if not hit occured.
 			Vector3 surfacePoint;		//< This is the point on the surface of the shape where the ray hit it.
 			Vector3 surfaceNormal;		//< This is the normal to the surface of the shape where it was hit.
+			double alpha;				//< Mainly used for internal purposes, this is the distance from ray origin along the ray to the hit point.
 		};
 
 		/**

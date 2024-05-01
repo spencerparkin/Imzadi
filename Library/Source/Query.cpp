@@ -71,32 +71,8 @@ RayCastQuery::RayCastQuery()
 /*virtual*/ Result* RayCastQuery::ExecuteQuery(Thread* thread)
 {
 	const BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
-
-	std::vector<const Shape*> shapeArray;
-	boxTree.RayCast(ray, shapeArray);
-
-	RayCastResult::HitData hitData;
-	hitData.shapeID = 0;
-
-	if (shapeArray.size() > 0)
-	{
-		double smallestAlpha = std::numeric_limits<double>::max();
-		for (const Shape* shape : shapeArray)
-		{
-			double alpha = 0.0;
-			Vector3 unitSurfaceNormal;
-			if (shape->RayCast(ray, alpha, unitSurfaceNormal) && alpha < smallestAlpha)
-			{
-				smallestAlpha = alpha;
-				hitData.shapeID = shape->GetShapeID();
-				hitData.surfaceNormal = unitSurfaceNormal;
-				hitData.surfacePoint = ray.CalculatePoint(alpha);
-			}
-		}
-	}
-
 	RayCastResult* result = RayCastResult::Create();
-	result->SetHitData(hitData);
+	boxTree.RayCast(this->GetRay(), result);
 	return result;
 }
 

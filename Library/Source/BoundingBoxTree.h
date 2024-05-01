@@ -3,14 +3,13 @@
 #include "Defines.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Shape.h"
+#include "Result.h"
 #include <vector>
 #include <unordered_map>
 
 namespace Collision
 {
 	class BoundingBoxNode;
-	class Shape;
-	class DebugRenderResult;
 
 	/**
 	 * This class facilitates the broad-phase of collision detection.
@@ -59,13 +58,12 @@ namespace Collision
 		void DebugRender(DebugRenderResult* renderResult) const;
 
 		/**
-		 * Calculate and return a minimal set of shapes, all of which have their bounding box
-		 * hit by the given ray, but (most likely) only one of which is hit by that ray before
-		 * any of the others.  The caller can ray-cast each of the returned shapes individually
-		 * to determine which one is hit soonest by the ray.  We do not go that far in
-		 * our calculations here, because we only consider the bounding boxes of the shapes.
+		 * Perform a ray-cast against all collision shapes within the tree.
+		 * 
+		 * @param[in] ray This is the ray with which to perform the cast.
+		 * @param[out] rayCastResult The hit result, if any, is put into the given RayCastResult instance.  If no hit, then the result will indicate as much.
 		 */
-		void RayCast(const Ray& ray, std::vector<const Shape*>& shapeArray) const;
+		void RayCast(const Ray& ray, RayCastResult* rayCastResult) const;
 
 	private:
 		BoundingBoxNode* rootNode;
@@ -107,6 +105,15 @@ namespace Collision
 		 * Render this node's space as a simple wire-frame box.
 		 */
 		void DebugRender(DebugRenderResult* renderResult) const;
+
+		/**
+		 * Descend the tree, performing a ray-cast as we go.
+		 * 
+		 * @param[in] ray This is the ray with which to perform the ray-cast.
+		 * @param[out] hitData This will contain info about what shape was hit and how, if any.
+		 * @return True is returned if and only if a hit ocurred in this node of the tree.
+		 */
+		bool RayCast(const Ray& ray, RayCastResult::HitData& hitData) const;
 
 	private:
 		BoundingBoxTree* tree;								//< This is the tree of which this node is a part.
