@@ -177,9 +177,7 @@ namespace Collision
 	};
 
 	/**
-	 * An instance of this class describes all the ways that a collision
-	 * shape is intersecting (or approximately in contact with) other
-	 * collision shapes within the collision world.
+	 * TODO: Figure it out.
 	 * 
 	 * Important: The results presented here are not thread-safe!  You will
 	 * be given raw const-pointers to collision shape instances, but these
@@ -198,13 +196,11 @@ namespace Collision
 		CollisionQueryResult();
 		virtual ~CollisionQueryResult();
 
+		/**
+		 * Allocate and return a new instance of the CollisionQueryResult class.
+		 */
 		static CollisionQueryResult* Create();
 
-		const Shape* shape;
-
-		// TODO: Add list of contacts here.  A contact should detail the minimal
-		//       distance needed to travel and in what direction so that the
-		//       shape in question and the other shape are no longer intersecting
-		//       with non-zero overlap, but just touching.
+		// TODO: Figure this out.
 	};
 }
