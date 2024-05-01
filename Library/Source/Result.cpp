@@ -18,6 +18,23 @@ Result::Result()
 	delete result;
 }
 
+//-------------------------------- ErrorResult --------------------------------
+
+ErrorResult::ErrorResult()
+{
+	this->errorMessage = new std::string();
+}
+
+/*virtual*/ ErrorResult::~ErrorResult()
+{
+	delete this->errorMessage;
+}
+
+/*static*/ ErrorResult* ErrorResult::Create()
+{
+	return new ErrorResult();
+}
+
 //-------------------------------- DebugRenderResult --------------------------------
 
 DebugRenderResult::DebugRenderResult()
@@ -108,4 +125,19 @@ RayCastResult::RayCastResult()
 /*static*/ RayCastResult* RayCastResult::Create()
 {
 	return new RayCastResult();
+}
+
+//-------------------------------- TransformResult --------------------------------
+
+TransformResult::TransformResult()
+{
+}
+
+/*virtual*/ TransformResult::~TransformResult()
+{
+}
+
+/*static*/ TransformResult* TransformResult::Create()
+{
+	return new TransformResult();
 }

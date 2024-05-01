@@ -2,6 +2,7 @@
 
 #include "Task.h"
 #include "Math/Ray.h"
+#include "Shape.h"
 #include <stdint.h>
 
 namespace Collision
@@ -10,7 +11,7 @@ namespace Collision
 
 	/**
 	 * This class and its derivatives are the means by which the collision system
-	 * user makes inqueries into the collision state of a given collision shape, or,
+	 * user makes inqueries into the collision state of a given collision shape; or,
 	 * in general, into any state of the collision system.
 	 * Of course, it would not make sense for a collision system to be continuously
 	 * checking, for every shape, if it is (or is not) in collision with every other
@@ -26,6 +27,29 @@ namespace Collision
 		virtual void Execute(Thread* thread) override;
 
 		virtual Result* ExecuteQuery(Thread* thread) = 0;
+	};
+
+	/**
+	 * This is the base class for all queries about a particular shape.
+	 */
+	class COLLISION_LIB_API ShapeQuery : public Query
+	{
+	public:
+		ShapeQuery();
+		virtual ~ShapeQuery();
+
+		/**
+		 * Set the shape ID of the shape about which to query.
+		 */
+		void SetShapeID(ShapeID shapeID) { this->shapeID = shapeID; }
+
+		/**
+		 * Get the shape ID of the shape about which to query.
+		 */
+		ShapeID GetShapeID() const { return this->shapeID; }
+
+	protected:
+		ShapeID shapeID;
 	};
 
 	/**
@@ -99,6 +123,29 @@ namespace Collision
 
 	private:
 		Ray ray;
+	};
+
+	/**
+	 * Query for a collision shape's object-to-world transform.  This query is added
+	 * for completeness and perhaps debugging, but I don't see it being reasonably
+	 * used in most production use-cases.  Rather, the collision system user should
+	 * track their own positioning and orientation information and then dictate to
+	 * the collision system each frame where they would like the collision shape to
+	 * be, and there really shouldn't be a need, at least not continually, to query
+	 * for a shape's transform.
+	 * 
+	 * A TransformResult class instance is returned by this query.
+	 */
+	class COLLISION_LIB_API ObjectToWorldQuery : public ShapeQuery
+	{
+	public:
+		ObjectToWorldQuery();
+		virtual ~ObjectToWorldQuery();
+
+		/**
+		 * Extract the shape's object-to-world transform.
+		 */
+		virtual Result* ExecuteQuery(Thread* thread) override;
 	};
 
 	//ShapeQuery -- What other shapes is this shape in collision with and how?

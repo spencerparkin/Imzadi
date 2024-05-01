@@ -296,6 +296,7 @@ void Canvas::Tick()
 	pitchQuat.SetFromAxisAngle(xAxis, rightStickVector.y * sensativityParams.rightThumbSensativity);
 	yawQuat.SetFromAxisAngle(Vector3(0.0, 1.0, 0.0), -rightStickVector.x * sensativityParams.rightThumbSensativity);
 
+	// TODO: No, we need to make sure the up-direction of the camera is accurate at all times.
 	Quaternion quat = this->camera.GetCameraOrientation();
 	quat = (pitchQuat * yawQuat * quat).Normalized();
 	this->camera.SetCameraOrientation(quat);
@@ -319,19 +320,22 @@ void Canvas::Tick()
 		if (system->MakeQuery(rayCastQuery, taskID))
 		{
 			system->FlushAllTasks();
-			auto result = (RayCastResult*)system->ObtainQueryResult(taskID);
 
-			const RayCastResult::HitData& hitData = result->GetHitData();
-			hitShapeID = hitData.shapeID;
-
-			delete this->targetShapeHitLine;
-			this->targetShapeHitLine = nullptr;
-
-			if (hitShapeID != 0)
+			auto result = dynamic_cast<RayCastResult*>(system->ObtainQueryResult(taskID));
+			if (result)
 			{
-				this->targetShapeHitLine = new LineSegment();
-				this->targetShapeHitLine->point[0] = hitData.surfacePoint;
-				this->targetShapeHitLine->point[1] = hitData.surfacePoint + 3.0 * hitData.surfaceNormal;
+				const RayCastResult::HitData& hitData = result->GetHitData();
+				hitShapeID = hitData.shapeID;
+
+				delete this->targetShapeHitLine;
+				this->targetShapeHitLine = nullptr;
+
+				if (hitShapeID != 0)
+				{
+					this->targetShapeHitLine = new LineSegment();
+					this->targetShapeHitLine->point[0] = hitData.surfacePoint;
+					this->targetShapeHitLine->point[1] = hitData.surfacePoint + 3.0 * hitData.surfaceNormal;
+				}
 			}
 
 			system->Free<RayCastResult>(result);

@@ -1,7 +1,9 @@
 #include "Query.h"
 #include "Result.h"
 #include "Thread.h"
+#include "Error.h"
 #include "BoundingBoxTree.h"
+#include <format>
 
 using namespace Collision;
 
@@ -18,8 +20,19 @@ Query::Query()
 /*virtual*/ void Query::Execute(Thread* thread)
 {
 	Result* result = this->ExecuteQuery(thread);
-	if (result)
-		thread->StoreResult(result, this->GetTaskID());
+	COLL_SYS_ASSERT(result != nullptr);
+	thread->StoreResult(result, this->GetTaskID());
+}
+
+//--------------------------------- ShapeQuery ---------------------------------
+
+ShapeQuery::ShapeQuery()
+{
+	this->shapeID = 0;
+}
+
+/*virtual*/ ShapeQuery::~ShapeQuery()
+{
 }
 
 //--------------------------------- DebugRenderQuery ---------------------------------
@@ -90,4 +103,29 @@ RayCastQuery::RayCastQuery()
 /*static*/ RayCastQuery* RayCastQuery::Create()
 {
 	return new RayCastQuery();
+}
+
+//--------------------------------- ObjectToWorldQuery ---------------------------------
+
+ObjectToWorldQuery::ObjectToWorldQuery()
+{
+}
+
+/*virtual*/ ObjectToWorldQuery::~ObjectToWorldQuery()
+{
+}
+
+/*virtual*/ Result* ObjectToWorldQuery::ExecuteQuery(Thread* thread)
+{
+	Shape* shape = thread->FindShape(this->shapeID);
+	if (!shape)
+	{
+		auto errorResult = ErrorResult::Create();
+		errorResult->SetErrorMessage(std::format("Failed to find a shape with ID {}.", this->shapeID));
+		return errorResult;
+	}
+
+	auto result = TransformResult::Create();
+	result->transform = shape->GetObjectToWorldTransform();
+	return result;
 }
