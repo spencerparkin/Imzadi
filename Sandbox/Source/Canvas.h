@@ -59,6 +59,8 @@ private:
 	ControllerSensativity controllerSensativity;
 	uint32_t debugDrawFlags;
 	bool targetShapes;
+	bool dragSelectedShape;
 	Collision::LineSegment* targetShapeHitLine;
 	Collision::ShapeID selectedShapeID;
+	Collision::Transform shapeToCamera;
 };

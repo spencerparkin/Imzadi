@@ -209,8 +209,10 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 	// keep things simpler for now, I'm just going to do the calculations in world space and assume we don't
 	// have any shear or non-uniform scale in the transform.
 
-	const Vector3& pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
-	const Vector3& pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
+	LineSegment worldLineSegment = this->objectToWorld.TransformLineSegment(this->lineSegment);
+
+	const Vector3& pointA = worldLineSegment.point[0];
+	const Vector3& pointB = worldLineSegment.point[1];
 
 	Vector3 unitVector = (pointB - pointA).Normalized();
 	Vector3 delta = ray.origin - pointA;
@@ -234,7 +236,7 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 	{
 		alpha = (tubeRoots.size() == 1) ? tubeRoots[0] : COLL_SYS_MIN(tubeRoots[0], tubeRoots[1]);
 		Vector3 hitPoint = ray.CalculatePoint(alpha);
-		double distance = this->lineSegment.ShortestDistanceTo(hitPoint);
+		double distance = worldLineSegment.ShortestDistanceTo(hitPoint);
 		if (::fabs(distance - this->radius) < tolerance)
 		{
 			unitSurfaceNormal = (hitPoint - pointA - (hitPoint - pointA).ProjectedOnto(unitVector)).Normalized();

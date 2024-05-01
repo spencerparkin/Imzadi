@@ -143,6 +143,11 @@ namespace Collision
 		 * Extract the shape's object-to-world transform.
 		 */
 		virtual Result* ExecuteQuery(Thread* thread) override;
+
+		/**
+		 * Allocate and return a new instance of the ObjectToWorldQuery class.
+		 */
+		static ObjectToWorldQuery* Create();
 	};
 
 	/**

@@ -189,6 +189,11 @@ namespace Collision
 		 */
 		virtual void Execute(Thread* thread) override;
 
+		/**
+		 * Allocate and return a new instance of the ObjectToWorldCommand class.
+		 */
+		static ObjectToWorldCommand* Create();
+
 	public:
 		Transform objectToWorld;		//< This transform is what's assigned to the target shape's object-to-world transform.
 	};

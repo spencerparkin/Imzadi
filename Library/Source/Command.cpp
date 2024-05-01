@@ -168,3 +168,8 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 		GetError()->AddErrorMessage(std::format("Failed to re-insert shape {} into AABB tree.", this->shapeID));
 	}
 }
+
+/*static*/ ObjectToWorldCommand* ObjectToWorldCommand::Create()
+{
+	return new ObjectToWorldCommand();
+}

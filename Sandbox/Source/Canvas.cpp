@@ -16,12 +16,12 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 {
 	this->targetShapes = false;
 	this->targetShapeHitLine = nullptr;
-
 	this->debugDrawFlags = COLL_SYS_DRAW_FLAG_SHAPES;
 	this->controllerSensativity = ControllerSensativity::MEDIUM;
 	this->strafeMode = StrafeMode::XZ_PLANE;
 	this->renderTimeArrayMax = 32;
 	this->selectedShapeID = 0;
+	this->dragSelectedShape = false;
 
 	this->renderContext = new wxGLContext(this);
 
@@ -100,7 +100,8 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	TaskID taskID = 0;
 	system->MakeQuery(renderQuery, taskID);
 	system->FlushAllTasks();
-	DebugRenderResult* renderResult = (DebugRenderResult*)system->ObtainQueryResult(taskID);
+	Result* result = system->ObtainQueryResult(taskID);
+	auto renderResult = dynamic_cast<DebugRenderResult*>(result);
 	if (renderResult)
 	{
 		glLineWidth(1.0);
@@ -115,9 +116,9 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		}
 
 		glEnd();
-
-		system->Free<Result>(renderResult);
 	}
+
+	system->Free<Result>(result);
 
 	if (this->targetShapes)
 	{
@@ -186,11 +187,11 @@ void Canvas::GetSensativityParams(SensativityParams& sensativityParams)
 		break;
 	case ControllerSensativity::MEDIUM:
 		sensativityParams.leftThumbSensativity = 0.5;
-		sensativityParams.rightThumbSensativity = 0.05;
+		sensativityParams.rightThumbSensativity = 0.02;
 		break;
 	case ControllerSensativity::HIGH:
 		sensativityParams.leftThumbSensativity = 3.0;
-		sensativityParams.rightThumbSensativity = 0.08;
+		sensativityParams.rightThumbSensativity = 0.03;
 		break;
 	default:
 		sensativityParams.leftThumbSensativity = 0.0;
@@ -321,10 +322,11 @@ void Canvas::Tick()
 		{
 			system->FlushAllTasks();
 
-			auto result = dynamic_cast<RayCastResult*>(system->ObtainQueryResult(taskID));
-			if (result)
+			Result* result = system->ObtainQueryResult(taskID);
+			auto rayCastResult = dynamic_cast<RayCastResult*>(result);
+			if (rayCastResult)
 			{
-				const RayCastResult::HitData& hitData = result->GetHitData();
+				const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 				hitShapeID = hitData.shapeID;
 
 				delete this->targetShapeHitLine;
@@ -338,12 +340,56 @@ void Canvas::Tick()
 				}
 			}
 
-			system->Free<RayCastResult>(result);
+			system->Free<Result>(result);
 		}
 
 		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_Y))
 		{
 			this->SetSelectedShape(hitShapeID);
+		}
+	}
+
+	if (this->selectedShapeID != 0)
+	{
+		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_A))
+		{
+			this->dragSelectedShape = !this->dragSelectedShape;
+
+			if (this->dragSelectedShape)
+			{
+				System* system = wxGetApp().GetCollisionSystem();
+
+				auto query = system->Create<ObjectToWorldQuery>();
+				query->SetShapeID(this->selectedShapeID);
+				TaskID taskID = 0;
+				if (system->MakeQuery(query, taskID))
+				{
+					system->FlushAllTasks();
+
+					Result* result = system->ObtainQueryResult(taskID);
+					auto transformResult = dynamic_cast<TransformResult*>(result);
+					if (transformResult)
+					{
+						const Transform& shapeToWorld = transformResult->transform;
+						const Transform& cameraToWorld = this->camera.GetCameraToWorldTransform();
+
+						Transform worldToCamera;
+						worldToCamera.Invert(cameraToWorld);
+						this->shapeToCamera = worldToCamera * shapeToWorld;
+					}
+
+					system->Free<Result>(result);
+				}
+			}
+		}
+
+		if (this->dragSelectedShape)
+		{
+			System* system = wxGetApp().GetCollisionSystem();
+			auto command = system->Create<ObjectToWorldCommand>();
+			command->objectToWorld = this->camera.GetCameraToWorldTransform() * this->shapeToCamera;
+			command->SetShapeID(this->selectedShapeID);
+			system->IssueCommand(command);
 		}
 	}
 
@@ -354,6 +400,8 @@ void Canvas::SetSelectedShape(Collision::ShapeID shapeID)
 {
 	if (shapeID != this->selectedShapeID)
 	{
+		this->dragSelectedShape = false;
+
 		System* system = wxGetApp().GetCollisionSystem();
 
 		if (this->selectedShapeID != 0)

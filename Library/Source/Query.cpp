@@ -106,6 +106,11 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 	return result;
 }
 
+/*static*/ ObjectToWorldQuery* ObjectToWorldQuery::Create()
+{
+	return new ObjectToWorldQuery();
+}
+
 //--------------------------------- CollisionQuery ---------------------------------
 
 CollisionQuery::CollisionQuery()
