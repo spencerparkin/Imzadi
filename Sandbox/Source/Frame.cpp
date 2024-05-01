@@ -225,7 +225,7 @@ void Frame::OnAbout(wxCommandEvent& event)
 	wxAboutDialogInfo aboutDialogInfo;
 
 	aboutDialogInfo.SetName("Sandbox");
-	aboutDialogInfo.SetDescription("This program is design to help test the CollisionLib library.");
+	aboutDialogInfo.SetDescription("This program is design to help test and develop the CollisionLib library.");
 
 	wxAboutBox(aboutDialogInfo);
 }

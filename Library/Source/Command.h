@@ -195,6 +195,6 @@ namespace Collision
 		static ObjectToWorldCommand* Create();
 
 	public:
-		Transform objectToWorld;		//< This transform is what's assigned to the target shape's object-to-world transform.
+		Transform objectToWorld;		///< This transform is what's assigned to the target shape's object-to-world transform.
 	};
 }

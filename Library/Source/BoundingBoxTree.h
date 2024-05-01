@@ -14,7 +14,8 @@ namespace Collision
 	/**
 	 * This class facilitates the broad-phase of collision detection.
 	 * Note that it is not a user-facing class and so the collision system
-	 * user will never have to interface with it directly.
+	 * user will never have to interface with it directly.  This class,
+	 * when appropriate, calls directly into the narrow-phase.
 	 */
 	class COLLISION_LIB_API BoundingBoxTree
 	{
@@ -64,6 +65,15 @@ namespace Collision
 		 * @param[out] rayCastResult The hit result, if any, is put into the given RayCastResult instance.  If no hit, then the result will indicate as much.
 		 */
 		void RayCast(const Ray& ray, RayCastResult* rayCastResult) const;
+
+		/**
+		 * Determine the collision status of the given shape.
+		 * 
+		 * @param[in] shape This is the shape in question.
+		 * @param[out] collisionResult The collision status is returned in this instance of the CollisionQueryResult class.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool CalculateCollision(const Shape* shape, CollisionQueryResult* collisionResult) const;
 
 	private:
 		BoundingBoxNode* rootNode;
@@ -116,11 +126,11 @@ namespace Collision
 		bool RayCast(const Ray& ray, RayCastResult::HitData& hitData) const;
 
 	private:
-		BoundingBoxTree* tree;								//< This is the tree of which this node is a part.
-		AxisAlignedBoundingBox box;							//< This is the space represented by this node.
-		std::vector<BoundingBoxNode*>* childNodeArray;		//< These are the sub-space partitions of this node.
-		BoundingBoxNode* parentNode;						//< This is a pointer to the parent space containing this node.
-		std::unordered_map<ShapeID, Shape*>* shapeMap;		//< These are shapes in this node's space that cannot fit in a sub-space.
+		BoundingBoxTree* tree;								///< This is the tree of which this node is a part.
+		AxisAlignedBoundingBox box;							///< This is the space represented by this node.
+		std::vector<BoundingBoxNode*>* childNodeArray;		///< These are the sub-space partitions of this node.
+		BoundingBoxNode* parentNode;						///< This is a pointer to the parent space containing this node.
+		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< These are shapes in this node's space that cannot fit in a sub-space.
 
 		// TODO: One way to overcome one of the limitations I see with this AABB tree is to replace the above shapeMap with
 		//       yet another tree that partitions the 2D space forming the intersection between adjacent 3D sub-spaces.

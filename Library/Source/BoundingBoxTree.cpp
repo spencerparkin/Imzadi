@@ -118,6 +118,55 @@ void BoundingBoxTree::RayCast(const Ray& ray, RayCastResult* rayCastResult) cons
 	rayCastResult->SetHitData(hitData);
 }
 
+bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResult* collisionResult) const
+{
+	const BoundingBoxNode* node = shape->node;
+	if (!node)
+	{
+		GetError()->AddErrorMessage("The given shape is not inserted into an AABB tree.");
+		return false;
+	}
+
+	if (node->tree != this)
+	{
+		GetError()->AddErrorMessage("The given shape is not a member of this AABB tree.");
+		return false;
+	}
+
+	std::list<const BoundingBoxNode*> nodeQueue;
+	nodeQueue.push_back(node);
+	while (nodeQueue.size() > 0)
+	{
+		std::list<const BoundingBoxNode*>::iterator iter = nodeQueue.begin();
+		node = *iter;
+		nodeQueue.erase(iter);
+
+		for (const BoundingBoxNode* childNode : *node->childNodeArray)
+		{
+			AxisAlignedBoundingBox intersection;
+			if (intersection.Intersect(childNode->box, shape->GetBoundingBox()))
+				nodeQueue.push_back(childNode);
+		}
+
+		for (auto pair : *node->shapeMap)
+		{
+			const Shape* otherShape = pair.second;
+			if (shape == otherShape)
+				continue;
+
+			AxisAlignedBoundingBox intersection;
+			if (intersection.Intersect(otherShape->GetBoundingBox(), shape->GetBoundingBox()))
+			{
+				// TODO: Write this.  I feel like we need a cache of pairs where each pair
+				//       does not necessarily represent an actual collision.  Invalidation
+				//       of a cached pair should happen whenever a shape is modified.
+			}
+		}
+	}
+
+	return true;
+}
+
 //--------------------------------- BoundingBoxNode ---------------------------------
 
 BoundingBoxNode::BoundingBoxNode(BoundingBoxNode* parentNode, BoundingBoxTree* tree)

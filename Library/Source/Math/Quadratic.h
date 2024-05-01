@@ -46,6 +46,6 @@ namespace Collision
 		double Descriminant() const;
 
 	public:
-		double A, B, C;		//< These are the real coeficients of this quadratic polynomial.
+		double A, B, C;		///< These are the real coeficients of this quadratic polynomial.
 	};
 }

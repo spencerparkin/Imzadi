@@ -126,7 +126,8 @@ namespace Collision
 		/**
 		 * Stall until all collision tasks (queries or commands) are complete.  Once this function has returned,
 		 * all previously issued commands will have been executed, and every call to ObtainQueryResult with a
-		 * valid query handle will succeed.
+		 * valid query handle will succeed.  In other words, no command or query is pending or in flight once
+		 * this call returns with success.
 		 * 
 		 * @return True is returned on success; false, otherwise.
 		 */

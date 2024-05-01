@@ -19,10 +19,6 @@ set(LIBRARY_SOURCES
     Source/Result.h
     Source/BoundingBoxTree.cpp
     Source/BoundingBoxTree.h
-    Source/CollisionPairCalculator.cpp
-    Source/CollisionPairCalculator.h
-    Source/CollisionPair.cpp
-    Source/CollisionPair.h
     Source/Defines.h
     Source/Math/AxisAlignedBoundingBox.cpp
     Source/Math/AxisAlignedBoundingBox.h

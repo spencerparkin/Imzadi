@@ -175,9 +175,9 @@ namespace Collision
 
 	private:
 
-		ShapeID shapeID;				//< This is a unique identifier that can be used to safely refer to this node on any thread.
-		static ShapeID nextShapeID;		//< This is the ID of the next shape to be allocated by the system.
-		BoundingBoxNode* node;			//< This is the node of the bounding-box tree that contains this shape.
+		ShapeID shapeID;				///< This is a unique identifier that can be used to safely refer to this node on any thread.
+		static ShapeID nextShapeID;		///< This is the ID of the next shape to be allocated by the system.
+		BoundingBoxNode* node;			///< This is the node of the bounding-box tree that contains this shape.
 
 	protected:
 
@@ -186,13 +186,13 @@ namespace Collision
 		 */
 		struct Cache
 		{
-			Transform worldToObject;			//< This should be calculated as the inverse of this shape's object-to-world transform.
-			AxisAlignedBoundingBox boundingBox;	//< This should be calculated as the smallest AABB that contains this shape.
+			Transform worldToObject;			///< This should be calculated as the inverse of this shape's object-to-world transform.
+			AxisAlignedBoundingBox boundingBox;	///< This should be calculated as the smallest AABB that contains this shape.
 		};
 
-		Transform objectToWorld;	//< A shape is described in object space and then realized in world space using this transform.
-		Vector3 debugColor;			//< This color is used to render the shape for debugging purposes.
-		mutable Cache cache;		//< This is cached data about the shape that can be gleaned as a function of the shape's defining characteristics.  The cache is used for efficiency purposes.
-		mutable bool cacheValid;	//< This flag indicates whethere our cache is currently valid.  It becomes invalid whenever our object-to-world transform changes, or other defining characteristics of the shape.
+		Transform objectToWorld;	///< A shape is described in object space and then realized in world space using this transform.
+		Vector3 debugColor;			///< This color is used to render the shape for debugging purposes.
+		mutable Cache cache;		///< This is cached data about the shape that can be gleaned as a function of the shape's defining characteristics.  The cache is used for efficiency purposes.
+		mutable bool cacheValid;	///< This flag indicates whethere our cache is currently valid.  It becomes invalid whenever our object-to-world transform changes, or other defining characteristics of the shape.
 	};
 }

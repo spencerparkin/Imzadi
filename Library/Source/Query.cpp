@@ -123,9 +123,26 @@ CollisionQuery::CollisionQuery()
 
 /*virtual*/ Result* CollisionQuery::ExecuteQuery(Thread* thread)
 {
-	// TODO: Write this.
-	// TODO: Note that if the underlying system is smart, work to see if A collides with B will not be duplicated to find that B collides with A.
-	return nullptr;
+	Shape* shape = thread->FindShape(this->shapeID);
+	if (!shape)
+	{
+		auto errorResult = ErrorResult::Create();
+		errorResult->SetErrorMessage(std::format("Failed to find a shape with ID {}.", this->shapeID));
+		return errorResult;
+	}
+	
+	auto collisionResult = CollisionQueryResult::Create();
+	BoundingBoxTree& tree = thread->GetBoundingBoxTree();
+	if (!tree.CalculateCollision(shape, collisionResult))
+	{
+		CollisionQueryResult::Free(collisionResult);
+
+		auto errorResult = ErrorResult::Create();
+		errorResult->SetErrorMessage(std::format("Failed to calculate collision result for shape with ID {}.", this->shapeID));
+		return errorResult;
+	}
+
+	return collisionResult;
 }
 
 /*static*/ CollisionQuery* CollisionQuery::Create()

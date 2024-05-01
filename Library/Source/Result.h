@@ -84,8 +84,8 @@ namespace Collision
 		 */
 		struct RenderLine
 		{
-			LineSegment line;	//< The user should render this line's geometry, given here in world space coordinates.
-			Vector3 color;		//< The user should render the line with this color to differentiate it from other elements of the collision world.
+			LineSegment line;	///< The user should render this line's geometry, given here in world space coordinates.
+			Vector3 color;		///< The user should render the line with this color to differentiate it from other elements of the collision world.
 		};
 
 		/**
@@ -134,10 +134,10 @@ namespace Collision
 		 */
 		struct HitData
 		{
-			ShapeID shapeID;			//< This is the ID of the collision shape that was hit by the ray, if any.  It is zero if not hit occured.
-			Vector3 surfacePoint;		//< This is the point on the surface of the shape where the ray hit it.
-			Vector3 surfaceNormal;		//< This is the normal to the surface of the shape where it was hit.
-			double alpha;				//< Mainly used for internal purposes, this is the distance from ray origin along the ray to the hit point.
+			ShapeID shapeID;			///< This is the ID of the collision shape that was hit by the ray, if any.  It is zero if not hit occured.
+			Vector3 surfacePoint;		///< This is the point on the surface of the shape where the ray hit it.
+			Vector3 surfaceNormal;		///< This is the normal to the surface of the shape where it was hit.
+			double alpha;				///< Mainly used for internal purposes, this is the distance from ray origin along the ray to the hit point.
 		};
 
 		/**
@@ -173,15 +173,13 @@ namespace Collision
 		static TransformResult* Create();
 
 	public:
-		Transform transform;		//< This is the returned transform.
+		Transform transform;		///< This is the returned transform.
 	};
 
 	/**
-	 * Instances of this class contain all the information returned by a
-	 * collision query, which is simply a list of collision pairs.  Each pair
-	 * details a collision between two shapes.  One of these shapes will always
-	 * be the shape specified in the collision query.  Additional information,
-	 * such as contact points and penetration depths will be provided.
+	 * An instance of this class describes all the ways that a collision
+	 * shape is intersecting (or approximately in contact with) other
+	 * collision shapes within the collision world.
 	 * 
 	 * Important: The results presented here are not thread-safe!  You will
 	 * be given raw const-pointers to collision shape instances, but these
@@ -190,9 +188,9 @@ namespace Collision
 	 * go do other important work, then, only when the results of the queries
 	 * are absolutely necessary before the application can continue, the collision
 	 * system should be stalled (or flushed, if you will), at which point, you
-	 * can safely examine all query results, and then act upon them (e.g., resolving
-	 * constraints or collisions or generating impulses, etc.)  All this would
-	 * typically happen in a single frame.
+	 * can safely examine all query results, and then act upon them (e.g., resolve
+	 * constraints, generate impulses, etc.)  All this would typically happen in
+	 * a single frame.
 	 */
 	class COLLISION_LIB_API CollisionQueryResult : public Result
 	{
@@ -202,6 +200,11 @@ namespace Collision
 
 		static CollisionQueryResult* Create();
 
-		// TODO: Add collision pair list here.
+		const Shape* shape;
+
+		// TODO: Add list of contacts here.  A contact should detail the minimal
+		//       distance needed to travel and in what direction so that the
+		//       shape in question and the other shape are no longer intersecting
+		//       with non-zero overlap, but just touching.
 	};
 }
