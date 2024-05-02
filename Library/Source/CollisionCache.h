@@ -99,8 +99,9 @@ namespace Collision
 		ShapeID GetOtherShapeID(ShapeID shapeID) const;
 
 		/**
-		 * Return the translation vector that would move the shape with the given ID in
-		 * such a way so as to put the shapes in this pair out of collision.
+		 * Return the minimal translation vector that would move the shape with the given ID in
+		 * such a way so as to put the shapes in this pair out of collision.  It could serve as an
+		 * approximation for a contact normal, I suppose.
 		 * 
 		 * @param[in] shapeID This is expected to be of the IDs of the two shapes in this collision status pair.
 		 */
@@ -108,7 +109,8 @@ namespace Collision
 
 		/**
 		 * Return a point approximating the center of overlap, if any, between the two shapes in this collision status pair.
-		 * It is left undefined if the pair are not actually in collision.
+		 * It is left undefined if the pair are not actually in collision.  It could serve as an approximation for a contact
+		 * point, I suppose.
 		 */
 		const Vector3& GetCollectionCenter() const { return this->collisionCenter; }
 
@@ -120,7 +122,7 @@ namespace Collision
 
 	public:
 		bool inCollision;				///< Are the shapes in this pair thought to be in collision/overlapping?
-		Vector3 collisionCenter;		///< This is an approximate center of the overlap region between the two shapes, if they are thought to be in collision; undefined, otherwise.  It can serve as an approximation for a contact point, I suppose.
+		Vector3 collisionCenter;		///< This is an approximate center of the overlap region between the two shapes, if they are thought to be in collision; undefined, otherwise.
 		Vector3 separationDelta;		///< This is a minimal translation delta that, if added to shape A or subtracted from shape B, will get them into a state of at most touching.  It is undefined if the shapes are not thought to be in collision.
 
 	private:

@@ -135,7 +135,7 @@ namespace Collision
 		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< These are shapes in this node's space that cannot fit in a sub-space.
 
 		// TODO: One way to overcome one of the limitations I see with this AABB tree is to replace the above shapeMap with
-		//       yet another tree that partitions the 2D space forming the intersection between adjacent 3D sub-spaces.
+		//       yet another tree that partitions the 2D space forming the intersection (or bondary) between adjacent 3D sub-spaces.
 		//       I would hold off on this optimization, though, until I can get everything else working without it.
 		//       For example, we could use a BSP tree.
 	};
