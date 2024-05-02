@@ -161,12 +161,15 @@ namespace Collision
 	 * here, nor do we try to solve for the moment of impact between two shapes.
 	 * In other words, time is not a variable that we consider here at all.
 	 * Rather, what we do is determine which shapes are touching or in non-zero overlap
-	 * with one another, and then the minimum movement necessary on the part of either
-	 * shape in order to get them into a state where they are at most touching.
-	 * The recommended direction either shape could move in order to separate may not
-	 * correspond to the direction they moved to come in contact with one another in
-	 * the first place.  A more sophisticated query may be written later that does
-	 * try to take time into account.
+	 * with this query's shape, and then the minimum linear movement necessary on the part of
+	 * either shape in order to get them into a state where they are at most touching one another.
+	 * The recommended direction this either shape could move in order to separate
+	 * may not correspond to the direction they may have moved to come in contact with one another,
+	 * or have any basis in physical reality, such as a bounce reflection trajectory.  However,
+	 * the said direction might be approximated as a contact normal.
+	 * 
+	 * A more sophisticated query may be written later that does try to take time into account,
+	 * and prevent tunneling.
 	 */
 	class COLLISION_LIB_API CollisionQuery : public ShapeQuery
 	{

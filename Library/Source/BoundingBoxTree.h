@@ -4,6 +4,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Shape.h"
 #include "Result.h"
+#include "CollisionCache.h"
 #include <vector>
 #include <unordered_map>
 
@@ -78,6 +79,7 @@ namespace Collision
 	private:
 		BoundingBoxNode* rootNode;
 		AxisAlignedBoundingBox collisionWorldExtents;
+		mutable CollisionCache collisionCache;
 	};
 
 	/**

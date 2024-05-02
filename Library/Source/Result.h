@@ -134,7 +134,7 @@ namespace Collision
 		 */
 		struct HitData
 		{
-			ShapeID shapeID;			///< This is the ID of the collision shape that was hit by the ray, if any.  It is zero if not hit occured.
+			ShapeID shapeID;			///< This is the ID of the collision shape that was hit by the ray, if any.  It is zero if no hit occured.
 			Vector3 surfacePoint;		///< This is the point on the surface of the shape where the ray hit it.
 			Vector3 surfaceNormal;		///< This is the normal to the surface of the shape where it was hit.
 			double alpha;				///< Mainly used for internal purposes, this is the distance from ray origin along the ray to the hit point.
@@ -176,15 +176,17 @@ namespace Collision
 		Transform transform;		///< This is the returned transform.
 	};
 
+	class ShapePairCollisionStatus;
+
 	/**
 	 * TODO: Figure it out.
 	 * 
 	 * Important: The results presented here are not thread-safe!  You will
-	 * be given raw const-pointers to collision shape instances, but these
-	 * are only valid if no queries or commands are pending or in flight.
+	 * be given raw pointers to collision shape instances with read/write access,
+	 * but these are only valid if no queries or commands are pending or in flight.
 	 * The best practice is for the application to make all necessary queries,
-	 * go do other important work, then, only when the results of the queries
-	 * are absolutely necessary before the application can continue, the collision
+	 * go do other important work, then (only when the results of the queries
+	 * are absolutely necessary before the application can continue) the collision
 	 * system should be stalled (or flushed, if you will), at which point, you
 	 * can safely examine all query results, and then act upon them (e.g., resolve
 	 * constraints, generate impulses, etc.)  All this would typically happen in
@@ -201,6 +203,19 @@ namespace Collision
 		 */
 		static CollisionQueryResult* Create();
 
-		// TODO: Figure this out.
+		/**
+		 * This is used internally to populate the query result.
+		 */
+		void AddCollisionStatus(ShapePairCollisionStatus* collisionStatus);
+
+		/**
+		 * Get this result's set of ShapePairCollisionStatus class instances.
+		 * Each pair will be a valid collision pair between two shapes, one of
+		 * which is the shape specified in the original collision query.
+		 */
+		const std::vector<ShapePairCollisionStatus*>& GetCollisionStatusArray() const { return *this->collisionStatusArray; }
+
+	private:
+		std::vector<ShapePairCollisionStatus*>* collisionStatusArray;
 	};
 }

@@ -11,6 +11,7 @@ Shape::Shape(bool temporary)
 	this->shapeID = temporary ? 0 : nextShapeID++;
 	this->cacheValid = false;
 	this->objectToWorld.SetIdentity();
+	this->revisionNumber = 0;
 }
 
 /*virtual*/ Shape::~Shape()
@@ -58,6 +59,7 @@ void Shape::SetObjectToWorldTransform(const Transform& objectToWorld)
 {
 	this->objectToWorld = objectToWorld;
 	this->cacheValid = false;
+	this->BumpRevisionNumber();
 }
 
 const Transform& Shape::GetObjectToWorldTransform() const

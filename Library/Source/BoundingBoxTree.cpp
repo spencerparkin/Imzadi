@@ -96,6 +96,8 @@ bool BoundingBoxTree::Remove(Shape* shape)
 
 void BoundingBoxTree::Clear()
 {
+	this->collisionCache.Clear();
+
 	delete this->rootNode;
 	this->rootNode = nullptr;
 }
@@ -157,9 +159,12 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 			AxisAlignedBoundingBox intersection;
 			if (intersection.Intersect(otherShape->GetBoundingBox(), shape->GetBoundingBox()))
 			{
-				// TODO: Write this.  I feel like we need a cache of pairs where each pair
-				//       does not necessarily represent an actual collision.  Invalidation
-				//       of a cached pair should happen whenever a shape is modified.
+				ShapePairCollisionStatus* collisionStatus = this->collisionCache.DetermineCollisionStatusOfShapes(shape, otherShape);
+				COLL_SYS_ASSERT(collisionStatus != nullptr);
+				if (collisionStatus && collisionStatus->inCollision)
+				{
+					collisionResult->AddCollisionStatus(collisionStatus);
+				}
 			}
 		}
 	}

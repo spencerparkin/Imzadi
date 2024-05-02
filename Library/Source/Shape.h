@@ -173,6 +173,18 @@ namespace Collision
 		 */
 		const Vector3& GetDebugRenderColor() const { return this->debugColor; }
 
+		/**
+		 * Return a number that should change every time this collision shape is changed in any
+		 * way that would effect its collision status.
+		 */
+		uint64_t GetRevisionNumber() const { return this->revisionNumber; }
+
+		/**
+		 * Increment a number that shuld change every time this collisio nshape is changed in any
+		 * way that would effect its collision status.
+		 */
+		void BumpRevisionNumber() { this->revisionNumber++; }
+
 	private:
 
 		ShapeID shapeID;				///< This is a unique identifier that can be used to safely refer to this node on any thread.
@@ -194,5 +206,6 @@ namespace Collision
 		Vector3 debugColor;			///< This color is used to render the shape for debugging purposes.
 		mutable Cache cache;		///< This is cached data about the shape that can be gleaned as a function of the shape's defining characteristics.  The cache is used for efficiency purposes.
 		mutable bool cacheValid;	///< This flag indicates whethere our cache is currently valid.  It becomes invalid whenever our object-to-world transform changes, or other defining characteristics of the shape.
+		uint64_t revisionNumber;	///< This is used in the collision cache mechanism.  Any change to the shape should bump this number.
 	};
 }

@@ -146,13 +146,20 @@ TransformResult::TransformResult()
 
 CollisionQueryResult::CollisionQueryResult()
 {
+	this->collisionStatusArray = new std::vector<ShapePairCollisionStatus*>();
 }
 
 /*virtual*/ CollisionQueryResult::~CollisionQueryResult()
 {
+	delete this->collisionStatusArray;
 }
 
 /*static*/ CollisionQueryResult* CollisionQueryResult::Create()
 {
 	return new CollisionQueryResult();
+}
+
+void CollisionQueryResult::AddCollisionStatus(ShapePairCollisionStatus* collisionStatus)
+{
+	this->collisionStatusArray->push_back(collisionStatus);
 }
