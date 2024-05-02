@@ -2,7 +2,9 @@
 #include "CollisionCache.h"
 #include "Shape.h"
 #include "Shapes/Sphere.h"
+#include "Shapes/Capsule.h"
 #include "Math/LineSegment.h"
+#include "Error.h"
 
 using namespace Collision;
 
@@ -38,14 +40,78 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 
 	Vector3 centerDelta = centerB - centerA;
 	double distance = centerDelta.Length();
-	double radiiSum = sphereA->GetRadias() + sphereB->GetRadias();
+	double radiiSum = sphereA->GetRadius() + sphereB->GetRadius();
 
 	if (distance < radiiSum)
 	{
 		collisionStatus->inCollision = true;
-		collisionStatus->collisionCenter = LineSegment(centerA, centerB).Lerp(sphereA->GetRadias() / radiiSum);
+		collisionStatus->collisionCenter = LineSegment(centerA, centerB).Lerp(sphereA->GetRadius() / radiiSum);
 		collisionStatus->separationDelta = centerDelta.Normalized() * (distance - radiiSum);
 	}
 
 	return collisionStatus;
+}
+
+//------------------------------ SphereCapsuleCollisionCalculator ------------------------------
+
+SphereCapsuleCollisionCalculator::SphereCapsuleCollisionCalculator()
+{
+}
+
+/*virtual*/ SphereCapsuleCollisionCalculator::~SphereCapsuleCollisionCalculator()
+{
+}
+
+/*virtual*/ ShapePairCollisionStatus* SphereCapsuleCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	auto sphere = dynamic_cast<const SphereShape*>(shapeA);
+	auto capsule = dynamic_cast<const CapsuleShape*>(shapeB);
+
+	if (!sphere || !capsule)
+	{
+		sphere = dynamic_cast<const SphereShape*>(shapeB);
+		capsule = dynamic_cast<const CapsuleShape*>(shapeA);
+	}
+
+	if (!sphere || !capsule)
+	{
+		GetError()->AddErrorMessage("Failed to cast given shapes to sphere and capsule.");
+		return nullptr;
+	}
+
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+
+	LineSegment capsuleSpine(capsule->GetVertex(0), capsule->GetVertex(1));
+	capsuleSpine = capsule->GetObjectToWorldTransform().TransformLineSegment(capsuleSpine);
+	Vector3 sphereCenter = sphere->GetObjectToWorldTransform().TransformPoint(sphere->GetCenter());
+
+	Vector3 closestPoint = capsuleSpine.ClosestPointTo(sphereCenter);
+	Vector3 delta = sphereCenter - closestPoint;
+	double distance = delta.Length();
+	double radiiSum = sphere->GetRadius() + capsule->GetRadius();
+
+	if (distance < radiiSum)
+	{
+		collisionStatus->inCollision = true;
+		collisionStatus->collisionCenter = closestPoint + delta * (capsule->GetRadius() / radiiSum);
+		collisionStatus->separationDelta = delta.Normalized() * (distance - radiiSum);
+	}
+
+	return collisionStatus;
+}
+
+//------------------------------ CapsuleCapsuleCollisionCalculator ------------------------------
+
+CapsuleCapsuleCollisionCalculator::CapsuleCapsuleCollisionCalculator()
+{
+}
+
+/*virtual*/ CapsuleCapsuleCollisionCalculator::~CapsuleCapsuleCollisionCalculator()
+{
+}
+
+/*virtual*/ ShapePairCollisionStatus* CapsuleCapsuleCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	// TODO: Here I think we need to solve for the shortest line-segment that connects two given line-segments.
+	return nullptr;
 }

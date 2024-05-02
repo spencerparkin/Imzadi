@@ -31,14 +31,37 @@ namespace Collision
 	};
 
 	/**
-	 * Provide the knowledge and means to calculate the collision status between
-	 * two given sphere shapes.
+	 * Calculate the collision status between two given sphere shapes.
 	 */
 	class COLLISION_LIB_API SphereSphereCollisionCalculator : public CollisionCalculator
 	{
 	public:
 		SphereSphereCollisionCalculator();
 		virtual ~SphereSphereCollisionCalculator();
+
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
+
+	/**
+	 * Calculate the collision status between a sphere and a capsule.
+	 */
+	class COLLISION_LIB_API SphereCapsuleCollisionCalculator : public CollisionCalculator
+	{
+	public:
+		SphereCapsuleCollisionCalculator();
+		virtual ~SphereCapsuleCollisionCalculator();
+
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
+
+	/**
+	 * Calculate the collision status between two capsules.
+	 */
+	class COLLISION_LIB_API CapsuleCapsuleCollisionCalculator : public CollisionCalculator
+	{
+	public:
+		CapsuleCapsuleCollisionCalculator();
+		virtual ~CapsuleCapsuleCollisionCalculator();
 
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};

@@ -28,6 +28,12 @@ namespace Collision
 		double Length() const;
 
 		/**
+		 * Calculate and return the point on this line segment that is closest
+		 * to the given point.
+		 */
+		Vector3 ClosestPointTo(const Vector3& point) const;
+
+		/**
 		 * Calculate and return the shortest distance from the given point
 		 * to any point on this line segment.
 		 */

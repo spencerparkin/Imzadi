@@ -69,7 +69,7 @@ namespace Collision
 		/**
 		 * Get the radius of the sphere.
 		 */
-		double GetRadias() const { return this->radius; }
+		double GetRadius() const { return this->radius; }
 
 		/**
 		 * Debug-draw this sphere shape in world-space.

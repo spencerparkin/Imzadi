@@ -14,7 +14,12 @@ CollisionCache::CollisionCache()
 	this->calculatorMap = new CollisionCalculatorMap();
 
 	this->AddCalculator<SphereSphereCollisionCalculator>(Shape::TypeID::SPHERE, Shape::TypeID::SPHERE);
-	// TODO: Add more calculators here.
+	this->AddCalculator<SphereCapsuleCollisionCalculator>(Shape::TypeID::SPHERE, Shape::TypeID::CAPSULE);
+	this->AddCalculator<CapsuleCapsuleCollisionCalculator>(Shape::TypeID::CAPSULE, Shape::TypeID::CAPSULE);
+
+	// TODO: I recall that the Bullet collision library had some magic algorithm that was a generalization
+	//       of a collision calculator that could handle general shapes if a specific shape calculator
+	//       was not available.  Maybe research what the name of that algorithm was and how it worked?
 }
 
 /*virtual*/ CollisionCache::~CollisionCache()

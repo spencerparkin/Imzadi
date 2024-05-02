@@ -35,7 +35,7 @@ double LineSegment::Length() const
 	return (this->point[1] - this->point[0]).Length();
 }
 
-double LineSegment::ShortestDistanceTo(const Vector3& point) const
+Vector3 LineSegment::ClosestPointTo(const Vector3& point) const
 {
 	Vector3 lineVector = this->point[1] - this->point[0];
 	double lineLength = lineVector.Length();
@@ -44,11 +44,16 @@ double LineSegment::ShortestDistanceTo(const Vector3& point) const
 	double projectedLength = pointVector.Dot(unitLineVector);
 
 	if (projectedLength <= 0.0)
-		return pointVector.Length();
+		return this->point[0];
 	else if (projectedLength >= lineLength)
-		return (point - this->point[1]).Length();
+		return this->point[1];
 
-	return (point - (this->point[0] + unitLineVector * projectedLength)).Length();
+	return this->point[0] + unitLineVector * projectedLength;
+}
+
+double LineSegment::ShortestDistanceTo(const Vector3& point) const
+{
+	return (point - this->ClosestPointTo(point)).Length();
 }
 
 double LineSegment::ShortestDistanceTo(const LineSegment& lineSegment) const
