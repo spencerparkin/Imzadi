@@ -407,24 +407,17 @@ void Canvas::Tick()
 				auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
 				if (collisionResult)
 				{
-					const Shape* shape = collisionResult->GetShape();
-
 					const std::vector<ShapePairCollisionStatus*>& collisionArray = collisionResult->GetCollisionStatusArray();
-					std::vector<Command*> commandArray;
 					for (auto* collisionStatus : collisionArray)
 					{
 						Transform resolverTransform;
 						resolverTransform.SetIdentity();
-						resolverTransform.translation = collisionStatus->separationDelta * ((collisionStatus->shapeA == shape) ? 1.0 : -1.0);
+						resolverTransform.translation = collisionStatus->GetSeparationDelta(this->selectedShapeID);
 						auto command = system->Create<ObjectToWorldCommand>();
-						command->SetShapeID(shape->GetShapeID());
-						command->objectToWorld = resolverTransform * shape->GetObjectToWorldTransform();
-						commandArray.push_back(command);
-					}
-
-					// Now that we're done processing all queries it is safe to issue commands.
-					for (auto command : commandArray)
+						command->SetShapeID(this->selectedShapeID);
+						command->objectToWorld = resolverTransform * collisionResult->GetObjectToWorldTransform();
 						system->IssueCommand(command);
+					}
 				}
 
 				system->Free<Result>(result);

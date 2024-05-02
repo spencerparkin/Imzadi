@@ -3,6 +3,7 @@
 #include "Defines.h"
 #include "Shape.h"
 #include "Math/LineSegment.h"
+#include "Math/Transform.h"
 #include <vector>
 #include <string>
 
@@ -182,17 +183,6 @@ namespace Collision
 	 * Instances of this class are results of collision queries, and simply consist
 	 * of a set of collision pairs.  See the ShapePairCollisionStatus class for
 	 * more information.
-	 * 
-	 * Important: The results presented here are not thread-safe!  You will
-	 * be given raw pointers to collision shape instances with read-only access,
-	 * but these are only valid if no queries or commands are pending or in flight.
-	 * The best practice is for the application to make all necessary queries,
-	 * go do other important work, then (only when the results of the queries
-	 * are absolutely necessary before the application can continue) the collision
-	 * system should be stalled (or flushed, if you will), at which point, you
-	 * can safely examine all query results, and then act upon them (e.g., resolve
-	 * constraints, generate impulses, etc.)  All this would typically happen in
-	 * a single frame.
 	 */
 	class COLLISION_LIB_API CollisionQueryResult : public Result
 	{
@@ -218,22 +208,28 @@ namespace Collision
 		const std::vector<ShapePairCollisionStatus*>& GetCollisionStatusArray() const { return *this->collisionStatusArray; }
 
 		/**
-		 * This is used internally to fulfill the query result.
+		 * This is used internally to set the ID of the shape in question.
 		 */
-		void SetShape(const Shape* shape) { this->shape = shape; }
+		void SetShapeID(ShapeID shapeID) { this->shapeID = shapeID; }
 
 		/**
-		 * Get read-only access to the collision shape of the collision query.
-		 * Be weary of thread-safety.  Note that you shuld never try to modify
-		 * a shape directly.  Rather, you must do it indirectly via commands issued
-		 * to the collision system, because any change to a shape may cause a number
-		 * of spacial-sorting considerations to change, and cause cache invalidations
-		 * to occur.
+		 * Get the ID of the shape that was used in the collision query.
 		 */
-		const Shape* GetShape() const { return this->shape; }
+		ShapeID GetShapeID() const { return this->shapeID; }
+
+		/**
+		 * This is used internally to set the object-to-world transform of the shape in question.
+		 */
+		void SetObjectToWorldTransform(const Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
+
+		/**
+		 * Get the object-to-world transform of the shape that was used in the collision query.
+		 */
+		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
 
 	private:
 		std::vector<ShapePairCollisionStatus*>* collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
-		const Shape* shape;		///< For convenience, this holds the shape in question that was the subject of the collision query.
+		ShapeID shapeID;			///< For convenience, this holds the ID of the shape in question that was the subject of the collision query.
+		Transform objectToWorld;	///< For convenience, this is the object-to-world transform of the shape in question at the time of query.
 	};
 }

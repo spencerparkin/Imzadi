@@ -2,12 +2,12 @@
 
 #include "Defines.h"
 #include "Math/Vector3.h"
+#include "Shape.h"
 #include <unordered_map>
 #include <string>
 
 namespace Collision
 {
-	class Shape;
 	class ShapePairCollisionStatus;
 	class CollisionCalculator;
 
@@ -66,17 +66,15 @@ namespace Collision
 	};
 
 	/**
-	 * These are the elements of the collision cache, and what are returned in a collision query.
-	 * Users get read-only access to the shapes and should not try to mutate them directly.
-	 * Rather, collision commands should be used to change anything about a shape.  This is because
-	 * changes to a shape can cause a bunch of internal cache invalidation and spacial re-sorting
-	 * to occur.  Further, such commands should not be issued until all query results have been
-	 * fully processed, unless you know what you're doing, I suppose.
+	 * These are the elements of the collision cache, and what are returned in a collision query result.
+	 * Note that raw shape pointers are included in this class/structure, but should not be accessed
+	 * by the collision system user.  They are made private, but don't be tempted to hack the structure,
+	 * because read/write or even just read-only access to them is not thread-safe.
 	 */
 	class COLLISION_LIB_API ShapePairCollisionStatus
 	{
 	public:
-		ShapePairCollisionStatus();
+		ShapePairCollisionStatus(const Shape* shapeA, const Shape* shapeB);
 		virtual ~ShapePairCollisionStatus();
 
 		/**
@@ -87,13 +85,48 @@ namespace Collision
 		 */
 		bool IsValid() const;
 
+		/**
+		 * Get the ID of one of the two shapes involved in this collision status pari.
+		 * 
+		 * @param[in] i If this is even, shape A's ID is returned; B, otherwise.
+		 */
+		ShapeID GetShapeID(int i) const;
+
+		/**
+		 * Get the ID of the shape involved in this collision status pair that
+		 * does not have the given ID.
+		 */
+		ShapeID GetOtherShapeID(ShapeID shapeID) const;
+
+		/**
+		 * Return the translation vector that would move the shape with the given ID in
+		 * such a way so as to put the shapes in this pair out of collision.
+		 * 
+		 * @param[in] shapeID This is expected to be of the IDs of the two shapes in this collision status pair.
+		 */
+		Vector3 GetSeparationDelta(ShapeID shapeID) const;
+
+		/**
+		 * Return a point approximating the center of overlap, if any, between the two shapes in this collision status pair.
+		 * It is left undefined if the pair are not actually in collision.
+		 */
+		const Vector3& GetCollectionCenter() const { return this->collisionCenter; }
+
+		/**
+		 * If this is a valid collision status pair, then tell the caller if the two shapes
+		 * involved are actually in collision (or overlap) with one another.
+		 */
+		bool AreInCollision() const { return this->inCollision; }
+
 	public:
 		bool inCollision;				///< Are the shapes in this pair thought to be in collision/overlapping?
-		const Shape* shapeA;			///< This is the first shape in the collision pair.  Order doesn't matter.
-		const Shape* shapeB;			///< This is the second shape in the collision pair.  Again, order doesn't matter.
+		Vector3 collisionCenter;		///< This is an approximate center of the overlap region between the two shapes, if they are thought to be in collision; undefined, otherwise.  It can serve as an approximation for a contact point, I suppose.
+		Vector3 separationDelta;		///< This is a minimal translation delta that, if added to shape A or subtracted from shape B, will get them into a state of at most touching.  It is undefined if the shapes are not thought to be in collision.
+
+	private:
 		uint64_t revisionNumberA;		///< This cache entry was calculated when shape A was at this revision number.
 		uint64_t revisionNumberB;		///< This cache entry was calculated when shape B was at this revision number.
-		Vector3 collisionCenter;		///< This is an approximate center of the overlap region between the two shapes, if they are thought to be in collision; undefined, otherwise.  It can be approximated as a contact point, I suppose.
-		Vector3 separationDelta;		///< This is a minimal translation delta that, if added to shape A or subtracted from shape B, will get them into a state of at most touching.  It is undefined if the shapes are not thought to be in collision.
+		const Shape* shapeA;			///< This is the first shape in the collision pair.  Order doesn't matter.
+		const Shape* shapeB;			///< This is the second shape in the collision pair.  Again, order doesn't matter.
 	};
 }

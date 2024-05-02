@@ -117,13 +117,13 @@ void CollisionCache::ClearCalculatorMap()
 
 //----------------------------- ShapePairCollisionStatus -----------------------------
 
-ShapePairCollisionStatus::ShapePairCollisionStatus()
+ShapePairCollisionStatus::ShapePairCollisionStatus(const Shape* shapeA, const Shape* shapeB)
 {
 	this->inCollision = false;
-	this->shapeA = nullptr;
-	this->shapeB = nullptr;
-	this->revisionNumberA = 0;
-	this->revisionNumberB = 0;
+	this->shapeA = shapeA;
+	this->shapeB = shapeB;
+	this->revisionNumberA = shapeA->GetRevisionNumber();
+	this->revisionNumberB = shapeB->GetRevisionNumber();
 }
 
 /*virtual*/ ShapePairCollisionStatus::~ShapePairCollisionStatus()
@@ -139,4 +139,32 @@ bool ShapePairCollisionStatus::IsValid() const
 		return false;
 
 	return true;
+}
+
+ShapeID ShapePairCollisionStatus::GetShapeID(int i) const
+{
+	if (i % 2 == 0)
+		return this->shapeA->GetShapeID();
+	else
+		return this->shapeB->GetShapeID();
+}
+
+ShapeID ShapePairCollisionStatus::GetOtherShapeID(ShapeID shapeID) const
+{
+	if (shapeID == this->shapeA->GetShapeID())
+		return this->shapeB->GetShapeID();
+	else if (shapeID == this->shapeB->GetShapeID())
+		return this->shapeA->GetShapeID();
+
+	return 0;
+}
+
+Vector3 ShapePairCollisionStatus::GetSeparationDelta(ShapeID shapeID) const
+{
+	if (shapeID == this->shapeA->GetShapeID())
+		return this->separationDelta;
+	else if (shapeID == this->shapeB->GetShapeID())
+		return -this->separationDelta;
+
+	return Vector3(0.0, 0.0, 0.0);
 }

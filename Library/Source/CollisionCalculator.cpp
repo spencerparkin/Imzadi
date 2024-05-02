@@ -31,13 +31,7 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 	auto sphereA = static_cast<const SphereShape*>(shapeA);
 	auto sphereB = static_cast<const SphereShape*>(shapeB);
 
-	auto collisionStatus = new ShapePairCollisionStatus();
-
-	collisionStatus->shapeA = shapeA;
-	collisionStatus->shapeB = shapeB;
-
-	collisionStatus->revisionNumberA = shapeA->GetRevisionNumber();
-	collisionStatus->revisionNumberB = shapeB->GetRevisionNumber();
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
 	Vector3 centerA = sphereA->GetObjectToWorldTransform().TransformPoint(sphereA->GetCenter());
 	Vector3 centerB = sphereB->GetObjectToWorldTransform().TransformPoint(sphereB->GetCenter());

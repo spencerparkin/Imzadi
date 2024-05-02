@@ -18,6 +18,11 @@ namespace Collision
 	 * space and is found in world space using an object-to-world transform.  The whole point of the
 	 * collision system is to let the user create shapes in the world, move them around, and query
 	 * to see which are in collision with which other shapes, and how.
+	 * 
+	 * Note that users create these on the main thread and then hand them over to the collision thread.
+	 * The time until the shapes are handed over is the only time the user can directly mutate the shape.
+	 * Once it's handed over, the user can only safely refer to a shape by ID, and can only safely mutate
+	 * that shape indirectly through the use of collision system commands.
 	 */
 	class COLLISION_LIB_API Shape
 	{

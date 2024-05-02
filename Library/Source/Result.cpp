@@ -147,7 +147,7 @@ TransformResult::TransformResult()
 CollisionQueryResult::CollisionQueryResult()
 {
 	this->collisionStatusArray = new std::vector<ShapePairCollisionStatus*>();
-	this->shape = nullptr;
+	this->shapeID = 0;
 }
 
 /*virtual*/ CollisionQueryResult::~CollisionQueryResult()

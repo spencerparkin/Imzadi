@@ -164,7 +164,7 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 			{
 				ShapePairCollisionStatus* collisionStatus = this->collisionCache.DetermineCollisionStatusOfShapes(shape, otherShape);
 				COLL_SYS_ASSERT(collisionStatus != nullptr);
-				if (collisionStatus && collisionStatus->inCollision)
+				if (collisionStatus && collisionStatus->AreInCollision())
 				{
 					collisionResult->AddCollisionStatus(collisionStatus);
 				}

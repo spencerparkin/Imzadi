@@ -132,7 +132,8 @@ CollisionQuery::CollisionQuery()
 	}
 	
 	auto collisionResult = CollisionQueryResult::Create();
-	collisionResult->SetShape(shape);
+	collisionResult->SetShapeID(shape->GetShapeID());
+	collisionResult->SetObjectToWorldTransform(shape->GetObjectToWorldTransform());
 
 	BoundingBoxTree& tree = thread->GetBoundingBoxTree();
 	if (!tree.CalculateCollision(shape, collisionResult))
