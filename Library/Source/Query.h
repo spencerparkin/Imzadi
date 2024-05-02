@@ -128,8 +128,7 @@ namespace Collision
 	/**
 	 * Query for a collision shape's object-to-world transform.  This query is added
 	 * for completeness and perhaps debugging, but I don't see it really being needed in
-	 * practice, because shape pointers are returned as part of the result of a collision
-	 * query, from which you have access to a shape's object-to-world transform.
+	 * practice.
 	 * 
 	 * A TransformResult class instance is returned by this query.
 	 */
