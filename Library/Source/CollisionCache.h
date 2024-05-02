@@ -16,8 +16,8 @@ namespace Collision
 	 * shape B, then you will get the same result as if you had queried shape B against
 	 * shgape A.  Further, if two shapes don't move and they're again queried against one
 	 * another, then you will, of course, get the same result.  The purposes of this cache
-	 * is to prevent the work of calculating a collision between two shapes from being redone
-	 * in the cases thus described.
+	 * is to prevent the work of calculating a collision between two shapes from being
+	 * needlessly redone, such as in the cases thus described.
 	 */
 	class COLLISION_LIB_API CollisionCache
 	{
@@ -67,9 +67,11 @@ namespace Collision
 
 	/**
 	 * These are the elements of the collision cache, and what are returned in a collision query.
-	 * You can mutate the shapes in this pair, but note that it is not a thread-safe thing to do
-	 * unless there are no command or queries pending or in flight.  Mutators on the shapes should
-	 * be sure to bump revision numbers to invalidate this cache entry.
+	 * Users get read-only access to the shapes and should not try to mutate them directly.
+	 * Rather, collision commands should be used to change anything about a shape.  This is because
+	 * changes to a shape can cause a bunch of internal cache invalidation and spacial re-sorting
+	 * to occur.  Further, such commands should not be issued until all query results have been
+	 * fully processed, unless you know what you're doing, I suppose.
 	 */
 	class COLLISION_LIB_API ShapePairCollisionStatus
 	{
@@ -87,8 +89,8 @@ namespace Collision
 
 	public:
 		bool inCollision;				///< Are the shapes in this pair thought to be in collision/overlapping?
-		Shape* shapeA;					///< This is the first shape in the collision pair.  Order doesn't matter.
-		Shape* shapeB;					///< This is the second shape in the collision pair.  Again, order doesn't matter.
+		const Shape* shapeA;			///< This is the first shape in the collision pair.  Order doesn't matter.
+		const Shape* shapeB;			///< This is the second shape in the collision pair.  Again, order doesn't matter.
 		uint64_t revisionNumberA;		///< This cache entry was calculated when shape A was at this revision number.
 		uint64_t revisionNumberB;		///< This cache entry was calculated when shape B was at this revision number.
 		Vector3 collisionCenter;		///< This is an approximate center of the overlap region between the two shapes, if they are thought to be in collision; undefined, otherwise.  It can be approximated as a contact point, I suppose.

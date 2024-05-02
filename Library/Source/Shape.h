@@ -180,8 +180,9 @@ namespace Collision
 		uint64_t GetRevisionNumber() const { return this->revisionNumber; }
 
 		/**
-		 * Increment a number that shuld change every time this collisio nshape is changed in any
-		 * way that would effect its collision status.
+		 * Increment a number that should change every time this collision shape is changed in any
+		 * way that could effect its collision status.  This is done internally where appropriate,
+		 * and there is no need to do it externally.  Redundant calls to this are fine.
 		 */
 		void BumpRevisionNumber() { this->revisionNumber++; }
 

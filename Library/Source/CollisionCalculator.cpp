@@ -33,8 +33,11 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 
 	auto collisionStatus = new ShapePairCollisionStatus();
 
-	collisionStatus->shapeA = const_cast<Shape*>(shapeA);
-	collisionStatus->shapeB = const_cast<Shape*>(shapeB);
+	collisionStatus->shapeA = shapeA;
+	collisionStatus->shapeB = shapeB;
+
+	collisionStatus->revisionNumberA = shapeA->GetRevisionNumber();
+	collisionStatus->revisionNumberB = shapeB->GetRevisionNumber();
 
 	Vector3 centerA = sphereA->GetObjectToWorldTransform().TransformPoint(sphereA->GetCenter());
 	Vector3 centerB = sphereB->GetObjectToWorldTransform().TransformPoint(sphereB->GetCenter());
@@ -47,7 +50,7 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 	{
 		collisionStatus->inCollision = true;
 		collisionStatus->collisionCenter = LineSegment(centerA, centerB).Lerp(sphereA->GetRadias() / radiiSum);
-		collisionStatus->separationDelta = centerDelta.Normalized() * (radiiSum - distance);
+		collisionStatus->separationDelta = centerDelta.Normalized() * (distance - radiiSum);
 	}
 
 	return collisionStatus;

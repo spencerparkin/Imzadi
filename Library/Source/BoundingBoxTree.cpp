@@ -135,8 +135,11 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 		return false;
 	}
 
+	// We have to start our traversal at the root, not the node of the shape,
+	// because there are some shapes that straddle boundaries at a higher level
+	// in the tree that can still intersect with shapes at a lower level.
 	std::list<const BoundingBoxNode*> nodeQueue;
-	nodeQueue.push_back(node);
+	nodeQueue.push_back(this->rootNode);
 	while (nodeQueue.size() > 0)
 	{
 		std::list<const BoundingBoxNode*>::iterator iter = nodeQueue.begin();

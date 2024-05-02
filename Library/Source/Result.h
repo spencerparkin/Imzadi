@@ -179,10 +179,12 @@ namespace Collision
 	class ShapePairCollisionStatus;
 
 	/**
-	 * TODO: Figure it out.
+	 * Instances of this class are results of collision queries, and simply consist
+	 * of a set of collision pairs.  See the ShapePairCollisionStatus class for
+	 * more information.
 	 * 
 	 * Important: The results presented here are not thread-safe!  You will
-	 * be given raw pointers to collision shape instances with read/write access,
+	 * be given raw pointers to collision shape instances with read-only access,
 	 * but these are only valid if no queries or commands are pending or in flight.
 	 * The best practice is for the application to make all necessary queries,
 	 * go do other important work, then (only when the results of the queries
@@ -215,7 +217,23 @@ namespace Collision
 		 */
 		const std::vector<ShapePairCollisionStatus*>& GetCollisionStatusArray() const { return *this->collisionStatusArray; }
 
+		/**
+		 * This is used internally to fulfill the query result.
+		 */
+		void SetShape(const Shape* shape) { this->shape = shape; }
+
+		/**
+		 * Get read-only access to the collision shape of the collision query.
+		 * Be weary of thread-safety.  Note that you shuld never try to modify
+		 * a shape directly.  Rather, you must do it indirectly via commands issued
+		 * to the collision system, because any change to a shape may cause a number
+		 * of spacial-sorting considerations to change, and cause cache invalidations
+		 * to occur.
+		 */
+		const Shape* GetShape() const { return this->shape; }
+
 	private:
-		std::vector<ShapePairCollisionStatus*>* collisionStatusArray;
+		std::vector<ShapePairCollisionStatus*>* collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
+		const Shape* shape;		///< For convenience, this holds the shape in question that was the subject of the collision query.
 	};
 }

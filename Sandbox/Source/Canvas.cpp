@@ -4,6 +4,7 @@
 #include "Command.h"
 #include "Query.h"
 #include "Result.h"
+#include "CollisionCache.h"
 #include <gl/GLU.h>
 #include <wx/utils.h>
 #include <time.h>
@@ -390,6 +391,44 @@ void Canvas::Tick()
 			command->objectToWorld = this->camera.GetCameraToWorldTransform() * this->shapeToCamera;
 			command->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(command);
+		}
+
+		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_B))
+		{
+			System* system = wxGetApp().GetCollisionSystem();
+
+			auto collisionQuery = system->Create<CollisionQuery>();
+			collisionQuery->SetShapeID(this->selectedShapeID);
+			TaskID taskID = 0;
+			if (system->MakeQuery(collisionQuery, taskID))
+			{
+				system->FlushAllTasks();
+				Result* result = system->ObtainQueryResult(taskID);
+				auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+				if (collisionResult)
+				{
+					const Shape* shape = collisionResult->GetShape();
+
+					const std::vector<ShapePairCollisionStatus*>& collisionArray = collisionResult->GetCollisionStatusArray();
+					std::vector<Command*> commandArray;
+					for (auto* collisionStatus : collisionArray)
+					{
+						Transform resolverTransform;
+						resolverTransform.SetIdentity();
+						resolverTransform.translation = collisionStatus->separationDelta * ((collisionStatus->shapeA == shape) ? 1.0 : -1.0);
+						auto command = system->Create<ObjectToWorldCommand>();
+						command->SetShapeID(shape->GetShapeID());
+						command->objectToWorld = resolverTransform * shape->GetObjectToWorldTransform();
+						commandArray.push_back(command);
+					}
+
+					// Now that we're done processing all queries it is safe to issue commands.
+					for (auto command : commandArray)
+						system->IssueCommand(command);
+				}
+
+				system->Free<Result>(result);
+			}
 		}
 	}
 
