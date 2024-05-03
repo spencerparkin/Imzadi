@@ -4,6 +4,7 @@
 #include "Math/Transform.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include <stdint.h>
+#include <atomic>
 
 namespace Collision
 {
@@ -94,6 +95,19 @@ namespace Collision
 		 * Calculate and return the area or volume of this shape.
 		 */
 		virtual double CalcSize() const = 0;
+
+		/**
+		 * During insertion into the AABB tree, if splitting is allowed, and splitting is
+		 * supported by this shape, then this method can be used to split this shape across
+		 * box boundaries so that it can be inserted deeper into the tree.  The original
+		 * shape is deleted and the split parts of the shape live on.
+		 * 
+		 * @param[in] plane This is the plane across which this shape is split.
+		 * @param[out] shapeBack This will be assigned the part of the shape on the back side of the given plane.
+		 * @param[out] shapeFront This will be assigned the part of the shape on the front side of the given plane.
+		 * @return False is returned by default, indicating that no split can occur.  True is returned and a split is performed otherwise.
+		 */
+		virtual bool Split(const Plane& plane, Shape*& shapeBack, Shape*& shapeFront) const;
 
 		/**
 		 * Tell the caller if this shape contains the given point as
@@ -193,9 +207,9 @@ namespace Collision
 
 	private:
 
-		ShapeID shapeID;				///< This is a unique identifier that can be used to safely refer to this node on any thread.
-		static ShapeID nextShapeID;		///< This is the ID of the next shape to be allocated by the system.
-		BoundingBoxNode* node;			///< This is the node of the bounding-box tree that contains this shape.
+		ShapeID shapeID;							///< This is a unique identifier that can be used to safely refer to this node on any thread.
+		static std::atomic<ShapeID> nextShapeID;	///< This is the ID of the next shape to be allocated by the system.
+		BoundingBoxNode* node;						///< This is the node of the bounding-box tree that contains this shape.
 
 	protected:
 

@@ -55,6 +55,14 @@ namespace Collision
 		virtual double CalcSize() const override;
 
 		/**
+		 * Split this polygon across the given plane into two separate polygons.
+		 * This method is used during insertion into the AABB tree if splitting is allowed.
+		 * Unlike many shapes, what's nice about convex polygons is that when
+		 * split across a plane, the two halfs are also convex polygons.
+		 */
+		virtual bool Split(const Plane& plane, Shape*& shapeBack, Shape*& shapeFront) const override;
+
+		/**
 		 * Tell the caller if the given point is contained within this polygon or on one of its edges.
 		 */
 		virtual bool ContainsPoint(const Vector3& point) const override;

@@ -38,9 +38,10 @@ namespace Collision
 		 * that operate on this tree are left undefined.
 		 * 
 		 * @param[in] shape This is the shape to insert into this tree.  It must not be a member of some other tree.  I can already be a member of this tree.
+		 * @param[in] shapeSplittingAllowed For shapes that are typically meant to be static, this flag can be set to true, and then our insertion algorithm will try to split the shape during insertion to get it deeper into the tree.
 		 * @return True is returned on success; false, otherwise.
 		 */
-		bool Insert(Shape* shape);
+		bool Insert(Shape* shape, bool shapeSplittingAllowed = false);
 
 		/**
 		 * Remove the given shape from this bounding-box tree.
@@ -133,10 +134,5 @@ namespace Collision
 		std::vector<BoundingBoxNode*>* childNodeArray;		///< These are the sub-space partitions of this node.
 		BoundingBoxNode* parentNode;						///< This is a pointer to the parent space containing this node.
 		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< These are shapes in this node's space that cannot fit in a sub-space.
-
-		// TODO: One way to overcome one of the limitations I see with this AABB tree is to replace the above shapeMap with
-		//       yet another tree that partitions the 2D space forming the intersection (or bondary) between adjacent 3D sub-spaces.
-		//       I would hold off on this optimization, though, until I can get everything else working without it.
-		//       For example, we could use a BSP tree.
 	};
 }

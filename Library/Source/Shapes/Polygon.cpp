@@ -103,6 +103,12 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	return area;
 }
 
+/*virtual*/ bool PolygonShape::Split(const Plane& plane, Shape*& shapeBack, Shape*& shapeFront) const
+{
+	// TODO: Write this.
+	return false;
+}
+
 void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) const
 {
 	for (const Vector3& vertex : *this->vertexArray)

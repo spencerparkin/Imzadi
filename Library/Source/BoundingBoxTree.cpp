@@ -19,8 +19,10 @@ BoundingBoxTree::BoundingBoxTree(const AxisAlignedBoundingBox& collisionWorldExt
 	this->Clear();
 }
 
-bool BoundingBoxTree::Insert(Shape* shape)
+bool BoundingBoxTree::Insert(Shape* shape, bool shapeSplittingAllowed /*= false*/)
 {
+	// TODO: Use shapeSplittingAllowed flag here.
+	
 	if (!this->rootNode)
 	{
 		this->rootNode = new BoundingBoxNode(nullptr, this);

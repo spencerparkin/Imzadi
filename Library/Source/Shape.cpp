@@ -2,7 +2,7 @@
 
 using namespace Collision;
 
-ShapeID Shape::nextShapeID = 1;
+std::atomic<ShapeID> Shape::nextShapeID(1);
 
 Shape::Shape(bool temporary)
 {
@@ -53,6 +53,11 @@ void Shape::RegenerateCacheIfNeeded() const
 		return false;
 
 	return true;
+}
+
+/*virtual*/ bool Shape::Split(const Plane& plane, Shape*& shapeBack, Shape*& shapeFront) const
+{
+	return false;
 }
 
 void Shape::SetObjectToWorldTransform(const Transform& objectToWorld)

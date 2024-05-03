@@ -11,6 +11,8 @@ set(LIBRARY_SOURCES
     Source/Query.h
     Source/Command.cpp
     Source/Command.h
+    Source/Loader.cpp
+    Source/Loader.h
     Source/CollisionCache.cpp
     Source/CollisionCache.h
     Source/CollisionCalculator.cpp
