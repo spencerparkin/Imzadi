@@ -30,10 +30,14 @@ set(LIBRARY_SOURCES
     Source/Math/AxisAlignedBoundingBox.h
     Source/Math/Matrix3x3.cpp
     Source/Math/Matrix3x3.h
+    Source/Math/Matrix2x2.cpp
+    Source/Math/Matrix2x2.h
     Source/Math/Transform.cpp
     Source/Math/Transform.h
     Source/Math/Vector3.cpp
     Source/Math/Vector3.h
+    Source/Math/Vector2.cpp
+    Source/Math/Vector2.h
     Source/Math/Ray.cpp
     Source/Math/Ray.h
     Source/Math/Plane.cpp

@@ -114,6 +114,10 @@ CapsuleCapsuleCollisionCalculator::CapsuleCapsuleCollisionCalculator()
 
 /*virtual*/ ShapePairCollisionStatus* CapsuleCapsuleCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
-	// TODO: Here I think we need to solve for the shortest line-segment that connects two given line-segments.
+	auto capsuleA = static_cast<const CapsuleShape*>(shapeA);
+	auto capsuleB = static_cast<const CapsuleShape*>(shapeB);
+
+	// TODO: Use Matrix2x2 to calculate shortest line-segment connecting the spines of the given capsules.
+
 	return nullptr;
 }

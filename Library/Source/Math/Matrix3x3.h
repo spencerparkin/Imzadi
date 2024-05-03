@@ -209,7 +209,7 @@ namespace Collision
 	};
 
 	/**
-	 * Calculate and return the sum of the two given matrices.  This is a commutative operation.
+	 * Calculate and return the sum of the two given 3x3 matrices.  This is a commutative operation.
 	 * 
 	 * @param[in] matrixA The first matrix taken in the sum.
 	 * @param[in] matrixB The second matrix taken in the sum.
@@ -218,7 +218,7 @@ namespace Collision
 	COLLISION_LIB_API Matrix3x3 operator+(const Matrix3x3& matrixA, const Matrix3x3& matrixB);
 
 	/**
-	 * Calculate and return the difference of the two given matrices.  This is a non-commutative operation.
+	 * Calculate and return the difference of the two given 3x3 matrices.  This is a non-commutative operation.
 	 * 
 	 * @param[in] matrixA The first matrix taken in the difference.
 	 * @param[in] matrixB The second matrix taken in the difference.
@@ -227,7 +227,7 @@ namespace Collision
 	COLLISION_LIB_API Matrix3x3 operator-(const Matrix3x3& matrixA, const Matrix3x3& matrixB);
 
 	/**
-	 * Calculate and return the product of the two given matrices.  This is a non-commutative operation.
+	 * Calculate and return the product of the two given 3x3 matrices.  This is a non-commutative operation.
 	 * 
 	 * @param[in] matrixA The first matrix taken in the product.
 	 * @param[in] matrixB The second matrix taken in the product.
@@ -236,7 +236,7 @@ namespace Collision
 	COLLISION_LIB_API Matrix3x3 operator*(const Matrix3x3& matrixA, const Matrix3x3& matrixB);
 
 	/**
-	 * Calculate and return the quotient of the two given matrices.  This is a non-commutative operation,
+	 * Calculate and return the quotient of the two given 3x3 matrices.  This is a non-commutative operation,
 	 * and is left undefined in the case that matrixB is singular (non-invertable.)
 	 * 
 	 * @param[in] matrixA The first matrix taken in the quotient (the dividend.)
@@ -246,7 +246,7 @@ namespace Collision
 	COLLISION_LIB_API Matrix3x3 operator/(const Matrix3x3& matrixA, const Matrix3x3& matrixB);
 
 	/**
-	 * Calculate and return the given matrix scaled by the given scalar.  This is a commutative operation.
+	 * Calculate and return the given 3x3 matrix scaled by the given scalar.  This is a commutative operation.
 	 * 
 	 * @param[in] matrix This is the matrix to be scaled.
 	 * @param[in] scalar This is the amount by which the matrix is scaled.
@@ -261,7 +261,7 @@ namespace Collision
 
 	/**
 	 * Treating the given vector as a 3x1 column vector, calculate and return
-	 * the prodcut of the given matrix and the given vector, in that order.
+	 * the prodcut of the given 3x3 matrix and the given vector, in that order.
 	 * 
 	 * @param[in] matrix This is the matrix taken in the product.
 	 * @param[in] vector This is the vector taken in the product.
@@ -271,7 +271,7 @@ namespace Collision
 
 	/**
 	 * Treating the given vector as a 1x3 column vector, calculate and return
-	 * the product of the given vector and the given matrix, in that order.
+	 * the product of the given vector and the given 3x3 matrix, in that order.
 	 * 
 	 * @param[in] vector This is the vector taken in the product.
 	 * @param[in] matrix This is the matrix taken in the product.

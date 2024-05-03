@@ -74,22 +74,6 @@ bool Vector3::IsPoint(const Vector3& point, double tolerance /*= 0.0*/) const
 	return (*this - point).Length() <= tolerance;
 }
 
-bool Vector3::IsSameAs(const Vector3& point, uint32_t componentFlags, double tolerance /*= 0.0*/) const
-{
-	double taxiCabDistance = 0.0;
-
-	if ((componentFlags & COLL_SYS_X_DIM_FLAG) != 0)
-		taxiCabDistance += ::fabs(this->x - point.x);
-
-	if ((componentFlags & COLL_SYS_Y_DIM_FLAG) != 0)
-		taxiCabDistance += ::fabs(this->y - point.y);
-
-	if ((componentFlags & COLL_SYS_Z_DIM_FLAG) != 0)
-		taxiCabDistance += ::fabs(this->z - point.z);
-
-	return taxiCabDistance < tolerance;
-}
-
 bool Vector3::IsAnyPoint(const std::vector<Vector3>& pointArray, double tolerance /*= 0.0*/) const
 {
 	for (const Vector3& point : pointArray)
