@@ -30,6 +30,11 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	return TypeID::POLYGON;
 }
 
+/*static*/ Shape::TypeID PolygonShape::StaticTypeID()
+{
+	return TypeID::POLYGON;
+}
+
 /*virtual*/ void PolygonShape::RecalculateCache() const
 {
 	Shape::RecalculateCache();

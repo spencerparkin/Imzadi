@@ -44,10 +44,12 @@ namespace Collision
 
 	private:
 
-		template<typename T>
-		void AddCalculator(uint32_t typeIDA, uint32_t typeIDB)
+		template<typename T, typename ShapeTypeA, typename ShapeTypeB>
+		void AddCalculator()
 		{
 			CollisionCalculator* calculator = new T();
+			uint32_t typeIDA = ShapeTypeA::StaticTypeID();
+			uint32_t typeIDB = ShapeTypeB::StaticTypeID();
 			uint64_t calculatorKey = this->MakeCalculatorKey(typeIDA, typeIDB);
 			this->calculatorMap->insert(std::pair<uint64_t, CollisionCalculator*>(calculatorKey, calculator));
 		}

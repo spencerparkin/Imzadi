@@ -25,6 +25,11 @@ BoxShape::BoxShape(bool temporary) : Shape(temporary)
 	return TypeID::BOX;
 }
 
+/*static*/ Shape::TypeID BoxShape::StaticTypeID()
+{
+	return TypeID::BOX;
+}
+
 void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool worldSpace) const
 {
 	for (int i = 0; i < 2; i++)

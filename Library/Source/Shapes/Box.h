@@ -22,6 +22,11 @@ namespace Collision
 		virtual TypeID GetShapeTypeID() const override;
 
 		/**
+		 * Return what we do in GetShapeTypeID().
+		 */
+		static TypeID StaticTypeID();
+
+		/**
 		 * See Shape::RecalculateCache.
 		 */
 		virtual void RecalculateCache() const override;

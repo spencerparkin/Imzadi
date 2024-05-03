@@ -1,6 +1,10 @@
 #include "CollisionCache.h"
 #include "CollisionCalculator.h"
 #include "Shape.h"
+#include "Shapes/Sphere.h"
+#include "Shapes/Box.h"
+#include "Shapes/Capsule.h"
+#include "Shapes/Polygon.h"
 #include "Error.h"
 #include <format>
 
@@ -13,9 +17,9 @@ CollisionCache::CollisionCache()
 	this->cacheMap = new ShapePairCollisionStatusMap();
 	this->calculatorMap = new CollisionCalculatorMap();
 
-	this->AddCalculator<SphereSphereCollisionCalculator>(Shape::TypeID::SPHERE, Shape::TypeID::SPHERE);
-	this->AddCalculator<SphereCapsuleCollisionCalculator>(Shape::TypeID::SPHERE, Shape::TypeID::CAPSULE);
-	this->AddCalculator<CapsuleCapsuleCollisionCalculator>(Shape::TypeID::CAPSULE, Shape::TypeID::CAPSULE);
+	this->AddCalculator<SphereSphereCollisionCalculator, SphereShape, SphereShape>();
+	this->AddCalculator<SphereCapsuleCollisionCalculator, SphereShape, CapsuleShape>();
+	this->AddCalculator<CapsuleCapsuleCollisionCalculator, CapsuleShape, CapsuleShape>();
 
 	// TODO: I recall that the Bullet collision library had some magic algorithm that was a generalization
 	//       of a collision calculator that could handle general shapes if a specific shape calculator

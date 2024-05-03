@@ -25,6 +25,11 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	return TypeID::SPHERE;
 }
 
+/*static*/ Shape::TypeID SphereShape::StaticTypeID()
+{
+	return TypeID::SPHERE;
+}
+
 /*virtual*/ void SphereShape::RecalculateCache() const
 {
 	Shape::RecalculateCache();

@@ -45,7 +45,7 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 	if (distance < radiiSum)
 	{
 		collisionStatus->inCollision = true;
-		collisionStatus->collisionCenter = LineSegment(centerA, centerB).Lerp(sphereA->GetRadius() / radiiSum);
+		collisionStatus->collisionCenter = LineSegment(centerA, centerB).Lerp(sphereA->GetRadius() / radiiSum);	// TODO: Need to test this calculation.
 		collisionStatus->separationDelta = centerDelta.Normalized() * (distance - radiiSum);
 	}
 
@@ -66,11 +66,13 @@ SphereCapsuleCollisionCalculator::SphereCapsuleCollisionCalculator()
 {
 	auto sphere = dynamic_cast<const SphereShape*>(shapeA);
 	auto capsule = dynamic_cast<const CapsuleShape*>(shapeB);
+	double directionFactor = -1.0;
 
 	if (!sphere || !capsule)
 	{
 		sphere = dynamic_cast<const SphereShape*>(shapeB);
 		capsule = dynamic_cast<const CapsuleShape*>(shapeA);
+		directionFactor = 1.0;
 	}
 
 	if (!sphere || !capsule)
@@ -93,8 +95,8 @@ SphereCapsuleCollisionCalculator::SphereCapsuleCollisionCalculator()
 	if (distance < radiiSum)
 	{
 		collisionStatus->inCollision = true;
-		collisionStatus->collisionCenter = closestPoint + delta * (capsule->GetRadius() / radiiSum);
-		collisionStatus->separationDelta = delta.Normalized() * (distance - radiiSum);
+		collisionStatus->collisionCenter = closestPoint + delta * (capsule->GetRadius() / radiiSum);	// TODO: Need to test this calculation.
+		collisionStatus->separationDelta = delta.Normalized() * (distance - radiiSum) * directionFactor;
 	}
 
 	return collisionStatus;

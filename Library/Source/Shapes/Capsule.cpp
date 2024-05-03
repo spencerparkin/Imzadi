@@ -23,7 +23,12 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ Shape::TypeID CapsuleShape::GetShapeTypeID() const
 {
-	return TypeID::POLYGON;
+	return TypeID::CAPSULE;
+}
+
+/*static*/ Shape::TypeID CapsuleShape::StaticTypeID()
+{
+	return TypeID::CAPSULE;
 }
 
 /*virtual*/ void CapsuleShape::RecalculateCache() const
