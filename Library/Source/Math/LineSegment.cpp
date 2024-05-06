@@ -104,18 +104,16 @@ bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const 
 
 	Vector3 delta = a - c;
 	Vector2 vector;
-	vector.x = b.Dot(delta);
-	vector.y = -d.Dot(delta);
+	vector.x = -b.Dot(delta);
+	vector.y = d.Dot(delta);
 	vector = matrixInv * vector;
 
 	double alpha = vector.x;
 	double beta = vector.y;
-	double lengthA = lineSegmentA.Length();
-	double lengthB = lineSegmentB.Length();
 
-	alpha = COLL_SYS_MIN(alpha, lengthA);
+	alpha = COLL_SYS_MIN(alpha, 1.0);
 	alpha = COLL_SYS_MAX(alpha, 0.0);
-	beta = COLL_SYS_MIN(beta, lengthB);
+	beta = COLL_SYS_MIN(beta, 1.0);
 	beta = COLL_SYS_MAX(beta, 0.0);
 
 	this->point[0] = lineSegmentA.Lerp(alpha);

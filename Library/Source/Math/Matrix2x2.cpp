@@ -184,7 +184,7 @@ namespace Collision
 			{
 				product.ele[i][j] =
 					matrixA.ele[i][0] * matrixB.ele[0][j] +
-					matrixB.ele[i][1] * matrixB.ele[1][j];
+					matrixA.ele[i][1] * matrixB.ele[1][j];
 			}
 		}
 
