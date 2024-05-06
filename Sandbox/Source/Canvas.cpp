@@ -270,8 +270,8 @@ void Canvas::Tick()
 	SensativityParams sensativityParams;
 	this->GetSensativityParams(sensativityParams);
 
-	Vector3 leftStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::LEFT);
-	Vector3 rightStickVector = this->controller.GetAnalogJoyStick(Controller::JoyStick::RIGHT);
+	Vector3 leftStickVector = this->controller.GetAnalogJoyStick(Controller::Side::LEFT);
+	Vector3 rightStickVector = this->controller.GetAnalogJoyStick(Controller::Side::RIGHT);
 
 	Vector3 xAxis, yAxis, zAxis;
 	this->camera.GetCameraFrame(xAxis, yAxis, zAxis);
@@ -352,6 +352,50 @@ void Canvas::Tick()
 
 	if (this->selectedShapeID != 0)
 	{
+		double leftTrigger = this->controller.GetTrigger(Controller::Side::LEFT);
+		double rightTrigger = this->controller.GetTrigger(Controller::Side::RIGHT);
+		if (leftTrigger != 0.0 || rightTrigger != 0.0)
+		{
+			System* system = wxGetApp().GetCollisionSystem();
+
+			auto query = system->Create<ObjectToWorldQuery>();
+			query->SetShapeID(this->selectedShapeID);
+			TaskID taskID = 0;
+			if (system->MakeQuery(query, taskID))
+			{
+				system->FlushAllTasks();
+
+				Result* result = system->ObtainQueryResult(taskID);
+				auto transformResult = dynamic_cast<TransformResult*>(result);
+				if (transformResult)
+				{
+					Transform shapeToWorld = transformResult->transform;
+					const Transform& cameraToWorld = this->camera.GetCameraToWorldTransform();
+
+					Vector3 xAxis, yAxis, zAxis;
+					cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
+
+					constexpr double rotationSpeed = 0.01;
+					double xAngle = leftTrigger * rotationSpeed;
+					double yAngle = rightTrigger * rotationSpeed;
+
+					Transform xAxisRotation, yAxisRotation;
+					xAxisRotation.matrix.SetFromAxisAngle(xAxis, xAngle);
+					yAxisRotation.matrix.SetFromAxisAngle(yAxis, yAngle);
+
+					shapeToWorld = xAxisRotation * yAxisRotation * shapeToWorld;
+					shapeToWorld.matrix.Orthonormalized();
+
+					auto command = system->Create<ObjectToWorldCommand>();
+					command->objectToWorld = shapeToWorld;
+					command->SetShapeID(this->selectedShapeID);
+					system->IssueCommand(command);
+				}
+
+				system->Free<Result>(result);
+			}
+		}
+
 		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_A))
 		{
 			this->dragSelectedShape = !this->dragSelectedShape;

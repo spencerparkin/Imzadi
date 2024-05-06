@@ -13,13 +13,14 @@ public:
 
 	void Update();
 
-	enum JoyStick
+	enum Side
 	{
 		LEFT,
 		RIGHT
 	};
 
-	Collision::Vector3 GetAnalogJoyStick(JoyStick joyStick);
+	Collision::Vector3 GetAnalogJoyStick(Side side);
+	double GetTrigger(Side side);
 
 	bool ButtonPressed(DWORD buttonFlag);
 	bool ButtonReleased(DWORD buttonFlag);

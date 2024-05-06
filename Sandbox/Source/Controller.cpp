@@ -62,21 +62,21 @@ bool Controller::ButtonUp(DWORD buttonFlag)
 	return((this->GetCurrentState()->Gamepad.wButtons & buttonFlag) == 0);
 }
 
-Vector3 Controller::GetAnalogJoyStick(JoyStick joyStick)
+Vector3 Controller::GetAnalogJoyStick(Side side)
 {
 	const XINPUT_STATE* currentState = this->GetCurrentState();
 
 	int thumbX = 0, thumbY = 0;
 	int deadZone = 0;
 	
-	switch (joyStick)
+	switch (side)
 	{
-	case JoyStick::LEFT:
+	case Side::LEFT:
 		thumbX = currentState->Gamepad.sThumbLX;
 		thumbY = currentState->Gamepad.sThumbLY;
 		deadZone = XINPUT_GAMEPAD_LEFT_THUMB_DEADZONE;
 		break;
-	case JoyStick::RIGHT:
+	case Side::RIGHT:
 		thumbX = currentState->Gamepad.sThumbRX;
 		thumbY = currentState->Gamepad.sThumbRY;
 		deadZone = XINPUT_GAMEPAD_RIGHT_THUMB_DEADZONE;
@@ -95,4 +95,26 @@ Vector3 Controller::GetAnalogJoyStick(JoyStick joyStick)
 	stickVector.z = 0.0;
 	
 	return stickVector;
+}
+
+double Controller::GetTrigger(Side side)
+{
+	const XINPUT_STATE* currentState = this->GetCurrentState();
+
+	BYTE trigger = 0;
+
+	switch (side)
+	{
+	case Side::LEFT:
+		trigger = currentState->Gamepad.bLeftTrigger;
+		break;
+	case Side::RIGHT:
+		trigger = currentState->Gamepad.bRightTrigger;
+		break;
+	}
+	
+	if (trigger < XINPUT_GAMEPAD_TRIGGER_THRESHOLD)
+		return 0.0;
+
+	return double(trigger) / 255.0;
 }

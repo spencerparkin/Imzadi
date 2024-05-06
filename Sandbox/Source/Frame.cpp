@@ -122,8 +122,6 @@ void Frame::OnClearWorld(wxCommandEvent& event)
 	this->canvas->Refresh();
 }
 
-// TODO: It should be possible to click on a shape to move it with the mouse.
-//       This is a good test of the ray-cast query capability of the collision system.
 void Frame::OnAddShape(wxCommandEvent& event)
 {
 	System* system = wxGetApp().GetCollisionSystem();
@@ -148,8 +146,8 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		{
 			auto capsule = system->Create<CapsuleShape>();
 			capsule->SetRadius(2.0);
-			capsule->SetVertex(0, Vector3(-5.0, -5.0, -5.0));
-			capsule->SetVertex(1, Vector3(3.0, 3.0, 3.0));
+			capsule->SetVertex(0, Vector3(-5.0, 0.0, 0.0));
+			capsule->SetVertex(1, Vector3(5.0, 0.0, 0.0));
 			shape = capsule;
 			break;
 		}
