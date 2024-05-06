@@ -270,7 +270,7 @@ namespace Collision
 	COLLISION_LIB_API Vector3 operator*(const Matrix3x3& matrix, const Vector3& vector);
 
 	/**
-	 * Treating the given vector as a 1x3 column vector, calculate and return
+	 * Treating the given vector as a 1x3 row vector, calculate and return
 	 * the product of the given vector and the given 3x3 matrix, in that order.
 	 * 
 	 * @param[in] vector This is the vector taken in the product.

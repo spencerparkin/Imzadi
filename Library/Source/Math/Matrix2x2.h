@@ -192,7 +192,7 @@ namespace Collision
 	COLLISION_LIB_API Vector2 operator*(const Matrix2x2& matrix, const Vector2& vector);
 
 	/**
-	 * Treating the given vector as a 1x2 column vector, calculate and return
+	 * Treating the given vector as a 1x2 row vector, calculate and return
 	 * the product of the given vector and the 2x2 given matrix, in that order.
 	 *
 	 * @param[in] vector This is the vector taken in the product.

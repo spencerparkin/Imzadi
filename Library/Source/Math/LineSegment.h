@@ -61,6 +61,24 @@ namespace Collision
 		 */
 		Vector3 Lerp(double lambda) const;
 
+		/**
+		 * Set this line segment as the shortest line segment connecting the two given line segments.
+		 * Note that we can fail here in cases where there is no single shortest connector.
+		 * 
+		 * @param[in] lineSegmentA The first point of this segment will be on this given line segment.
+		 * @param[in] lineSegmentB The second point of this segment will be on this given line segment.
+		 * @return True is returned on success; false, otherwise, and this line segment is left undefined.
+		 */
+		bool SetAsShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB);
+
+		/**
+		 * Return the difference between the vertices of this line segment.
+		 * Of course, this operation will depend on the order of the points.
+		 * 
+		 * @return Return the second point minus the first point of this line segment.
+		 */
+		Vector3 GetDelta() const;
+
 	public:
 		Vector3 point[2];
 	};

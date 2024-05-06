@@ -149,3 +149,88 @@ double Matrix2x2::Determinant() const
 {
 	return this->ele[0][0] * this->ele[1][1] - this->ele[0][1] * this->ele[1][0];
 }
+
+namespace Collision
+{
+	Matrix2x2 operator+(const Matrix2x2& matrixA, const Matrix2x2& matrixB)
+	{
+		Matrix2x2 sum;
+
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 2; j++)
+				sum.ele[i][j] = matrixA.ele[i][j] + matrixB.ele[i][j];
+
+		return sum;
+	}
+
+	Matrix2x2 operator-(const Matrix2x2& matrixA, const Matrix2x2& matrixB)
+	{
+		Matrix2x2 diff;
+
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 2; j++)
+				diff.ele[i][j] = matrixA.ele[i][j] - matrixB.ele[i][j];
+
+		return diff;
+	}
+
+	Matrix2x2 operator*(const Matrix2x2& matrixA, const Matrix2x2& matrixB)
+	{
+		Matrix2x2 product;
+
+		for (int i = 0; i < 2; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				product.ele[i][j] =
+					matrixA.ele[i][0] * matrixB.ele[0][j] +
+					matrixB.ele[i][1] * matrixB.ele[1][j];
+			}
+		}
+
+		return product;
+	}
+
+	Matrix2x2 operator/(const Matrix2x2& matrixA, const Matrix2x2& matrixB)
+	{
+		return matrixA * matrixB.Inverted();
+	}
+
+	Matrix2x2 operator*(const Matrix2x2& matrix, double scalar)
+	{
+		Matrix2x2 product;
+
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 2; j++)
+				product.ele[i][j] = matrix.ele[i][j] * scalar;
+
+		return product;
+	}
+
+	Matrix2x2 operator*(double scalar, const Matrix2x2& matrix)
+	{
+		Matrix2x2 product;
+
+		for (int i = 0; i < 2; i++)
+			for (int j = 0; j < 2; j++)
+				product.ele[i][j] = matrix.ele[i][j] * scalar;
+
+		return product;
+	}
+
+	Vector2 operator*(const Matrix2x2& matrix, const Vector2& vector)
+	{
+		return Vector2(
+			vector.x * matrix.ele[0][0] + vector.y * matrix.ele[0][1],
+			vector.x * matrix.ele[1][0] + vector.y * matrix.ele[1][1]
+		);
+	}
+
+	Vector2 operator*(const Vector2& vector, const Matrix2x2& matrix)
+	{
+		return Vector2(
+			vector.x * matrix.ele[0][0] + vector.y * matrix.ele[1][0],
+			vector.x * matrix.ele[0][1] + vector.y * matrix.ele[1][1]
+		);
+	}
+}

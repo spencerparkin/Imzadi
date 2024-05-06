@@ -85,6 +85,11 @@ namespace Collision
 		const Vector3& GetVertex(int i) const;
 
 		/**
+		 * Return the line segment that serves as the spine of this capsule.
+		 */
+		const LineSegment& GetSpine() const { return this->lineSegment; }
+
+		/**
 		 * Set this capsule's radius.
 		 */
 		void SetRadius(double radius) { this->radius = radius; }

@@ -114,10 +114,27 @@ CapsuleCapsuleCollisionCalculator::CapsuleCapsuleCollisionCalculator()
 
 /*virtual*/ ShapePairCollisionStatus* CapsuleCapsuleCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+
 	auto capsuleA = static_cast<const CapsuleShape*>(shapeA);
 	auto capsuleB = static_cast<const CapsuleShape*>(shapeB);
 
-	// TODO: Use Matrix2x2 to calculate shortest line-segment connecting the spines of the given capsules.
+	LineSegment spineA = capsuleA->GetObjectToWorldTransform().TransformLineSegment(capsuleA->GetSpine());
+	LineSegment spineB = capsuleB->GetObjectToWorldTransform().TransformLineSegment(capsuleB->GetSpine());
 
-	return nullptr;
+	LineSegment shortestConnector;
+	if (shortestConnector.SetAsShortestConnector(spineA, spineB))
+	{
+		double distance = shortestConnector.Length();
+		double radiiSum = capsuleA->GetRadius() + capsuleB->GetRadius();
+
+		if (distance < radiiSum)
+		{
+			collisionStatus->inCollision = true;
+			collisionStatus->collisionCenter = Vector3(0.0, 0.0, 0.0);	// TODO: Figure this out.
+			collisionStatus->separationDelta = shortestConnector.GetDelta().Normalized() * (distance - radiiSum);
+		}
+	}
+
+	return collisionStatus;
 }
