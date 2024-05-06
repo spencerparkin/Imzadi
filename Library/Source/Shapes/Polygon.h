@@ -69,7 +69,7 @@ namespace Collision
 		virtual bool Split(const Plane& plane, Shape*& shapeBack, Shape*& shapeFront) const override;
 
 		/**
-		 * Tell the caller if the given point is contained within this polygon or on one of its edges.
+		 * Tell the caller if the given world-space point is contained within this polygon or on one of its edges.
 		 */
 		virtual bool ContainsPoint(const Vector3& point) const override;
 
@@ -181,6 +181,12 @@ namespace Collision
 		 * @param[out] worldVertexArray This array is populated with this polygon's transformed vertices.
 		 */
 		void GetWorldVertices(std::vector<Vector3>& worldVertexArray) const;
+
+		/**
+		 * Calculate and return the point on this polygon (in world space) that is closest
+		 * to the given point (also in world space.)
+		 */
+		Vector3 ClosestPointTo(const Vector3& point) const;
 
 	private:
 		/**

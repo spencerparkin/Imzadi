@@ -4,6 +4,7 @@
 #include "Shapes/Sphere.h"
 #include "Shapes/Capsule.h"
 #include "Shapes/Box.h"
+#include "Shapes/Polygon.h"
 #include "Math/LineSegment.h"
 #include "Math/Plane.h"
 #include "Error.h"
@@ -215,6 +216,54 @@ SphereBoxCollisionCalculator::SphereBoxCollisionCalculator()
 		}
 
 		collisionStatus->separationDelta = box->GetObjectToWorldTransform().TransformNormal(collisionStatus->separationDelta);
+	}
+
+	return collisionStatus;
+}
+
+//------------------------------ SpherePolygonCollisionCalculator ------------------------------
+
+SpherePolygonCollisionCalculator::SpherePolygonCollisionCalculator()
+{
+}
+
+/*virtual*/ SpherePolygonCollisionCalculator::~SpherePolygonCollisionCalculator()
+{
+}
+
+/*virtual*/ ShapePairCollisionStatus* SpherePolygonCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	auto sphere = dynamic_cast<const SphereShape*>(shapeA);
+	auto polygon = dynamic_cast<const PolygonShape*>(shapeB);
+	double directionFactor = 1.0;
+
+	if (!sphere || !polygon)
+	{
+		sphere = dynamic_cast<const SphereShape*>(shapeB);
+		polygon = dynamic_cast<const PolygonShape*>(shapeA);
+		directionFactor = -1.0;
+	}
+
+	if (!sphere || !polygon)
+	{
+		GetError()->AddErrorMessage("Failed to cast given shapes to sphere and polygon.");
+		return nullptr;
+	}
+
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+
+	Vector3 sphereCenter = sphere->GetObjectToWorldTransform().TransformPoint(sphere->GetCenter());
+	Vector3 polygonPoint = polygon->ClosestPointTo(sphereCenter);
+	Vector3 delta = sphereCenter - polygonPoint;
+	double distance = delta.Length();
+	if (distance < sphere->GetRadius())
+	{
+		collisionStatus->inCollision = true;
+		collisionStatus->collisionCenter = polygonPoint;
+		if(!delta.Normalize())
+			delta = polygon->GetPlane().unitNormal;
+			
+		collisionStatus->separationDelta = delta * (sphere->GetRadius() - distance) * directionFactor;
 	}
 
 	return collisionStatus;

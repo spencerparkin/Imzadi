@@ -573,3 +573,36 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 		iter = nextIter;
 	}
 }
+
+Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
+{
+	Plane plane = this->GetObjectToWorldTransform().TransformPlane(this->GetPlane());
+	Vector3 closestPoint = plane.ClosestPointTo(point);
+	if (this->ContainsPoint(closestPoint))
+		return closestPoint;
+
+	double smallestDistance = std::numeric_limits<double>::max();
+
+	std::vector<Vector3> worldVertexArray;
+	this->GetWorldVertices(worldVertexArray);
+
+	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
+	{
+		int j = (i + 1) % worldVertexArray.size();
+
+		const Vector3& pointA = worldVertexArray[i];
+		const Vector3& pointB = worldVertexArray[j];
+
+		LineSegment edge(pointA, pointB);
+
+		Vector3 edgePoint = edge.ClosestPointTo(point);
+		double distance = (point - edgePoint).Length();
+		if (distance < smallestDistance)
+		{
+			smallestDistance = distance;
+			closestPoint = edgePoint;
+		}
+	}
+
+	return closestPoint;
+}

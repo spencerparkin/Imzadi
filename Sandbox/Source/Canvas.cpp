@@ -370,10 +370,15 @@ void Canvas::Tick()
 				if (transformResult)
 				{
 					Transform shapeToWorld = transformResult->transform;
+					Transform worldToShape;
+					worldToShape.Invert(shapeToWorld);
+
 					const Transform& cameraToWorld = this->camera.GetCameraToWorldTransform();
 
 					Vector3 xAxis, yAxis, zAxis;
 					cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
+					xAxis = worldToShape.TransformNormal(xAxis);
+					yAxis = worldToShape.TransformNormal(yAxis);
 
 					constexpr double rotationSpeed = 0.01;
 					double xAngle = leftTrigger * rotationSpeed;
@@ -383,7 +388,7 @@ void Canvas::Tick()
 					xAxisRotation.matrix.SetFromAxisAngle(xAxis, xAngle);
 					yAxisRotation.matrix.SetFromAxisAngle(yAxis, yAngle);
 
-					shapeToWorld = xAxisRotation * yAxisRotation * shapeToWorld;
+					shapeToWorld = shapeToWorld * xAxisRotation * yAxisRotation;
 					shapeToWorld.matrix.Orthonormalized();
 
 					auto command = system->Create<ObjectToWorldCommand>();

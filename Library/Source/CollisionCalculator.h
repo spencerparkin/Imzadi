@@ -77,4 +77,16 @@ namespace Collision
 
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
+
+	/**
+	 * Calculate the collision status between a sphere and a polygon.
+	 */
+	class COLLISION_LIB_API SpherePolygonCollisionCalculator : public CollisionCalculator
+	{
+	public:
+		SpherePolygonCollisionCalculator();
+		virtual ~SpherePolygonCollisionCalculator();
+
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
 }
