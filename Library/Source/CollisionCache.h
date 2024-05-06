@@ -88,17 +88,11 @@ namespace Collision
 		bool IsValid() const;
 
 		/**
-		 * Get the ID of one of the two shapes involved in this collision status pari.
+		 * Get the ID of one of the two shapes involved in this collision status pair.
 		 * 
 		 * @param[in] i If this is even, shape A's ID is returned; B, otherwise.
 		 */
 		ShapeID GetShapeID(int i) const;
-
-		/**
-		 * Get the ID of the shape involved in this collision status pair that
-		 * does not have the given ID.
-		 */
-		ShapeID GetOtherShapeID(ShapeID shapeID) const;
 
 		/**
 		 * Return the minimal translation vector that would move the shape with the given ID in
@@ -106,6 +100,7 @@ namespace Collision
 		 * approximation for a contact normal, I suppose.
 		 * 
 		 * @param[in] shapeID This is expected to be of the IDs of the two shapes in this collision status pair.
+		 * @return The translation needed to move the given shape out of collision is returned; zero if the given shape is not a member of this pair.
 		 */
 		Vector3 GetSeparationDelta(ShapeID shapeID) const;
 
