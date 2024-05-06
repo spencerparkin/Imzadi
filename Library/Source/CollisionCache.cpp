@@ -20,6 +20,7 @@ CollisionCache::CollisionCache()
 	this->AddCalculator<SphereSphereCollisionCalculator, SphereShape, SphereShape>();
 	this->AddCalculator<SphereCapsuleCollisionCalculator, SphereShape, CapsuleShape>();
 	this->AddCalculator<CapsuleCapsuleCollisionCalculator, CapsuleShape, CapsuleShape>();
+	this->AddCalculator<SphereBoxCollisionCalculator, SphereShape, BoxShape>();
 
 	// TODO: I recall that the Bullet collision library had some magic algorithm that was a generalization
 	//       of a collision calculator that could handle general shapes if a specific shape calculator

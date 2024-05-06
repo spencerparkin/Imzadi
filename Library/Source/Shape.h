@@ -24,6 +24,11 @@ namespace Collision
 	 * The time until the shapes are handed over is the only time the user can directly mutate the shape.
 	 * Once it's handed over, the user can only safely refer to a shape by ID, and can only safely mutate
 	 * that shape indirectly through the use of collision system commands.
+	 * 
+	 * For now, only convex collision shapes are supported, but there is no requirement that this be
+	 * the case in the overall design of the system.  An arbitrary mesh that is not necessarily convex
+	 * would be the most flexible type of collision shape I can think of, but is presently well beyond
+	 * the capabilities of this system.
 	 */
 	class COLLISION_LIB_API Shape
 	{
@@ -157,8 +162,9 @@ namespace Collision
 		/**
 		 * Set this shape's transform taking it from object space to world space.
 		 * Note that to keep things simple, all calculations assume that there
-		 * is no shear or non-uniform scale in the matrix part of the given transform.
-		 * If this is not the case, then we leave the results of all calculations undefined.
+		 * is no shear or scale in the matrix part of the given transform.  In other
+		 * words, we assume that it's a rigid-body transform.  If this is not the
+		 * case, then we leave the results of all calculations undefined.
 		 */
 		void SetObjectToWorldTransform(const Transform& objectToWorld);
 

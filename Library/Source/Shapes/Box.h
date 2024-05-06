@@ -5,6 +5,8 @@
 
 namespace Collision
 {
+	class PolygonShape;
+
 	/**
 	 * This collision shape is simply a box with a given width, height and depth.
 	 * In object-space, the box is centered at origin having a width in the x-dimension,
@@ -15,6 +17,8 @@ namespace Collision
 	public:
 		BoxShape(bool temporary);
 		virtual ~BoxShape();
+
+		typedef Vector3 BoxVertexMatrix[2][2][2];
 
 		/**
 		 * See Shape::GetShapeTypeID.
@@ -85,12 +89,43 @@ namespace Collision
 		const Vector3& GetExtents() const { return this->extents; }
 
 		/**
+		 * Return the AABB that represents this box in object-space.
+		 * 
+		 * @param[out] box This box is returned in the given AABB.
+		 */
+		void GetAxisAlignedBox(AxisAlignedBoundingBox& box) const;
+
+		/**
+		 * Calculate and return the corner points of this box in a 2x2x2 matrix.
+		 * 
+		 * @param[out] boxVertices This is expected to be a 2x2x2 matrix of vectors.  If it's not, we stomp memory!
+		 * @param[in] worldSpace If true, the world-space corners are calculated; the object-space corners, otherwise.
+		 */
+		void GetCornerMatrix(BoxVertexMatrix& boxVertices, bool worldSpace) const;
+
+		/**
 		 * Calculate and return the corner points of this box.
 		 * 
 		 * @param[out] cornerPointArray This is populated with this box's corners.
 		 * @param[in] worldSpace If true, the world-space corners are calculated; the object-space corners, otherwise.
 		 */
 		void GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool worldSpace) const;
+
+		/**
+		 * Calculate and return the line segments forming the edges of this box.
+		 * 
+		 * @param[out] edgeSegmentArray This is populated with the box's edges.
+		 * @param[in] worldSpace If true, the world-space edges are calculated; the object-space corners, otherwise.
+		 */
+		void GetEdgeSegmentArray(std::vector<LineSegment>& edgeSegmentArray, bool worldSpace) const;
+
+		/**
+		 * Calculate and return the polygons forming the faces (rectangles) of this box.
+		 * 
+		 * @param[out] facePolygonArray This is populated with the box's faces.
+		 * @param[in] worldSpace If true, the world-space faces are calculated; the object-space faces, otherwise.
+		 */
+		void GetFacePolygonArray(std::vector<PolygonShape>& facePolygonArray, bool worldSpace) const;
 
 	private:
 		Vector3 extents;

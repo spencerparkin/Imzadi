@@ -76,3 +76,9 @@ bool Plane::AnyPointOnSide(const std::vector<Vector3>& pointArray, Side side) co
 
 	return false;
 }
+
+Vector3 Plane::ClosestPointTo(const Vector3& point) const
+{
+	double distance = this->SignedDistanceTo(point);
+	return point - distance * this->unitNormal;
+}

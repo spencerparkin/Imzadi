@@ -26,6 +26,7 @@ namespace Collision
 	class COLLISION_LIB_API PolygonShape : public Shape
 	{
 	public:
+		PolygonShape(const PolygonShape& polygon);
 		PolygonShape(bool temporary);
 		virtual ~PolygonShape();
 

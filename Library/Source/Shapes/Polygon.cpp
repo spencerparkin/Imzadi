@@ -9,6 +9,15 @@
 
 using namespace Collision;
 
+PolygonShape::PolygonShape(const PolygonShape& polygon) : Shape(true)
+{
+	this->vertexArray = new std::vector<Vector3>();
+	this->cachedPlaneValid = false;
+
+	for (const Vector3& vertex : *polygon.vertexArray)
+		this->vertexArray->push_back(vertex);
+}
+
 PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 {
 	this->vertexArray = new std::vector<Vector3>();

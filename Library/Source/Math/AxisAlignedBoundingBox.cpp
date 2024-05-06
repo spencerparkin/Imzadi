@@ -1,4 +1,5 @@
 #include "AxisAlignedBoundingBox.h"
+#include "LineSegment.h"
 #include "Plane.h"
 
 using namespace Collision;
@@ -208,4 +209,112 @@ void AxisAlignedBoundingBox::GetSidePlanes(std::vector<Plane>& sidePlaneArray) c
 		plane.center.SetComponents(this->maxCorner.x, this->minCorner.y, this->minCorner.z);
 		sidePlaneArray.push_back(plane);
 	}
+}
+
+void AxisAlignedBoundingBox::GetEdgeSegments(std::vector<LineSegment>& edgeSegmentArray) const
+{
+	// -X to +X
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->minCorner.y, this->minCorner.z),
+		Vector3(this->maxCorner.x, this->minCorner.y, this->minCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->maxCorner.y, this->minCorner.z),
+		Vector3(this->maxCorner.x, this->maxCorner.y, this->minCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->minCorner.y, this->maxCorner.z),
+		Vector3(this->maxCorner.x, this->minCorner.y, this->maxCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->maxCorner.y, this->maxCorner.z),
+		Vector3(this->maxCorner.x, this->maxCorner.y, this->maxCorner.z))
+	);
+
+	// -Y to +Y
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->minCorner.y, this->minCorner.z),
+		Vector3(this->minCorner.x, this->maxCorner.y, this->minCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->maxCorner.x, this->minCorner.y, this->minCorner.z),
+		Vector3(this->maxCorner.x, this->maxCorner.y, this->minCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->minCorner.y, this->maxCorner.z),
+		Vector3(this->minCorner.x, this->maxCorner.y, this->maxCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->maxCorner.x, this->minCorner.y, this->maxCorner.z),
+		Vector3(this->maxCorner.x, this->maxCorner.y, this->maxCorner.z))
+	);
+
+	// -Z to +Z
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->minCorner.y, this->minCorner.z),
+		Vector3(this->minCorner.x, this->minCorner.y, this->maxCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->maxCorner.x, this->minCorner.y, this->minCorner.z),
+		Vector3(this->maxCorner.x, this->minCorner.y, this->maxCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->minCorner.x, this->maxCorner.y, this->minCorner.z),
+		Vector3(this->minCorner.x, this->maxCorner.y, this->maxCorner.z))
+	);
+
+	edgeSegmentArray.push_back(LineSegment(
+		Vector3(this->maxCorner.x, this->maxCorner.y, this->minCorner.z),
+		Vector3(this->maxCorner.x, this->maxCorner.y, this->maxCorner.z))
+	);
+}
+
+Vector3 AxisAlignedBoundingBox::ClosestPointTo(const Vector3& point) const
+{
+	Vector3 closestPoint;
+	double smallestSquareDistance = std::numeric_limits<double>::max();
+
+	std::vector<LineSegment> edgeSegmentArray;
+	this->GetEdgeSegments(edgeSegmentArray);
+	for (const LineSegment& edge : edgeSegmentArray)
+	{
+		Vector3 edgePoint = edge.ClosestPointTo(point);
+		Vector3 delta = point - edgePoint;
+		double squareDistance = delta.Dot(delta);
+		if (squareDistance < smallestSquareDistance)
+		{
+			smallestSquareDistance = squareDistance;
+			closestPoint = edgePoint;
+		}
+	}
+
+	std::vector<Plane> sidePlaneArray;
+	this->GetSidePlanes(sidePlaneArray);
+	for (const Plane& sidePlane : sidePlaneArray)
+	{
+		Vector3 planePoint = sidePlane.ClosestPointTo(point);
+		if (this->ContainsPoint(planePoint, 1e-5))
+		{
+			Vector3 delta = point - planePoint;
+			double squareDistance = delta.Dot(delta);
+			if (squareDistance < smallestSquareDistance)
+			{
+				smallestSquareDistance = squareDistance;
+				closestPoint = planePoint;
+			}
+		}
+	}
+
+	return closestPoint;
 }

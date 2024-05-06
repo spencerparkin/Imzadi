@@ -295,6 +295,12 @@ double Matrix3x3::Determinant() const
 		+ this->ele[0][2] * (this->ele[1][0] * this->ele[2][1] - this->ele[2][0] * this->ele[1][1]);
 }
 
+bool Matrix3x3::Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) const
+{
+	// TODO: Write this.  The shear matrix performs the Gram-Schmit orthogonalization process.
+	return false;
+}
+
 namespace Collision
 {
 	Matrix3x3 operator+(const Matrix3x3& matrixA, const Matrix3x3& matrixB)

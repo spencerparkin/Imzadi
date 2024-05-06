@@ -100,6 +100,12 @@ namespace Collision
 		 */
 		bool AnyPointOnSide(const std::vector<Vector3>& pointArray, Side side) const;
 
+		/**
+		 * Calculate and return the point on this plane that is closest
+		 * to the given point.
+		 */
+		Vector3 ClosestPointTo(const Vector3& point) const;
+
 	public:
 		Vector3 center;
 		Vector3 unitNormal;

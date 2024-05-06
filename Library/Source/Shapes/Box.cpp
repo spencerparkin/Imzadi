@@ -2,6 +2,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Transform.h"
 #include "Math/Ray.h"
+#include "Polygon.h"
 #include "Result.h"
 #include <vector>
 
@@ -30,7 +31,7 @@ BoxShape::BoxShape(bool temporary) : Shape(temporary)
 	return TypeID::BOX;
 }
 
-void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool worldSpace) const
+void BoxShape::GetCornerMatrix(BoxVertexMatrix& boxVertices, bool worldSpace) const
 {
 	for (int i = 0; i < 2; i++)
 	{
@@ -38,16 +39,101 @@ void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool 
 		{
 			for (int k = 0; k < 2; k++)
 			{
-				Vector3 cornerPoint;
+				Vector3 cornerVector;
 
-				cornerPoint.x = this->extents.x * ((i == 0) ? -1.0 : 1.0);
-				cornerPoint.y = this->extents.y * ((j == 0) ? -1.0 : 1.0);
-				cornerPoint.z = this->extents.z * ((k == 0) ? -1.0 : 1.0);
+				cornerVector.x = this->extents.x * ((i == 0) ? -1.0 : 1.0);
+				cornerVector.y = this->extents.y * ((j == 0) ? -1.0 : 1.0);
+				cornerVector.z = this->extents.z * ((k == 0) ? -1.0 : 1.0);
 
-				cornerPointArray.push_back(worldSpace ? this->objectToWorld.TransformPoint(cornerPoint) : cornerPoint);
+				boxVertices[i][j][k] = worldSpace ? this->objectToWorld.TransformPoint(cornerVector) : cornerVector;
 			}
 		}
 	}
+}
+
+void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool worldSpace) const
+{
+	BoxVertexMatrix boxVertices;
+	this->GetCornerMatrix(boxVertices, worldSpace);
+
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+			for (int k = 0; k < 2; k++)
+				cornerPointArray.push_back(boxVertices[i][j][k]);
+}
+
+void BoxShape::GetEdgeSegmentArray(std::vector<LineSegment>& edgeSegmentArray, bool worldSpace) const
+{
+	BoxVertexMatrix boxVertices;
+	this->GetCornerMatrix(boxVertices, worldSpace);
+
+	LineSegment edge;
+
+	for (int i = 0; i < 2; i++)
+	{
+		for (int j = 0; j < 2; j++)
+		{
+			edge.point[0] = boxVertices[i][j][0];
+			edge.point[1] = boxVertices[i][j][1];
+			edgeSegmentArray.push_back(edge);
+
+			edge.point[0] = boxVertices[i][0][j];
+			edge.point[1] = boxVertices[i][1][j];
+			edgeSegmentArray.push_back(edge);
+
+			edge.point[0] = boxVertices[0][i][j];
+			edge.point[1] = boxVertices[1][i][j];
+			edgeSegmentArray.push_back(edge);
+		}
+	}
+}
+
+void BoxShape::GetFacePolygonArray(std::vector<PolygonShape>& facePolygonArray, bool worldSpace) const
+{
+	BoxVertexMatrix boxVertices;
+	this->GetCornerMatrix(boxVertices, worldSpace);
+
+	PolygonShape face(true);
+	face.AddVertex(boxVertices[0][0][0]);
+	face.AddVertex(boxVertices[0][0][1]);
+	face.AddVertex(boxVertices[0][1][1]);
+	face.AddVertex(boxVertices[0][1][0]);
+	facePolygonArray.push_back(face);
+
+	face.Clear();
+	face.AddVertex(boxVertices[1][0][0]);
+	face.AddVertex(boxVertices[1][1][0]);
+	face.AddVertex(boxVertices[1][1][1]);
+	face.AddVertex(boxVertices[1][0][1]);
+	facePolygonArray.push_back(face);
+
+	face.Clear();
+	face.AddVertex(boxVertices[0][0][0]);
+	face.AddVertex(boxVertices[0][0][1]);
+	face.AddVertex(boxVertices[1][0][1]);
+	face.AddVertex(boxVertices[1][0][0]);
+	facePolygonArray.push_back(face);
+
+	face.Clear();
+	face.AddVertex(boxVertices[0][1][0]);
+	face.AddVertex(boxVertices[1][1][0]);
+	face.AddVertex(boxVertices[1][1][1]);
+	face.AddVertex(boxVertices[0][1][1]);
+	facePolygonArray.push_back(face);
+
+	face.Clear();
+	face.AddVertex(boxVertices[0][0][0]);
+	face.AddVertex(boxVertices[0][1][0]);
+	face.AddVertex(boxVertices[1][1][0]);
+	face.AddVertex(boxVertices[1][0][0]);
+	facePolygonArray.push_back(face);
+
+	face.Clear();
+	face.AddVertex(boxVertices[0][0][1]);
+	face.AddVertex(boxVertices[1][0][1]);
+	face.AddVertex(boxVertices[1][1][1]);
+	face.AddVertex(boxVertices[0][1][1]);
+	facePolygonArray.push_back(face);
 }
 
 /*virtual*/ void BoxShape::RecalculateCache() const
@@ -70,6 +156,12 @@ void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool 
 	return true;
 }
 
+void BoxShape::GetAxisAlignedBox(AxisAlignedBoundingBox& box) const
+{
+	box.minCorner = -this->extents;
+	box.maxCorner = this->extents;
+}
+
 /*virtual*/ double BoxShape::CalcSize() const
 {
 	return 8.0 * this->extents.x * this->extents.y * this->extents.z;
@@ -82,52 +174,22 @@ void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool 
 	Vector3 objectSpacePoint = worldToObject.TransformPoint(point);
 
 	AxisAlignedBoundingBox box;
-	box.minCorner = -this->extents;
-	box.maxCorner = this->extents;
+	this->GetAxisAlignedBox(box);
 
 	return box.ContainsPoint(objectSpacePoint);
 }
 
 /*virtual*/ void BoxShape::DebugRender(DebugRenderResult* renderResult) const
 {
-	Vector3 boxVertices[2][2][2];
+	std::vector<LineSegment> edgeSegmentArray;
+	this->GetEdgeSegmentArray(edgeSegmentArray, true);
 
-	for (int i = 0; i < 2; i++)
+	for (const LineSegment& edge : edgeSegmentArray)
 	{
-		for (int j = 0; j < 2; j++)
-		{
-			for (int k = 0; k < 2; k++)
-			{
-				Vector3 cornerVector;
-
-				cornerVector.x = this->extents.x * ((i == 0) ? -1.0 : 1.0);
-				cornerVector.y = this->extents.y * ((j == 0) ? -1.0 : 1.0);
-				cornerVector.z = this->extents.z * ((k == 0) ? -1.0 : 1.0);
-
-				boxVertices[i][j][k] = this->objectToWorld.TransformPoint(cornerVector);
-			}
-		}
-	}
-
-	DebugRenderResult::RenderLine renderLine;
-	renderLine.color = this->debugColor;
-
-	for (int i = 0; i < 2; i++)
-	{
-		for (int j = 0; j < 2; j++)
-		{
-			renderLine.line.point[0] = boxVertices[i][j][0];
-			renderLine.line.point[1] = boxVertices[i][j][1];
-			renderResult->AddRenderLine(renderLine);
-
-			renderLine.line.point[0] = boxVertices[i][0][j];
-			renderLine.line.point[1] = boxVertices[i][1][j];
-			renderResult->AddRenderLine(renderLine);
-
-			renderLine.line.point[0] = boxVertices[0][i][j];
-			renderLine.line.point[1] = boxVertices[1][i][j];
-			renderResult->AddRenderLine(renderLine);
-		}
+		DebugRenderResult::RenderLine renderLine;
+		renderLine.color = this->debugColor;
+		renderLine.line = edge;
+		renderResult->AddRenderLine(renderLine);
 	}
 }
 
@@ -137,8 +199,7 @@ void BoxShape::GetCornerPointArray(std::vector<Vector3>& cornerPointArray, bool 
 	Ray objectSpaceRay = worldToObject.TransformRay(ray);
 
 	AxisAlignedBoundingBox objectSpaceBox;
-	objectSpaceBox.maxCorner = this->extents;
-	objectSpaceBox.minCorner = -this->extents;
+	this->GetAxisAlignedBox(objectSpaceBox);
 	if (!objectSpaceRay.CastAgainst(objectSpaceBox, alpha))
 		return false;
 

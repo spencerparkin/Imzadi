@@ -6,6 +6,7 @@
 namespace Collision
 {
 	class Plane;
+	class LineSegment;
 
 	/**
 	 * An AABB for short, these boxes whose sides are parallel to the XY, YZ or XZ planes.
@@ -136,9 +137,22 @@ namespace Collision
 		 * undefined if this AABB is invalid.  The plane normals always
 		 * face away from the box.
 		 * 
-		 * @param[out] This array is populated with the planes containing the sides of this box.
+		 * @param[out] sidePlaneArray This array is populated with the planes containing the sides of this box.
 		 */
 		void GetSidePlanes(std::vector<Plane>& sidePlaneArray) const;
+
+		/**
+		 * Calculate and return the 12 line-segments forming the edges of this box.
+		 * 
+		 * @param[out] edgeSegmentArray This array is populated with the line-segments continaing the edges of this box.
+		 */
+		void GetEdgeSegments(std::vector<LineSegment>& edgeSegmentArray) const;
+
+		/**
+		 * Calculate and return the point on this box's boundary that is closest
+		 * to the given point.
+		 */
+		Vector3 ClosestPointTo(const Vector3& point) const;
 
 	public:
 		Vector3 minCorner;
