@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Defines.h"
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -145,6 +147,16 @@ namespace Collision
 		 * @return The rotated ray is returned as output, leaving the input untouched.
 		 */
 		Ray Rotate(const Ray& ray) const;
+
+		/**
+		 * Write this quaternion to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this quaternion from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
 
 	public:
 		double w, x, y, z;

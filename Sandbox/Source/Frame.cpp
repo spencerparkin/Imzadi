@@ -1,9 +1,12 @@
 #include "Frame.h"
 #include "App.h"
 #include "Canvas.h"
+#include "Error.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
+#include <wx/filedlg.h>
+#include <wx/msgdlg.h>
 #include "Shapes/Box.h"
 #include "Shapes/Capsule.h"
 #include "Shapes/Polygon.h"
@@ -17,6 +20,9 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->canvas = nullptr;
 
 	wxMenu* programMenu = new wxMenu();
+	programMenu->Append(new wxMenuItem(programMenu, ID_DumpWorld, "Dump World", "Write the current physics world to disk."));
+	programMenu->Append(new wxMenuItem(programMenu, ID_RestoreWorld, "Restore World", "Load the physics world from disk."));
+	programMenu->AppendSeparator();
 	programMenu->Append(new wxMenuItem(programMenu, ID_ClearWorld, "Clear World", "Remove all shapes from the collision world."));
 	programMenu->AppendSeparator();
 	programMenu->Append(new wxMenuItem(programMenu, ID_Exit, "Exit", "Go skiing."));
@@ -46,6 +52,8 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 
 	this->Bind(wxEVT_MENU, &Frame::OnExit, this, ID_Exit);
 	this->Bind(wxEVT_MENU, &Frame::OnClearWorld, this, ID_ClearWorld);
+	this->Bind(wxEVT_MENU, &Frame::OnDumpOrRestoreWorld, this, ID_DumpWorld);
+	this->Bind(wxEVT_MENU, &Frame::OnDumpOrRestoreWorld, this, ID_RestoreWorld);
 	this->Bind(wxEVT_MENU, &Frame::OnAbout, this, ID_About);
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddBox);
 	this->Bind(wxEVT_MENU, &Frame::OnAddShape, this, ID_AddCapsule);
@@ -120,6 +128,57 @@ void Frame::OnClearWorld(wxCommandEvent& event)
 	System* system = wxGetApp().GetCollisionSystem();
 	system->IssueCommand(system->Create<RemoveAllShapesCommand>());
 	this->canvas->Refresh();
+}
+
+void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
+{
+	System* system = wxGetApp().GetCollisionSystem();
+
+	switch (event.GetId())
+	{
+		case ID_DumpWorld:
+		{
+			wxFileDialog fileDialog(this, wxFileSelectorPromptStr, wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+			if (fileDialog.ShowModal() == wxID_OK)
+			{
+				std::string fileName((const char*)fileDialog.GetPath().c_str());
+
+				if (wxFileExists(fileName))
+					wxRemoveFile(fileName);
+
+				if (!system->DumpToFile(fileName))
+				{
+					wxString errorMsg(GetError()->GetAllErrorMessages().c_str());
+					wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
+				}
+				else
+				{
+					wxMessageBox("Physics world dumped!", "Success!", wxICON_INFORMATION | wxOK, this);
+				}
+			}
+
+			break;
+		}
+		case ID_RestoreWorld:
+		{
+			wxFileDialog fileDialog(this, wxFileSelectorPromptStr, wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+			if (fileDialog.ShowModal() == wxID_OK)
+			{
+				std::string fileName((const char*)fileDialog.GetPath().c_str());
+				if (!system->RestoreFromFile(fileName))
+				{
+					wxString errorMsg(GetError()->GetAllErrorMessages().c_str());
+					wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
+				}
+				else
+				{
+					wxMessageBox("Physics world restored!", "Success!", wxICON_INFORMATION | wxOK, this);
+				}
+			}
+
+			break;
+		}
+	}
 }
 
 void Frame::OnAddShape(wxCommandEvent& event)

@@ -126,3 +126,15 @@ Vector3 LineSegment::GetDelta() const
 {
 	return this->point[1] - this->point[0];
 }
+
+void LineSegment::Dump(std::ostream& stream) const
+{
+	this->point[0].Dump(stream);
+	this->point[1].Dump(stream);
+}
+
+void LineSegment::Restore(std::istream& stream)
+{
+	this->point[0].Restore(stream);
+	this->point[1].Restore(stream);
+}

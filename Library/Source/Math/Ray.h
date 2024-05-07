@@ -124,6 +124,16 @@ namespace Collision
 		 */
 		void FromLineSegment(const LineSegment& lineSegment);
 
+		/**
+		 * Write this ray to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this ray from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
+
 	public:
 		Vector3 origin;
 		Vector3 unitDirection;

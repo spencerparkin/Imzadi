@@ -64,6 +64,16 @@ namespace Collision
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
 		/**
+		 * Write this capsule to given stream in binary form.
+		 */
+		virtual bool Dump(std::ostream& stream) const override;
+
+		/**
+		 * Read this capsule from the given stream in binary form.
+		 */
+		virtual bool Restore(std::istream& stream) override;
+
+		/**
 		 * Allocate and return a new CapsuleShape class instance.
 		 */
 		static CapsuleShape* Create();

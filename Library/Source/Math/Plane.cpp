@@ -82,3 +82,15 @@ Vector3 Plane::ClosestPointTo(const Vector3& point) const
 	double distance = this->SignedDistanceTo(point);
 	return point - distance * this->unitNormal;
 }
+
+void Plane::Dump(std::ostream& stream) const
+{
+	this->center.Dump(stream);
+	this->unitNormal.Dump(stream);
+}
+
+void Plane::Restore(std::istream& stream)
+{
+	this->center.Restore(stream);
+	this->unitNormal.Restore(stream);
+}

@@ -150,6 +150,20 @@ double Matrix2x2::Determinant() const
 	return this->ele[0][0] * this->ele[1][1] - this->ele[0][1] * this->ele[1][0];
 }
 
+void Matrix2x2::Dump(std::ostream& stream) const
+{
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+			stream.write((char*)&this->ele[i][j], sizeof(double));
+}
+
+void Matrix2x2::Restore(std::istream& stream)
+{
+	for (int i = 0; i < 2; i++)
+		for (int j = 0; j < 2; j++)
+			stream.read((char*)&this->ele[i][j], sizeof(double));
+}
+
 namespace Collision
 {
 	Matrix2x2 operator+(const Matrix2x2& matrixA, const Matrix2x2& matrixB)

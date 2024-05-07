@@ -81,7 +81,6 @@ bool Quaternion::IsValid() const
 	return true;
 }
 
-
 void Quaternion::SetIdentity()
 {
 	this->w = 1.0;
@@ -182,6 +181,22 @@ Ray Quaternion::Rotate(const Ray& ray) const
 	rotatedRay.origin = this->Rotate(ray.origin);
 	rotatedRay.unitDirection = this->Rotate(ray.unitDirection).Normalized();
 	return rotatedRay;
+}
+
+void Quaternion::Dump(std::ostream& stream) const
+{
+	stream.write((char*)&this->w, sizeof(this->w));
+	stream.write((char*)&this->x, sizeof(this->x));
+	stream.write((char*)&this->y, sizeof(this->y));
+	stream.write((char*)&this->z, sizeof(this->z));
+}
+
+void Quaternion::Restore(std::istream& stream)
+{
+	stream.read((char*)&this->w, sizeof(this->w));
+	stream.read((char*)&this->x, sizeof(this->x));
+	stream.read((char*)&this->y, sizeof(this->y));
+	stream.read((char*)&this->z, sizeof(this->z));
 }
 
 namespace Collision

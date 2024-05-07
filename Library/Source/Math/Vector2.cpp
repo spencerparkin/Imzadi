@@ -36,3 +36,15 @@ bool Vector2::Normalize(double* length /*= nullptr*/)
 	*this *= scale;
 	return true;
 }
+
+void Vector2::Dump(std::ostream& stream) const
+{
+	stream.write((char*)&this->x, sizeof(this->x));
+	stream.write((char*)&this->y, sizeof(this->y));
+}
+
+void Vector2::Restore(std::istream& stream)
+{
+	stream.read((char*)&this->x, sizeof(this->x));
+	stream.read((char*)&this->y, sizeof(this->y));
+}

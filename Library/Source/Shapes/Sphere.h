@@ -91,6 +91,16 @@ namespace Collision
 		 */
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
+		/**
+		 * Write this sphere to given stream in binary form.
+		 */
+		virtual bool Dump(std::ostream& stream) const override;
+
+		/**
+		 * Read this sphere from the given stream in binary form.
+		 */
+		virtual bool Restore(std::istream& stream) override;
+
 	private:
 		Vector3 center;
 		double radius;

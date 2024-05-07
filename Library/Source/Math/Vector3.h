@@ -3,6 +3,8 @@
 #include "Defines.h"
 #include <math.h>
 #include <vector>
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -274,6 +276,16 @@ namespace Collision
 		 * @return True is returned if any given point is approximately the same as this point; false, otherwise.
 		 */
 		bool IsAnyPoint(const std::vector<Vector3>& pointArray, double tolerance = 0.0) const;
+
+		/**
+		 * Write this vector to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this vector from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
 
 	public:
 		double x, y, z;

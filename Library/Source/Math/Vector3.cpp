@@ -82,3 +82,17 @@ bool Vector3::IsAnyPoint(const std::vector<Vector3>& pointArray, double toleranc
 
 	return false;
 }
+
+void Vector3::Dump(std::ostream& stream) const
+{
+	stream.write((char*)&this->x, sizeof(this->x));
+	stream.write((char*)&this->y, sizeof(this->y));
+	stream.write((char*)&this->z, sizeof(this->z));
+}
+
+void Vector3::Restore(std::istream& stream)
+{
+	stream.read((char*)&this->x, sizeof(this->x));
+	stream.read((char*)&this->y, sizeof(this->y));
+	stream.read((char*)&this->z, sizeof(this->z));
+}

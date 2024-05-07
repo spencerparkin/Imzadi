@@ -5,6 +5,8 @@
 #include "Query.h"
 #include "Shape.h"
 #include <format>
+#include <ostream>
+#include <istream>
 
 using namespace Collision;
 
@@ -258,4 +260,53 @@ void Thread::WaitForAllTasksToComplete()
 {
 	std::unique_lock<std::mutex> lock(*this->taskQueueMutex);
 	this->allTasksDoneCondVar->wait(lock, [=]() { return this->taskQueue->size() == 0; });
+}
+
+bool Thread::DumpShapes(std::ostream& stream) const
+{
+	uint32_t numShapes = (uint32_t)this->shapeMap->size();
+	stream.write((char*)&numShapes, sizeof(uint32_t));
+
+	for (auto pair : *this->shapeMap)
+	{
+		const Shape* shape = pair.second;
+		stream << (uint32_t)shape->GetShapeTypeID();
+		if (!shape->Dump(stream))
+		{
+			GetError()->AddErrorMessage(std::format("Failed to dump shape with ID {}.", shape->GetShapeID()));
+			return false;
+		}
+	}
+
+	return true;
+}
+
+bool Thread::RestoreShapes(std::istream& stream)
+{
+	this->ClearShapes();
+
+	uint32_t numShapes = 0;
+	stream.read((char*)&numShapes, sizeof(numShapes));
+
+	for (uint32_t i = 0; i < numShapes; i++)
+	{
+		uint32_t typeID = 0;
+		stream >> typeID;
+		Shape* shape = Shape::Create((Shape::TypeID)typeID);
+		if (!shape)
+		{
+			GetError()->AddErrorMessage(std::format("Failed to create shape with type ID {}.", typeID));
+			return false;
+		}
+		
+		if (!shape->Restore(stream))
+		{
+			GetError()->AddErrorMessage(std::format("Failed to restore shape with type ID {}.", typeID));
+			return false;
+		}
+
+		this->AddShape(shape);
+	}
+
+	return true;
 }

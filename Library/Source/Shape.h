@@ -5,6 +5,8 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include <stdint.h>
 #include <atomic>
+#include <ostream>
+#include <istream>
 
 namespace Collision
 {
@@ -143,6 +145,24 @@ namespace Collision
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const = 0;
 
 		/**
+		 * Overrides should serialize this shape to the given stream.  Note that they
+		 * should call this base-class method before providing their own implimentation.
+		 * 
+		 * @param[out] stream Write a binary representation of the shape to this stream.
+		 * @return True should be returned if the shape is successfully dumped; false, otherwise.
+		 */
+		virtual bool Dump(std::ostream& stream) const;
+
+		/**
+		 * Overrides should deserialize this shape from the given stream.  Note that they
+		 * should call this base-class method before providing their own implimentation.
+		 * 
+		 * @param[in] stream Read a binary representation of this shape from this stream.
+		 * @return True should be returned if the shape is successfully restored; false, otherwise.
+		 */
+		virtual bool Restore(std::istream& stream);
+
+		/**
 		 * Free the memory used by the given shape.  You should never allocate or free a shape yourself,
 		 * because the calling code may be using a different heap than that of the collision system.
 		 * You should also never free a shape of which you do not have ownership.  In most cases, ownership
@@ -152,6 +172,11 @@ namespace Collision
 		 * @param[in] shape This is the shape who's memory is to be reclaimed.
 		 */
 		static void Free(Shape* shape);
+
+		/**
+		 * This is a shape class factory creating the shape corresponding to the given type.
+		 */
+		static Shape* Create(TypeID typeID);
 
 		/**
 		 * This calls the RecalculateCache() method if the cache is not currently valid.

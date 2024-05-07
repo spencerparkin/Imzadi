@@ -197,4 +197,56 @@ namespace Collision
 	public:
 		Transform objectToWorld;		///< This transform is what's assigned to the target shape's object-to-world transform.
 	};
+
+	/**
+	 * Use this command to dump or restore the collision world to or from disk, respectively.
+	 * It's mainly used for debugging purposes.  It's not meant to be used in a production case.
+	 */
+	class COLLISION_LIB_API FileCommand : public Command
+	{
+	public:
+		FileCommand();
+		virtual ~FileCommand();
+
+		/**
+		 * Perform the dump or restore operation of the collision world.
+		 */
+		virtual void Execute(Thread* thread) override;
+
+		/**
+		 * Create a new instance of the FileComand class.
+		 */
+		static FileCommand* Create();
+
+		enum Action
+		{
+			DUMP,
+			RESTORE
+		};
+
+		/**
+		 * Configure this command to either write the collision world shapes to file,
+		 * or read them from file.
+		 */
+		void SetAction(Action action) { this->action = action; }
+
+		/**
+		 * Get the action this command is configured to perform.
+		 */
+		Action GetAction() const { return this->action; }
+
+		/**
+		 * Configure the file that is to be read from or written to.
+		 */
+		void SetFilePath(const std::string& filePath) { *this->filePath = filePath; }
+
+		/**
+		 * Get the file this command is configured to read from or write to.
+		 */
+		const std::string& GetFilePath() const { return *this->filePath; }
+
+	private:
+		std::string* filePath;
+		Action action;
+	};
 }

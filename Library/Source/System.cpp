@@ -125,3 +125,23 @@ bool System::FlushAllTasks()
 	this->thread->WaitForAllTasksToComplete();
 	return true;
 }
+
+bool System::DumpToFile(const std::string& fileName)
+{
+	auto command = FileCommand::Create();
+	command->SetFilePath(fileName);
+	command->SetAction(FileCommand::Action::DUMP);
+	this->IssueCommand(command);
+	this->FlushAllTasks();
+	return GetError()->GetCount() == 0;
+}
+
+bool System::RestoreFromFile(const std::string& fileName)
+{
+	auto command = FileCommand::Create();
+	command->SetFilePath(fileName);
+	command->SetAction(FileCommand::Action::RESTORE);
+	this->IssueCommand(command);
+	this->FlushAllTasks();
+	return GetError()->GetCount() == 0;
+}

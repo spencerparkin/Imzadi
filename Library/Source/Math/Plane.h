@@ -106,6 +106,16 @@ namespace Collision
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
 
+		/**
+		 * Write this plane to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this plane from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
+
 	public:
 		Vector3 center;
 		Vector3 unitNormal;

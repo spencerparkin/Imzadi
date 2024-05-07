@@ -1,4 +1,8 @@
 #include "Shape.h"
+#include "Shapes/Box.h"
+#include "Shapes/Capsule.h"
+#include "Shapes/Polygon.h"
+#include "Shapes/Sphere.h"
 
 using namespace Collision;
 
@@ -26,6 +30,23 @@ ShapeID Shape::GetShapeID() const
 /*static*/ void Shape::Free(Shape* shape)
 {
 	delete shape;
+}
+
+/*static*/ Shape* Shape::Create(TypeID typeID)
+{
+	switch (typeID)
+	{
+	case TypeID::BOX:
+		return new BoxShape(false);
+	case TypeID::CAPSULE:
+		return new CapsuleShape(false);
+	case TypeID::POLYGON:
+		return new PolygonShape(false);
+	case TypeID::SPHERE:
+		return new SphereShape(false);
+	}
+
+	return nullptr;
 }
 
 /*virtual*/ void Shape::RecalculateCache() const
@@ -84,4 +105,18 @@ const AxisAlignedBoundingBox& Shape::GetBoundingBox() const
 	this->RegenerateCacheIfNeeded();
 
 	return this->cache.boundingBox;
+}
+
+/*virtual*/ bool Shape::Dump(std::ostream& stream) const
+{
+	this->objectToWorld.Dump(stream);
+	this->debugColor.Dump(stream);
+	return true;
+}
+
+/*virtual*/ bool Shape::Restore(std::istream& stream)
+{
+	this->objectToWorld.Restore(stream);
+	this->debugColor.Restore(stream);
+	return true;
 }

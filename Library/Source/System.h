@@ -133,6 +133,24 @@ namespace Collision
 		 */
 		bool FlushAllTasks();
 
+		/**
+		 * Dump the current physics world (all the shapes) to the given file.  This is mainly used
+		 * for debugging purposes.
+		 * 
+		 * @param[in] fileName This is a string containing the fully-qualified path to where the data should be dumped.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool DumpToFile(const std::string& fileName);
+
+		/**
+		 * Restore a previously dumped physics world (all the shapes) from the given file.  This is mainly
+		 * used for debugging purposes.
+		 * 
+		 * @param[in] fileName This is a string containing the fully-qualified path to where the data can be restored from.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool RestoreFromFile(const std::string& fileName);
+
 	private:
 		Thread* thread;
 	};

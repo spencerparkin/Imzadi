@@ -126,6 +126,25 @@ namespace Collision
 		 */
 		BoundingBoxTree& GetBoundingBoxTree() { return this->boxTree; }
 
+		/**
+		 * Write all shapes of the collision world to the given stream.
+		 * This is mainly for debugging purposes as sometimes it's nice to
+		 * capture a scene for restoration later.
+		 * 
+		 * @return True is returned if all shapes are successfully dumped; false, otherwise.
+		 */
+		bool DumpShapes(std::ostream& stream) const;
+
+		/**
+		 * Read shapes in to the collision world from the given stream.
+		 * Note that a wipe of the collision world is performed before
+		 * the restoration is performed.  In other words, this is not an
+		 * accumulative operation.
+		 * 
+		 * @return True is returned if all shapes are successfully restored; false, otherwise.
+		 */
+		bool RestoreShapes(std::istream& stream);
+
 	private:
 
 		/**

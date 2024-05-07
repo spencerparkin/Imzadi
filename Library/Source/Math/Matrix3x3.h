@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Defines.h"
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -214,6 +216,16 @@ namespace Collision
 		 * @return True is returned on success; false, otherwise.  Failure occurs if and only if the matrix is singular.
 		 */
 		bool Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) const;
+
+		/**
+		 * Write this matrix to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this matrix from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
 
 	public:
 		double ele[3][3];

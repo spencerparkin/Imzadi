@@ -126,3 +126,15 @@ void Ray::FromLineSegment(const LineSegment& lineSegment)
 	this->origin = lineSegment.point[0];
 	this->unitDirection = lineSegment.GetDelta().Normalized();
 }
+
+void Ray::Dump(std::ostream& stream) const
+{
+	this->origin.Dump(stream);
+	this->unitDirection.Dump(stream);
+}
+
+void Ray::Restore(std::istream& stream)
+{
+	this->origin.Restore(stream);
+	this->unitDirection.Restore(stream);
+}

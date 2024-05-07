@@ -79,6 +79,16 @@ namespace Collision
 		 */
 		Vector3 GetDelta() const;
 
+		/**
+		 * Write this line segment to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this line segment from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
+
 	public:
 		Vector3 point[2];
 	};

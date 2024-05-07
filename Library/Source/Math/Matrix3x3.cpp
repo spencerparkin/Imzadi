@@ -301,6 +301,20 @@ bool Matrix3x3::Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) 
 	return false;
 }
 
+void Matrix3x3::Dump(std::ostream& stream) const
+{
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			stream.write((char*)&this->ele[i][j], sizeof(double));
+}
+
+void Matrix3x3::Restore(std::istream& stream)
+{
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			stream.read((char*)&this->ele[i][j], sizeof(double));
+}
+
 namespace Collision
 {
 	Matrix3x3 operator+(const Matrix3x3& matrixA, const Matrix3x3& matrixB)

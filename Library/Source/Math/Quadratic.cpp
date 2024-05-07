@@ -64,3 +64,17 @@ double Quadratic::Descriminant() const
 {
 	return this->B * this->B - 4.0 * this->A * this->C;
 }
+
+void Quadratic::Dump(std::ostream& stream) const
+{
+	stream.write((char*)&this->A, sizeof(this->A));
+	stream.write((char*)&this->B, sizeof(this->B));
+	stream.write((char*)&this->C, sizeof(this->C));
+}
+
+void Quadratic::Restore(std::istream& stream)
+{
+	stream.read((char*)&this->A, sizeof(this->A));
+	stream.read((char*)&this->B, sizeof(this->B));
+	stream.read((char*)&this->C, sizeof(this->C));
+}

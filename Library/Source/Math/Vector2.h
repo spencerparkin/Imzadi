@@ -2,6 +2,8 @@
 
 #include "Defines.h"
 #include <math.h>
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -176,6 +178,16 @@ namespace Collision
 		 * @return True is returned on success; false, otherwise.  Failure can occur if the vector is zero or numerically too short in length.
 		 */
 		bool Normalize(double* length = nullptr);
+
+		/**
+		 * Write this vector to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this vector from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
 
 	public:
 		double x, y;

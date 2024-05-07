@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Defines.h"
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -125,6 +127,16 @@ namespace Collision
 		 * @return The determinant of this matrix is returned.
 		 */
 		double Determinant() const;
+
+		/**
+		 * Write this matrix to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this matrix from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
 
 	public:
 		double ele[2][2];

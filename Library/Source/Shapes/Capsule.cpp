@@ -281,3 +281,23 @@ const Vector3& CapsuleShape::GetVertex(int i) const
 {
 	return (i % 2 == 0) ? this->lineSegment.point[0] : this->lineSegment.point[1];
 }
+
+/*virtual*/ bool CapsuleShape::Dump(std::ostream& stream) const
+{
+	if (!Shape::Dump(stream))
+		return false;
+
+	stream << this->radius;
+	this->lineSegment.Dump(stream);
+	return true;
+}
+
+/*virtual*/ bool CapsuleShape::Restore(std::istream& stream)
+{
+	if (!Shape::Restore(stream))
+		return false;
+
+	stream >> this->radius;
+	this->lineSegment.Restore(stream);
+	return true;
+}

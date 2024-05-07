@@ -167,3 +167,23 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	unitSurfaceNormal = (hitPoint - worldCenter).Normalized();
 	return true;
 }
+
+/*virtual*/ bool SphereShape::Dump(std::ostream& stream) const
+{
+	if (!Shape::Dump(stream))
+		return false;
+
+	stream << this->radius;
+	this->center.Dump(stream);
+	return true;
+}
+
+/*virtual*/ bool SphereShape::Restore(std::istream& stream)
+{
+	if (!Shape::Restore(stream))
+		return false;
+
+	stream >> this->radius;
+	this->center.Restore(stream);
+	return true;
+}

@@ -2,6 +2,8 @@
 
 #include "Defines.h"
 #include <vector>
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -44,6 +46,16 @@ namespace Collision
 		 * @return The value B^2 - 4AC is returned.
 		 */
 		double Descriminant() const;
+
+		/**
+		 * Write this quadratic to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this quadratic from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
 
 	public:
 		double A, B, C;		///< These are the real coeficients of this quadratic polynomial.

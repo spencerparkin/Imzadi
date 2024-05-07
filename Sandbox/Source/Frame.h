@@ -17,6 +17,8 @@ public:
 		ID_ClearWorld,
 		ID_About,
 		ID_AddBox,
+		ID_DumpWorld,
+		ID_RestoreWorld,
 		ID_AddCapsule,
 		ID_AddPolygon,
 		ID_AddSphere,
@@ -31,6 +33,7 @@ public:
 	void OnAddShape(wxCommandEvent& event);
 	void OnClearWorld(wxCommandEvent& event);
 	void OnDebugDrawToggle(wxCommandEvent& event);
+	void OnDumpOrRestoreWorld(wxCommandEvent& event);
 	void OnUpdateUI(wxUpdateUIEvent& event);
 	void OnTimer(wxTimerEvent& event);
 

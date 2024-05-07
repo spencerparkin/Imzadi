@@ -128,6 +128,16 @@ namespace Collision
 		 */
 		bool Invert(const Transform& transform);
 
+		/**
+		 * Write this transform to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this transform from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
+
 	public:
 		Matrix3x3 matrix;
 		Vector3 translation;

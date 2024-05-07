@@ -606,3 +606,33 @@ Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
 
 	return closestPoint;
 }
+
+/*virtual*/ bool PolygonShape::Dump(std::ostream& stream) const
+{
+	if (!Shape::Dump(stream))
+		return false;
+
+	stream << uint32_t(this->vertexArray->size());
+	for (const Vector3& vertex : *this->vertexArray)
+		vertex.Dump(stream);
+
+	return true;
+}
+
+/*virtual*/ bool PolygonShape::Restore(std::istream& stream)
+{
+	if (!Shape::Restore(stream))
+		return false;
+
+	uint32_t numVertices = 0;
+	stream >> numVertices;
+	this->vertexArray->clear();
+	for (uint32_t i = 0; i < numVertices; i++)
+	{
+		Vector3 vertex;
+		vertex.Restore(stream);
+		this->vertexArray->push_back(vertex);
+	}
+
+	return true;
+}

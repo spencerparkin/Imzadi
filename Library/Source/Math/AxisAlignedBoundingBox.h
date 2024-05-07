@@ -154,6 +154,16 @@ namespace Collision
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
 
+		/**
+		 * Write this AABB to the given stream in binary form.
+		 */
+		void Dump(std::ostream& stream) const;
+
+		/**
+		 * Read this AABB from the given stream in binary form.
+		 */
+		void Restore(std::istream& stream);
+
 	public:
 		Vector3 minCorner;
 		Vector3 maxCorner;

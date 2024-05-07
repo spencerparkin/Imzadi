@@ -100,6 +100,18 @@ bool Transform::Invert(const Transform& transform)
 	return true;
 }
 
+void Transform::Dump(std::ostream& stream) const
+{
+	this->matrix.Dump(stream);
+	this->translation.Dump(stream);
+}
+
+void Transform::Restore(std::istream& stream)
+{
+	this->matrix.Restore(stream);
+	this->translation.Restore(stream);
+}
+
 namespace Collision
 {
 	Transform operator*(const Transform& transformA, const Transform& transformB)

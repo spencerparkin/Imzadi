@@ -318,3 +318,15 @@ Vector3 AxisAlignedBoundingBox::ClosestPointTo(const Vector3& point) const
 
 	return closestPoint;
 }
+
+void AxisAlignedBoundingBox::Dump(std::ostream& stream) const
+{
+	this->minCorner.Dump(stream);
+	this->maxCorner.Dump(stream);
+}
+
+void AxisAlignedBoundingBox::Restore(std::istream& stream)
+{
+	this->minCorner.Restore(stream);
+	this->maxCorner.Restore(stream);
+}

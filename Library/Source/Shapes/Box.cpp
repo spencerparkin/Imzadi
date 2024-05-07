@@ -263,3 +263,21 @@ void BoxShape::GetAxisAlignedBox(AxisAlignedBoundingBox& box) const
 	COLL_SYS_ASSERT(false);
 	return false;
 }
+
+/*virtual*/ bool BoxShape::Dump(std::ostream& stream) const
+{
+	if (!Shape::Dump(stream))
+		return false;
+
+	this->extents.Dump(stream);
+	return true;
+}
+
+/*virtual*/ bool BoxShape::Restore(std::istream& stream)
+{
+	if (!Shape::Restore(stream))
+		return false;
+
+	this->extents.Restore(stream);
+	return true;
+}

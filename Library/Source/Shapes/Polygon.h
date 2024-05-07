@@ -88,6 +88,16 @@ namespace Collision
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
 		/**
+		 * Write this polygon to given stream in binary form.
+		 */
+		virtual bool Dump(std::ostream& stream) const override;
+
+		/**
+		 * Read this polygon from the given stream in binary form.
+		 */
+		virtual bool Restore(std::istream& stream) override;
+
+		/**
 		 * Allocate and return a new PolygonShape class instance.
 		 */
 		static PolygonShape* Create();

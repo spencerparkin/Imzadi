@@ -68,6 +68,16 @@ namespace Collision
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
 		/**
+		 * Write this box to given stream in binary form.
+		 */
+		virtual bool Dump(std::ostream& stream) const override;
+
+		/**
+		 * Read this box from the given stream in binary form.
+		 */
+		virtual bool Restore(std::istream& stream) override;
+
+		/**
 		 * Allocate and return a new BoxShape class instance.
 		 */
 		static BoxShape* Create();
