@@ -7,6 +7,7 @@
 #include "Shapes/Polygon.h"
 #include "Math/LineSegment.h"
 #include "Math/Plane.h"
+#include "Math/Ray.h"
 #include "Error.h"
 
 using namespace Collision;
@@ -267,4 +268,105 @@ SpherePolygonCollisionCalculator::SpherePolygonCollisionCalculator()
 	}
 
 	return collisionStatus;
+}
+
+//------------------------------ BoxBoxCollisionCalculator ------------------------------
+
+BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
+{
+}
+
+/*virtual*/ BoxBoxCollisionCalculator::~BoxBoxCollisionCalculator()
+{
+}
+
+/*virtual*/ ShapePairCollisionStatus* BoxBoxCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	auto boxA = dynamic_cast<const BoxShape*>(shapeA);
+	auto boxB = dynamic_cast<const BoxShape*>(shapeB);
+
+	if (!boxA || !boxB)
+	{
+		GetError()->AddErrorMessage("Failed to cast given shapes to box shapes.");
+		return nullptr;
+	}
+
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+
+	VertexPenetrationArray vertexPenetrationArrayA;
+	EdgeImpalementArray edgeImpalementArrayA;
+	this->CalculateInternal(boxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA);
+
+	VertexPenetrationArray vertexPenetrationArrayB;
+	EdgeImpalementArray edgeImpalementArrayB;
+	this->CalculateInternal(boxB, boxA, vertexPenetrationArrayB, edgeImpalementArrayB);
+
+	if (vertexPenetrationArrayA.size() > 0 || edgeImpalementArrayA.size() > 0 ||
+		vertexPenetrationArrayB.size() > 0 || edgeImpalementArrayB.size() > 0)
+	{
+		collisionStatus->inCollision = true;
+
+		if (edgeImpalementArrayA.size() == 1 && edgeImpalementArrayB.size() == 1)
+		{
+			LineSegment lineA(edgeImpalementArrayA[0].surfacePointA, edgeImpalementArrayA[0].surfacePointB);
+			LineSegment lineB(edgeImpalementArrayB[0].surfacePointA, edgeImpalementArrayB[0].surfacePointB);
+			LineSegment connector;
+			connector.SetAsShortestConnector(lineA, lineB);
+			collisionStatus->collisionCenter = connector.Lerp(0.5);
+			collisionStatus->separationDelta = connector.GetDelta();
+		}
+		//else...TODO: Handle other cases here.
+	}
+
+	return collisionStatus;
+}
+
+void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray)
+{
+	AxisAlignedBoundingBox homeBoxAligned;
+	homeBox->GetAxisAlignedBox(homeBoxAligned);
+
+	std::vector<Vector3> awayCornerPointArray;
+	awayBox->GetCornerPointArray(awayCornerPointArray, false);
+
+	const Transform& homeToWorld = homeBox->GetObjectToWorldTransform();
+	Transform worldToHome = homeToWorld.Inverted();
+
+	const Transform& awayToWorld = awayBox->GetObjectToWorldTransform();
+	Transform awayToHome = worldToHome * awayToWorld;
+
+	for (Vector3& awayCorner : awayCornerPointArray)
+		awayCorner = awayToHome.TransformPoint(awayCorner);
+
+	for (const Vector3& awayCorner : awayCornerPointArray)
+	{
+		if (homeBoxAligned.ContainsPoint(awayCorner))
+		{
+			VertexPenetration vertexPenetration;
+			vertexPenetration.penetrationPoint = homeToWorld.TransformPoint(awayCorner);
+			vertexPenetration.surfacePoint = homeToWorld.TransformPoint(homeBoxAligned.ClosestPointTo(awayCorner));
+			vertexPenetrationArray.push_back(vertexPenetration);
+		}
+	}
+
+	std::vector<LineSegment> edgeSegmentArray;
+	awayBox->GetEdgeSegmentArray(edgeSegmentArray, false);
+
+	for (LineSegment& edge : edgeSegmentArray)
+		edge = awayToHome.TransformLineSegment(edge);
+
+	for (const LineSegment& edge : edgeSegmentArray)
+	{
+		std::vector<double> alphaArray;
+		Ray ray;
+		ray.FromLineSegment(edge);
+		ray.CastAgainst(homeBoxAligned, alphaArray);
+		if (alphaArray.size() == 2)
+		{
+			EdgeImpalement edgeImpalement;
+			edgeImpalement.surfacePointA = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
+			edgeImpalement.surfacePointB = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[1]));
+			edgeImpalementArray.push_back(edgeImpalement);
+		}
+	}
 }

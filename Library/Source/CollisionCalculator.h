@@ -1,11 +1,13 @@
 #pragma once
 
 #include "Defines.h"
+#include "Math/Vector3.h"
 
 namespace Collision
 {
 	class ShapePairCollisionStatus;
 	class Shape;
+	class BoxShape;
 
 	/**
 	 * This is the base class for all derivatives that know how to calculate the
@@ -88,5 +90,42 @@ namespace Collision
 		virtual ~SpherePolygonCollisionCalculator();
 
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
+
+	/**
+	 * Calculate the collision status between a pair of boxes.
+	 */
+	class COLLISION_LIB_API BoxBoxCollisionCalculator : public CollisionCalculator
+	{
+	public:
+		BoxBoxCollisionCalculator();
+		virtual ~BoxBoxCollisionCalculator();
+
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+
+	private:
+
+		struct VertexPenetration
+		{
+			Vector3 surfacePoint;
+			Vector3 penetrationPoint;
+		};
+
+		struct EdgeImpalement
+		{
+			Vector3 surfacePointA;
+			Vector3 surfacePointB;
+		};
+
+		typedef std::vector<VertexPenetration> VertexPenetrationArray;
+		typedef std::vector<EdgeImpalement> EdgeImpalementArray;
+
+		/**
+		 * ...
+		 * 
+		 * @param[in] homeBox All calculations will be done in this box's space.
+		 * @param[in] awayBox This box will be transformed into the space of the home box before calculations are made.
+		 */
+		void CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray);
 	};
 }

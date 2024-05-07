@@ -1,6 +1,8 @@
 #include "Ray.h"
 #include "Plane.h"
 #include "AxisAlignedBoundingBox.h"
+#include "LineSegment.h"
+#include <algorithm>
 
 using namespace Collision;
 
@@ -74,28 +76,34 @@ bool Ray::CastAgainst(const Plane& plane, double& alpha) const
 
 bool Ray::CastAgainst(const AxisAlignedBoundingBox& box, double& alpha) const
 {
+	std::vector<double> alphaArray;
+	if (!this->CastAgainst(box, alphaArray))
+		return false;
+
+	alpha = alphaArray[0];
+	return true;
+}
+
+bool Ray::CastAgainst(const AxisAlignedBoundingBox& box, std::vector<double>& alphaArray) const
+{
 	std::vector<Plane> sidePlaneArray;
 	box.GetSidePlanes(sidePlaneArray);
 	if (sidePlaneArray.size() == 0)
 		return false;
 
-	alpha = std::numeric_limits<double>::max();
-
 	for (const Plane& sidePlane : sidePlaneArray)
 	{
-		double planeHitAlpha = 0.0;
-		if (this->CastAgainst(sidePlane, planeHitAlpha))
+		double alpha = 0.0;
+		if (this->CastAgainst(sidePlane, alpha))
 		{
-			Vector3 hitPoint = this->CalculatePoint(planeHitAlpha);
+			Vector3 hitPoint = this->CalculatePoint(alpha);
 			if (box.ContainsPoint(hitPoint, 1e-5))
-			{
-				if (alpha > planeHitAlpha)
-					alpha = planeHitAlpha;
-			}
+				alphaArray.push_back(alpha);
 		}
 	}
 
-	return alpha != std::numeric_limits<double>::max();
+	std::sort(alphaArray.begin(), alphaArray.end());
+	return alphaArray.size() > 0;
 }
 
 bool Ray::HitsOrOriginatesIn(const AxisAlignedBoundingBox& box) const
@@ -105,4 +113,16 @@ bool Ray::HitsOrOriginatesIn(const AxisAlignedBoundingBox& box) const
 
 	double alpha = 0.0;
 	return this->CastAgainst(box, alpha);
+}
+
+void Ray::ToLineSegment(LineSegment& lineSegment, double alpha) const
+{
+	lineSegment.point[0] = this->origin;
+	lineSegment.point[1] = this->CalculatePoint(alpha);
+}
+
+void Ray::FromLineSegment(const LineSegment& lineSegment)
+{
+	this->origin = lineSegment.point[0];
+	this->unitDirection = lineSegment.GetDelta().Normalized();
 }
