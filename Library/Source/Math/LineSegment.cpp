@@ -127,6 +127,13 @@ Vector3 LineSegment::GetDelta() const
 	return this->point[1] - this->point[0];
 }
 
+void LineSegment::Reverse()
+{
+	Vector3 point = this->point[0];
+	this->point[0] = this->point[1];
+	this->point[1] = point;
+}
+
 void LineSegment::Dump(std::ostream& stream) const
 {
 	this->point[0].Dump(stream);

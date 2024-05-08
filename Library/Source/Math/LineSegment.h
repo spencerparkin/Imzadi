@@ -80,6 +80,13 @@ namespace Collision
 		Vector3 GetDelta() const;
 
 		/**
+		 * Swap the first and second points of this line-segment.  In many
+		 * situations, it doesn't matter which is which, but sometimes it
+		 * does matter when using certain method of this class.
+		 */
+		void Reverse();
+
+		/**
 		 * Write this line segment to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;

@@ -117,8 +117,16 @@ namespace Collision
 			Vector3 surfacePointB;
 		};
 
+		struct FacePuncture
+		{
+			Vector3 surfacePoint;
+			Vector3 externalPoint;
+			Vector3 internalPoint;
+		};
+
 		typedef std::vector<VertexPenetration> VertexPenetrationArray;
 		typedef std::vector<EdgeImpalement> EdgeImpalementArray;
+		typedef std::vector<FacePuncture> FacePunctureArray;
 
 		/**
 		 * ...
@@ -126,6 +134,6 @@ namespace Collision
 		 * @param[in] homeBox All calculations will be done in this box's space.
 		 * @param[in] awayBox This box will be transformed into the space of the home box before calculations are made.
 		 */
-		void CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray);
+		void CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray, FacePunctureArray& facePunctureArray);
 	};
 }

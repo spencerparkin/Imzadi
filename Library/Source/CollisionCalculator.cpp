@@ -8,6 +8,7 @@
 #include "Math/LineSegment.h"
 #include "Math/Plane.h"
 #include "Math/Ray.h"
+#include "Math/Interval.h"
 #include "Error.h"
 
 using namespace Collision;
@@ -293,13 +294,21 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
+	// TODO: I think we need an iterative process here.  If one or more iterations occurrs, then
+	//       there was a collision.  Each iteration, we move A away from B.  Of course, we have to
+	//       work with copies of A and B.  The final delta will be the sum of all the deltas we
+	//       calculate in all the interations.  Termination of the iteration guarentees that the
+	//       boxes are separated.
+
 	VertexPenetrationArray vertexPenetrationArrayA;
 	EdgeImpalementArray edgeImpalementArrayA;
-	this->CalculateInternal(boxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA);
+	FacePunctureArray facePunctureArrayA;
+	this->CalculateInternal(boxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA, facePunctureArrayA);
 
 	VertexPenetrationArray vertexPenetrationArrayB;
 	EdgeImpalementArray edgeImpalementArrayB;
-	this->CalculateInternal(boxB, boxA, vertexPenetrationArrayB, edgeImpalementArrayB);
+	FacePunctureArray facePunctureArrayB;
+	this->CalculateInternal(boxB, boxA, vertexPenetrationArrayB, edgeImpalementArrayB, facePunctureArrayB);
 
 	if (vertexPenetrationArrayA.size() > 0 || edgeImpalementArrayA.size() > 0 ||
 		vertexPenetrationArrayB.size() > 0 || edgeImpalementArrayB.size() > 0)
@@ -342,7 +351,10 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 	return collisionStatus;
 }
 
-void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray)
+void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox,
+													VertexPenetrationArray& vertexPenetrationArray,
+													EdgeImpalementArray& edgeImpalementArray,
+													FacePunctureArray& facePunctureArray)
 {
 	AxisAlignedBoundingBox homeBoxAligned;
 	homeBox->GetAxisAlignedBox(homeBoxAligned);
@@ -379,19 +391,37 @@ void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 	for (const LineSegment& edge : edgeSegmentArray)
 	{
 		std::vector<double> alphaArray;
-		double edgeLength = edge.Length();
+		Interval interval(0.0, edge.Length());
 		Ray ray;
 		ray.FromLineSegment(edge);
 		ray.CastAgainst(homeBoxAligned, alphaArray);
 		if (alphaArray.size() == 2)
 		{
-			if (0.0 < alphaArray[0] && alphaArray[0] < edgeLength &&
-				0.0 < alphaArray[1] && alphaArray[1] < edgeLength)
+			if (interval.ContainsValue(alphaArray[0]) && interval.ContainsValue(alphaArray[1]))
 			{
 				EdgeImpalement edgeImpalement;
 				edgeImpalement.surfacePointA = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
 				edgeImpalement.surfacePointB = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[1]));
 				edgeImpalementArray.push_back(edgeImpalement);
+			}
+			else if (interval.ContainsValue(alphaArray[0]))
+			{
+				FacePuncture facePuncture;
+				facePuncture.surfacePoint = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
+				facePuncture.externalPoint = homeToWorld.TransformPoint(edge.point[0]);
+				facePuncture.internalPoint = homeToWorld.TransformPoint(edge.point[1]);
+				facePunctureArray.push_back(facePuncture);
+			}
+		}
+		else if (alphaArray.size() == 1)
+		{
+			if (interval.ContainsValue(alphaArray[0]))
+			{
+				FacePuncture facePuncture;
+				facePuncture.surfacePoint = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
+				facePuncture.externalPoint = homeToWorld.TransformPoint(edge.point[1]);
+				facePuncture.internalPoint = homeToWorld.TransformPoint(edge.point[0]);
+				facePunctureArray.push_back(facePuncture);
 			}
 		}
 	}

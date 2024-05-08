@@ -118,7 +118,9 @@ namespace Collision
 		 * Set this ray as originating from the given line segment's first
 		 * point and going in a direction toward the other point of the
 		 * line segment.  Our result is left undefined if the given line
-		 * segment is degenerate.
+		 * segment is degenerate.  Notice, of course, that there is a loss
+		 * of information here.  We cannot recover the line-segment from
+		 * this ray.
 		 * 
 		 * @param[in] lineSegment The ray will contain this line segment.
 		 */
