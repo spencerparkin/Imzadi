@@ -306,7 +306,8 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 	{
 		collisionStatus->inCollision = true;
 
-		if (edgeImpalementArrayA.size() == 1 && edgeImpalementArrayB.size() == 1)
+		if (edgeImpalementArrayA.size() == 1 && edgeImpalementArrayB.size() == 1 &&
+			vertexPenetrationArrayA.size() == 0 && vertexPenetrationArrayB.size() == 0)
 		{
 			LineSegment lineA(edgeImpalementArrayA[0].surfacePointA, edgeImpalementArrayA[0].surfacePointB);
 			LineSegment lineB(edgeImpalementArrayB[0].surfacePointA, edgeImpalementArrayB[0].surfacePointB);
@@ -315,7 +316,27 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 			collisionStatus->collisionCenter = connector.Lerp(0.5);
 			collisionStatus->separationDelta = -connector.GetDelta();
 		}
-		//else...TODO: Handle other cases here.
+		else if (edgeImpalementArrayA.size() == 0 && edgeImpalementArrayB.size() == 0 &&
+			vertexPenetrationArrayA.size() == 1 && vertexPenetrationArrayB.size() == 0)
+		{
+			const VertexPenetration& vertexPenetration = vertexPenetrationArrayA[0];
+			LineSegment lineSeg(vertexPenetration.penetrationPoint, vertexPenetration.surfacePoint);
+			collisionStatus->collisionCenter = lineSeg.Lerp(0.5);
+			collisionStatus->separationDelta = -lineSeg.GetDelta();
+		}
+		else if (edgeImpalementArrayA.size() == 0 && edgeImpalementArrayB.size() == 0 &&
+			vertexPenetrationArrayA.size() == 0 && vertexPenetrationArrayB.size() == 1)
+		{
+			const VertexPenetration& vertexPenetration = vertexPenetrationArrayB[0];
+			LineSegment lineSeg(vertexPenetration.penetrationPoint, vertexPenetration.surfacePoint);
+			collisionStatus->collisionCenter = lineSeg.Lerp(0.5);
+			collisionStatus->separationDelta = lineSeg.GetDelta();
+		}
+		else
+		{
+			GetError()->AddErrorMessage("Box-to-box collision case not yet handled!");
+			COLL_SYS_ASSERT(false);
+		}
 	}
 
 	return collisionStatus;

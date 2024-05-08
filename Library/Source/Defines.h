@@ -1,5 +1,7 @@
 #pragma once
 
+#include <assert.h>
+
 #if defined COLLISION_LIB_EXPORT
 #	define COLLISION_LIB_API		__declspec(dllexport)
 #elif defined COLLISION_LIB_IMPORT
@@ -17,5 +19,4 @@
 #define COLL_SYS_DRAW_FLAG_SHAPE_BOXES			0x00000002
 #define COLL_SYS_DRAW_FLAG_AABB_TREE			0x00000004
 
-// TODO: Give this a meaningful definition.
-#define COLL_SYS_ASSERT(condition)
+#define COLL_SYS_ASSERT(condition)		assert(condition)
