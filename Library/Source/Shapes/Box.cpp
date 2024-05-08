@@ -12,6 +12,12 @@ BoxShape::BoxShape(bool temporary) : Shape(temporary)
 {
 }
 
+BoxShape::BoxShape(const BoxShape& boxShape) : Shape(true)
+{
+	this->extents = boxShape.extents;
+	this->objectToWorld = boxShape.objectToWorld;
+}
+
 /*virtual*/ BoxShape::~BoxShape()
 {
 }

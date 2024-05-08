@@ -294,26 +294,25 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
-	// TODO: I think we need an iterative process here.  If one or more iterations occurrs, then
-	//       there was a collision.  Each iteration, we move A away from B.  Of course, we have to
-	//       work with copies of A and B.  The final delta will be the sum of all the deltas we
-	//       calculate in all the interations.  Termination of the iteration guarentees that the
-	//       boxes are separated.
+	BoxShape tempBoxA(*boxA);
+	Vector3 totalSeparationDelta(0.0, 0.0, 0.0);
 
-	VertexPenetrationArray vertexPenetrationArrayA;
-	EdgeImpalementArray edgeImpalementArrayA;
-	FacePunctureArray facePunctureArrayA;
-	this->CalculateInternal(boxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA, facePunctureArrayA);
-
-	VertexPenetrationArray vertexPenetrationArrayB;
-	EdgeImpalementArray edgeImpalementArrayB;
-	FacePunctureArray facePunctureArrayB;
-	this->CalculateInternal(boxB, boxA, vertexPenetrationArrayB, edgeImpalementArrayB, facePunctureArrayB);
-
-	if (vertexPenetrationArrayA.size() > 0 || edgeImpalementArrayA.size() > 0 ||
-		vertexPenetrationArrayB.size() > 0 || edgeImpalementArrayB.size() > 0)
+	while (true)
 	{
-		collisionStatus->inCollision = true;
+		VertexPenetrationArray vertexPenetrationArrayA;
+		EdgeImpalementArray edgeImpalementArrayA;
+		FacePunctureArray facePunctureArrayA;
+		bool intersectionsFoundA = this->CalculateInternal(&tempBoxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA, facePunctureArrayA);
+
+		VertexPenetrationArray vertexPenetrationArrayB;
+		EdgeImpalementArray edgeImpalementArrayB;
+		FacePunctureArray facePunctureArrayB;
+		bool intersectionsFoundB = this->CalculateInternal(boxB, &tempBoxA, vertexPenetrationArrayB, edgeImpalementArrayB, facePunctureArrayB);
+
+		if (!intersectionsFoundA && !intersectionsFoundB)
+			break;
+		
+		Vector3 separationDelta(0.0, 0.0, 0.0);
 
 		if (edgeImpalementArrayA.size() == 1 && edgeImpalementArrayB.size() == 1 &&
 			vertexPenetrationArrayA.size() == 0 && vertexPenetrationArrayB.size() == 0)
@@ -322,36 +321,46 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 			LineSegment lineB(edgeImpalementArrayB[0].surfacePointA, edgeImpalementArrayB[0].surfacePointB);
 			LineSegment connector;
 			connector.SetAsShortestConnector(lineA, lineB);
-			collisionStatus->collisionCenter = connector.Lerp(0.5);
-			collisionStatus->separationDelta = -connector.GetDelta();
+			separationDelta = -connector.GetDelta();
 		}
 		else if (edgeImpalementArrayA.size() == 0 && edgeImpalementArrayB.size() == 0 &&
 			vertexPenetrationArrayA.size() == 1 && vertexPenetrationArrayB.size() == 0)
 		{
 			const VertexPenetration& vertexPenetration = vertexPenetrationArrayA[0];
 			LineSegment lineSeg(vertexPenetration.penetrationPoint, vertexPenetration.surfacePoint);
-			collisionStatus->collisionCenter = lineSeg.Lerp(0.5);
-			collisionStatus->separationDelta = -lineSeg.GetDelta();
+			separationDelta = -lineSeg.GetDelta();
 		}
 		else if (edgeImpalementArrayA.size() == 0 && edgeImpalementArrayB.size() == 0 &&
 			vertexPenetrationArrayA.size() == 0 && vertexPenetrationArrayB.size() == 1)
 		{
 			const VertexPenetration& vertexPenetration = vertexPenetrationArrayB[0];
 			LineSegment lineSeg(vertexPenetration.penetrationPoint, vertexPenetration.surfacePoint);
-			collisionStatus->collisionCenter = lineSeg.Lerp(0.5);
-			collisionStatus->separationDelta = lineSeg.GetDelta();
+			separationDelta = lineSeg.GetDelta();
 		}
 		else
 		{
-			GetError()->AddErrorMessage("Box-to-box collision case not yet handled!");
+			// This means there's a case we need to consider that we have not yet considered.
 			COLL_SYS_ASSERT(false);
+			break;		// Nevertheless, break out so that we can visualize what the case is that we are not yet accounting for.
 		}
+
+		Transform separationTransform;
+		separationTransform.SetIdentity();
+		separationTransform.translation = separationDelta;
+		tempBoxA.SetObjectToWorldTransform(separationTransform * tempBoxA.GetObjectToWorldTransform());
+		totalSeparationDelta += separationDelta;
+	}
+
+	if (totalSeparationDelta.IsNonZero())
+	{
+		collisionStatus->inCollision = true;
+		collisionStatus->separationDelta = totalSeparationDelta;
 	}
 
 	return collisionStatus;
 }
 
-void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox,
+bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox,
 													VertexPenetrationArray& vertexPenetrationArray,
 													EdgeImpalementArray& edgeImpalementArray,
 													FacePunctureArray& facePunctureArray)
@@ -425,4 +434,6 @@ void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 			}
 		}
 	}
+
+	return facePunctureArray.size() > 0 || edgeSegmentArray.size() > 0 || vertexPenetrationArray.size() > 0;
 }

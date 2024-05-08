@@ -110,6 +110,22 @@ namespace Collision
 		}
 
 		/**
+		 * Tell the caller if this vector is of non-zero length.
+		 */
+		bool IsNonZero() const
+		{
+			return this->x != 0.0 || this->y != 0.0 || this->z != 0.0;
+		}
+
+		/**
+		 * Tell the caller if this vector is of zero length.
+		 */
+		bool IsZero() const
+		{
+			return this->x == 0.0 && this->y == 0.0 && this->z == 0.0;
+		}
+
+		/**
 		 * Set the x, y and z components of this vector.  This method is provided merely
 		 * for convenience as the said components are made public in this class.
 		 * 

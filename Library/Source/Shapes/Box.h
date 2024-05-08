@@ -16,6 +16,7 @@ namespace Collision
 	{
 	public:
 		BoxShape(bool temporary);
+		BoxShape(const BoxShape& boxShape);
 		virtual ~BoxShape();
 
 		typedef Vector3 BoxVertexMatrix[2][2][2];
