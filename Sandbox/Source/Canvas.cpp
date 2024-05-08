@@ -352,9 +352,12 @@ void Canvas::Tick()
 
 	if (this->selectedShapeID != 0)
 	{
-		double leftTrigger = this->controller.GetTrigger(Controller::Side::LEFT);
-		double rightTrigger = this->controller.GetTrigger(Controller::Side::RIGHT);
-		if (leftTrigger != 0.0 || rightTrigger != 0.0)
+		bool dpadDown = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_DOWN);
+		bool dpadUp = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_UP);
+		bool dpadLeft = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_LEFT);
+		bool dpadRight = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_RIGHT);
+
+		if (dpadDown || dpadUp || dpadLeft || dpadRight)
 		{
 			System* system = wxGetApp().GetCollisionSystem();
 
@@ -380,9 +383,12 @@ void Canvas::Tick()
 					xAxis = worldToShape.TransformNormal(xAxis);
 					yAxis = worldToShape.TransformNormal(yAxis);
 
+					double xScale = (dpadDown ? 1.0 : (dpadUp ? -1.0 : 0.0));
+					double yScale = (dpadRight ? 1.0 : (dpadLeft ? -1.0 : 0.0));
+
 					constexpr double rotationSpeed = 0.01;
-					double xAngle = leftTrigger * rotationSpeed;
-					double yAngle = rightTrigger * rotationSpeed;
+					double xAngle = xScale * rotationSpeed;
+					double yAngle = yScale * rotationSpeed;
 
 					Transform xAxisRotation, yAxisRotation;
 					xAxisRotation.matrix.SetFromAxisAngle(xAxis, xAngle);
