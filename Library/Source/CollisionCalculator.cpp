@@ -313,7 +313,7 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 			LineSegment connector;
 			connector.SetAsShortestConnector(lineA, lineB);
 			collisionStatus->collisionCenter = connector.Lerp(0.5);
-			collisionStatus->separationDelta = connector.GetDelta();
+			collisionStatus->separationDelta = -connector.GetDelta();
 		}
 		//else...TODO: Handle other cases here.
 	}
@@ -358,15 +358,20 @@ void BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 	for (const LineSegment& edge : edgeSegmentArray)
 	{
 		std::vector<double> alphaArray;
+		double edgeLength = edge.Length();
 		Ray ray;
 		ray.FromLineSegment(edge);
 		ray.CastAgainst(homeBoxAligned, alphaArray);
 		if (alphaArray.size() == 2)
 		{
-			EdgeImpalement edgeImpalement;
-			edgeImpalement.surfacePointA = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
-			edgeImpalement.surfacePointB = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[1]));
-			edgeImpalementArray.push_back(edgeImpalement);
+			if (0.0 < alphaArray[0] && alphaArray[0] < edgeLength &&
+				0.0 < alphaArray[1] && alphaArray[1] < edgeLength)
+			{
+				EdgeImpalement edgeImpalement;
+				edgeImpalement.surfacePointA = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
+				edgeImpalement.surfacePointB = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[1]));
+				edgeImpalementArray.push_back(edgeImpalement);
+			}
 		}
 	}
 }

@@ -26,7 +26,7 @@ CollisionCache::CollisionCache()
 	// TODO: CapsuleBox
 	// TODO: PolygonPolygon
 	// TODO: PolygonBox
-	// TODO: BoxBox
+	this->AddCalculator<BoxBoxCollisionCalculator, BoxShape, BoxShape>();
 
 	// TODO: I recall that the Bullet collision library had some magic algorithm that was a generalization
 	//       of a collision calculator that could handle general shapes if a specific shape calculator
