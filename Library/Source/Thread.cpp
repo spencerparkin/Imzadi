@@ -270,7 +270,8 @@ bool Thread::DumpShapes(std::ostream& stream) const
 	for (auto pair : *this->shapeMap)
 	{
 		const Shape* shape = pair.second;
-		stream << (uint32_t)shape->GetShapeTypeID();
+		uint32_t typeID = shape->GetShapeTypeID();
+		stream.write((char*)&typeID, sizeof(typeID));
 		if (!shape->Dump(stream))
 		{
 			GetError()->AddErrorMessage(std::format("Failed to dump shape with ID {}.", shape->GetShapeID()));
@@ -291,7 +292,7 @@ bool Thread::RestoreShapes(std::istream& stream)
 	for (uint32_t i = 0; i < numShapes; i++)
 	{
 		uint32_t typeID = 0;
-		stream >> typeID;
+		stream.read((char*)&typeID, sizeof(typeID));
 		Shape* shape = Shape::Create((Shape::TypeID)typeID);
 		if (!shape)
 		{
