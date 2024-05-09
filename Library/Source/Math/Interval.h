@@ -53,9 +53,9 @@ namespace Collision
 
 		/**
 		 * Return true if the given value V is contained within this interval [A,B]; false, otherwise.
-		 * That is, return A <= V <= B.
+		 * That is, return A - E <= V <= B + E, where E is the given epsilon.
 		 */
-		bool ContainsValue(double value) const;
+		bool ContainsValue(double value, double epsilon = 0.0) const;
 
 		/**
 		 * Return true if the given value V is contained within the open interval (A,B); false, otherwise.

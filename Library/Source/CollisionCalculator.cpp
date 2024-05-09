@@ -337,11 +337,35 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 			LineSegment lineSeg(vertexPenetration.penetrationPoint, vertexPenetration.surfacePoint);
 			separationDelta = lineSeg.GetDelta();
 		}
+		else if(facePunctureArrayA.size() > 0 || facePunctureArrayB.size() > 0)
+		{
+			std::vector<const FacePuncture*> combinedPunctureArray;
+			for (const FacePuncture& facePuncture : facePunctureArrayA)
+				combinedPunctureArray.push_back(&facePuncture);
+			for (const FacePuncture& facePuncture : facePunctureArrayB)
+				combinedPunctureArray.push_back(&facePuncture);
+			double smallestPunctureDistance = std::numeric_limits<double>::max();
+			int j = -1;
+			for (int i = 0; i < (signed)combinedPunctureArray.size(); i++)
+			{
+				const FacePuncture* facePuncture = combinedPunctureArray[i];
+				double punctureDistance = (facePuncture->surfacePoint - facePuncture->internalPoint).Length();
+				if (punctureDistance < smallestPunctureDistance)
+				{
+					smallestPunctureDistance = punctureDistance;
+					j = i;
+				}
+			}
+			const FacePuncture* chosenPuncture = combinedPunctureArray[j];
+			separationDelta = chosenPuncture->internalPoint - chosenPuncture->surfacePoint;
+			if (j >= facePunctureArrayA.size())
+				separationDelta = -separationDelta;
+		}
 		else
 		{
 			// This means there's a case we need to consider that we have not yet considered.
 			COLL_SYS_ASSERT(false);
-			break;		// Nevertheless, break out so that we can visualize what the case is that we are not yet accounting for.
+			break;
 		}
 
 		Transform separationTransform;
@@ -365,6 +389,12 @@ bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 													EdgeImpalementArray& edgeImpalementArray,
 													FacePunctureArray& facePunctureArray)
 {
+	constexpr double threshold = 1e-5;
+
+	vertexPenetrationArray.clear();
+	edgeImpalementArray.clear();
+	facePunctureArray.clear();
+
 	AxisAlignedBoundingBox homeBoxAligned;
 	homeBox->GetAxisAlignedBox(homeBoxAligned);
 
@@ -387,7 +417,8 @@ bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 			VertexPenetration vertexPenetration;
 			vertexPenetration.penetrationPoint = homeToWorld.TransformPoint(awayCorner);
 			vertexPenetration.surfacePoint = homeToWorld.TransformPoint(homeBoxAligned.ClosestPointTo(awayCorner));
-			vertexPenetrationArray.push_back(vertexPenetration);
+			if ((vertexPenetration.surfacePoint - vertexPenetration.penetrationPoint).Length() > threshold)
+				vertexPenetrationArray.push_back(vertexPenetration);
 		}
 	}
 
@@ -406,12 +437,14 @@ bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 		ray.CastAgainst(homeBoxAligned, alphaArray);
 		if (alphaArray.size() == 2)
 		{
-			if (interval.ContainsValue(alphaArray[0]) && interval.ContainsValue(alphaArray[1]))
+			constexpr double epsilon = 1e-6;
+			if (interval.ContainsValue(alphaArray[0], epsilon) && interval.ContainsValue(alphaArray[1], epsilon))
 			{
 				EdgeImpalement edgeImpalement;
 				edgeImpalement.surfacePointA = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
 				edgeImpalement.surfacePointB = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[1]));
-				edgeImpalementArray.push_back(edgeImpalement);
+				if ((edgeImpalement.surfacePointA - edgeImpalement.surfacePointB).Length() > threshold)
+					edgeImpalementArray.push_back(edgeImpalement);
 			}
 			else if (interval.ContainsValue(alphaArray[0]))
 			{
@@ -419,7 +452,8 @@ bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 				facePuncture.surfacePoint = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
 				facePuncture.externalPoint = homeToWorld.TransformPoint(edge.point[0]);
 				facePuncture.internalPoint = homeToWorld.TransformPoint(edge.point[1]);
-				facePunctureArray.push_back(facePuncture);
+				if ((facePuncture.surfacePoint - facePuncture.internalPoint).Length() > threshold)
+					facePunctureArray.push_back(facePuncture);
 			}
 		}
 		else if (alphaArray.size() == 1)
@@ -430,10 +464,11 @@ bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const
 				facePuncture.surfacePoint = homeToWorld.TransformPoint(ray.CalculatePoint(alphaArray[0]));
 				facePuncture.externalPoint = homeToWorld.TransformPoint(edge.point[1]);
 				facePuncture.internalPoint = homeToWorld.TransformPoint(edge.point[0]);
-				facePunctureArray.push_back(facePuncture);
+				if ((facePuncture.surfacePoint - facePuncture.internalPoint).Length() > threshold)
+					facePunctureArray.push_back(facePuncture);
 			}
 		}
 	}
 
-	return facePunctureArray.size() > 0 || edgeSegmentArray.size() > 0 || vertexPenetrationArray.size() > 0;
+	return facePunctureArray.size() > 0 || edgeImpalementArray.size() > 0 || vertexPenetrationArray.size() > 0;
 }

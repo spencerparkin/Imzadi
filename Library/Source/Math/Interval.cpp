@@ -46,9 +46,9 @@ bool Interval::IsValid() const
 	return this->A <= this->B;
 }
 
-bool Interval::ContainsValue(double value) const
+bool Interval::ContainsValue(double value, double epsilon /*= 0.0*/) const
 {
-	return this->A <= value && value <= this->B;
+	return this->A - epsilon <= value && value <= this->B + epsilon;
 }
 
 bool Interval::ContainsInteriorValue(double value) const
