@@ -69,7 +69,7 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 			return false;
 
 	// Make sure that all the points are coplanar.
-	constexpr double tolerance = 1e-7;
+	constexpr double tolerance = 1e-4;
 	const Plane& plane = this->GetPlane();
 	for (const Vector3& vertex : *this->vertexArray)
 	{
