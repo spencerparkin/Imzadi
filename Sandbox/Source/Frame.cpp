@@ -2,6 +2,7 @@
 #include "App.h"
 #include "Canvas.h"
 #include "Error.h"
+#include "Loader.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
@@ -19,13 +20,15 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 {
 	this->canvas = nullptr;
 
-	wxMenu* programMenu = new wxMenu();
-	programMenu->Append(new wxMenuItem(programMenu, ID_DumpWorld, "Dump World", "Write the current physics world to disk."));
-	programMenu->Append(new wxMenuItem(programMenu, ID_RestoreWorld, "Restore World", "Load the physics world from disk."));
-	programMenu->AppendSeparator();
-	programMenu->Append(new wxMenuItem(programMenu, ID_ClearWorld, "Clear World", "Remove all shapes from the collision world."));
-	programMenu->AppendSeparator();
-	programMenu->Append(new wxMenuItem(programMenu, ID_Exit, "Exit", "Go skiing."));
+	wxMenu* fileMenu = new wxMenu();
+	fileMenu->Append(new wxMenuItem(fileMenu, ID_LoadShapes, "Load Shapes", "Load collision shapes from a file."));
+	fileMenu->AppendSeparator();
+	fileMenu->Append(new wxMenuItem(fileMenu, ID_DumpWorld, "Dump World", "Write the current physics world to disk."));
+	fileMenu->Append(new wxMenuItem(fileMenu, ID_RestoreWorld, "Restore World", "Load the physics world from disk."));
+	fileMenu->AppendSeparator();
+	fileMenu->Append(new wxMenuItem(fileMenu, ID_ClearWorld, "Clear World", "Remove all shapes from the collision world."));
+	fileMenu->AppendSeparator();
+	fileMenu->Append(new wxMenuItem(fileMenu, ID_Exit, "Exit", "Go skiing."));
 
 	wxMenu* shapeMenu = new wxMenu();
 	shapeMenu->Append(new wxMenuItem(shapeMenu, ID_AddBox, "Add Box", "Add a box shape to the collision world."));
@@ -42,7 +45,7 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	helpMenu->Append(new wxMenuItem(helpMenu, ID_About, "About", "Show the about-box."));
 
 	wxMenuBar* menuBar = new wxMenuBar();
-	menuBar->Append(programMenu, "Program");
+	menuBar->Append(fileMenu, "File");
 	menuBar->Append(shapeMenu, "Shape");
 	menuBar->Append(drawMenu, "Draw");
 	menuBar->Append(helpMenu, "Help");
@@ -51,6 +54,7 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->SetStatusBar(new wxStatusBar(this));
 
 	this->Bind(wxEVT_MENU, &Frame::OnExit, this, ID_Exit);
+	this->Bind(wxEVT_MENU, &Frame::OnLoadShapes, this, ID_LoadShapes);
 	this->Bind(wxEVT_MENU, &Frame::OnClearWorld, this, ID_ClearWorld);
 	this->Bind(wxEVT_MENU, &Frame::OnDumpOrRestoreWorld, this, ID_DumpWorld);
 	this->Bind(wxEVT_MENU, &Frame::OnDumpOrRestoreWorld, this, ID_RestoreWorld);
@@ -138,7 +142,7 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 	{
 		case ID_DumpWorld:
 		{
-			wxFileDialog fileDialog(this, wxFileSelectorPromptStr, wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+			wxFileDialog fileDialog(this, "Choose file where collision world shapes will be dumped.", wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 			if (fileDialog.ShowModal() == wxID_OK)
 			{
 				std::string fileName((const char*)fileDialog.GetPath().c_str());
@@ -161,7 +165,7 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 		}
 		case ID_RestoreWorld:
 		{
-			wxFileDialog fileDialog(this, wxFileSelectorPromptStr, wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+			wxFileDialog fileDialog(this, "Choose file from which to restore the collision world.", wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
 			if (fileDialog.ShowModal() == wxID_OK)
 			{
 				std::string fileName((const char*)fileDialog.GetPath().c_str());
@@ -177,6 +181,44 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 			}
 
 			break;
+		}
+	}
+}
+
+void Frame::OnLoadShapes(wxCommandEvent& event)
+{
+	wxFileDialog fileDialog(this, "Choose file(s) from which to load collision world shapes", wxEmptyString, wxEmptyString, "(*.OBJ)|*.OBJ", wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+	if (fileDialog.ShowModal() == wxID_OK)
+	{
+		wxArrayString fileArray;
+		fileDialog.GetPaths(fileArray);
+
+		std::vector<Shape*> shapeArray;
+
+		for (const wxString& filePath : fileArray)
+		{
+			ShapeLoader* shapeLoader = ShapeLoader::Create((const char*)filePath.c_str());
+			if (!shapeLoader)
+				wxMessageBox(wxString::Format("Failed to create shape loader for file: %s", filePath.c_str()), "Error!", wxICON_ERROR | wxOK, this);
+			else
+			{
+				if (!shapeLoader->LoadShapes((const char*)filePath.c_str(), shapeArray))
+				{
+					std::string errorMsg = GetError()->GetAllErrorMessages();
+					wxMessageBox(wxString::Format("Failed to load all shapes from file: %s\n\n%s", filePath.c_str(), errorMsg.c_str()), "Error!", wxICON_ERROR | wxOK, this);
+				}
+
+				ShapeLoader::Free(shapeLoader);
+			}
+		}
+
+		if (shapeArray.size() > 0)
+		{
+			wxMessageBox(wxString::Format("%d shapes loaded!", int(shapeArray.size())), "Shape Loading", wxICON_INFORMATION | wxOK, this);
+
+			System* system = wxGetApp().GetCollisionSystem();
+			for (auto shape : shapeArray)
+				system->AddShape(shape);
 		}
 	}
 }

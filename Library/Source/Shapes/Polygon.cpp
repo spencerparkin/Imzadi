@@ -69,7 +69,7 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 			return false;
 
 	// Make sure that all the points are coplanar.
-	constexpr double tolerance = 1e-5;
+	constexpr double tolerance = 1e-7;
 	const Plane& plane = this->GetPlane();
 	for (const Vector3& vertex : *this->vertexArray)
 	{
@@ -87,7 +87,7 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 		for (int j = 0; j < (signed)this->vertexArray->size(); j++)
 		{
 			double distance = edgePlane.SignedDistanceTo((*vertexArray)[j]);
-			if (distance > 0.0)
+			if (distance >= tolerance)
 				return false;
 		}
 	}
@@ -179,19 +179,6 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 
 		renderLine.line.point[0] = this->objectToWorld.TransformPoint((*this->vertexArray)[i]);
 		renderLine.line.point[1] = this->objectToWorld.TransformPoint((*this->vertexArray)[j]);
-		renderLine.color = this->debugColor;
-
-		renderResult->AddRenderLine(renderLine);
-	}
-
-	Vector3 center = this->objectToWorld.TransformPoint(this->GetCenter());
-
-	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
-	{
-		DebugRenderResult::RenderLine renderLine;
-
-		renderLine.line.point[0] = center;
-		renderLine.line.point[1] = this->objectToWorld.TransformPoint((*this->vertexArray)[i]);
 		renderLine.color = this->debugColor;
 
 		renderResult->AddRenderLine(renderLine);

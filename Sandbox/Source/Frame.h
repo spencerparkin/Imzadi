@@ -16,9 +16,10 @@ public:
 		ID_Exit = wxID_HIGHEST,
 		ID_ClearWorld,
 		ID_About,
-		ID_AddBox,
+		ID_LoadShapes,
 		ID_DumpWorld,
 		ID_RestoreWorld,
+		ID_AddBox,
 		ID_AddCapsule,
 		ID_AddPolygon,
 		ID_AddSphere,
@@ -30,6 +31,7 @@ public:
 
 	void OnExit(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
+	void OnLoadShapes(wxCommandEvent& event);
 	void OnAddShape(wxCommandEvent& event);
 	void OnClearWorld(wxCommandEvent& event);
 	void OnDebugDrawToggle(wxCommandEvent& event);
