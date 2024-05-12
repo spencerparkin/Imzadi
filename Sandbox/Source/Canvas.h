@@ -15,6 +15,7 @@ public:
 
 	void OnPaint(wxPaintEvent& event);
 	void OnSize(wxSizeEvent& event);
+	void OnKeyPressed(wxKeyEvent& event);
 
 	void Tick();
 

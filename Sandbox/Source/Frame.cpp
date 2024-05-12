@@ -130,7 +130,7 @@ void Frame::OnExit(wxCommandEvent& event)
 void Frame::OnClearWorld(wxCommandEvent& event)
 {
 	System* system = wxGetApp().GetCollisionSystem();
-	system->IssueCommand(system->Create<RemoveAllShapesCommand>());
+	system->Clear();
 	this->canvas->Refresh();
 }
 
@@ -153,6 +153,7 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 				if (!system->DumpToFile(fileName))
 				{
 					wxString errorMsg(GetError()->GetAllErrorMessages().c_str());
+					GetError()->Clear();
 					wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
 				}
 				else
@@ -172,6 +173,7 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 				if (!system->RestoreFromFile(fileName))
 				{
 					wxString errorMsg(GetError()->GetAllErrorMessages().c_str());
+					GetError()->Clear();
 					wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
 				}
 				else
@@ -205,6 +207,7 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 				if (!shapeLoader->LoadShapes((const char*)filePath.c_str(), shapeArray))
 				{
 					std::string errorMsg = GetError()->GetAllErrorMessages();
+					GetError()->Clear();
 					wxMessageBox(wxString::Format("Failed to load all shapes from file: %s\n\n%s", filePath.c_str(), errorMsg.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 				}
 

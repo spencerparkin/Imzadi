@@ -60,6 +60,14 @@ namespace Collision
 		ShapeID AddShape(Shape* shape);
 
 		/**
+		 * Remove the collision shape from the collision system having the given shape ID.  This does nothing if
+		 * the shape ID is invalid, except generate an error.
+		 * 
+		 * @param shapeID This is a thread-safe handle to the shape you want to remove.
+		 */
+		void RemoveShape(ShapeID shapeID);
+
+		/**
 		 * Remove all collision shapes from the system.  Typically you'd call this when you want to wipe
 		 * everything clean and rebuild your world of collidable shapes.
 		 */

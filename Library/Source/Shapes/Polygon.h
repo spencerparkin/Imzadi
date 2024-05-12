@@ -246,6 +246,7 @@ namespace Collision
 		virtual void Update(const Shape* shape) override;
 
 	public:
-		Plane plane;		///< This is the plane containing the polygon with normal facing the direction of the "front" space of the polygon.
+		Vector3 center;		///< This is the center of the polygon in object-space.
+		Plane plane;		///< This is the plane containing the object-space polygon with normal facing the direction of the "front" space of the polygon.
 	};
 }

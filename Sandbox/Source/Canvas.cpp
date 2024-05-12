@@ -28,6 +28,7 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 
 	this->Bind(wxEVT_PAINT, &Canvas::OnPaint, this);
 	this->Bind(wxEVT_SIZE, &Canvas::OnSize, this);
+	this->Bind(wxEVT_KEY_DOWN, &Canvas::OnKeyPressed, this);
 
 	this->camera.SetCameraPosition(Vector3(20.0, 10.0, 20.0));
 	this->camera.SetCameraTarget(Vector3(0.0, 0.0, 0.0));
@@ -229,6 +230,25 @@ wxString Canvas::GetStatusMessage()
 	}
 
 	return message;
+}
+
+void Canvas::OnKeyPressed(wxKeyEvent& event)
+{
+	switch (event.GetKeyCode())
+	{
+		case WXK_DELETE:
+		{
+			if (this->selectedShapeID != 0)
+			{
+				System* system = wxGetApp().GetCollisionSystem();
+				system->RemoveShape(this->selectedShapeID);
+				this->selectedShapeID = 0;
+				this->Refresh();
+			}
+
+			break;
+		}
+	}
 }
 
 void Canvas::Tick()

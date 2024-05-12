@@ -75,8 +75,16 @@ ShapeID System::AddShape(Shape* shape)
 	return shapeID;
 }
 
+void System::RemoveShape(ShapeID shapeID)
+{
+	auto command = this->Create<RemoveShapeCommand>();
+	command->SetShapeID(shapeID);
+	this->IssueCommand(command);
+}
+
 void System::Clear()
 {
+	this->IssueCommand(this->Create<RemoveAllShapesCommand>());
 }
 
 bool System::IssueCommand(Command* command)

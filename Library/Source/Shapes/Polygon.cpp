@@ -238,17 +238,7 @@ const Plane& PolygonShape::GetPlane() const
 
 Vector3 PolygonShape::GetCenter() const
 {
-	Vector3 center(0.0, 0.0, 0.0);
-
-	if (this->vertexArray->size() > 0)
-	{
-		for (const Vector3& vertex : *this->vertexArray)
-			center += vertex;
-
-		center /= double(this->vertexArray->size());
-	}
-
-	return center;
+	return ((PolygonShapeCache*)this->GetCache())->center;
 }
 
 int PolygonShape::ModIndex(int i) const
@@ -259,6 +249,7 @@ int PolygonShape::ModIndex(int i) const
 	return j;
 }
 
+// TODO: I think this may have a bug in it.
 bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 {
 	plane.center = Vector3(0.0, 0.0, 0.0);
@@ -628,12 +619,34 @@ PolygonShapeCache::PolygonShapeCache()
 	ShapeCache::Update(shape);
 
 	auto polygon = (const PolygonShape*)shape;
-	polygon->CalculatePlaneOfBestFit(this->plane);		// TODO: I think this may have a bug in it.
+	
+	if (polygon->vertexArray->size() <= 2)
+	{
+		this->plane = Plane();
+		this->center = Vector3(0.0, 0.0, 0.0);
+	}
+	else
+	{
+		this->center = Vector3(0.0, 0.0, 0.0);
+		for (const Vector3& vertex : *polygon->vertexArray)
+			this->center += vertex;
+		
+		this->center /= double(polygon->vertexArray->size());
 
-	Vector3 center = polygon->GetCenter();
-	Vector3 frontDirection = ((*polygon->vertexArray)[0] - center).Cross((*polygon->vertexArray)[1] - (*polygon->vertexArray)[0]);
-	if (frontDirection.Dot(this->plane.unitNormal) < 0.0)
-		this->plane.unitNormal = -this->plane.unitNormal;
+		Vector3 normal(0.0, 0.0, 0.0);
+
+		for (int i = 0; i < (signed)polygon->vertexArray->size(); i++)
+		{
+			int j = (i + 1) % polygon->vertexArray->size();
+
+			const Vector3& vertexA = (*polygon->vertexArray)[i];
+			const Vector3& vertexB = (*polygon->vertexArray)[j];
+
+			normal += (vertexA - this->center).Cross(vertexB - this->center);
+		}
+
+		this->plane = Plane(center, normal.Normalized());
+	}
 
 	std::vector<Vector3> worldVertexArray;
 	polygon->GetWorldVertices(worldVertexArray);
