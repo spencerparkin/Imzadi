@@ -25,6 +25,8 @@ namespace Collision
 	 */
 	class COLLISION_LIB_API PolygonShape : public Shape
 	{
+		friend class PolygonShapeCache;
+
 	public:
 		PolygonShape(const PolygonShape& polygon);
 		PolygonShape(bool temporary);
@@ -39,11 +41,6 @@ namespace Collision
 		 * Return what we do in GetShapeTypeID().
 		 */
 		static TypeID StaticTypeID();
-
-		/**
-		 * See Shape::RecalculateCache.
-		 */
-		virtual void RecalculateCache() const override;
 
 		/**
 		 * Tell the caller if this polygon is valid.  A valid polygon
@@ -198,7 +195,15 @@ namespace Collision
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
 
+	protected:
+
+		/**
+		 * Allocate and return the shape cache (PolygonShapeCache) used by this class.
+		 */
+		virtual ShapeCache* CreateCache() const override;
+
 	private:
+
 		/**
 		 * Return the given index (or offset) mod N, where N is the number of vertices in this polygon.
 		 * The returned index will always be non-negative.
@@ -222,7 +227,25 @@ namespace Collision
 
 	private:
 		std::vector<Vector3>* vertexArray;
-		mutable Plane cachedPlane;
-		mutable bool cachedPlaneValid;
+	};
+
+	/**
+	 * This class holds information that can be gleaned about a polygon, but also
+	 * such information as we would like to have on hand, readily available at
+	 * a moment's notice.
+	 */
+	class PolygonShapeCache : public ShapeCache
+	{
+	public:
+		PolygonShapeCache();
+		virtual ~PolygonShapeCache();
+
+		/**
+		 * Update our bounding-box as well as the plane containing this polygon.
+		 */
+		virtual void Update(const Shape* shape) override;
+
+	public:
+		Plane plane;		///< This is the plane containing the polygon with normal facing the direction of the "front" space of the polygon.
 	};
 }

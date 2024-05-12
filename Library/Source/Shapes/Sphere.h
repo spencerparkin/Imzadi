@@ -10,6 +10,8 @@ namespace Collision
 	 */
 	class COLLISION_LIB_API SphereShape : public Shape
 	{
+		friend class SphereShapeCache;
+
 	public:
 		SphereShape(bool temporary);
 		virtual ~SphereShape();
@@ -23,11 +25,6 @@ namespace Collision
 		 * Return what we do in GetShapeTypeID().
 		 */
 		static TypeID StaticTypeID();
-
-		/**
-		 * See Shape::RecalculateCache.
-		 */
-		virtual void RecalculateCache() const override;
 
 		/**
 		 * Tell the caller if this sphere is valid.  The radius must be
@@ -101,8 +98,30 @@ namespace Collision
 		 */
 		virtual bool Restore(std::istream& stream) override;
 
+	protected:
+
+		/**
+		 * Allocate and return the shape cache (SphereShapeCache) used by this class.
+		 */
+		virtual ShapeCache* CreateCache() const override;
+
 	private:
 		Vector3 center;
 		double radius;
+	};
+
+	/**
+	 * This class knows how to regenerate cache for a SphereShape class.
+	 */
+	class SphereShapeCache : public ShapeCache
+	{
+	public:
+		SphereShapeCache();
+		virtual ~SphereShapeCache();
+
+		/**
+		 * Update the given sphere's bounding box.
+		 */
+		virtual void Update(const Shape* shape) override;
 	};
 }

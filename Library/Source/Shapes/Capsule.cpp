@@ -7,6 +7,8 @@
 
 using namespace Collision;
 
+//-------------------------------- CapsuleShape --------------------------------
+
 CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 {
 	this->radius = 1.0;
@@ -21,6 +23,11 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 	return new CapsuleShape(false);
 }
 
+/*virtual*/ ShapeCache* CapsuleShape::CreateCache() const
+{
+	return new CapsuleShapeCache();
+}
+
 /*virtual*/ Shape::TypeID CapsuleShape::GetShapeTypeID() const
 {
 	return TypeID::CAPSULE;
@@ -29,24 +36,6 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 /*static*/ Shape::TypeID CapsuleShape::StaticTypeID()
 {
 	return TypeID::CAPSULE;
-}
-
-/*virtual*/ void CapsuleShape::RecalculateCache() const
-{
-	Shape::RecalculateCache();
-
-	Vector3 pointA = this->objectToWorld.TransformPoint(this->lineSegment.point[0]);
-	Vector3 pointB = this->objectToWorld.TransformPoint(this->lineSegment.point[1]);
-
-	this->cache.boundingBox.minCorner = pointA;
-	this->cache.boundingBox.maxCorner = pointA;
-
-	Vector3 delta(this->radius, this->radius, this->radius);
-
-	this->cache.boundingBox.Expand(pointA + delta);
-	this->cache.boundingBox.Expand(pointA - delta);
-	this->cache.boundingBox.Expand(pointB + delta);
-	this->cache.boundingBox.Expand(pointB - delta);
 }
 
 /*virtual*/ bool CapsuleShape::IsValid() const
@@ -300,4 +289,34 @@ const Vector3& CapsuleShape::GetVertex(int i) const
 	stream >> this->radius;
 	this->lineSegment.Restore(stream);
 	return true;
+}
+
+//-------------------------------- CapsuleShapeCache --------------------------------
+
+CapsuleShapeCache::CapsuleShapeCache()
+{
+}
+
+/*virtual*/ CapsuleShapeCache::~CapsuleShapeCache()
+{
+}
+
+/*virtual*/ void CapsuleShapeCache::Update(const Shape* shape)
+{
+	ShapeCache::Update(shape);
+
+	auto capsule = (const CapsuleShape*)shape;
+
+	Vector3 pointA = capsule->objectToWorld.TransformPoint(capsule->lineSegment.point[0]);
+	Vector3 pointB = capsule->objectToWorld.TransformPoint(capsule->lineSegment.point[1]);
+
+	this->boundingBox.minCorner = pointA;
+	this->boundingBox.maxCorner = pointA;
+
+	Vector3 delta(capsule->radius, capsule->radius, capsule->radius);
+
+	this->boundingBox.Expand(pointA + delta);
+	this->boundingBox.Expand(pointA - delta);
+	this->boundingBox.Expand(pointB + delta);
+	this->boundingBox.Expand(pointB - delta);
 }

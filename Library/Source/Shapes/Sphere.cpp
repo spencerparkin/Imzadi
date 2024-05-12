@@ -6,6 +6,8 @@
 
 using namespace Collision;
 
+//------------------------------------- SphereShape -------------------------------------
+
 SphereShape::SphereShape(bool temporary) : Shape(temporary)
 {
 	this->radius = 1.0;
@@ -20,6 +22,11 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	return new SphereShape(false);
 }
 
+/*virtual*/ ShapeCache* SphereShape::CreateCache() const
+{
+	return new SphereShapeCache();
+}
+
 /*virtual*/ Shape::TypeID SphereShape::GetShapeTypeID() const
 {
 	return TypeID::SPHERE;
@@ -28,17 +35,6 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 /*static*/ Shape::TypeID SphereShape::StaticTypeID()
 {
 	return TypeID::SPHERE;
-}
-
-/*virtual*/ void SphereShape::RecalculateCache() const
-{
-	Shape::RecalculateCache();
-
-	Vector3 delta(this->radius, this->radius, this->radius);
-	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->center);
-
-	this->cache.boundingBox.minCorner = worldCenter - delta;
-	this->cache.boundingBox.maxCorner = worldCenter + delta;
 }
 
 /*virtual*/ bool SphereShape::IsValid() const
@@ -186,4 +182,27 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	stream >> this->radius;
 	this->center.Restore(stream);
 	return true;
+}
+
+//------------------------------------- SphereShapeCache -------------------------------------
+
+SphereShapeCache::SphereShapeCache()
+{
+}
+
+/*virtual*/ SphereShapeCache::~SphereShapeCache()
+{
+}
+
+/*virtual*/ void SphereShapeCache::Update(const Shape* shape)
+{
+	ShapeCache::Update(shape);
+
+	auto sphere = (const SphereShape*)shape;
+
+	Vector3 delta(sphere->radius, sphere->radius, sphere->radius);
+	Vector3 worldCenter = sphere->objectToWorld.TransformPoint(sphere->center);
+
+	this->boundingBox.minCorner = worldCenter - delta;
+	this->boundingBox.maxCorner = worldCenter + delta;
 }

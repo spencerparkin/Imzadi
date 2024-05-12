@@ -9,10 +9,11 @@
 
 using namespace Collision;
 
+//----------------------------- PolygonShape -----------------------------
+
 PolygonShape::PolygonShape(const PolygonShape& polygon) : Shape(true)
 {
 	this->vertexArray = new std::vector<Vector3>();
-	this->cachedPlaneValid = false;
 
 	for (const Vector3& vertex : *polygon.vertexArray)
 		this->vertexArray->push_back(vertex);
@@ -21,7 +22,6 @@ PolygonShape::PolygonShape(const PolygonShape& polygon) : Shape(true)
 PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 {
 	this->vertexArray = new std::vector<Vector3>();
-	this->cachedPlaneValid = false;
 }
 
 /*virtual*/ PolygonShape::~PolygonShape()
@@ -34,6 +34,11 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	return new PolygonShape(false);
 }
 
+/*virtual*/ ShapeCache* PolygonShape::CreateCache() const
+{
+	return new PolygonShapeCache();
+}
+
 /*virtual*/ Shape::TypeID PolygonShape::GetShapeTypeID() const
 {
 	return TypeID::POLYGON;
@@ -42,18 +47,6 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 /*static*/ Shape::TypeID PolygonShape::StaticTypeID()
 {
 	return TypeID::POLYGON;
-}
-
-/*virtual*/ void PolygonShape::RecalculateCache() const
-{
-	Shape::RecalculateCache();
-
-	if (this->vertexArray->size() > 0)
-	{
-		std::vector<Vector3> worldVertexArray;
-		this->GetWorldVertices(worldVertexArray);
-		this->cache.boundingBox.SetToBoundPointCloud(worldVertexArray);
-	}
 }
 
 /*virtual*/ bool PolygonShape::IsValid() const
@@ -239,19 +232,8 @@ const Vector3& PolygonShape::GetVertex(int i) const
 
 const Plane& PolygonShape::GetPlane() const
 {
-	if (!this->cachedPlaneValid && this->vertexArray->size() >= 3)
-	{
-		this->CalculatePlaneOfBestFit(this->cachedPlane);
-
-		Vector3 center = this->GetCenter();
-		Vector3 frontDirection = ((*this->vertexArray)[0] - center).Cross((*this->vertexArray)[1] - (*this->vertexArray)[0]);
-		if (frontDirection.Dot(cachedPlane.unitNormal) < 0.0)
-			cachedPlane.unitNormal = -cachedPlane.unitNormal;
-
-		this->cachedPlaneValid = true;
-	}
-	
-	return this->cachedPlane;
+	auto cache = (PolygonShapeCache*)this->GetCache();
+	return cache->plane;
 }
 
 Vector3 PolygonShape::GetCenter() const
@@ -629,4 +611,31 @@ Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
 	}
 
 	return true;
+}
+
+//----------------------------- PolygonShapeCache -----------------------------
+
+PolygonShapeCache::PolygonShapeCache()
+{
+}
+
+/*virtual*/ PolygonShapeCache::~PolygonShapeCache()
+{
+}
+
+/*virtual*/ void PolygonShapeCache::Update(const Shape* shape)
+{
+	ShapeCache::Update(shape);
+
+	auto polygon = (const PolygonShape*)shape;
+	polygon->CalculatePlaneOfBestFit(this->plane);		// TODO: I think this may have a bug in it.
+
+	Vector3 center = polygon->GetCenter();
+	Vector3 frontDirection = ((*polygon->vertexArray)[0] - center).Cross((*polygon->vertexArray)[1] - (*polygon->vertexArray)[0]);
+	if (frontDirection.Dot(this->plane.unitNormal) < 0.0)
+		this->plane.unitNormal = -this->plane.unitNormal;
+
+	std::vector<Vector3> worldVertexArray;
+	polygon->GetWorldVertices(worldVertexArray);
+	this->boundingBox.SetToBoundPointCloud(worldVertexArray);
 }

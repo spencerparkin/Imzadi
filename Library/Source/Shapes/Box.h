@@ -14,6 +14,8 @@ namespace Collision
 	 */
 	class COLLISION_LIB_API BoxShape : public Shape
 	{
+		friend class BoxShapeCache;
+
 	public:
 		BoxShape(bool temporary);
 		BoxShape(const BoxShape& boxShape);
@@ -30,11 +32,6 @@ namespace Collision
 		 * Return what we do in GetShapeTypeID().
 		 */
 		static TypeID StaticTypeID();
-
-		/**
-		 * See Shape::RecalculateCache.
-		 */
-		virtual void RecalculateCache() const override;
 
 		/**
 		 * Tell the caller if this box is valid.  A valid box
@@ -138,7 +135,29 @@ namespace Collision
 		 */
 		void GetFacePolygonArray(std::vector<PolygonShape>& facePolygonArray, bool worldSpace) const;
 
+	protected:
+
+		/**
+		 * Allocate and return the shape cache (BoxShapeCache) used by this class.
+		 */
+		virtual ShapeCache* CreateCache() const override;
+
 	private:
 		Vector3 extents;
+	};
+
+	/**
+	 * This class knows how to regenerate cache for a BoxShape class.
+	 */
+	class BoxShapeCache : public ShapeCache
+	{
+	public:
+		BoxShapeCache();
+		virtual ~BoxShapeCache();
+
+		/**
+		 * Update the given box's bounding box.
+		 */
+		virtual void Update(const Shape* shape) override;
 	};
 }

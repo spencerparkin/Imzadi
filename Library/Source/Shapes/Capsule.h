@@ -13,6 +13,8 @@ namespace Collision
 	 */
 	class COLLISION_LIB_API CapsuleShape : public Shape
 	{
+		friend class CapsuleShapeCache;
+
 	public:
 		CapsuleShape(bool temporary);
 		virtual ~CapsuleShape();
@@ -26,11 +28,6 @@ namespace Collision
 		 * Return what we do in GetShapeTypeID().
 		 */
 		static TypeID StaticTypeID();
-
-		/**
-		 * See Shape::RecalculateCache.
-		 */
-		virtual void RecalculateCache() const override;
 
 		/**
 		 * Tell the caller if this capsule is valid.
@@ -109,8 +106,30 @@ namespace Collision
 		 */
 		double GetRadius() const { return this->radius; }
 
+	protected:
+
+		/**
+		 * Allocate and return the shape cache (CapsuleShapeCache) used by this class.
+		 */
+		virtual ShapeCache* CreateCache() const override;
+
 	private:
 		LineSegment lineSegment;
 		double radius;
+	};
+
+	/**
+	 * This class knows how to regenerate cache for a CapsuleShape class.
+	 */
+	class CapsuleShapeCache : public ShapeCache
+	{
+	public:
+		CapsuleShapeCache();
+		virtual ~CapsuleShapeCache();
+
+		/**
+		 * Update the given capsule's bounding-box.
+		 */
+		virtual void Update(const Shape* shape) override;
 	};
 }

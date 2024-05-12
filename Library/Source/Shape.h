@@ -12,6 +12,7 @@ namespace Collision
 {
 	class DebugRenderResult;
 	class BoundingBoxNode;
+	class ShapeCache;
 
 	typedef uint64_t ShapeID;
 
@@ -36,6 +37,7 @@ namespace Collision
 	{
 		friend class BoundingBoxTree;
 		friend class BoundingBoxNode;
+		friend class ShapeCache;
 
 	public:
 		/**
@@ -81,13 +83,6 @@ namespace Collision
 		 * @return The shape's ID is returned for reference purposes.
 		 */
 		ShapeID GetShapeID() const;
-
-		/**
-		 * Derivatives must override this method to recalculate this shape's internal cache.
-		 * See the Cache structure.  Derivatives must also be careful to invalidate this
-		 * cache whenever necessary, and they should call this base method in their override.
-		 */
-		virtual void RecalculateCache() const;
 
 		/**
 		 * Tell the caller if this collision shape has valid data.  Overrides should
@@ -179,12 +174,6 @@ namespace Collision
 		static Shape* Create(TypeID typeID);
 
 		/**
-		 * This calls the RecalculateCache() method if the cache is not currently valid.
-		 * The cache is flagged as valid after this call.
-		 */
-		void RegenerateCacheIfNeeded() const;
-
-		/**
 		 * Set this shape's transform taking it from object space to world space.
 		 * Note that to keep things simple, all calculations assume that there
 		 * is no shear or scale in the matrix part of the given transform.  In other
@@ -241,22 +230,68 @@ namespace Collision
 		ShapeID shapeID;							///< This is a unique identifier that can be used to safely refer to this node on any thread.
 		static std::atomic<ShapeID> nextShapeID;	///< This is the ID of the next shape to be allocated by the system.
 		BoundingBoxNode* node;						///< This is the node of the bounding-box tree that contains this shape.
+		mutable ShapeCache* cache;					///< This pointer should never be accessed directly by methods of this class or any of its derivatives.  Rather, the GetCache method should always be used.
 
 	protected:
 
 		/**
-		 * Any redundant data about the shape should be stored here.
+		 * This method should be used internally by any other class method to get
+		 * access to the ShapeCache member pointer.
 		 */
-		struct Cache
-		{
-			Transform worldToObject;			///< This should be calculated as the inverse of this shape's object-to-world transform.
-			AxisAlignedBoundingBox boundingBox;	///< This should be calculated as the smallest AABB that contains this shape.
-		};
+		ShapeCache* GetCache() const;
+
+		/**
+		 * Derivatives must override this to provide a ShapeClass derivative allocation.
+		 */
+		virtual ShapeCache* CreateCache() const = 0;
+
+	protected:
 
 		Transform objectToWorld;	///< A shape is described in object space and then realized in world space using this transform.
 		Vector3 debugColor;			///< This color is used to render the shape for debugging purposes.
-		mutable Cache cache;		///< This is cached data about the shape that can be gleaned as a function of the shape's defining characteristics.  The cache is used for efficiency purposes.
-		mutable bool cacheValid;	///< This flag indicates whethere our cache is currently valid.  It becomes invalid whenever our object-to-world transform changes, or other defining characteristics of the shape.
 		uint64_t revisionNumber;	///< This is used in the collision cache mechanism.  Any change to the shape should bump this number.
+	};
+
+	/**
+	 * This class holds information that is redundant about a shape, or that can be
+	 * gleaned from the defining characteristics of the shape.  The purpose here is
+	 * to prevent us from recalculating this information every time we need it, and
+	 * to provide a formal caching mechanism we can use to manage it.  Also, while
+	 * all shapes share some common attributes we'd like to cache, some require
+	 * additional information, and that information can be stored in a derivative
+	 * of this class.
+	 * 
+	 * Methods of the associated shape class need to be careful to invalidate this
+	 * cache class instance whenever necessary.
+	 * 
+	 * Another way to think of this class is as a way of enforcing single-source of truth.
+	 * For example, the object-to-world transform is a single source of truth, while
+	 * we let the world-to-object transform always be a function of that truth.  This way,
+	 * we're never uncertain about what is current and what is possibly not.  If both
+	 * transforms were the source of truth, then our code has to work hard everywhere to
+	 * keep them in sync, and it's too error-prone.
+	 * 
+	 * Lastly, (as if this isn't already super long-winded and over-the-top), making this
+	 * its own class creates a clear separation in the data between what is a defining
+	 * characteristic of a shape and what is gleanable/additional or redundant information
+	 * about the shape.
+	 */
+	class ShapeCache
+	{
+	public:
+		ShapeCache();
+		virtual ~ShapeCache();
+
+		/**
+		 * Overrides of this method should call this base method as well as provide a
+		 * means of updating its own members as well as members of this base class that
+		 * cannot be generally updated, such as the bounding-box.
+		 */
+		virtual void Update(const Shape* shape);
+
+	public:
+		bool isValid;						///< If true, the other members of this class should be a reflection of reality; false, otherwise.
+		Transform worldToObject;			///< This should be calculated as the inverse of this shape's object-to-world transform.
+		AxisAlignedBoundingBox boundingBox;	///< This should be calculated as the smallest AABB that contains this shape.
 	};
 }

@@ -8,18 +8,32 @@ using namespace Collision;
 
 std::atomic<ShapeID> Shape::nextShapeID(1);
 
+//---------------------------------- Shape ----------------------------------
+
 Shape::Shape(bool temporary)
 {
 	this->node = nullptr;
 	this->debugColor.SetComponents(1.0, 0.0, 0.0);
 	this->shapeID = temporary ? 0 : nextShapeID++;
-	this->cacheValid = false;
+	this->cache = nullptr;
 	this->objectToWorld.SetIdentity();
 	this->revisionNumber = 0;
 }
 
 /*virtual*/ Shape::~Shape()
 {
+	delete this->cache;
+}
+
+ShapeCache* Shape::GetCache() const
+{
+	if (!this->cache)
+		this->cache = this->CreateCache();
+
+	if (!this->cache->isValid)
+		this->cache->Update(this);
+
+	return this->cache;
 }
 
 ShapeID Shape::GetShapeID() const
@@ -49,28 +63,12 @@ ShapeID Shape::GetShapeID() const
 	return nullptr;
 }
 
-/*virtual*/ void Shape::RecalculateCache() const
-{
-	this->cache.worldToObject.Invert(this->objectToWorld);
-}
-
-void Shape::RegenerateCacheIfNeeded() const
-{
-	if (!this->cacheValid)
-	{
-		this->RecalculateCache();
-		this->cacheValid = true;
-	}
-}
-
 /*virtual*/ bool Shape::IsValid() const
 {
 	if (!this->objectToWorld.IsValid())
 		return false;
 
-	this->RegenerateCacheIfNeeded();
-
-	if (!this->cache.worldToObject.IsValid())
+	if (!this->GetCache()->worldToObject.IsValid())
 		return false;
 
 	return true;
@@ -84,7 +82,7 @@ void Shape::RegenerateCacheIfNeeded() const
 void Shape::SetObjectToWorldTransform(const Transform& objectToWorld)
 {
 	this->objectToWorld = objectToWorld;
-	this->cacheValid = false;
+	this->GetCache()->isValid = false;
 	this->BumpRevisionNumber();
 }
 
@@ -95,16 +93,12 @@ const Transform& Shape::GetObjectToWorldTransform() const
 
 const Transform& Shape::GetWorldToObjectTransform() const
 {
-	this->RegenerateCacheIfNeeded();
-
-	return this->cache.worldToObject;
+	return this->GetCache()->worldToObject;
 }
 
 const AxisAlignedBoundingBox& Shape::GetBoundingBox() const
 {
-	this->RegenerateCacheIfNeeded();
-
-	return this->cache.boundingBox;
+	return this->GetCache()->boundingBox;
 }
 
 /*virtual*/ bool Shape::Dump(std::ostream& stream) const
@@ -119,4 +113,21 @@ const AxisAlignedBoundingBox& Shape::GetBoundingBox() const
 	this->objectToWorld.Restore(stream);
 	this->debugColor.Restore(stream);
 	return true;
+}
+
+//---------------------------------- ShapeCache ----------------------------------
+
+ShapeCache::ShapeCache()
+{
+	this->isValid = false;
+}
+
+/*virtual*/ ShapeCache::~ShapeCache()
+{
+}
+
+/*virtual*/ void ShapeCache::Update(const Shape* shape)
+{
+	this->worldToObject.Invert(shape->objectToWorld);
+	this->isValid = true;
 }

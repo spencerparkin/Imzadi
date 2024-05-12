@@ -8,6 +8,8 @@
 
 using namespace Collision;
 
+//------------------------------- BoxShape -------------------------------
+
 BoxShape::BoxShape(bool temporary) : Shape(temporary)
 {
 }
@@ -25,6 +27,11 @@ BoxShape::BoxShape(const BoxShape& boxShape) : Shape(true)
 /*static*/ BoxShape* BoxShape::Create()
 {
 	return new BoxShape(false);
+}
+
+/*virtual*/ ShapeCache* BoxShape::CreateCache() const
+{
+	return new BoxShapeCache();
 }
 
 /*virtual*/ Shape::TypeID BoxShape::GetShapeTypeID() const
@@ -140,15 +147,6 @@ void BoxShape::GetFacePolygonArray(std::vector<PolygonShape>& facePolygonArray, 
 	face.AddVertex(boxVertices[1][1][1]);
 	face.AddVertex(boxVertices[0][1][1]);
 	facePolygonArray.push_back(face);
-}
-
-/*virtual*/ void BoxShape::RecalculateCache() const
-{
-	Shape::RecalculateCache();
-
-	std::vector<Vector3> cornerPointArray;
-	this->GetCornerPointArray(cornerPointArray, true);
-	this->cache.boundingBox.SetToBoundPointCloud(cornerPointArray);
 }
 
 /*virtual*/ bool BoxShape::IsValid() const
@@ -286,4 +284,25 @@ void BoxShape::GetAxisAlignedBox(AxisAlignedBoundingBox& box) const
 
 	this->extents.Restore(stream);
 	return true;
+}
+
+//------------------------------- BoxShapeCache -------------------------------
+
+BoxShapeCache::BoxShapeCache()
+{
+}
+
+/*virtual*/ BoxShapeCache::~BoxShapeCache()
+{
+}
+
+/*virtual*/ void BoxShapeCache::Update(const Shape* shape)
+{
+	ShapeCache::Update(shape);
+
+	auto box = (const BoxShape*)shape;
+
+	std::vector<Vector3> cornerPointArray;
+	box->GetCornerPointArray(cornerPointArray, true);
+	this->boundingBox.SetToBoundPointCloud(cornerPointArray);
 }
