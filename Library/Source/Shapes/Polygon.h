@@ -142,18 +142,27 @@ namespace Collision
 		/**
 		 * Return the object-space plane containing this polygon.  Of course, there
 		 * is no corresponding set call, because this plane is determined by this
-		 * polygon's set of vertices.  Note that the returned result is
-		 * cached so that subsequence calls to this function are faster.
+		 * polygon's set of vertices.
 		 * 
 		 * @return The polygon's plane is returned in object-space.  Its normal will point toward the "front" space of this polygon.
 		 */
 		const Plane& GetPlane() const;
 
 		/**
-		 * Calculate and return the average of all this polygon's object-space vertices.
+		 * Return the world-space plane containing this polygon.
+		 */
+		const Plane& GetWorldPlane() const;
+
+		/**
+		 * Return the average of all this polygon's object-space vertices.
 		 * This is always a point of the polygon in object-space if the polygon is valid.
 		 */
-		Vector3 GetCenter() const;
+		const Vector3& GetCenter() const;
+
+		/**
+		 * Return the average of all this polygon's world-space vertices.
+		 */
+		const Vector3& GetWorldCenter() const;
 
 		/**
 		 * Calculate and return a plane in object space that best fits this polygon's set of vertices,
@@ -184,10 +193,8 @@ namespace Collision
 
 		/**
 		 * Return the vertices of this polygon (in CCW order) transformed into world space.
-		 * 
-		 * @param[out] worldVertexArray This array is populated with this polygon's transformed vertices.
 		 */
-		void GetWorldVertices(std::vector<Vector3>& worldVertexArray) const;
+		const std::vector<Vector3>& GetWorldVertices() const;
 
 		/**
 		 * Calculate and return the point on this polygon (in world space) that is closest
@@ -246,7 +253,10 @@ namespace Collision
 		virtual void Update(const Shape* shape) override;
 
 	public:
-		Vector3 center;		///< This is the center of the polygon in object-space.
-		Plane plane;		///< This is the plane containing the object-space polygon with normal facing the direction of the "front" space of the polygon.
+		Vector3 center;			///< This is the center of the polygon in object-space.
+		Vector3 worldCenter;	///< This is the center of the polygon in world-space.
+		Plane plane;			///< This is the plane containing the object-space polygon with normal facing the direction of the front-space of the polygon.
+		Plane worldPlane;		///< This is the plane containing the world-space polygon with normal facing the direction of the front-space of the polygon.
+		std::vector<Vector3>* worldVertexArray;		///< These are the world-space vertices of the polygon.
 	};
 }

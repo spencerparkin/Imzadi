@@ -116,24 +116,21 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	return false;
 }
 
-void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) const
+const std::vector<Vector3>& PolygonShape::GetWorldVertices() const
 {
-	for (const Vector3& vertex : *this->vertexArray)
-		worldVertexArray.push_back(this->objectToWorld.TransformPoint(vertex));
+	return *((PolygonShapeCache*)this->GetCache())->worldVertexArray;
 }
 
 /*virtual*/ bool PolygonShape::ContainsPoint(const Vector3& point) const
 {
 	// Is the point on the plane of the polygon?
-	Plane plane = this->objectToWorld.TransformPlane(this->GetPlane());
+	const Plane& worldPlane = this->GetWorldPlane();
 	double tolerance = 1e-5;
-	if (plane.GetSide(point, tolerance) != Plane::Side::NEITHER)
+	if (worldPlane.GetSide(point, tolerance) != Plane::Side::NEITHER)
 		return false;
 
-	std::vector<Vector3> worldVertexArray;
-	this->GetWorldVertices(worldVertexArray);
-
 	// Is the point on an edge of the polygon?
+	const std::vector<Vector3>& worldVertexArray = this->GetWorldVertices();
 	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
 	{
 		int j = (i + 1) % worldVertexArray.size();
@@ -154,7 +151,7 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 		const Vector3& vertexA = worldVertexArray[i];
 		const Vector3& vertexB = worldVertexArray[j];
 
-		double determinant = (vertexA - point).Cross(vertexB - point).Dot(plane.unitNormal);
+		double determinant = (vertexA - point).Cross(vertexB - point).Dot(worldPlane.unitNormal);
 		if (determinant < 0.0)
 			return false;
 	}
@@ -167,21 +164,21 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 	DebugRenderResult::RenderLine renderLine;
 	renderLine.color = this->debugColor;
 
-	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	const std::vector<Vector3>& worldVertexArray = this->GetWorldVertices();
+	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
 	{
-		int j = (i + 1) % this->vertexArray->size();
+		int j = (i + 1) % worldVertexArray.size();
 
-		renderLine.line.point[0] = this->objectToWorld.TransformPoint((*this->vertexArray)[i]);
-		renderLine.line.point[1] = this->objectToWorld.TransformPoint((*this->vertexArray)[j]);
+		renderLine.line.point[0] = worldVertexArray[i];
+		renderLine.line.point[1] = worldVertexArray[j];
 		renderResult->AddRenderLine(renderLine);
 	}
 
-	const Plane& plane = this->GetPlane();
-	Vector3 worldNormal = this->objectToWorld.TransformNormal(plane.unitNormal);
-	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->GetCenter());
+	const Plane& worldPlane = this->GetWorldPlane();
+	const Vector3& worldCenter = this->GetWorldCenter();
 
 	renderLine.line.point[0] = worldCenter;
-	renderLine.line.point[1] = worldCenter + worldNormal;
+	renderLine.line.point[1] = worldCenter + worldPlane.unitNormal;
 	renderResult->AddRenderLine(renderLine);
 }
 
@@ -190,15 +187,15 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 	if (this->ContainsPoint(ray.origin))
 		return false;
 
-	Plane plane = this->objectToWorld.TransformPlane(this->GetPlane());
-	if (!ray.CastAgainst(plane, alpha) || alpha < 0.0)
+	const Plane& worldPlane = this->GetWorldPlane();
+	if (!ray.CastAgainst(worldPlane, alpha) || alpha < 0.0)
 		return false;
 
 	Vector3 hitPoint = ray.CalculatePoint(alpha);
 	if (!this->ContainsPoint(hitPoint))
 		return false;
 
-	unitSurfaceNormal = plane.unitNormal;
+	unitSurfaceNormal = worldPlane.unitNormal;
 	if (unitSurfaceNormal.Dot(ray.unitDirection) > 0.0)
 		unitSurfaceNormal = -unitSurfaceNormal;
 
@@ -232,13 +229,22 @@ const Vector3& PolygonShape::GetVertex(int i) const
 
 const Plane& PolygonShape::GetPlane() const
 {
-	auto cache = (PolygonShapeCache*)this->GetCache();
-	return cache->plane;
+	return ((PolygonShapeCache*)this->GetCache())->plane;
 }
 
-Vector3 PolygonShape::GetCenter() const
+const Plane& PolygonShape::GetWorldPlane() const
+{
+	return ((PolygonShapeCache*)this->GetCache())->worldPlane;
+}
+
+const Vector3& PolygonShape::GetCenter() const
 {
 	return ((PolygonShapeCache*)this->GetCache())->center;
+}
+
+const Vector3& PolygonShape::GetWorldCenter() const
+{
+	return ((PolygonShapeCache*)this->GetCache())->worldCenter;
 }
 
 int PolygonShape::ModIndex(int i) const
@@ -419,6 +425,7 @@ void PolygonShape::FixWindingOfTriangle(const Vector3& desiredNormal)
 	}
 }
 
+// TODO: Test this.  It has not yet been tested, and so it surely doesn't work yet.
 void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& planarPointCloud, const Plane& plane)
 {
 	this->Clear();
@@ -543,16 +550,13 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 
 Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
 {
-	Plane plane = this->GetObjectToWorldTransform().TransformPlane(this->GetPlane());
-	Vector3 closestPoint = plane.ClosestPointTo(point);
+	const Plane& worldPlane = this->GetWorldPlane();
+	Vector3 closestPoint = worldPlane.ClosestPointTo(point);
 	if (this->ContainsPoint(closestPoint))
 		return closestPoint;
 
 	double smallestDistance = std::numeric_limits<double>::max();
-
-	std::vector<Vector3> worldVertexArray;
-	this->GetWorldVertices(worldVertexArray);
-
+	const std::vector<Vector3>& worldVertexArray = this->GetWorldVertices();
 	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
 	{
 		int j = (i + 1) % worldVertexArray.size();
@@ -608,10 +612,12 @@ Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
 
 PolygonShapeCache::PolygonShapeCache()
 {
+	this->worldVertexArray = new std::vector<Vector3>();
 }
 
 /*virtual*/ PolygonShapeCache::~PolygonShapeCache()
 {
+	delete this->worldVertexArray;
 }
 
 /*virtual*/ void PolygonShapeCache::Update(const Shape* shape)
@@ -632,6 +638,7 @@ PolygonShapeCache::PolygonShapeCache()
 			this->center += vertex;
 		
 		this->center /= double(polygon->vertexArray->size());
+		this->worldCenter = polygon->objectToWorld.TransformPoint(this->center);
 
 		Vector3 normal(0.0, 0.0, 0.0);
 
@@ -646,9 +653,12 @@ PolygonShapeCache::PolygonShapeCache()
 		}
 
 		this->plane = Plane(center, normal.Normalized());
+		this->worldPlane = polygon->objectToWorld.TransformPlane(this->plane);
 	}
 
-	std::vector<Vector3> worldVertexArray;
-	polygon->GetWorldVertices(worldVertexArray);
-	this->boundingBox.SetToBoundPointCloud(worldVertexArray);
+	this->worldVertexArray->clear();
+	for (const Vector3& vertex : *polygon->vertexArray)
+		this->worldVertexArray->push_back(polygon->objectToWorld.TransformPoint(vertex));
+
+	this->boundingBox.SetToBoundPointCloud(*this->worldVertexArray);
 }
