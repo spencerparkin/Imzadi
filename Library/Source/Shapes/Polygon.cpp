@@ -171,18 +171,25 @@ void PolygonShape::GetWorldVertices(std::vector<Vector3>& worldVertexArray) cons
 
 /*virtual*/ void PolygonShape::DebugRender(DebugRenderResult* renderResult) const
 {
+	DebugRenderResult::RenderLine renderLine;
+	renderLine.color = this->debugColor;
+
 	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
 	{
 		int j = (i + 1) % this->vertexArray->size();
 
-		DebugRenderResult::RenderLine renderLine;
-
 		renderLine.line.point[0] = this->objectToWorld.TransformPoint((*this->vertexArray)[i]);
 		renderLine.line.point[1] = this->objectToWorld.TransformPoint((*this->vertexArray)[j]);
-		renderLine.color = this->debugColor;
-
 		renderResult->AddRenderLine(renderLine);
 	}
+
+	const Plane& plane = this->GetPlane();
+	Vector3 worldNormal = this->objectToWorld.TransformNormal(plane.unitNormal);
+	Vector3 worldCenter = this->objectToWorld.TransformPoint(this->GetCenter());
+
+	renderLine.line.point[0] = worldCenter;
+	renderLine.line.point[1] = worldCenter + worldNormal;
+	renderResult->AddRenderLine(renderLine);
 }
 
 /*virtual*/ bool PolygonShape::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
