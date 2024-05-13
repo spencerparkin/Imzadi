@@ -302,12 +302,12 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 		VertexPenetrationArray vertexPenetrationArrayA;
 		EdgeImpalementArray edgeImpalementArrayA;
 		FacePunctureArray facePunctureArrayA;
-		bool intersectionsFoundA = this->CalculateInternal(&tempBoxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA, facePunctureArrayA);
+		bool intersectionsFoundA = this->GatherInfo(&tempBoxA, boxB, vertexPenetrationArrayA, edgeImpalementArrayA, facePunctureArrayA);
 
 		VertexPenetrationArray vertexPenetrationArrayB;
 		EdgeImpalementArray edgeImpalementArrayB;
 		FacePunctureArray facePunctureArrayB;
-		bool intersectionsFoundB = this->CalculateInternal(boxB, &tempBoxA, vertexPenetrationArrayB, edgeImpalementArrayB, facePunctureArrayB);
+		bool intersectionsFoundB = this->GatherInfo(boxB, &tempBoxA, vertexPenetrationArrayB, edgeImpalementArrayB, facePunctureArrayB);
 
 		if (!intersectionsFoundA && !intersectionsFoundB)
 			break;
@@ -384,7 +384,7 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 	return collisionStatus;
 }
 
-bool BoxBoxCollisionCalculator::CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox,
+bool BoxBoxCollisionCalculator::GatherInfo(const BoxShape* homeBox, const BoxShape* awayBox,
 													VertexPenetrationArray& vertexPenetrationArray,
 													EdgeImpalementArray& edgeImpalementArray,
 													FacePunctureArray& facePunctureArray)

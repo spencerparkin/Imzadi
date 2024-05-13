@@ -137,6 +137,6 @@ namespace Collision
 		 * @param[out] edgeImpalementArray Away-box edges originating outside the home-box and then passing in and out of it are returned here in world space.
 		 * @param[out] facePunctureArray Away-box edges originating inside or outside the home-box and then entering or exiting the away-box are returned here in world space.
 		 */
-		bool CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray, FacePunctureArray& facePunctureArray);
+		bool GatherInfo(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray, FacePunctureArray& facePunctureArray);
 	};
 }
