@@ -4,6 +4,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/LineSegment.h"
 #include "Math/Matrix3x3.h"
+#include "Math/Interval.h"
 #include "Result.h"
 #include <list>
 
@@ -112,8 +113,49 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ bool PolygonShape::Split(const Plane& plane, Shape*& shapeBack, Shape*& shapeFront) const
 {
-	// TODO: Write this.
-	return false;
+	constexpr double planeThickness = 1e-6;
+
+	auto polygonBack = new PolygonShape(false);
+	auto polygonFront = new PolygonShape(false);
+
+	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	{
+		int j = (i + 1) % this->vertexArray->size();
+
+		const Vector3& vertexA = (*this->vertexArray)[i];
+		const Vector3& vertexB = (*this->vertexArray)[j];
+
+		Plane::Side side = plane.GetSide(vertexA, planeThickness);
+
+		if (side == Plane::Side::BACK || side == Plane::Side::NEITHER)
+			polygonBack->vertexArray->push_back(vertexA);
+		if (side == Plane::Side::FRONT || side == Plane::Side::NEITHER)
+			polygonFront->vertexArray->push_back(vertexA);
+
+		double edgeLength = 0.0;
+		Ray ray(vertexA, vertexB - vertexA);
+		ray.unitDirection.Normalize(&edgeLength);
+		double alpha = 0.0;
+		Interval interval(0.0, edgeLength);
+
+		if (ray.CastAgainst(plane, alpha) && interval.ContainsInteriorValue(alpha))
+		{
+			Vector3 intersectionPoint = ray.CalculatePoint(alpha);
+			polygonBack->vertexArray->push_back(intersectionPoint);
+			polygonFront->vertexArray->push_back(intersectionPoint);
+		}
+	}
+
+	if (polygonBack->vertexArray->size() < 3 || polygonFront->vertexArray->size() < 3)
+	{
+		delete polygonBack;
+		delete polygonFront;
+		return false;
+	}
+
+	shapeBack = polygonBack;
+	shapeFront = polygonFront;
+	return true;
 }
 
 const std::vector<Vector3>& PolygonShape::GetWorldVertices() const

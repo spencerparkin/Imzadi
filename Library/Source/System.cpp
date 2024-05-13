@@ -52,7 +52,7 @@ bool System::Shutdown()
 	return true;
 }
 
-ShapeID System::AddShape(Shape* shape)
+ShapeID System::AddShape(Shape* shape, uint32_t flags)
 {
 	if (!this->thread)
 	{
@@ -70,6 +70,7 @@ ShapeID System::AddShape(Shape* shape)
 
 	auto command = AddShapeCommand::Create();
 	command->SetShape(shape);
+	command->SetFlags(flags);
 	this->thread->SendTask(command);
 
 	return shapeID;

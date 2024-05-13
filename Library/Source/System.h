@@ -55,9 +55,10 @@ namespace Collision
 		 * Shape class derivative.
 		 * 
 		 * @param shape This is a pointer to the Shape object derivative.  Ownership of the memory is taken by the system.
+		 * @param flags This is an OR-ing of the COLL_SYS_ADD_FLAG_* flags.
 		 * @return A handle to the collision shape is returned.  Use it to reference the shape in any command or query.
 		 */
-		ShapeID AddShape(Shape* shape);
+		ShapeID AddShape(Shape* shape, uint32_t flags);
 
 		/**
 		 * Remove the collision shape from the collision system having the given shape ID.  This does nothing if

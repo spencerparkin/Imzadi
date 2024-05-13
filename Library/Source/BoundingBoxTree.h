@@ -42,8 +42,8 @@ namespace Collision
 		 * Note that if the COLL_SYS_ADD_FLAG_ALLOW_SPLIT is passed in, then
 		 * we try to split the given shape up as needed to get it as deep into
 		 * the tree as possible, with a reasonable limit on how small a leaf
-		 * node can get.  Also, whether we succeed or fail here, ownership
-		 * of the memory of the given shape is taken by the tree.  If it gets
+		 * node can get.  Also, only on successful insertion is the ownership
+		 * of the memory of the given shape taken on by the tree.  If it gets
 		 * split, then it will be deleted, and its ID will become invalid.
 		 * If splitting is not allowed and insertion is successful, then you
 		 * can continue to refer to the shape on the main thread by its ID.

@@ -143,6 +143,7 @@ void Thread::AddShape(Shape* shape, uint32_t flags)
 
 	if (!this->boxTree.Insert(shape, flags))
 	{
+		Shape::Free(shape);
 		GetError()->AddErrorMessage(std::format("Failed to insert shape with ID {} into the bounding-box tree.", shapeID));
 	}
 }

@@ -101,10 +101,19 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 			shape = nullptr;
 			node->BindToShape(shapeBack);
 			node->BindToShape(shapeFront);
+			
 			if (!this->Insert(shapeBack, flags))
+			{
+				Shape::Free(shapeBack);
 				return false;
+			}
+
 			if (!this->Insert(shapeFront, flags))
+			{
+				Shape::Free(shapeFront);
 				return false;
+			}
+
 			break;
 		}
 	}

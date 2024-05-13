@@ -221,7 +221,7 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 
 			System* system = wxGetApp().GetCollisionSystem();
 			for (auto shape : shapeArray)
-				system->AddShape(shape);
+				system->AddShape(shape, COLL_SYS_ADD_FLAG_ALLOW_SPLIT);
 		}
 	}
 }
@@ -294,7 +294,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 
 	if (shape)
 	{
-		system->AddShape(shape);
+		system->AddShape(shape, 0);
 		this->canvas->Refresh();
 	}
 }
