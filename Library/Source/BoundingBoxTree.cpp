@@ -102,6 +102,9 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 			node->BindToShape(shapeBack);
 			node->BindToShape(shapeFront);
 			
+			COLL_SYS_ASSERT((*node->childNodeArray)[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
+			COLL_SYS_ASSERT((*node->childNodeArray)[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
+
 			if (!this->Insert(shapeBack, flags))
 			{
 				Shape::Free(shapeBack);
