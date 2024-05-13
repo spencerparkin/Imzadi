@@ -24,8 +24,13 @@ namespace Collision
 		 * shapes, which may or may not be in collision; that is determined by this
 		 * function.
 		 * 
-		 * @param[in] shapeA The first shape to consider in a possible collision with the second.  Order doesn't matter.
-		 * @param[in] shapeB The second shape to consider in a possible collision with the first.  Again, order doesn't matter.
+		 * Note that the order of the arguments does matter in at least two ways.  First,
+		 * the override will expect certain types to be castable for each argument.
+		 * Second, the separation delta is always based on moving the first shape away
+		 * from the second.
+		 * 
+		 * @param[in] shapeA The first shape to consider in a possible collision with the second.
+		 * @param[in] shapeB The second shape to consider in a possible collision with the first.
 		 * @return A new and valid ShapePairCollisionStatus class instance should be calculated and returned.
 		 */
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) = 0;
