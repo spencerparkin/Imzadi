@@ -17,16 +17,25 @@ CollisionCache::CollisionCache()
 	this->cacheMap = new ShapePairCollisionStatusMap();
 	this->calculatorMap = new CollisionCalculatorMap();
 
-	this->AddCalculator<SphereSphereCollisionCalculator, SphereShape, SphereShape>();
-	this->AddCalculator<SphereCapsuleCollisionCalculator, SphereShape, CapsuleShape>();
-	this->AddCalculator<SpherePolygonCollisionCalculator, SphereShape, PolygonShape>();
-	this->AddCalculator<SphereBoxCollisionCalculator, SphereShape, BoxShape>();
-	this->AddCalculator<CapsuleCapsuleCollisionCalculator, CapsuleShape, CapsuleShape>();
+	this->AddCalculator<SphereShape, SphereShape>();
+	
+	this->AddCalculator<SphereShape, CapsuleShape>();
+	this->AddCalculator<CapsuleShape, SphereShape>();
+	
+	this->AddCalculator<SphereShape, PolygonShape>();
+	this->AddCalculator<PolygonShape, SphereShape>();
+
+	this->AddCalculator<SphereShape, BoxShape>();
+	this->AddCalculator<BoxShape, SphereShape>();
+
+	this->AddCalculator<CapsuleShape, CapsuleShape>();
+
 	// TODO: CapsulePolygon
 	// TODO: CapsuleBox
 	// TODO: PolygonPolygon
 	// TODO: PolygonBox
-	this->AddCalculator<BoxBoxCollisionCalculator, BoxShape, BoxShape>();
+
+	this->AddCalculator<BoxShape, BoxShape>();
 }
 
 /*virtual*/ CollisionCache::~CollisionCache()
@@ -66,7 +75,7 @@ ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const
 		}
 		else
 		{
-			CollisionCalculator* calculator = calculatorIter->second;
+			CollisionCalculatorInterface* calculator = calculatorIter->second;
 			collisionStatus = calculator->Calculate(shapeA, shapeB);
 			if (!collisionStatus)
 			{
@@ -102,7 +111,7 @@ uint64_t CollisionCache::MakeCalculatorKey(const Shape* shapeA, const Shape* sha
 
 uint64_t CollisionCache::MakeCalculatorKey(uint32_t typeIDA, uint32_t typeIDB)
 {
-	return (uint64_t(COLL_SYS_MIN(typeIDA, typeIDB)) << 32) | uint64_t(COLL_SYS_MAX(typeIDA, typeIDB));
+	return (uint64_t(typeIDA) << 32) | uint64_t(typeIDB);
 }
 
 void CollisionCache::Clear()
@@ -121,7 +130,7 @@ void CollisionCache::ClearCalculatorMap()
 	while (this->calculatorMap->size() > 0)
 	{
 		CollisionCalculatorMap::iterator iter = this->calculatorMap->begin();
-		CollisionCalculator* calculator = iter->second;
+		CollisionCalculatorInterface* calculator = iter->second;
 		delete calculator;
 		this->calculatorMap->erase(iter);
 	}

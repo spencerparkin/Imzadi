@@ -13,27 +13,9 @@
 
 using namespace Collision;
 
-//------------------------------ CollisionCalculator ------------------------------
+//------------------------------ CollisionCalculator<SphereShape, SphereShape> ------------------------------
 
-CollisionCalculator::CollisionCalculator()
-{
-}
-
-/*virtual*/ CollisionCalculator::~CollisionCalculator()
-{
-}
-
-//------------------------------ SphereSphereCollisionCalculator ------------------------------
-
-SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
-{
-}
-
-/*virtual*/ SphereSphereCollisionCalculator::~SphereSphereCollisionCalculator()
-{
-}
-
-/*virtual*/ ShapePairCollisionStatus* SphereSphereCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	auto sphereA = dynamic_cast<const SphereShape*>(shapeA);
 	auto sphereB = dynamic_cast<const SphereShape*>(shapeB);
@@ -44,7 +26,7 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 		return nullptr;
 	}
 
-	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+	auto collisionStatus = new ShapePairCollisionStatus(sphereA, sphereB);
 
 	Vector3 centerA = sphereA->GetObjectToWorldTransform().TransformPoint(sphereA->GetCenter());
 	Vector3 centerB = sphereB->GetObjectToWorldTransform().TransformPoint(sphereB->GetCenter());
@@ -63,29 +45,13 @@ SphereSphereCollisionCalculator::SphereSphereCollisionCalculator()
 	return collisionStatus;
 }
 
-//------------------------------ SphereCapsuleCollisionCalculator ------------------------------
+//------------------------------ CollisionCalculator<SphereShape, CapsuleShape> ------------------------------
 
-SphereCapsuleCollisionCalculator::SphereCapsuleCollisionCalculator()
-{
-}
-
-/*virtual*/ SphereCapsuleCollisionCalculator::~SphereCapsuleCollisionCalculator()
-{
-}
-
-/*virtual*/ ShapePairCollisionStatus* SphereCapsuleCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<SphereShape, CapsuleShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	auto sphere = dynamic_cast<const SphereShape*>(shapeA);
 	auto capsule = dynamic_cast<const CapsuleShape*>(shapeB);
-	double directionFactor = -1.0;
-
-	if (!sphere || !capsule)
-	{
-		sphere = dynamic_cast<const SphereShape*>(shapeB);
-		capsule = dynamic_cast<const CapsuleShape*>(shapeA);
-		directionFactor = 1.0;
-	}
-
+	
 	if (!sphere || !capsule)
 	{
 		GetError()->AddErrorMessage("Failed to cast given shapes to sphere and capsule.");
@@ -107,23 +73,25 @@ SphereCapsuleCollisionCalculator::SphereCapsuleCollisionCalculator()
 	{
 		collisionStatus->inCollision = true;
 		collisionStatus->collisionCenter = closestPoint + delta * (capsule->GetRadius() / radiiSum);	// TODO: Need to test this calculation.
-		collisionStatus->separationDelta = delta.Normalized() * (distance - radiiSum) * directionFactor;
+		collisionStatus->separationDelta = delta.Normalized() * (radiiSum - distance);
 	}
 
 	return collisionStatus;
 }
 
-//------------------------------ CapsuleCapsuleCollisionCalculator ------------------------------
+//------------------------------ CollisionCalculator<CapsuleShape, SphereShape> ------------------------------
 
-CapsuleCapsuleCollisionCalculator::CapsuleCapsuleCollisionCalculator()
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<CapsuleShape, SphereShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
+	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<SphereShape, CapsuleShape>().Calculate(shapeB, shapeA);
+	if (collisionStatus)
+		collisionStatus->separationDelta *= -1.0;
+	return collisionStatus;
 }
 
-/*virtual*/ CapsuleCapsuleCollisionCalculator::~CapsuleCapsuleCollisionCalculator()
-{
-}
+//------------------------------ CollisionCalculator<CapsuleShape, CapsuleShape> ------------------------------
 
-/*virtual*/ ShapePairCollisionStatus* CapsuleCapsuleCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<CapsuleShape, CapsuleShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
@@ -156,28 +124,12 @@ CapsuleCapsuleCollisionCalculator::CapsuleCapsuleCollisionCalculator()
 	return collisionStatus;
 }
 
-//------------------------------ SphereBoxCollisionCalculator ------------------------------
+//------------------------------ CollisionCalculator<SphereShape, BoxShape> ------------------------------
 
-SphereBoxCollisionCalculator::SphereBoxCollisionCalculator()
-{
-}
-
-/*virtual*/ SphereBoxCollisionCalculator::~SphereBoxCollisionCalculator()
-{
-}
-
-/*virtual*/ ShapePairCollisionStatus* SphereBoxCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<SphereShape, BoxShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	auto sphere = dynamic_cast<const SphereShape*>(shapeA);
 	auto box = dynamic_cast<const BoxShape*>(shapeB);
-	double directionFactor = 1.0;
-
-	if (!sphere || !box)
-	{
-		sphere = dynamic_cast<const SphereShape*>(shapeB);
-		box = dynamic_cast<const BoxShape*>(shapeA);
-		directionFactor = -1.0;
-	}
 
 	if (!sphere || !box)
 	{
@@ -206,15 +158,15 @@ SphereBoxCollisionCalculator::SphereBoxCollisionCalculator()
 		double boxBorderThickness = 1e-4;
 		if (distance < boxBorderThickness)
 		{
-			collisionStatus->separationDelta = closestBoxPoint.Normalized() * sphere->GetRadius() * directionFactor;
+			collisionStatus->separationDelta = closestBoxPoint.Normalized() * sphere->GetRadius();
 		}
 		else if (objectSpaceBox.ContainsPoint(sphereCenter))
 		{
-			collisionStatus->separationDelta = -delta.Normalized() * (sphere->GetRadius() + distance) * directionFactor;
+			collisionStatus->separationDelta = -delta.Normalized() * (sphere->GetRadius() + distance);
 		}
 		else
 		{
-			collisionStatus->separationDelta = delta.Normalized() * (sphere->GetRadius() - distance) * directionFactor;
+			collisionStatus->separationDelta = delta.Normalized() * (sphere->GetRadius() - distance);
 		}
 
 		collisionStatus->separationDelta = box->GetObjectToWorldTransform().TransformNormal(collisionStatus->separationDelta);
@@ -223,28 +175,22 @@ SphereBoxCollisionCalculator::SphereBoxCollisionCalculator()
 	return collisionStatus;
 }
 
-//------------------------------ SpherePolygonCollisionCalculator ------------------------------
+//------------------------------ CollisionCalculator<BoxShape, SphereShape> ------------------------------
 
-SpherePolygonCollisionCalculator::SpherePolygonCollisionCalculator()
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<BoxShape, SphereShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
+	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<SphereShape, BoxShape>().Calculate(shapeB, shapeA);
+	if (collisionStatus)
+		collisionStatus->separationDelta *= -1.0;
+	return collisionStatus;
 }
 
-/*virtual*/ SpherePolygonCollisionCalculator::~SpherePolygonCollisionCalculator()
-{
-}
+//------------------------------ CollisionCalculator<SphereShape, PolygonShape> ------------------------------
 
-/*virtual*/ ShapePairCollisionStatus* SpherePolygonCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<SphereShape, PolygonShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	auto sphere = dynamic_cast<const SphereShape*>(shapeA);
 	auto polygon = dynamic_cast<const PolygonShape*>(shapeB);
-	double directionFactor = 1.0;
-
-	if (!sphere || !polygon)
-	{
-		sphere = dynamic_cast<const SphereShape*>(shapeB);
-		polygon = dynamic_cast<const PolygonShape*>(shapeA);
-		directionFactor = -1.0;
-	}
 
 	if (!sphere || !polygon)
 	{
@@ -265,23 +211,25 @@ SpherePolygonCollisionCalculator::SpherePolygonCollisionCalculator()
 		if(!delta.Normalize())
 			delta = polygon->GetPlane().unitNormal;
 			
-		collisionStatus->separationDelta = delta * (sphere->GetRadius() - distance) * directionFactor;
+		collisionStatus->separationDelta = delta * (sphere->GetRadius() - distance);
 	}
 
 	return collisionStatus;
 }
 
-//------------------------------ BoxBoxCollisionCalculator ------------------------------
+//------------------------------ CollisionCalculator<PolygonShape, SphereShape> ------------------------------
 
-BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<PolygonShape, SphereShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
+	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<SphereShape, PolygonShape>().Calculate(shapeB, shapeA);
+	if (collisionStatus)
+		collisionStatus->separationDelta *= -1.0;
+	return collisionStatus;
 }
 
-/*virtual*/ BoxBoxCollisionCalculator::~BoxBoxCollisionCalculator()
-{
-}
+//------------------------------ CollisionCalculator<BoxShape, BoxShape> ------------------------------
 
-/*virtual*/ ShapePairCollisionStatus* BoxBoxCollisionCalculator::Calculate(const Shape* shapeA, const Shape* shapeB)
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<BoxShape, BoxShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	auto boxA = dynamic_cast<const BoxShape*>(shapeA);
 	auto boxB = dynamic_cast<const BoxShape*>(shapeB);
@@ -384,10 +332,10 @@ BoxBoxCollisionCalculator::BoxBoxCollisionCalculator()
 	return collisionStatus;
 }
 
-bool BoxBoxCollisionCalculator::GatherInfo(const BoxShape* homeBox, const BoxShape* awayBox,
-													VertexPenetrationArray& vertexPenetrationArray,
-													EdgeImpalementArray& edgeImpalementArray,
-													FacePunctureArray& facePunctureArray)
+bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox, const BoxShape* awayBox,
+															VertexPenetrationArray& vertexPenetrationArray,
+															EdgeImpalementArray& edgeImpalementArray,
+															FacePunctureArray& facePunctureArray)
 {
 	constexpr double threshold = 1e-5;
 

@@ -1,29 +1,28 @@
 #pragma once
 
 #include "Defines.h"
+#include "Shapes/Sphere.h"
+#include "Shapes/Capsule.h"
+#include "Shapes/Box.h"
+#include "Shapes/Polygon.h"
 #include "Math/Vector3.h"
 
 namespace Collision
 {
 	class ShapePairCollisionStatus;
 	class Shape;
-	class BoxShape;
 
 	/**
 	 * This is the base class for all derivatives that know how to calculate the
-	 * collision status between a given pair of shapes.
+	 * collision status between a given pair of specific shape types.
 	 */
-	class COLLISION_LIB_API CollisionCalculator
+	class COLLISION_LIB_API CollisionCalculatorInterface
 	{
 	public:
-		CollisionCalculator();
-		virtual ~CollisionCalculator();
-
 		/**
 		 * Overrides should calculate and return a new collision status for the given
 		 * shapes, which may or may not be in collision; that is determined by this
-		 * function.  Unless both shapes are the same type, the override should use a
-		 * dynamic cast to determine shape is which type.
+		 * function.
 		 * 
 		 * @param[in] shapeA The first shape to consider in a possible collision with the second.  Order doesn't matter.
 		 * @param[in] shapeB The second shape to consider in a possible collision with the first.  Again, order doesn't matter.
@@ -33,74 +32,105 @@ namespace Collision
 	};
 
 	/**
-	 * Calculate the collision status between two given sphere shapes.
+	 * This class is just a dummy and is meant to be specialized.
 	 */
-	class COLLISION_LIB_API SphereSphereCollisionCalculator : public CollisionCalculator
+	template<typename ShapeTypeA, typename ShapeTypeB>
+	class COLLISION_LIB_API CollisionCalculator : public CollisionCalculatorInterface
 	{
 	public:
-		SphereSphereCollisionCalculator();
-		virtual ~SphereSphereCollisionCalculator();
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override
+		{
+			return nullptr;
+		}
+	};
 
+	/**
+	 * Calculate the collision status between two given sphere shapes.
+	 */
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<SphereShape, SphereShape> : public CollisionCalculatorInterface
+	{
+	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
 
 	/**
 	 * Calculate the collision status between a sphere and a capsule.
 	 */
-	class COLLISION_LIB_API SphereCapsuleCollisionCalculator : public CollisionCalculator
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<SphereShape, CapsuleShape> : public CollisionCalculatorInterface
 	{
 	public:
-		SphereCapsuleCollisionCalculator();
-		virtual ~SphereCapsuleCollisionCalculator();
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
 
+	/**
+	 * Calculate the collision status between a capsule and a sphere.
+	 */
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<CapsuleShape, SphereShape> : public CollisionCalculatorInterface
+	{
+	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
 
 	/**
 	 * Calculate the collision status between two capsules.
 	 */
-	class COLLISION_LIB_API CapsuleCapsuleCollisionCalculator : public CollisionCalculator
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<CapsuleShape, CapsuleShape> : public CollisionCalculatorInterface
 	{
 	public:
-		CapsuleCapsuleCollisionCalculator();
-		virtual ~CapsuleCapsuleCollisionCalculator();
-
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
 
 	/**
 	 * Calculate the collision status between a sphere and a box.
 	 */
-	class COLLISION_LIB_API SphereBoxCollisionCalculator : public CollisionCalculator
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<SphereShape, BoxShape> : public CollisionCalculatorInterface
 	{
 	public:
-		SphereBoxCollisionCalculator();
-		virtual ~SphereBoxCollisionCalculator();
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
 
+	/**
+	 * Calculate the collision status between a box and a sphere.
+	 */
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<BoxShape, SphereShape> : public CollisionCalculatorInterface
+	{
+	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
 
 	/**
 	 * Calculate the collision status between a sphere and a polygon.
 	 */
-	class COLLISION_LIB_API SpherePolygonCollisionCalculator : public CollisionCalculator
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<SphereShape, PolygonShape> : public CollisionCalculatorInterface
 	{
 	public:
-		SpherePolygonCollisionCalculator();
-		virtual ~SpherePolygonCollisionCalculator();
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
 
+	/**
+	 * Calculate the collision status between a polygon and a sphere.
+	 */
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<PolygonShape, SphereShape> : public CollisionCalculatorInterface
+	{
+	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
 
 	/**
 	 * Calculate the collision status between a pair of boxes.
 	 */
-	class COLLISION_LIB_API BoxBoxCollisionCalculator : public CollisionCalculator
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<BoxShape, BoxShape> : public CollisionCalculatorInterface
 	{
 	public:
-		BoxBoxCollisionCalculator();
-		virtual ~BoxBoxCollisionCalculator();
-
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 
 	private:

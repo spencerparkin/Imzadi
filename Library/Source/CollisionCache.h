@@ -2,6 +2,7 @@
 
 #include "Defines.h"
 #include "Math/Vector3.h"
+#include "CollisionCalculator.h"
 #include "Shape.h"
 #include <unordered_map>
 #include <string>
@@ -9,7 +10,6 @@
 namespace Collision
 {
 	class ShapePairCollisionStatus;
-	class CollisionCalculator;
 
 	/**
 	 * Collision results are symmetric, which is to say that if you query shape A against
@@ -44,14 +44,14 @@ namespace Collision
 
 	private:
 
-		template<typename T, typename ShapeTypeA, typename ShapeTypeB>
+		template<typename ShapeTypeA, typename ShapeTypeB>
 		void AddCalculator()
 		{
-			CollisionCalculator* calculator = new T();
+			CollisionCalculatorInterface* calculator = new CollisionCalculator<ShapeTypeA, ShapeTypeB>();
 			uint32_t typeIDA = ShapeTypeA::StaticTypeID();
 			uint32_t typeIDB = ShapeTypeB::StaticTypeID();
 			uint64_t calculatorKey = this->MakeCalculatorKey(typeIDA, typeIDB);
-			this->calculatorMap->insert(std::pair<uint64_t, CollisionCalculator*>(calculatorKey, calculator));
+			this->calculatorMap->insert(std::pair<uint64_t, CollisionCalculatorInterface*>(calculatorKey, calculator));
 		}
 
 		void ClearCalculatorMap();
@@ -63,7 +63,7 @@ namespace Collision
 		typedef std::unordered_map<std::string, ShapePairCollisionStatus*> ShapePairCollisionStatusMap;
 		ShapePairCollisionStatusMap* cacheMap;
 
-		typedef std::unordered_map<uint64_t, CollisionCalculator*> CollisionCalculatorMap;
+		typedef std::unordered_map<uint64_t, CollisionCalculatorInterface*> CollisionCalculatorMap;
 		CollisionCalculatorMap* calculatorMap;
 	};
 
