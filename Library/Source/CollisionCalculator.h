@@ -45,6 +45,7 @@ namespace Collision
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override
 		{
+			COLL_SYS_ASSERT(false);
 			return nullptr;
 		}
 	};
