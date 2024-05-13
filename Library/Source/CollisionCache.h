@@ -99,17 +99,22 @@ namespace Collision
 		 * such a way so as to put the shapes in this pair out of collision.  It could serve as an
 		 * approximation for a contact normal, I suppose.
 		 * 
-		 * @param[in] shapeID This is expected to be of the IDs of the two shapes in this collision status pair.
+		 * @param[in] shapeID This is expected to be one of the IDs of the two shapes in this collision status pair.  This is the shape to be moved.
 		 * @return The translation needed to move the given shape out of collision is returned; zero if the given shape is not a member of this pair.
 		 */
 		Vector3 GetSeparationDelta(ShapeID shapeID) const;
+
+		/**
+		 * Return the length of the separation delta.  This is zero if there is no collision.
+		 */
+		double GetSeparationDeltaLength() const;
 
 		/**
 		 * Return a point approximating the center of overlap, if any, between the two shapes in this collision status pair.
 		 * It is left undefined if the pair are not actually in collision.  It could serve as an approximation for a contact
 		 * point, I suppose.
 		 */
-		const Vector3& GetCollectionCenter() const { return this->collisionCenter; }
+		const Vector3& GetCollisionCenter() const { return this->collisionCenter; }
 
 		/**
 		 * If this is a valid collision status pair, then tell the caller if the two shapes

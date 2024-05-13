@@ -129,10 +129,13 @@ namespace Collision
 		typedef std::vector<FacePuncture> FacePunctureArray;
 
 		/**
-		 * ...
+		 * Gather information about how the "away" box intersects the "home" box, if at all.
 		 * 
 		 * @param[in] homeBox All calculations will be done in this box's space.
 		 * @param[in] awayBox This box will be transformed into the space of the home box before calculations are made.
+		 * @param[out] vertexPenetrationArray Away-box vertices inside the home-box are returned here in world space.
+		 * @param[out] edgeImpalementArray Away-box edges originating outside the home-box and then passing in and out of it are returned here in world space.
+		 * @param[out] facePunctureArray Away-box edges originating inside or outside the home-box and then entering or exiting the away-box are returned here in world space.
 		 */
 		bool CalculateInternal(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray, FacePunctureArray& facePunctureArray);
 	};

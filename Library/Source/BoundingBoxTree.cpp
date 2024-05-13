@@ -291,12 +291,10 @@ void BoundingBoxNode::SplitIfNotAlreadySplit(BoundingBoxTree* tree)
 	auto nodeA = new BoundingBoxNode(this, tree);
 	auto nodeB = new BoundingBoxNode(this, tree);
 
-	this->box.Split(nodeA->box, nodeB->box);
+	this->box.Split(nodeA->box, nodeB->box, &this->dividingPlane);
 
 	this->childNodeArray->push_back(nodeA);
 	this->childNodeArray->push_back(nodeB);
-
-	// TODO: Calculate division plane here.
 }
 
 void BoundingBoxNode::BindToShape(Shape* shape)

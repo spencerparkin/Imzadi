@@ -110,8 +110,9 @@ namespace Collision
 		 * 
 		 * @param[out] aabbA This will hold the first half.
 		 * @param[out] aabbB This will hold the second half.
+		 * @param[out] divisionPlane This is an optional paramter that, if given, will be set to the plane separating the two returned AABBs with normal pointing toward the second of these.
 		 */
-		void Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBoundingBox& aabbB) const;
+		void Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBoundingBox& aabbB, Plane* divisionPlane = nullptr) const;
 
 		/**
 		 * Calculate and return the dimensions (lengths) of the sides of this AABB.

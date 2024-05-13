@@ -27,10 +27,6 @@ CollisionCache::CollisionCache()
 	// TODO: PolygonPolygon
 	// TODO: PolygonBox
 	this->AddCalculator<BoxBoxCollisionCalculator, BoxShape, BoxShape>();
-
-	// TODO: I recall that the Bullet collision library had some magic algorithm that was a generalization
-	//       of a collision calculator that could handle general shapes if a specific shape calculator
-	//       was not available.  Maybe research what the name of that algorithm was and how it worked?
 }
 
 /*virtual*/ CollisionCache::~CollisionCache()
@@ -173,4 +169,12 @@ Vector3 ShapePairCollisionStatus::GetSeparationDelta(ShapeID shapeID) const
 		return -this->separationDelta;
 
 	return Vector3(0.0, 0.0, 0.0);
+}
+
+double ShapePairCollisionStatus::GetSeparationDeltaLength() const
+{
+	if (!this->inCollision)
+		return 0.0;
+
+	return this->separationDelta.Length();
 }

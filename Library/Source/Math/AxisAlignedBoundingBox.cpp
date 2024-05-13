@@ -123,7 +123,7 @@ void AxisAlignedBoundingBox::Expand(const AxisAlignedBoundingBox& box)
 	this->Expand(Vector3(box.maxCorner.x, box.maxCorner.y, box.maxCorner.z));
 }
 
-void AxisAlignedBoundingBox::Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBoundingBox& aabbB) const
+void AxisAlignedBoundingBox::Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBoundingBox& aabbB, Plane* divisionPlane /*= nullptr*/) const
 {
 	double xSize = 0.0, ySize = 0.0, zSize = 0.0;
 	this->GetDimensions(xSize, ySize, zSize);
@@ -136,18 +136,27 @@ void AxisAlignedBoundingBox::Split(AxisAlignedBoundingBox& aabbA, AxisAlignedBou
 		double middle = (this->minCorner.x + this->maxCorner.x) / 2.0;
 		aabbA.maxCorner.x = middle;
 		aabbB.minCorner.x = middle;
+
+		if (divisionPlane)
+			*divisionPlane = Plane(aabbA.maxCorner, Vector3(1.0, 0.0, 0.0));
 	}
 	else if (ySize >= xSize && ySize >= zSize)
 	{
 		double middle = (this->minCorner.y + this->maxCorner.y) / 2.0;
 		aabbA.maxCorner.y = middle;
 		aabbB.minCorner.y = middle;
+
+		if (divisionPlane)
+			*divisionPlane = Plane(aabbA.maxCorner, Vector3(0.0, 1.0, 0.0));
 	}
 	else //if(zSize >= xSize && zSize >= ySize)
 	{
 		double middle = (this->minCorner.z + this->maxCorner.z) / 2.0;
 		aabbA.maxCorner.z = middle;
 		aabbB.minCorner.z = middle;
+
+		if (divisionPlane)
+			*divisionPlane = Plane(aabbA.maxCorner, Vector3(0.0, 0.0, 1.0));
 	}
 }
 

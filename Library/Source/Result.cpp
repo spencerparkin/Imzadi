@@ -1,4 +1,5 @@
 #include "Result.h"
+#include "CollisionCache.h"
 #include "Math/AxisAlignedBoundingBox.h"
 
 using namespace Collision;
@@ -163,4 +164,42 @@ CollisionQueryResult::CollisionQueryResult()
 void CollisionQueryResult::AddCollisionStatus(ShapePairCollisionStatus* collisionStatus)
 {
 	this->collisionStatusArray->push_back(collisionStatus);
+}
+
+const ShapePairCollisionStatus* CollisionQueryResult::GetMostEgregiousCollision() const
+{
+	double largestLength = 0.0;
+	const ShapePairCollisionStatus* foundStatus = nullptr;
+
+	for (auto collisionStatusPair : *this->collisionStatusArray)
+	{
+		if (collisionStatusPair->AreInCollision())
+		{
+			double length = collisionStatusPair->GetSeparationDeltaLength();
+			if (length > largestLength)
+			{
+				largestLength = length;
+				foundStatus = collisionStatusPair;
+			}
+		}
+	}
+
+	return foundStatus;
+}
+
+Vector3 CollisionQueryResult::GetAverageSeparationDelta(ShapeID shapeID) const
+{
+	Vector3 averageSeparationDelta(0.0, 0.0, 0.0);
+	double count = 0.0;
+
+	for (auto collisionStatusPair : *this->collisionStatusArray)
+	{
+		if (collisionStatusPair->AreInCollision())
+		{
+			averageSeparationDelta += collisionStatusPair->GetSeparationDelta(shapeID);
+			count++;
+		}
+	}
+
+	return averageSeparationDelta / COLL_SYS_MAX(count, 1.0);
 }

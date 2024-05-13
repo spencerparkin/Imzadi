@@ -227,6 +227,21 @@ namespace Collision
 		 */
 		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
 
+		/**
+		 * Find and return the collusion status pair of this result with the largest penetration depth.
+		 * 
+		 * @return Null is returned here if there is no collision status pair in a colliding state.
+		 */
+		const ShapePairCollisionStatus* GetMostEgregiousCollision() const;
+
+		/**
+		 * Calculate and return the average separation delta for all collision status pairs
+		 * of this result that are in the collision status.
+		 * 
+		 * @param shapeID This will determine the direction of the separation deltas.  The direction will move the shape with this ID away from the other shape of the pair.
+		 */
+		Vector3 GetAverageSeparationDelta(ShapeID shapeID) const;
+
 	private:
 		std::vector<ShapePairCollisionStatus*>* collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
 		ShapeID shapeID;			///< For convenience, this holds the ID of the shape in question that was the subject of the collision query.
