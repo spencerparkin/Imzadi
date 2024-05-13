@@ -2,11 +2,13 @@
 
 #include "Defines.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "Math/Plane.h"
 #include "Shape.h"
 #include "Result.h"
 #include "CollisionCache.h"
 #include <vector>
 #include <unordered_map>
+#include <functional>
 
 namespace Collision
 {
@@ -33,22 +35,54 @@ namespace Collision
 		 * caller to know when to re-insert a shape when its bounding box
 		 * changes.  This class is non-the-wiser about changes made to
 		 * shapes outside of its scope that would effect their bounding boxes,
-		 * and therefore, their ideal positioning within this tree.  If a shape
+		 * and therefore, their ideal positioning within the tree.  If a shape
 		 * is changed without re-insertion, then the results of algorithms
 		 * that operate on this tree are left undefined.
 		 * 
+		 * Note that if the COLL_SYS_ADD_FLAG_ALLOW_SPLIT is passed in, then
+		 * we try to split the given shape up as needed to get it as deep into
+		 * the tree as possible, with a reasonable limit on how small a leaf
+		 * node can get.  Also, whether we succeed or fail here, ownership
+		 * of the memory of the given shape is taken by the tree.  If it gets
+		 * split, then it will be deleted, and its ID will become invalid.
+		 * If splitting is not allowed and insertion is successful, then you
+		 * can continue to refer to the shape on the main thread by its ID.
+		 * Thus, splitting is designed for static collision shapes.  It doesn't
+		 * make sense to split dynamic collision shapes.
+		 * 
 		 * @param[in] shape This is the shape to insert into this tree.  It must not be a member of some other tree.  I can already be a member of this tree.
-		 * @param[in] shapeSplittingAllowed For shapes that are typically meant to be static, this flag can be set to true, and then our insertion algorithm will try to split the shape during insertion to get it deeper into the tree.
+		 * @param[in] flags This is an OR-ing of flags of the form COLL_SYS_ADD_FLAG_*.  In particular, we look at the COLL_SYS_ADD_FLAG_ALLOW_SPLIT flag to see if shape splitting is allowed.
 		 * @return True is returned on success; false, otherwise.
 		 */
-		bool Insert(Shape* shape, bool shapeSplittingAllowed = false);
+		bool Insert(Shape* shape, uint32_t flags);
 
 		/**
-		 * Remove the given shape from this bounding-box tree.
+		 * Remove the shape having the given ID from this bounding-box tree.
 		 * 
-		 * @param[in] shape This is the shape to remove from this tree.  It must already be a member of this tree.
+		 * @param[in] shapeID This is the shape to remove from the tree.  It must already be a member of this tree.
 		 */
-		bool Remove(Shape* shape);
+		bool Remove(ShapeID shapeID);
+
+		/**
+		 * Find and return the shape having the given shape ID.
+		 *
+		 * @param[in] shapeID This is the ID of the shape to find within the collision world.
+		 * @return If found, a pointer to the shape is returned; null, otherwise.
+		 */
+		Shape* FindShape(ShapeID shapeID);
+
+		/**
+		 * Provide a convenient way to iterate all shapes of the tree.
+		 * 
+		 * @param[in] callback This is a lambda that is given each shape of the tree and expected to return true if and only if iteration should continue.
+		 * @return True is returned if every invocation of the callback returned true.
+		 */
+		bool ForAllShapes(std::function<bool(const Shape*)> callback) const;
+
+		/**
+		 * Return the number of shapes being stored in the tree.
+		 */
+		uint32_t GetNumShapes() const;
 
 		/**
 		 * Remove all shapes from this tree and delete all nodes of the tree.
@@ -78,9 +112,10 @@ namespace Collision
 		bool CalculateCollision(const Shape* shape, CollisionQueryResult* collisionResult) const;
 
 	private:
-		BoundingBoxNode* rootNode;
-		AxisAlignedBoundingBox collisionWorldExtents;
-		mutable CollisionCache collisionCache;
+		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< We keep a map here of all shapes stored in the tree.
+		BoundingBoxNode* rootNode;							///< The root note represents the entire space managed by the collision system.
+		AxisAlignedBoundingBox collisionWorldExtents;		///< When the root note is created, it takes on this extent.
+		mutable CollisionCache collisionCache;				///< This is used to speed up the narrow-phase of collision detection.
 	};
 
 	/**
@@ -112,7 +147,7 @@ namespace Collision
 		 * If this node has no children, create two children partitioning this node's
 		 * space into two ideal-sized sub-spaces.
 		 */
-		void SplitIfNeeded(BoundingBoxTree* tree);
+		void SplitIfNotAlreadySplit(BoundingBoxTree* tree);
 
 		/**
 		 * Render this node's space as a simple wire-frame box.
@@ -134,5 +169,6 @@ namespace Collision
 		std::vector<BoundingBoxNode*>* childNodeArray;		///< These are the sub-space partitions of this node.
 		BoundingBoxNode* parentNode;						///< This is a pointer to the parent space containing this node.
 		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< These are shapes in this node's space that cannot fit in a sub-space.
+		Plane dividingPlane;								///< This is a plane dividing this node's space into two sub-spaces, but not dividing any of this node's sub-nodes.
 	};
 }

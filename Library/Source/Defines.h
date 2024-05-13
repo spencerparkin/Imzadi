@@ -20,3 +20,7 @@
 #define COLL_SYS_DRAW_FLAG_AABB_TREE			0x00000004
 
 #define COLL_SYS_ASSERT(condition)		assert(condition)
+
+#define COLL_SYS_ADD_FLAG_ALLOW_SPLIT			0x00000001
+
+#define COLL_SYS_MIN_NODE_VOLUME			8.0

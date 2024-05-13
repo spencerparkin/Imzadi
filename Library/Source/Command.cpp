@@ -55,6 +55,7 @@ ShapeCommand::ShapeCommand()
 AddShapeCommand::AddShapeCommand()
 {
 	this->shape = nullptr;
+	this->flags = 0;
 }
 
 /*virtual*/ AddShapeCommand::~AddShapeCommand()
@@ -69,7 +70,7 @@ AddShapeCommand::AddShapeCommand()
 		return;
 	}
 
-	thread->AddShape(this->shape);
+	thread->AddShape(this->shape, this->flags);
 }
 
 /*static*/ AddShapeCommand* AddShapeCommand::Create()
@@ -165,7 +166,7 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 	shape->SetObjectToWorldTransform(this->objectToWorld);
 
 	BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
-	if (!boxTree.Insert(shape))
+	if (!boxTree.Insert(shape, 0))
 	{
 		GetError()->AddErrorMessage(std::format("Failed to re-insert shape {} into AABB tree.", this->shapeID));
 	}

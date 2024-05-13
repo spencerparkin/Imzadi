@@ -485,6 +485,9 @@ void Canvas::Tick()
 					const std::vector<ShapePairCollisionStatus*>& collisionArray = collisionResult->GetCollisionStatusArray();
 					for (auto* collisionStatus : collisionArray)
 					{
+						// TODO: This is dumb.  We're just resolving the last collision in the list, not addressing all of them.
+						//       And we really should only send one command.  But if we do, what should the resolver transform be?
+						//       Take the average of all the separation deltas?
 						Transform resolverTransform;
 						resolverTransform.SetIdentity();
 						resolverTransform.translation = collisionStatus->GetSeparationDelta(this->selectedShapeID);

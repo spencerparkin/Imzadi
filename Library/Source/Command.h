@@ -93,12 +93,24 @@ namespace Collision
 		virtual void Execute(Thread* thread) override;
 
 		/**
+		 * Set the insertion flags to be used in the add operation.
+		 * These are flags of the form COLL_SYS_ADD_FLAG_*.
+		 */
+		void SetFlags(uint32_t flags) { this->flags = flags; }
+
+		/**
+		 * Get the insertion flags to be used in the add operation.
+		 */
+		uint32_t GetFlags() const { return this->flags; }
+
+		/**
 		 * Allocate an instance of the AddShapeCommand.
 		 */
 		static AddShapeCommand* Create();
 
 	private:
 		Shape* shape;
+		uint32_t flags;
 	};
 
 	/**

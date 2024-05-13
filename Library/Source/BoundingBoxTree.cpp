@@ -2,7 +2,9 @@
 #include "Error.h"
 #include "Result.h"
 #include "Math/Ray.h"
+#include "Math/Plane.h"
 #include <algorithm>
+#include <format>
 
 using namespace Collision;
 
@@ -12,26 +14,36 @@ BoundingBoxTree::BoundingBoxTree(const AxisAlignedBoundingBox& collisionWorldExt
 {
 	this->rootNode = nullptr;
 	this->collisionWorldExtents = collisionWorldExtents;
+	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
 }
 
 /*virtual*/ BoundingBoxTree::~BoundingBoxTree()
 {
 	this->Clear();
+
+	delete this->shapeMap;
 }
 
-bool BoundingBoxTree::Insert(Shape* shape, bool shapeSplittingAllowed /*= false*/)
+bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 {
-	// TODO: Use shapeSplittingAllowed flag here.
-	
-	if (!this->rootNode)
+	if (!shape)
 	{
-		this->rootNode = new BoundingBoxNode(nullptr, this);
-		this->rootNode->box = this->collisionWorldExtents;
+		GetError()->AddErrorMessage("Can't insert null shape into box tree!");
+		return false;
 	}
 
+	// Insertion begins either where the shape is already bound or, if not bound, at the root.
 	BoundingBoxNode* node = shape->node;
 	if (!node)
+	{
+		if (!this->rootNode)
+		{
+			this->rootNode = new BoundingBoxNode(nullptr, this);
+			this->rootNode->box = this->collisionWorldExtents;
+		}
+
 		node = this->rootNode;
+	}
 	else
 	{
 		if (node->tree != this)
@@ -47,11 +59,13 @@ bool BoundingBoxTree::Insert(Shape* shape, bool shapeSplittingAllowed /*= false*
 	while (node && !node->box.ContainsBox(shape->GetBoundingBox()))
 		node = node->parentNode;
 	
-	// Now put the shape down the tree as far as possible.
+	// Now push the shape down the tree as far as possible.
 	while (node)
 	{
-		node->SplitIfNeeded(this);
+		// Make children for the current node if it doesn't already have them.
+		node->SplitIfNotAlreadySplit(this);
 
+		// Can the shape fit into any of the children?
 		BoundingBoxNode* foundNode = nullptr;
 		for (BoundingBoxNode* childNode : *node->childNodeArray)
 		{
@@ -62,10 +76,37 @@ bool BoundingBoxTree::Insert(Shape* shape, bool shapeSplittingAllowed /*= false*
 			}
 		}
 
+		// Can we push the shape deeper into the tree?
 		if (foundNode)
-			node = foundNode;
+			node = foundNode;	// Yes!
 		else
+		{
+			// The shape is as deep as it can go.  If splitting is not allowed, we're done.
+			if ((flags & COLL_SYS_ADD_FLAG_ALLOW_SPLIT) == 0)
+				break;
+
+			// Okay, splitting is allowed, but is the node too small for us to want to attempt any further splitting?
+			double nodeVolume = node->box.GetVolume();
+			if (nodeVolume < COLL_SYS_MIN_NODE_VOLUME)
+				break;
+
+			// Attempt to split the shape.  If we can't, we're done.
+			Shape* shapeBack = nullptr;
+			Shape* shapeFront = nullptr;
+			if (!shape->Split(node->dividingPlane, shapeBack, shapeFront))
+				break;
+
+			// The shape was split!  Destroy the original shape and insert the sub-shapes.
+			Shape::Free(shape);
+			shape = nullptr;
+			node->BindToShape(shapeBack);
+			node->BindToShape(shapeFront);
+			if (!this->Insert(shapeBack, flags))
+				return false;
+			if (!this->Insert(shapeFront, flags))
+				return false;
 			break;
+		}
 	}
 
 	if (!node)
@@ -74,26 +115,57 @@ bool BoundingBoxTree::Insert(Shape* shape, bool shapeSplittingAllowed /*= false*
 		return false;
 	}
 
-	node->BindToShape(shape);
+	// At last, if we have a node/shape pair here, then complete insertion of the shape at this node and in this tree.
+	if (shape)
+	{
+		node->BindToShape(shape);
+		this->shapeMap->insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
+	}
+
 	return true;
 }
 
-bool BoundingBoxTree::Remove(Shape* shape)
+bool BoundingBoxTree::Remove(ShapeID shapeID)
 {
-	if (!shape->node)
+	Shape* shape = this->FindShape(shapeID);
+	if (!shape)
 	{
-		GetError()->AddErrorMessage("The given shape is not a member of any tree!");
+		GetError()->AddErrorMessage(std::format("No shape with ID {} found in the box tree.", shapeID));
 		return false;
 	}
 
-	if (shape->node->tree != this)
-	{
-		GetError()->AddErrorMessage("The given shape can't be removed from this tree, because it is not a member of this tree.");
-		return false;
-	}
-
+	// If the shape was found in our map, then these conditions must also be true or something has gone wrong in our book-keeping.
+	COLL_SYS_ASSERT(shape->node && shape->node->tree == this);
 	shape->node->UnbindFromShape(shape);
+	this->shapeMap->erase(shape->GetShapeID());
+	Shape::Free(shape);
 	return true;
+}
+
+Shape* BoundingBoxTree::FindShape(ShapeID shapeID)
+{
+	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->find(shapeID);
+	if (iter == this->shapeMap->end())
+		return nullptr;
+
+	return iter->second;
+}
+
+bool BoundingBoxTree::ForAllShapes(std::function<bool(const Shape*)> callback) const
+{
+	for (auto pair : *this->shapeMap)
+	{
+		const Shape* shape = pair.second;
+		if (!callback(shape))
+			return false;
+	}
+
+	return true;
+}
+
+uint32_t BoundingBoxTree::GetNumShapes() const
+{
+	return this->shapeMap->size();
 }
 
 void BoundingBoxTree::Clear()
@@ -102,6 +174,14 @@ void BoundingBoxTree::Clear()
 
 	delete this->rootNode;
 	this->rootNode = nullptr;
+
+	while (this->shapeMap->size() > 0)
+	{
+		std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->begin();
+		Shape* shape = iter->second;
+		Shape::Free(shape);
+		this->shapeMap->erase(iter);
+	}
 }
 
 void BoundingBoxTree::DebugRender(DebugRenderResult* renderResult) const
@@ -203,7 +283,7 @@ BoundingBoxNode::BoundingBoxNode(BoundingBoxNode* parentNode, BoundingBoxTree* t
 	delete this->childNodeArray;
 }
 
-void BoundingBoxNode::SplitIfNeeded(BoundingBoxTree* tree)
+void BoundingBoxNode::SplitIfNotAlreadySplit(BoundingBoxTree* tree)
 {
 	if (this->childNodeArray->size() > 0)
 		return;
@@ -215,6 +295,8 @@ void BoundingBoxNode::SplitIfNeeded(BoundingBoxTree* tree)
 
 	this->childNodeArray->push_back(nodeA);
 	this->childNodeArray->push_back(nodeB);
+
+	// TODO: Calculate division plane here.
 }
 
 void BoundingBoxNode::BindToShape(Shape* shape)

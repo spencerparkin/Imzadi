@@ -82,9 +82,10 @@ namespace Collision
 		/**
 		 * Add the given shape to the collision world.
 		 * 
-		 * @param shape This is the shape to add.
+		 * @param[in] shape This is the shape to add.
+		 * @param[in] flags These are an OR-ing of the COLL_SYS_ADD_FLAG_* flags.
 		 */
-		void AddShape(Shape* shape);
+		void AddShape(Shape* shape, uint32_t flags);
 
 		/**
 		 * Remove the given shape from the collision world.
@@ -94,7 +95,7 @@ namespace Collision
 		void RemoveShape(ShapeID shapeID);
 
 		/**
-		 * Find and return the shape having the given shape ID.
+		 * Search the bounding-box tree for the shape having the given shape ID.
 		 * 
 		 * @param[in] shapeID This is the ID of the shape to find within the collision world.
 		 * @return If found, a pointer to the shape is returned; null, otherwise.
@@ -179,7 +180,6 @@ namespace Collision
 		std::counting_semaphore<4096>* taskQueueSemaphore;
 		std::mutex* resultMapMutex;
 		std::unordered_map<TaskID, Result*>* resultMap;
-		std::unordered_map<ShapeID, Shape*>* shapeMap;
 		std::condition_variable* allTasksDoneCondVar;
 	};
 }

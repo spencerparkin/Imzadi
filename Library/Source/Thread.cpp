@@ -19,7 +19,6 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(co
 	this->taskQueueSemaphore = new std::counting_semaphore<4096>(0);
 	this->resultMap = new std::unordered_map<TaskID, Result*>();
 	this->resultMapMutex = new std::mutex();
-	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
 	this->allTasksDoneCondVar = new std::condition_variable();
 }
 
@@ -30,7 +29,6 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(co
 	delete this->taskQueueSemaphore;
 	delete this->resultMap;
 	delete this->resultMapMutex;
-	delete this->shapeMap;
 	delete this->allTasksDoneCondVar;
 }
 
@@ -137,57 +135,30 @@ void Thread::ClearResults()
 void Thread::ClearShapes()
 {
 	this->boxTree.Clear();
-
-	while (this->shapeMap->size() > 0)
-	{
-		std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->begin();
-		Shape* shape = iter->second;
-		Shape::Free(shape);
-		this->shapeMap->erase(iter);
-	}
 }
 
-void Thread::AddShape(Shape* shape)
+void Thread::AddShape(Shape* shape, uint32_t flags)
 {
-	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->find(shape->GetShapeID());
-	if (iter == this->shapeMap->end())
+	ShapeID shapeID = shape->GetShapeID();
+
+	if (!this->boxTree.Insert(shape, flags))
 	{
-		this->shapeMap->insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
-		this->boxTree.Insert(shape);
-	}
-	else
-	{
-		GetError()->AddErrorMessage(std::format("Cannot add shape.  A shape with ID {} already exists in the system.", shape->GetShapeID()));
-		Shape::Free(shape);
+		GetError()->AddErrorMessage(std::format("Failed to insert shape with ID {} into the bounding-box tree.", shapeID));
 	}
 }
 
 void Thread::RemoveShape(ShapeID shapeID)
 {
-	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->find(shapeID);
-	if (iter != this->shapeMap->end())
+	if (!this->boxTree.Remove(shapeID))
 	{
-		Shape* shape = iter->second;
-		this->boxTree.Remove(shape);
-		Shape::Free(shape);
-		this->shapeMap->erase(iter);
-	}
-	else
-	{
-		GetError()->AddErrorMessage(std::format("Cannot remove shape.  No shape with ID {} was found in the system.", shapeID));
+		GetError()->AddErrorMessage(std::format("Failed to remove shape with ID {} from the bounding-box tree.", shapeID));
 	}
 }
 
 Shape* Thread::FindShape(ShapeID shapeID)
 {
-	Shape* shape = nullptr;
-	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->find(shapeID);
-	if (iter != this->shapeMap->end())
-	{
-		shape = iter->second;
-		COLL_SYS_ASSERT(shape->GetShapeID() == shapeID);
-	}
-
+	Shape* shape = this->boxTree.FindShape(shapeID);
+	COLL_SYS_ASSERT(!shape || shape->GetShapeID() == shapeID);
 	return shape;
 }
 
@@ -242,14 +213,13 @@ void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 {
 	if ((drawFlags & COLL_SYS_DRAW_FLAG_SHAPES) != 0)
 	{
-		for (auto pair : *this->shapeMap)
+		this->boxTree.ForAllShapes([renderResult, drawFlags](const Shape* shape) -> bool
 		{
-			const Shape* shape = pair.second;
 			shape->DebugRender(renderResult);
-
 			if ((drawFlags & COLL_SYS_DRAW_FLAG_SHAPE_BOXES) != 0)
 				renderResult->AddLinesForBox(shape->GetBoundingBox(), Vector3(1.0, 1.0, 1.0) - shape->GetDebugRenderColor());
-		}
+			return true;
+		});
 	}
 
 	if ((drawFlags & COLL_SYS_DRAW_FLAG_AABB_TREE) != 0)
@@ -264,12 +234,11 @@ void Thread::WaitForAllTasksToComplete()
 
 bool Thread::DumpShapes(std::ostream& stream) const
 {
-	uint32_t numShapes = (uint32_t)this->shapeMap->size();
+	uint32_t numShapes = this->boxTree.GetNumShapes();
 	stream.write((char*)&numShapes, sizeof(uint32_t));
 
-	for (auto pair : *this->shapeMap)
+	return this->boxTree.ForAllShapes([&stream](const Shape* shape) -> bool
 	{
-		const Shape* shape = pair.second;
 		uint32_t typeID = shape->GetShapeTypeID();
 		stream.write((char*)&typeID, sizeof(typeID));
 		if (!shape->Dump(stream))
@@ -277,9 +246,8 @@ bool Thread::DumpShapes(std::ostream& stream) const
 			GetError()->AddErrorMessage(std::format("Failed to dump shape with ID {}.", shape->GetShapeID()));
 			return false;
 		}
-	}
-
-	return true;
+		return true;
+	});
 }
 
 bool Thread::RestoreShapes(std::istream& stream)
@@ -306,7 +274,7 @@ bool Thread::RestoreShapes(std::istream& stream)
 			return false;
 		}
 
-		this->AddShape(shape);
+		this->AddShape(shape, 0);
 	}
 
 	return true;

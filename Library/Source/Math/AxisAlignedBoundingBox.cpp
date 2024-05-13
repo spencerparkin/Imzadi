@@ -319,6 +319,13 @@ Vector3 AxisAlignedBoundingBox::ClosestPointTo(const Vector3& point) const
 	return closestPoint;
 }
 
+double AxisAlignedBoundingBox::GetVolume() const
+{
+	double width = 0.0, height = 0.0, depth = 0.0;
+	this->GetDimensions(width, height, depth);
+	return width * height * depth;
+}
+
 void AxisAlignedBoundingBox::Dump(std::ostream& stream) const
 {
 	this->minCorner.Dump(stream);

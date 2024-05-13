@@ -149,6 +149,11 @@ namespace Collision
 		void GetEdgeSegments(std::vector<LineSegment>& edgeSegmentArray) const;
 
 		/**
+		 * Return the volume of this AABB.
+		 */
+		double GetVolume() const;
+
+		/**
 		 * Calculate and return the point on this box's boundary that is closest
 		 * to the given point.
 		 */
