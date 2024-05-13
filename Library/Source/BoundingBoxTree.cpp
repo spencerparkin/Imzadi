@@ -78,47 +78,49 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 
 		// Can we push the shape deeper into the tree?
 		if (foundNode)
-			node = foundNode;	// Yes!
-		else
 		{
-			// The shape is as deep as it can go.  If splitting is not allowed, we're done.
-			if ((flags & COLL_SYS_ADD_FLAG_ALLOW_SPLIT) == 0)
-				break;
-
-			// Okay, splitting is allowed, but is the node too small for us to want to attempt any further splitting?
-			double nodeVolume = node->box.GetVolume();
-			if (nodeVolume < COLL_SYS_MIN_NODE_VOLUME)
-				break;
-
-			// Attempt to split the shape.  If we can't, we're done.
-			Shape* shapeBack = nullptr;
-			Shape* shapeFront = nullptr;
-			if (!shape->Split(node->dividingPlane, shapeBack, shapeFront))
-				break;
-
-			// The shape was split!  Destroy the original shape and insert the sub-shapes.
-			Shape::Free(shape);
-			shape = nullptr;
-			node->BindToShape(shapeBack);
-			node->BindToShape(shapeFront);
-			
-			COLL_SYS_ASSERT((*node->childNodeArray)[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
-			COLL_SYS_ASSERT((*node->childNodeArray)[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
-
-			if (!this->Insert(shapeBack, flags))
-			{
-				Shape::Free(shapeBack);
-				return false;
-			}
-
-			if (!this->Insert(shapeFront, flags))
-			{
-				Shape::Free(shapeFront);
-				return false;
-			}
-
-			break;
+			// Yes!
+			node = foundNode;
+			continue;
 		}
+		
+		// The shape is as deep as it can go.  If splitting is not allowed, we're done.
+		if ((flags & COLL_SYS_ADD_FLAG_ALLOW_SPLIT) == 0)
+			break;
+
+		// Okay, splitting is allowed, but is the node too small for us to want to attempt any further splitting?
+		double nodeVolume = node->box.GetVolume();
+		if (nodeVolume < COLL_SYS_MIN_NODE_VOLUME)
+			break;
+
+		// Attempt to split the shape.  If we can't, we're done.
+		Shape* shapeBack = nullptr;
+		Shape* shapeFront = nullptr;
+		if (!shape->Split(node->dividingPlane, shapeBack, shapeFront))
+			break;
+
+		// The shape was split!  Destroy the original shape and insert the sub-shapes.
+		Shape::Free(shape);
+		shape = nullptr;
+		node->BindToShape(shapeBack);
+		node->BindToShape(shapeFront);
+			
+		COLL_SYS_ASSERT((*node->childNodeArray)[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
+		COLL_SYS_ASSERT((*node->childNodeArray)[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
+
+		if (!this->Insert(shapeBack, flags))
+		{
+			Shape::Free(shapeBack);
+			return false;
+		}
+
+		if (!this->Insert(shapeFront, flags))
+		{
+			Shape::Free(shapeFront);
+			return false;
+		}
+
+		break;
 	}
 
 	if (!node)
