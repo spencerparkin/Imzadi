@@ -17,24 +17,28 @@ CollisionCache::CollisionCache()
 	this->cacheMap = new ShapePairCollisionStatusMap();
 	this->calculatorMap = new CollisionCalculatorMap();
 
+	// Sphere:
 	this->AddCalculator<SphereShape, SphereShape>();
-	
 	this->AddCalculator<SphereShape, CapsuleShape>();
-	this->AddCalculator<CapsuleShape, SphereShape>();
-	
 	this->AddCalculator<SphereShape, PolygonShape>();
-	this->AddCalculator<PolygonShape, SphereShape>();
-
 	this->AddCalculator<SphereShape, BoxShape>();
-	this->AddCalculator<BoxShape, SphereShape>();
 
+	// Capsule:
+	this->AddCalculator<CapsuleShape, SphereShape>();
 	this->AddCalculator<CapsuleShape, CapsuleShape>();
+	this->AddCalculator<CapsuleShape, PolygonShape>();
+	this->AddCalculator<CapsuleShape, BoxShape>();
+	
+	// Polygon:
+	this->AddCalculator<PolygonShape, SphereShape>();
+	this->AddCalculator<PolygonShape, CapsuleShape>();
+	this->AddCalculator<PolygonShape, PolygonShape>();
+	this->AddCalculator<PolygonShape, BoxShape>();
 
-	// TODO: CapsulePolygon
-	// TODO: CapsuleBox
-	// TODO: PolygonPolygon
-	// TODO: PolygonBox
-
+	// Box:
+	this->AddCalculator<BoxShape, SphereShape>();
+	this->AddCalculator<BoxShape, CapsuleShape>();
+	this->AddCalculator<BoxShape, PolygonShape>();
 	this->AddCalculator<BoxShape, BoxShape>();
 }
 
