@@ -1,5 +1,6 @@
 #pragma once
 
+#include <wx/app.h>
 #include "Camera.h"
 #include "Controller.h"
 #include "Shape.h"

@@ -13,7 +13,7 @@ using namespace Collision;
 
 int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
-Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
+Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize), controller(0)
 {
 	this->targetShapes = false;
 	this->targetShapeHitLine = nullptr;
@@ -290,8 +290,11 @@ void Canvas::Tick()
 	SensativityParams sensativityParams;
 	this->GetSensativityParams(sensativityParams);
 
-	Vector3 leftStickVector = this->controller.GetAnalogJoyStick(Controller::Side::LEFT);
-	Vector3 rightStickVector = this->controller.GetAnalogJoyStick(Controller::Side::RIGHT);
+	Vector3 leftStickVector;
+	this->controller.GetAnalogJoyStick(Controller::Side::LEFT, leftStickVector.x, leftStickVector.y);
+
+	Vector3 rightStickVector;
+	this->controller.GetAnalogJoyStick(Controller::Side::RIGHT, rightStickVector.x, rightStickVector.y);
 
 	Vector3 xAxis, yAxis, zAxis;
 	this->camera.GetCameraFrame(xAxis, yAxis, zAxis);

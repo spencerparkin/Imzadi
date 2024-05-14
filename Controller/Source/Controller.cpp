@@ -1,9 +1,9 @@
 #include "Controller.h"
+#include <math.h>
 
-using namespace Collision;
-
-Controller::Controller()
+Controller::Controller(DWORD userIndex)
 {
+	this->userIndex = userIndex;
 	::ZeroMemory(this->stateBuffer, sizeof(this->stateBuffer));
 	this->stateIndex = 0;
 }
@@ -14,7 +14,7 @@ Controller::Controller()
 
 void Controller::Update()
 {
-	DWORD result = XInputGetState(0, &this->stateBuffer[this->stateIndex]);
+	DWORD result = XInputGetState(this->userIndex, &this->stateBuffer[this->stateIndex]);
 	if (result == ERROR_SUCCESS)
 		this->stateIndex = 1 - this->stateIndex;
 }
@@ -62,7 +62,7 @@ bool Controller::ButtonUp(DWORD buttonFlag)
 	return((this->GetCurrentState()->Gamepad.wButtons & buttonFlag) == 0);
 }
 
-Vector3 Controller::GetAnalogJoyStick(Side side)
+void Controller::GetAnalogJoyStick(Side side, double& x, double& y)
 {
 	const XINPUT_STATE* currentState = this->GetCurrentState();
 
@@ -83,18 +83,13 @@ Vector3 Controller::GetAnalogJoyStick(Side side)
 		break;
 	}
 	
-	if (abs(thumbX) < deadZone)
+	if (::abs(thumbX) < deadZone)
 		thumbX = 0;
-	if (abs(thumbY) < deadZone)
+	if (::abs(thumbY) < deadZone)
 		thumbY = 0;
 
-	Vector3 stickVector;
-
-	stickVector.x = double(thumbX) / 32768.0;
-	stickVector.y = double(thumbY) / 32768.0;
-	stickVector.z = 0.0;
-	
-	return stickVector;
+	x = double(thumbX) / 32768.0;
+	y = double(thumbY) / 32768.0;
 }
 
 double Controller::GetTrigger(Side side)
