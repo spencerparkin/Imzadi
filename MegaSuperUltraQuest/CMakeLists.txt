@@ -14,6 +14,7 @@ add_executable(MegaSuperUltraQuest WIN32 ${GAME_SOURCES})
 target_link_libraries(MegaSuperUltraQuest PRIVATE
     CollisionLib
     ControllerLib
+    d3d11.lib
 )
 
 target_compile_definitions(MegaSuperUltraQuest PRIVATE

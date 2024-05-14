@@ -5,13 +5,10 @@ int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, in
 {
 	Game game(instance);
 
-	if (!game.Initialize())
+	if (game.Initialize())
 	{
-		//MessageBoxA()
-		return -1;
+		game.Run();
 	}
-
-	game.Run();
 
 	game.Shutdown();
 
