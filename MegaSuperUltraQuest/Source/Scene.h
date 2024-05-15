@@ -3,7 +3,7 @@
 #include <list>
 #include <memory>
 
-class RenderMesh;
+class Asset;
 class Camera;
 
 /**
@@ -24,8 +24,9 @@ public:
 
 	/**
 	 * Add a RenderMesh instance to the scene.  It will get drawn if it intersects the view frustum.
+	 * We'll fail here if the given asset is not a RenderMesh asset.
 	 */
-	void AddRenderMesh(std::shared_ptr<RenderMesh> renderMesh);
+	bool AddRenderMesh(std::shared_ptr<Asset> renderMesh);
 
 	/**
 	 * Submit draw-calls for everything approximately deemed visible in the scene.
@@ -44,7 +45,7 @@ public:
 	Camera* GetCamera() { return this->camera.get(); }
 
 private:
-	typedef std::list<std::shared_ptr<RenderMesh>> RenderMeshList;
+	typedef std::list<std::shared_ptr<Asset>> RenderMeshList;
 
 	// Note that a more sophisticated system would spacially sort scene objects
 	// or put them in some sort of hierarchy or something like that.  I'm just

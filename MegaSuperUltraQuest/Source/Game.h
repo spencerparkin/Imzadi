@@ -2,10 +2,12 @@
 
 #include <Windows.h>
 #include <d3d11.h>
+#include <memory>
 
 #define GAME_WINDOW_CLASS_NAME		TEXT("GameWindowClass")
 
 class Scene;
+class AssetCache;
 
 class Game
 {
@@ -16,6 +18,9 @@ public:
 	bool Initialize();
 	bool Run();
 	bool Shutdown();
+
+	Scene* GetScene() { return this->scene.get(); }
+	AssetCache* GetAssetCache() { return this->assetCache.get(); }
 
 private:
 
@@ -30,5 +35,6 @@ private:
 	ID3D11DeviceContext* deviceContext;
 	IDXGISwapChain* swapChain;
 	ID3D11RenderTargetView* frameBufferView;
-	Scene* scene;
+	std::shared_ptr<Scene> scene;
+	std::shared_ptr<AssetCache> assetCache;
 };

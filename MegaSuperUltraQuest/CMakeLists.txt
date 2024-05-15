@@ -11,6 +11,12 @@ set(GAME_SOURCES
     Source/RenderMesh.h
     Source/Camera.cpp
     Source/Camera.h
+    Source/Shader.cpp
+    Source/Shader.h
+    Source/Texture.cpp
+    Source/Texture.h
+    Source/AssetCache.cpp
+    Source/AssetCache.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})
@@ -25,4 +31,9 @@ target_link_libraries(MegaSuperUltraQuest PRIVATE
 
 target_compile_definitions(MegaSuperUltraQuest PRIVATE
     WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
+target_include_directories(MegaSuperUltraQuest PRIVATE
+    "ThirdParty"
 )

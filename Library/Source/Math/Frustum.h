@@ -68,7 +68,7 @@ namespace Collision
 	public:
 		double hfovi;		///< This is the horizontal field of vision in radians.
 		double vfovi;		///< This is the vertical field of vision in radians.
-		double near;		///< This is where the tip of the pryamid is chopped off.
-		double far;			///< This is where the base of the pyrmaid is located.
+		double nearClip;	///< This is where the tip of the pryamid is chopped off.
+		double farClip;		///< This is where the base of the pyrmaid is located.
 	};
 }

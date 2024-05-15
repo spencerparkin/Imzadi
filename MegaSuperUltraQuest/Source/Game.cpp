@@ -1,5 +1,7 @@
 #include "Game.h"
 #include "Scene.h"
+#include "RenderMesh.h"
+#include "Camera.h"
 #include <format>
 
 Game::Game(HINSTANCE instance)
@@ -12,6 +14,7 @@ Game::Game(HINSTANCE instance)
 	this->swapChain = NULL;
 	this->frameBufferView = NULL;
 	this->scene = nullptr;
+	this->assetCache = nullptr;
 }
 
 /*virtual*/ Game::~Game()
@@ -120,7 +123,18 @@ bool Game::Initialize()
 	backBufferTexture->Release();
 	backBufferTexture = nullptr;
 
-	this->scene = new Scene();
+	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, nullptr);
+
+	this->assetCache = std::make_shared<AssetCache>();
+	this->scene = std::make_shared<Scene>();
+
+	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
+	this->scene->SetCamera(camera);
+
+	// Test code: Can we just load a triangle render mesh asset and then draw it?
+	std::shared_ptr<Asset> renderMesh;
+	this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMesh);
+	this->scene->AddRenderMesh(renderMesh);
 
 	this->keepRunning = true;
 	return true;
@@ -189,8 +203,8 @@ bool Game::Shutdown()
 {
 	// TODO: Do we need to wait for the GPU to finish?!
 
-	delete this->scene;
-	this->scene = nullptr;
+	this->scene.reset();
+	this->assetCache.reset();
 
 	if (this->device)
 	{
