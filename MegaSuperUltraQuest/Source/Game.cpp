@@ -125,6 +125,9 @@ bool Game::Initialize()
 
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, nullptr);
 
+	// TODO: Need to get this a different way, obviously.
+	std::filesystem::current_path("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest");
+
 	this->assetCache = std::make_shared<AssetCache>();
 	this->scene = std::make_shared<Scene>();
 
@@ -133,8 +136,8 @@ bool Game::Initialize()
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?
 	std::shared_ptr<Asset> renderMesh;
-	this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMesh);
-	this->scene->AddRenderMesh(renderMesh);
+	if (this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMesh))
+		this->scene->AddRenderMesh(renderMesh);
 
 	this->keepRunning = true;
 	return true;
@@ -193,6 +196,7 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 	if (userData != 0)
 	{
 		auto game = (Game*)userData;
+		assert(game->mainWindowHandle == windowHandle);
 		return game->WndProc(msg, wParam, lParam);
 	}
 

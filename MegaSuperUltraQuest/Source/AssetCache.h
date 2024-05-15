@@ -4,6 +4,7 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
+#include <filesystem>
 
 class Asset;
 
@@ -24,9 +25,11 @@ public:
 	 */
 	void Clear();
 
-	static bool ResolveAssetPath(std::string& assetFile);
-
 private:
+
+	bool ResolveAssetPath(std::string& assetFile);
+
+	std::filesystem::path assetsFolder;
 
 	typedef std::unordered_map<std::string, std::shared_ptr<Asset>> AssetMap;
 	AssetMap assetMap;

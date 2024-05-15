@@ -29,12 +29,17 @@ void AssetCache::Clear()
 	this->assetMap.clear();
 }
 
-/*static*/ bool AssetCache::ResolveAssetPath(std::string& assetFile)
+bool AssetCache::ResolveAssetPath(std::string& assetFile)
 {
 	std::filesystem::path assetPath(assetFile);
 	if (assetPath.is_relative())
 	{
-		//...
+		if (this->assetsFolder.empty())
+		{
+			this->assetsFolder = std::filesystem::current_path() / "Assets";
+		}
+
+		assetFile = (this->assetsFolder / assetPath).string();
 	}
 
 	return std::filesystem::exists(assetFile);
@@ -89,13 +94,17 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 
 	if (jsonDoc.HasParseError())
 	{
+		asset.reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
 		//...
 		return false;
 	}
 
 	if (!asset->Load(jsonDoc, this))
+	{
+		asset.reset();
 		return false;
+	}
 
 	// Having loaded the asset successfully, cache it.
 	this->assetMap.insert(std::pair<std::string, std::shared_ptr<Asset>>(key, asset));
