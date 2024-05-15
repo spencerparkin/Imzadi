@@ -8,6 +8,8 @@ namespace Collision
 	class AxisAlignedBoundingBox;
 	class Matrix4x4;
 	class Plane;
+	class Vector3;
+	class Transform;
 
 	/**
 	 * Frustums can be thought of as volumes in the shape of a pyramid, but the
@@ -15,12 +17,15 @@ namespace Collision
 	 * corners don't meet at right angle.  These are most often used to represent
 	 * a camera's field of vision, and projection matrices are based on the idea
 	 * of warping this space into a box that does have right angles.  This warping
-	 * of the space is what gives us the fore-shortening effect, which is the effect
+	 * of the space is what gives us the fore-shortening effect; which is the effect
 	 * that things further away appear smaller, and things closer, bigger.
 	 * 
 	 * The frustums represented by this class can very in shape, but not position
 	 * and orientation.  Specifically, these frustums always have the tip of their
-	 * pyramid at the origin, and the base goes toward the -Z axis.
+	 * pyramid at the origin, and the base goes toward the -Z axis.  In other words,
+	 * these are always camera-space frustums.  If you want to check to see if a
+	 * world space object intersects a frustum, then you need to transform that
+	 * object into camera space first.
 	 */
 	class COLLISION_LIB_API Frustum
 	{
@@ -32,10 +37,12 @@ namespace Collision
 		void operator=(const Frustum& frustum);
 
 		/**
-		 * Return true if and only if the given box non-trivially overlaps this frustum.
+		 * Return true if and only if the given sphere non-trivially overlaps this frustum.
 		 * That is, if the overlapping area is non-zero.
+		 * 
+		 * @param[in] sphere This should be a sphere in camera-space.
 		 */
-		bool IntersectedBy(const AxisAlignedBoundingBox& box) const;
+		bool IntersectedBySphere(const Vector3& center, double radius) const;
 
 		/**
 		 * Calculate and return the 6 planes that form the sides of this frustum.
@@ -44,21 +51,17 @@ namespace Collision
 
 		/**
 		 * Calculate and return the projection matrix that can be used for
-		 * world to camera space transforms, the said camera space being
-		 * the area inside this frustum.
+		 * camera space to projection space transformations, the said
+		 * camera space being represented by the area inside this frustum.
+		 * Camera space is thought of as the eye at origin looking down the
+		 * -Z axis with +Y axis up, and +X axis right.
 		 * 
 		 * @param[out] matrix This is the returned projection matrix.
 		 */
 		void ToProjectionMatrix(Matrix4x4& matrix) const;
 
 		/**
-		 * Calculate this frustum as that represented by the given
-		 * world to camera space transform.  If the given matrix
-		 * does not represent such a transform, then we leave our
-		 * result here undefined.
-		 * 
-		 * @param[in] matrix This matrix is assumed to be a projection matrix similar to what's calculated in the ToProjectionMatrix method.
-		 * @return True is returned on success; false, otherwise.
+		 * TODO: Write this.
 		 */
 		bool FromProjectionMatrix(const Matrix4x4& matrix);
 

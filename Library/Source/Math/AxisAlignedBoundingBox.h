@@ -162,6 +162,17 @@ namespace Collision
 		double GetVolume() const;
 
 		/**
+		 * Calculate and return the tightest sphere containing this AABB.
+		 * One application here is to check the returned sphere (once transformed
+		 * into camera space) against a frustum.  If it intersects, then we
+		 * approximate the AABB as also intersecting the frustum.
+		 * 
+		 * @param[out] center This is the center of the returned sphere.
+		 * @param[out] radius This is the radius of the returned sphere.
+		 */
+		void GetSphere(Vector3& center, double& radius) const;
+
+		/**
 		 * Calculate and return the point on this box's boundary that is closest
 		 * to the given point.
 		 */

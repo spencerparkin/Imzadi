@@ -347,6 +347,11 @@ double AxisAlignedBoundingBox::GetVolume() const
 	return width * height * depth;
 }
 
+void AxisAlignedBoundingBox::GetSphere(Vector3& center, double& radius) const
+{
+	// TODO: Write this.
+}
+
 void AxisAlignedBoundingBox::Dump(std::ostream& stream) const
 {
 	this->minCorner.Dump(stream);

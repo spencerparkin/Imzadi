@@ -367,6 +367,16 @@ bool Matrix4x4::OrthonormalizeOrientation()
 	return true;
 }
 
+void Matrix4x4::Dump(std::ostream& stream) const
+{
+	// TODO: Write this.
+}
+
+void Matrix4x4::Restore(std::istream& stream)
+{
+	// TODO: Write this.
+}
+
 namespace Collision
 {
 	Matrix4x4 operator*(const Matrix4x4& leftMatrix, const Matrix4x4& rightMatrix)

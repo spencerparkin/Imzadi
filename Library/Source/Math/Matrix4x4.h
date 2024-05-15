@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Defines.h"
+#include <istream>
+#include <ostream>
 
 namespace Collision
 {
@@ -57,6 +59,10 @@ namespace Collision
 		void operator=(const Matrix4x4& matrix);
 		void operator=(const Matrix3x3& matrix);
 
+		void Dump(std::ostream& stream) const;
+		void Restore(std::istream& stream);
+
+	public:
 		double ele[4][4];
 	};
 

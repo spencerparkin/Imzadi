@@ -2,6 +2,8 @@
 #include "Matrix4x4.h"
 #include "Plane.h"
 #include "AxisAlignedBoundingBox.h"
+#include "Transform.h"
+#include "Ray.h"
 #include <math.h>
 
 using namespace Collision;
@@ -39,7 +41,7 @@ void Frustum::GetPlanes(std::vector<Plane>& planeArray) const
 	// TODO: Write this.
 }
 
-bool Frustum::IntersectedBy(const AxisAlignedBoundingBox& box) const
+bool Frustum::IntersectedBySphere(const Vector3& center, double radius) const
 {
 	// TODO: Write this.
 	return false;

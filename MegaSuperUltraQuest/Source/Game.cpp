@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "Scene.h"
 #include <format>
 
 Game::Game(HINSTANCE instance)
@@ -10,6 +11,7 @@ Game::Game(HINSTANCE instance)
 	this->deviceContext = NULL;
 	this->swapChain = NULL;
 	this->frameBufferView = NULL;
+	this->scene = nullptr;
 }
 
 /*virtual*/ Game::~Game()
@@ -118,6 +120,8 @@ bool Game::Initialize()
 	backBufferTexture->Release();
 	backBufferTexture = nullptr;
 
+	this->scene = new Scene();
+
 	this->keepRunning = true;
 	return true;
 }
@@ -136,7 +140,7 @@ bool Game::Run()
 		FLOAT backgroundColor[4] = { 0.5f, 0.5f, 0.0f, 1.0f };
 		this->deviceContext->ClearRenderTargetView(this->frameBufferView, backgroundColor);
 
-		// TODO: Game tick/render goes here.
+		this->scene->Render();
 
 		this->swapChain->Present(1, 0);
 	}
@@ -183,6 +187,11 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 
 bool Game::Shutdown()
 {
+	// TODO: Do we need to wait for the GPU to finish?!
+
+	delete this->scene;
+	this->scene = nullptr;
+
 	if (this->device)
 	{
 		this->device->Release();

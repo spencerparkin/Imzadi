@@ -5,6 +5,8 @@
 
 #define GAME_WINDOW_CLASS_NAME		TEXT("GameWindowClass")
 
+class Scene;
+
 class Game
 {
 public:
@@ -28,4 +30,5 @@ private:
 	ID3D11DeviceContext* deviceContext;
 	IDXGISwapChain* swapChain;
 	ID3D11RenderTargetView* frameBufferView;
+	Scene* scene;
 };

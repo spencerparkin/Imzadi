@@ -5,6 +5,12 @@ set(GAME_SOURCES
     Source/Main.h
     Source/Game.cpp
     Source/Game.h
+    Source/Scene.cpp
+    Source/Scene.h
+    Source/RenderMesh.cpp
+    Source/RenderMesh.h
+    Source/Camera.cpp
+    Source/Camera.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})
