@@ -220,6 +220,18 @@ void AxisAlignedBoundingBox::GetSidePlanes(std::vector<Plane>& sidePlaneArray) c
 	}
 }
 
+void AxisAlignedBoundingBox::GetVertices(std::vector<Vector3>& vertexArray) const
+{
+	vertexArray.push_back(Vector3(this->minCorner.x, this->minCorner.y, this->minCorner.z));
+	vertexArray.push_back(Vector3(this->minCorner.x, this->minCorner.y, this->maxCorner.z));
+	vertexArray.push_back(Vector3(this->minCorner.x, this->maxCorner.y, this->minCorner.z));
+	vertexArray.push_back(Vector3(this->minCorner.x, this->maxCorner.y, this->maxCorner.z));
+	vertexArray.push_back(Vector3(this->maxCorner.x, this->minCorner.y, this->minCorner.z));
+	vertexArray.push_back(Vector3(this->maxCorner.x, this->minCorner.y, this->maxCorner.z));
+	vertexArray.push_back(Vector3(this->maxCorner.x, this->maxCorner.y, this->minCorner.z));
+	vertexArray.push_back(Vector3(this->maxCorner.x, this->maxCorner.y, this->maxCorner.z));
+}
+
 void AxisAlignedBoundingBox::GetEdgeSegments(std::vector<LineSegment>& edgeSegmentArray) const
 {
 	// -X to +X

@@ -28,12 +28,18 @@ set(LIBRARY_SOURCES
     Source/Defines.h
     Source/Math/AxisAlignedBoundingBox.cpp
     Source/Math/AxisAlignedBoundingBox.h
+    Source/Math/Frustum.cpp
+    Source/Math/Frustum.h
+    Source/Math/Matrix4x4.cpp
+    Source/Math/Matrix4x4.h
     Source/Math/Matrix3x3.cpp
     Source/Math/Matrix3x3.h
     Source/Math/Matrix2x2.cpp
     Source/Math/Matrix2x2.h
     Source/Math/Transform.cpp
     Source/Math/Transform.h
+    Source/Math/Vector4.cpp
+    Source/Math/Vector4.h
     Source/Math/Vector3.cpp
     Source/Math/Vector3.h
     Source/Math/Vector2.cpp

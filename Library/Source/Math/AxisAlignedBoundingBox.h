@@ -143,6 +143,13 @@ namespace Collision
 		void GetSidePlanes(std::vector<Plane>& sidePlaneArray) const;
 
 		/**
+		 * Calculate and return the 8 vertices of this box.
+		 * 
+		 * @param[out] vertexArray This array is populated with the vertices of this box.
+		 */
+		void GetVertices(std::vector<Vector3>& vertexArray) const;
+
+		/**
 		 * Calculate and return the 12 line-segments forming the edges of this box.
 		 * 
 		 * @param[out] edgeSegmentArray This array is populated with the line-segments continaing the edges of this box.
