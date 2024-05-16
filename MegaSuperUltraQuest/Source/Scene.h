@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Reference.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include <list>
-#include <memory>
 
 class RenderObject;
 class Camera;
@@ -11,7 +11,7 @@ class Camera;
  * This class represents the entire renderable scene and how we're viewing it.
  * It is a collection of RenderObject instances and can be asked to update and draw each frame.
  */
-class Scene
+class Scene : public ReferenceCounted
 {
 public:
 	Scene();
@@ -26,7 +26,7 @@ public:
 	/**
 	 * Add a RenderObject instance to the scene.  It will get drawn if it intersects the view frustum.
 	 */
-	void AddRenderObject(std::shared_ptr<RenderObject> renderObject);
+	void AddRenderObject(Reference<RenderObject> renderObject);
 
 	/**
 	 * Submit draw-calls for everything approximately deemed visible in the scene.
@@ -37,15 +37,15 @@ public:
 	 * Assign the given camera to the scene.  This will dictate
 	 * how the scene is viewed and therefore rendered.
 	 */
-	void SetCamera(std::shared_ptr<Camera> camera) { this->camera = camera; }
+	void SetCamera(Reference<Camera> camera) { this->camera = camera; }
 
 	/**
 	 * Get access to the camera representing our view into the scene.
 	 */
-	Camera* GetCamera() { return this->camera.get(); }
+	Camera* GetCamera() { return this->camera.Get(); }
 
 private:
-	typedef std::list<std::shared_ptr<RenderObject>> RenderObjectList;
+	typedef std::list<Reference<RenderObject>> RenderObjectList;
 
 	// Note that a more sophisticated system would spacially sort scene objects
 	// or put them in some sort of hierarchy or something like that.  I'm just
@@ -58,13 +58,13 @@ private:
 	// Before a render mesh can draw, we must calculate its full object-space
 	// to projection-space transform, which is why we need to associate a
 	// camera with the scene.
-	std::shared_ptr<Camera> camera;
+	Reference<Camera> camera;
 };
 
 /**
  * This is the base class for anything that can get rendered in the scene.
  */
-class RenderObject
+class RenderObject : public ReferenceCounted
 {
 public:
 	RenderObject();

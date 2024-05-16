@@ -18,7 +18,7 @@ void Scene::Clear()
 	this->renderObjectList.clear();
 }
 
-void Scene::AddRenderObject(std::shared_ptr<RenderObject> renderObject)
+void Scene::AddRenderObject(Reference<RenderObject> renderObject)
 {
 	this->renderObjectList.push_back(renderObject);
 }
@@ -28,9 +28,9 @@ void Scene::Render()
 	if (!this->camera)
 		return;
 
-	for (const std::shared_ptr<RenderObject>& renderObject : this->renderObjectList)
+	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
 	{
-		if (!this->camera->IsApproximatelyVisible(renderObject.get()))
+		if (!this->camera->IsApproximatelyVisible(renderObject.Get()))
 			continue;
 			
 		renderObject->Render(this);

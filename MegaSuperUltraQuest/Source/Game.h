@@ -2,7 +2,7 @@
 
 #include <Windows.h>
 #include <d3d11.h>
-#include <memory>
+#include "Reference.h"
 
 #define GAME_WINDOW_CLASS_NAME		TEXT("GameWindowClass")
 
@@ -19,8 +19,8 @@ public:
 	bool Run();
 	bool Shutdown();
 
-	Scene* GetScene() { return this->scene.get(); }
-	AssetCache* GetAssetCache() { return this->assetCache.get(); }
+	Scene* GetScene() { return this->scene.Get(); }
+	AssetCache* GetAssetCache() { return this->assetCache.Get(); }
 
 private:
 
@@ -35,6 +35,6 @@ private:
 	ID3D11DeviceContext* deviceContext;
 	IDXGISwapChain* swapChain;
 	ID3D11RenderTargetView* frameBufferView;
-	std::shared_ptr<Scene> scene;
-	std::shared_ptr<AssetCache> assetCache;
+	Reference<Scene> scene;
+	Reference<AssetCache> assetCache;
 };

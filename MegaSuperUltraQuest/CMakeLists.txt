@@ -19,6 +19,8 @@ set(GAME_SOURCES
     Source/Buffer.h
     Source/AssetCache.cpp
     Source/AssetCache.h
+    Source/Reference.cpp
+    Source/Reference.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})

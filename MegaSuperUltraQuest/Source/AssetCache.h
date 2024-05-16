@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Reference.h"
 #include "rapidjson/document.h"
 #include <string>
 #include <unordered_map>
-#include <memory>
 #include <filesystem>
 
 class Asset;
@@ -13,13 +13,13 @@ class RenderObject;
  * This is supposed to be one-stop-shopping for any asset we'd want to load,
  * whether that be a render-mesh, texture, shader, etc.
  */
-class AssetCache
+class AssetCache : public ReferenceCounted
 {
 public:
 	AssetCache();
 	virtual ~AssetCache();
 
-	bool GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>& asset);
+	bool GrabAsset(const std::string& assetFile, Reference<Asset>& asset);
 
 	/**
 	 * Remove all assets from this cache.
@@ -36,14 +36,14 @@ private:
 
 	std::filesystem::path assetFolder;
 
-	typedef std::unordered_map<std::string, std::shared_ptr<Asset>> AssetMap;
+	typedef std::unordered_map<std::string, Reference<Asset>> AssetMap;
 	AssetMap assetMap;
 };
 
 /**
  * This is the base class for all asset types.
  */
-class Asset
+class Asset : public ReferenceCounted
 {
 public:
 	Asset();
@@ -52,5 +52,5 @@ public:
 	virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) = 0;
 	virtual bool Unload() = 0;
 	virtual bool CanBeCached() const { return true; }
-	virtual bool MakeRenderInstance(std::shared_ptr<RenderObject>& renderObject) { return false; }
+	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) { return false; }
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Reference.h"
 #include "Math/Transform.h"
 #include "Math/Frustum.h"
 
@@ -8,7 +9,7 @@ class RenderObject;
 /**
  * An instance of this class describes how we are viewing a scene.
  */
-class Camera
+class Camera : public ReferenceCounted
 {
 public:
 	Camera();

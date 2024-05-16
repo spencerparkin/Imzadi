@@ -125,19 +125,19 @@ bool Game::Initialize()
 
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, nullptr);
 
-	this->assetCache = std::make_shared<AssetCache>();
+	this->assetCache.Set(new AssetCache());
 	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
 
-	this->scene = std::make_shared<Scene>();
+	this->scene.Set(new Scene());
 
-	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
+	Reference<Camera> camera(new Camera());
 	this->scene->SetCamera(camera);
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?
-	std::shared_ptr<Asset> renderMeshAsset;
+	Reference<Asset> renderMeshAsset;
 	if (this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMeshAsset))
 	{
-		std::shared_ptr<RenderObject> renderMesh;
+		Reference<RenderObject> renderMesh;
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 			this->scene->AddRenderObject(renderMesh);
 	}
@@ -210,8 +210,8 @@ bool Game::Shutdown()
 {
 	// TODO: Do we need to wait for the GPU to finish?!
 
-	this->scene.reset();
-	this->assetCache.reset();
+	this->scene.Reset();
+	this->assetCache.Reset();
 
 	if (this->device)
 	{

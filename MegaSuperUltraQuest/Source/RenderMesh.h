@@ -4,6 +4,9 @@
 #include "Math/Transform.h"
 #include "Scene.h"
 #include "AssetCache.h"
+#include "Shader.h"
+#include "Texture.h"
+#include "Buffer.h"
 #include <d3dcommon.h>
 
 class RenderMeshAsset;
@@ -20,10 +23,10 @@ public:
 	virtual void Render(Scene* scene) override;
 	virtual Collision::AxisAlignedBoundingBox GetWorldBoundingBox() const override;
 
-	void SetRenderMesh(std::shared_ptr<Asset> mesh) { this->mesh = mesh; }
+	void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }
 
 private:
-	std::shared_ptr<Asset> mesh;
+	Reference<RenderMeshAsset> mesh;
 	Collision::AxisAlignedBoundingBox boundingBox;
 	Collision::Transform objectToWorld;
 };
@@ -39,12 +42,12 @@ public:
 
 	virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 	virtual bool Unload() override;
-	virtual bool MakeRenderInstance(std::shared_ptr<RenderObject>& renderObject) override;
+	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) override;
 
 private:
 	D3D_PRIMITIVE_TOPOLOGY primType;
-	std::shared_ptr<Asset> vertexBuffer;
-	std::shared_ptr<Asset> indexBuffer;
-	std::shared_ptr<Asset> shader;
-	std::shared_ptr<Asset> texture;
+	Reference<Buffer> vertexBuffer;
+	Reference<Buffer> indexBuffer;
+	Reference<Shader> shader;
+	Reference<Texture> texture;
 };

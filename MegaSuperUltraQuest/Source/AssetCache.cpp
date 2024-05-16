@@ -23,7 +23,7 @@ void AssetCache::Clear()
 {
 	for (auto pair : this->assetMap)
 	{
-		Asset* asset = pair.second.get();
+		Asset* asset = pair.second.Get();
 		asset->Unload();
 	}
 
@@ -39,7 +39,7 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 	return std::filesystem::exists(assetFile);
 }
 
-bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>& asset)
+bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset)
 {
 	std::filesystem::path assetPath(assetFile);
 	std::string key = assetPath.filename().string();
@@ -62,15 +62,15 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 	// Next, what kind of asset is it?  We'll deduce this from the extension.
 	std::string ext = assetPath.extension().string();
 	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
-	asset.reset();
+	asset.Reset();
 	if (ext == ".render_mesh")
-		asset = std::make_shared<RenderMeshAsset>();
+		asset.Set(new RenderMeshAsset());
 	else if (ext == ".shader")
-		asset = std::make_shared<Shader>();
+		asset.Set(new Shader());
 	else if (ext == ".texture")
-		asset = std::make_shared<Texture>();
+		asset.Set(new Texture());
 	else if (ext == ".buffer")
-		asset = std::make_shared<Buffer>();
+		asset.Set(new Buffer());
 	if (!asset)
 		return false;
 
@@ -90,7 +90,7 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 
 	if (jsonDoc.HasParseError())
 	{
-		asset.reset();
+		asset.Reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
 		//...
 		return false;
@@ -98,7 +98,7 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 
 	if (!asset->Load(jsonDoc, this))
 	{
-		asset.reset();
+		asset.Reset();
 		return false;
 	}
 
@@ -106,7 +106,7 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 	// if it can be cached before doing so.  I'm not sure, but there
 	// may be a future need for this.
 	if (asset->CanBeCached())
-		this->assetMap.insert(std::pair<std::string, std::shared_ptr<Asset>>(key, asset));
+		this->assetMap.insert(std::pair<std::string, Reference<Asset>>(key, asset));
 
 	// Enjoy your meal.
 	return true;
