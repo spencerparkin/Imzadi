@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "RenderMesh.h"
+#include "Scene.h"
 
 using namespace Collision;
 
@@ -12,9 +12,9 @@ Camera::Camera()
 {
 }
 
-bool Camera::IsApproximatelyVisible(const RenderMesh* renderMesh) const
+bool Camera::IsApproximatelyVisible(const RenderObject* renderObject) const
 {
-	const AxisAlignedBoundingBox& box = renderMesh->GetWorldBoundingBox();
+	const AxisAlignedBoundingBox& box = renderObject->GetWorldBoundingBox();
 
 	Vector3 center;
 	double radius;

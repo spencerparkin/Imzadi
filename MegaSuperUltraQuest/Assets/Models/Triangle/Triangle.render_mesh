@@ -1,0 +1,5 @@
+{
+    "vertex_buffer": "Models/Triangle/Triangle.buffer",
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Models/Triangle/Triangle.shader"
+}

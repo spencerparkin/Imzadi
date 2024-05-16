@@ -3,7 +3,7 @@
 #include "Math/Transform.h"
 #include "Math/Frustum.h"
 
-class RenderMesh;
+class RenderObject;
 
 /**
  * An instance of this class describes how we are viewing a scene.
@@ -15,10 +15,10 @@ public:
 	virtual ~Camera();
 
 	/**
-	 * False is returned here if the given render mesh is definitely not visible.
-	 * True is returned here if the given render mesh is likely visible.
+	 * False is returned here if the given render object is definitely not visible.
+	 * True is returned here if the given render object is likely visible.
 	 */
-	bool IsApproximatelyVisible(const RenderMesh* renderMesh) const;
+	bool IsApproximatelyVisible(const RenderObject* renderObject) const;
 
 	/**
 	 * Specify the position and orientation of this camera.  Remember that camera

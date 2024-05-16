@@ -15,6 +15,8 @@ set(GAME_SOURCES
     Source/Shader.h
     Source/Texture.cpp
     Source/Texture.h
+    Source/Buffer.cpp
+    Source/Buffer.h
     Source/AssetCache.cpp
     Source/AssetCache.h
 )

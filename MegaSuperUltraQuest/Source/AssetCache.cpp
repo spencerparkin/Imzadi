@@ -1,5 +1,6 @@
 #include "AssetCache.h"
 #include "RenderMesh.h"
+#include "Buffer.h"
 #include "Shader.h"
 #include "Texture.h"
 #include <algorithm>
@@ -33,14 +34,7 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 {
 	std::filesystem::path assetPath(assetFile);
 	if (assetPath.is_relative())
-	{
-		if (this->assetsFolder.empty())
-		{
-			this->assetsFolder = std::filesystem::current_path() / "Assets";
-		}
-
-		assetFile = (this->assetsFolder / assetPath).string();
-	}
+		assetFile = (this->assetFolder / assetPath).string();
 
 	return std::filesystem::exists(assetFile);
 }
@@ -70,11 +64,13 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
 	asset.reset();
 	if (ext == ".render_mesh")
-		asset = std::make_shared<RenderMesh>();
+		asset = std::make_shared<RenderMeshAsset>();
 	else if (ext == ".shader")
 		asset = std::make_shared<Shader>();
 	else if (ext == ".texture")
 		asset = std::make_shared<Texture>();
+	else if (ext == ".buffer")
+		asset = std::make_shared<Buffer>();
 	if (!asset)
 		return false;
 
@@ -106,8 +102,11 @@ bool AssetCache::GrabAsset(const std::string& assetFile, std::shared_ptr<Asset>&
 		return false;
 	}
 
-	// Having loaded the asset successfully, cache it.
-	this->assetMap.insert(std::pair<std::string, std::shared_ptr<Asset>>(key, asset));
+	// Having loaded the asset successfully, cache it.  Ask the asset
+	// if it can be cached before doing so.  I'm not sure, but there
+	// may be a future need for this.
+	if (asset->CanBeCached())
+		this->assetMap.insert(std::pair<std::string, std::shared_ptr<Asset>>(key, asset));
 
 	// Enjoy your meal.
 	return true;

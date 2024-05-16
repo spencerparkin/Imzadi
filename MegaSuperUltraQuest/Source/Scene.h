@@ -1,14 +1,15 @@
 #pragma once
 
+#include "Math/AxisAlignedBoundingBox.h"
 #include <list>
 #include <memory>
 
-class Asset;
+class RenderObject;
 class Camera;
 
 /**
  * This class represents the entire renderable scene and how we're viewing it.
- * It is a collection of render meshes and can be asked to update and draw each frame.
+ * It is a collection of RenderObject instances and can be asked to update and draw each frame.
  */
 class Scene
 {
@@ -17,16 +18,15 @@ public:
 	virtual ~Scene();
 
 	/**
-	 * Remove all RenderMesh instances being tracked by this scene.  Once cleared,
+	 * Remove all RenderObject instances being tracked by this scene.  Once cleared,
 	 * nothing will render when the scene is rendered.
 	 */
 	void Clear();
 
 	/**
-	 * Add a RenderMesh instance to the scene.  It will get drawn if it intersects the view frustum.
-	 * We'll fail here if the given asset is not a RenderMesh asset.
+	 * Add a RenderObject instance to the scene.  It will get drawn if it intersects the view frustum.
 	 */
-	bool AddRenderMesh(std::shared_ptr<Asset> renderMesh);
+	void AddRenderObject(std::shared_ptr<RenderObject> renderObject);
 
 	/**
 	 * Submit draw-calls for everything approximately deemed visible in the scene.
@@ -45,7 +45,7 @@ public:
 	Camera* GetCamera() { return this->camera.get(); }
 
 private:
-	typedef std::list<std::shared_ptr<Asset>> RenderMeshList;
+	typedef std::list<std::shared_ptr<RenderObject>> RenderObjectList;
 
 	// Note that a more sophisticated system would spacially sort scene objects
 	// or put them in some sort of hierarchy or something like that.  I'm just
@@ -53,10 +53,24 @@ private:
 	// objects.  That's it.  I'll cull them based on the view frustum, but
 	// that's as far as I'm going to take visible surface determination in
 	// this simple application.
-	RenderMeshList renderMeshList;
+	RenderObjectList renderObjectList;
 
 	// Before a render mesh can draw, we must calculate its full object-space
 	// to projection-space transform, which is why we need to associate a
 	// camera with the scene.
 	std::shared_ptr<Camera> camera;
+};
+
+/**
+ * This is the base class for anything that can get rendered in the scene.
+ */
+class RenderObject
+{
+public:
+	RenderObject();
+	virtual ~RenderObject();
+
+	virtual void Render(Scene* scene) = 0;
+
+	virtual Collision::AxisAlignedBoundingBox GetWorldBoundingBox() const = 0;
 };

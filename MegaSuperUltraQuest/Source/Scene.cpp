@@ -2,6 +2,8 @@
 #include "Camera.h"
 #include "RenderMesh.h"
 
+//--------------------------- Scene ---------------------------
+
 Scene::Scene()
 {
 }
@@ -13,15 +15,12 @@ Scene::Scene()
 
 void Scene::Clear()
 {
-	this->renderMeshList.clear();
+	this->renderObjectList.clear();
 }
 
-bool Scene::AddRenderMesh(std::shared_ptr<Asset> renderMesh)
+void Scene::AddRenderObject(std::shared_ptr<RenderObject> renderObject)
 {
-	if (!dynamic_cast<RenderMesh*>(renderMesh.get()))
-		return false;
-
-	this->renderMeshList.push_back(renderMesh);
+	this->renderObjectList.push_back(renderObject);
 }
 
 void Scene::Render()
@@ -29,12 +28,21 @@ void Scene::Render()
 	if (!this->camera)
 		return;
 
-	for (const std::shared_ptr<Asset>& asset : this->renderMeshList)
+	for (const std::shared_ptr<RenderObject>& renderObject : this->renderObjectList)
 	{
-		auto renderMesh = static_cast<RenderMesh*>(asset.get());
-		if (!this->camera->IsApproximatelyVisible(renderMesh))
+		if (!this->camera->IsApproximatelyVisible(renderObject.get()))
 			continue;
 			
-		renderMesh->Render(this);
+		renderObject->Render(this);
 	}
+}
+
+//--------------------------- RenderObject ---------------------------
+
+RenderObject::RenderObject()
+{
+}
+
+/*virtual*/ RenderObject::~RenderObject()
+{
 }

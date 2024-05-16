@@ -125,19 +125,22 @@ bool Game::Initialize()
 
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, nullptr);
 
-	// TODO: Need to get this a different way, obviously.
-	std::filesystem::current_path("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest");
-
 	this->assetCache = std::make_shared<AssetCache>();
+	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
+
 	this->scene = std::make_shared<Scene>();
 
 	std::shared_ptr<Camera> camera = std::make_shared<Camera>();
 	this->scene->SetCamera(camera);
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?
-	std::shared_ptr<Asset> renderMesh;
-	if (this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMesh))
-		this->scene->AddRenderMesh(renderMesh);
+	std::shared_ptr<Asset> renderMeshAsset;
+	if (this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMeshAsset))
+	{
+		std::shared_ptr<RenderObject> renderMesh;
+		if (renderMeshAsset->MakeRenderInstance(renderMesh))
+			this->scene->AddRenderObject(renderMesh);
+	}
 
 	this->keepRunning = true;
 	return true;
