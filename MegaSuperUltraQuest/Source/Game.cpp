@@ -2,7 +2,10 @@
 #include "Scene.h"
 #include "RenderMesh.h"
 #include "Camera.h"
+#include "Math/Transform.h"
 #include <format>
+
+using namespace Collision;
 
 Game* Game::gameSingleton = nullptr;
 
@@ -163,6 +166,11 @@ bool Game::Initialize()
 
 	Reference<Camera> camera(new Camera());
 	this->scene->SetCamera(camera);
+	
+	Transform cameraTransform;
+	cameraTransform.matrix.SetIdentity();
+	cameraTransform.translation.SetComponents(0.0, 0.0, 10.0);
+	camera->SetCameraToWorldTransform(cameraTransform);
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?
 	Reference<Asset> renderMeshAsset;

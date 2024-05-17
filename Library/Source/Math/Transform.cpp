@@ -2,6 +2,7 @@
 #include "Plane.h"
 #include "Ray.h"
 #include "LineSegment.h"
+#include "Matrix4x4.h"
 
 using namespace Collision;
 
@@ -97,6 +98,36 @@ bool Transform::Invert(const Transform& transform)
 		return false;
 
 	this->translation = this->matrix * -transform.translation;
+	return true;
+}
+
+void Transform::GetToMatrix(Matrix4x4& matrix) const
+{
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			matrix.ele[i][j] = this->matrix.ele[i][j];
+
+	matrix.ele[3][0] = 0.0;
+	matrix.ele[3][1] = 0.0;
+	matrix.ele[3][2] = 0.0;
+	matrix.ele[3][3] = 1.0f;
+	matrix.ele[0][3] = this->translation.x;
+	matrix.ele[1][3] = this->translation.y;
+	matrix.ele[2][3] = this->translation.z;
+}
+
+bool Transform::SetFromMatrix(const Matrix4x4& matrix)
+{
+	if (matrix.ele[3][0] != 0.0 || matrix.ele[3][1] != 0.0 || matrix.ele[3][2] != 0.0 || matrix.ele[3][3] != 1.0)
+		return false;
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			this->matrix.ele[i][j] = matrix.ele[i][j];
+
+	this->translation.x = matrix.ele[0][3];
+	this->translation.y = matrix.ele[1][3];
+	this->translation.z = matrix.ele[2][3];
 	return true;
 }
 

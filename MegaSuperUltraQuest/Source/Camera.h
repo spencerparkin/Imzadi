@@ -32,6 +32,10 @@ public:
 	 */
 	const Collision::Transform& GetWorldToCameraTransform() const;
 
+	const Collision::Frustum& GetFrustum() const { return this->frustum; }
+
+	void SetFrustum(const Collision::Frustum& frustum) { this->frustum = frustum; }
+
 private:
 
 	Collision::Frustum frustum;

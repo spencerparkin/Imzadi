@@ -54,13 +54,21 @@ void RenderMeshInstance::Render(Scene* scene)
 		const Shader::Constant* constant = nullptr;
 		if (shader->GetConstantInfo("object_to_projection", constant) && constant->size == 16 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
 		{
-			// TODO: Build the object to projection space matrix here.
-			Matrix4x4 objectToProjection;
-			objectToProjection.SetIdentity();
+			Matrix4x4 worldToCameraMat;
+			camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
+
+			Matrix4x4 objectToWorldMat;
+			this->objectToWorld.GetToMatrix(objectToWorldMat);
+
+			Matrix4x4 cameraToProjMat;
+			camera->GetFrustum().ToProjectionMatrix(cameraToProjMat);
+
+			Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
+
 			float* ele = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
 			for (int i = 0; i < 4; i++)
 				for (int j = 0; j < 4; j++)
-					*ele++ = float(objectToProjection.ele[i][j]);
+					*ele++ = float(objectToProjMat.ele[i][j]);
 		}
 
 		deviceContext->Unmap(constantsBuffer, 0);

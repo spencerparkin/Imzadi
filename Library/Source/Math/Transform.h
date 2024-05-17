@@ -8,6 +8,7 @@ namespace Collision
 	class Plane;
 	class Ray;
 	class LineSegment;
+	class Matrix4x4;
 
 	/**
 	 * These are affine transformations and can be considered vector-valued functions of a vector variable.
@@ -127,6 +128,21 @@ namespace Collision
 		 * @return True is returned on success; false, otherwise.
 		 */
 		bool Invert(const Transform& transform);
+
+		/**
+		 * Return this transform in the given matrix.
+		 * 
+		 * @param[out] matrix This matrix will get initialized to one performing the same transform as this that performed by this class.
+		 */
+		void GetToMatrix(Matrix4x4& matrix) const;
+
+		/**
+		 * Initialize this transform using the given matrix.
+		 * 
+		 * @param[in] matrix This matrix is used to initialize this transform.
+		 * @return We fail here if the given matrix isn't an affine transform.
+		 */
+		bool SetFromMatrix(const Matrix4x4& matrix);
 
 		/**
 		 * Write this transform to the given stream in binary form.
