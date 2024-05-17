@@ -166,7 +166,7 @@ bool Game::Initialize()
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?
 	Reference<Asset> renderMeshAsset;
-	if (this->assetCache->GrabAsset("Models/Triangle/Triangle.render_mesh", renderMeshAsset))
+	if (this->assetCache->GrabAsset("Models/Box/Box.render_mesh", renderMeshAsset))
 	{
 		Reference<RenderObject> renderMesh;
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))

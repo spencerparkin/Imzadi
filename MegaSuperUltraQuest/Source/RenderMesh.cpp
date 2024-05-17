@@ -71,9 +71,11 @@ void RenderMeshInstance::Render(Scene* scene)
 	else
 	{
 		ID3D11Buffer* indexBufferIface = indexBuffer->GetBuffer();
-		deviceContext->IASetIndexBuffer(indexBufferIface, indexBuffer->GetFormat(), 0);
+		DXGI_FORMAT format = indexBuffer->GetFormat();
+		deviceContext->IASetIndexBuffer(indexBufferIface, format, 0);
 
-		deviceContext->DrawIndexed(indexBuffer->GetNumElements(), 0, 0);
+		UINT numElements = indexBuffer->GetNumElements();
+		deviceContext->DrawIndexed(numElements, 0, 0);
 	}
 }
 

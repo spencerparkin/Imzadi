@@ -39,6 +39,16 @@ Buffer::Buffer()
 		componentTypeSize = sizeof(short);
 		this->componentFormat = DXGI_FORMAT_R16_SINT;
 	}
+	else if (componentType == "uint")
+	{
+		componentTypeSize = sizeof(unsigned int);
+		this->componentFormat = DXGI_FORMAT_R32_UINT;
+	}
+	else if (componentType == "ushort")
+	{
+		componentTypeSize = sizeof(unsigned short);
+		this->componentFormat = DXGI_FORMAT_R16_UINT;
+	}
 	else
 		return false;
 
@@ -85,6 +95,7 @@ Buffer::Buffer()
 	{
 		const rapidjson::Value& bufferComponentValue = bufferValue[i];
 		
+		// I smell a template function here.
 		if (componentType == "float")
 		{
 			if (!bufferComponentValue.IsFloat())
@@ -107,6 +118,22 @@ Buffer::Buffer()
 				return false;
 
 			short component = (short)bufferComponentValue.GetInt();
+			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+		}
+		else if (componentType == "uint")
+		{
+			if (!bufferComponentValue.IsInt())
+				return false;
+
+			unsigned int component = (unsigned int)bufferComponentValue.GetInt();
+			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+		}
+		else if (componentType == "ushort")
+		{
+			if (!bufferComponentValue.IsInt())
+				return false;
+
+			unsigned short component = (unsigned short)bufferComponentValue.GetInt();
 			::memcpy(&componentBuffer[j], &component, componentTypeSize);
 		}
 
