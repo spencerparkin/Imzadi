@@ -42,6 +42,7 @@ private:
 	ID3D11DeviceContext* deviceContext;
 	IDXGISwapChain* swapChain;
 	ID3D11RenderTargetView* frameBufferView;
+	ID3D11RasterizerState* rasterizerState;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
 	static Game* gameSingleton;

@@ -15,6 +15,7 @@ Game::Game(HINSTANCE instance)
 	this->deviceContext = NULL;
 	this->swapChain = NULL;
 	this->frameBufferView = NULL;
+	this->rasterizerState = NULL;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 }
@@ -137,8 +138,7 @@ bool Game::Initialize()
 	rasterizerDesc.MultisampleEnable = FALSE;
 	rasterizerDesc.AntialiasedLineEnable = FALSE;
 
-	ID3D11RasterizerState* rasterizerState = nullptr;
-	result = this->device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+	result = this->device->CreateRasterizerState(&rasterizerDesc, &this->rasterizerState);
 	if (FAILED(result))
 		return false;
 
@@ -251,6 +251,12 @@ bool Game::Shutdown()
 	{
 		this->assetCache->Clear();
 		this->assetCache.Reset();
+	}
+
+	if (this->rasterizerState)
+	{
+		this->rasterizerState->Release();
+		this->rasterizerState = nullptr;
 	}
 
 	if (this->device)
