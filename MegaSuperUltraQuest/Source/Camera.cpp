@@ -14,14 +14,9 @@ Camera::Camera()
 
 bool Camera::IsApproximatelyVisible(const RenderObject* renderObject) const
 {
-	const AxisAlignedBoundingBox& box = renderObject->GetWorldBoundingBox();
-
 	Vector3 center;
-	double radius;
-	box.GetSphere(center, radius);
-
-	center = this->GetWorldToCameraTransform().TransformPoint(center);
-
+	double radius = 0.0;
+	renderObject->GetWorldBoundingSphere(center, radius);
 	return this->frustum.IntersectedBySphere(center, radius);
 }
 

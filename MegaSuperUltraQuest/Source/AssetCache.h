@@ -2,6 +2,8 @@
 
 #include "Reference.h"
 #include "rapidjson/document.h"
+#include "Math/Vector3.h"
+#include "Math/AxisAlignedBoundingBox.h"
 #include <string>
 #include <unordered_map>
 #include <filesystem>
@@ -45,6 +47,9 @@ public:
 	void SetAssetFolder(const std::string& assetFolder) { this->assetFolder = assetFolder; }
 
 	std::string GetAssetFolder() const { return this->assetFolder.string(); }
+
+	bool LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector);
+	bool LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb);
 
 private:
 

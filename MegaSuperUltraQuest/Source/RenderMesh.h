@@ -21,13 +21,14 @@ public:
 	virtual ~RenderMeshInstance();
 
 	virtual void Render(Scene* scene) override;
-	virtual Collision::AxisAlignedBoundingBox GetWorldBoundingBox() const override;
+	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const override;
 
 	void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }
+	void SetBoundingBox(const Collision::AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 
 private:
 	Reference<RenderMeshAsset> mesh;
-	Collision::AxisAlignedBoundingBox boundingBox;
+	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 	Collision::Transform objectToWorld;
 };
 
@@ -50,4 +51,5 @@ private:
 	Reference<Buffer> indexBuffer;
 	Reference<Shader> shader;
 	Reference<Texture> texture;
+	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 };

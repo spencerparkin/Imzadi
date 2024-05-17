@@ -25,9 +25,10 @@ void RenderMeshInstance::Render(Scene* scene)
 	// TODO: Write this.
 }
 
-/*virtual*/ Collision::AxisAlignedBoundingBox RenderMeshInstance::GetWorldBoundingBox() const
+/*virtual*/ void RenderMeshInstance::GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const
 {
-	return this->boundingBox;
+	this->objectSpaceBoundingBox.GetSphere(center, radius);
+	center = this->objectToWorld.TransformPoint(center);
 }
 
 //---------------------------------- RenderMeshAsset ----------------------------------
@@ -47,6 +48,12 @@ RenderMeshAsset::RenderMeshAsset()
 
 	if (!jsonDoc.IsObject())
 		return false;
+
+	if (jsonDoc.HasMember("bounding_box"))
+	{
+		if (!assetCache->LoadBoundingBox(jsonDoc["bounding_box"], this->objectSpaceBoundingBox))
+			return false;
+	}
 
 	if (!jsonDoc.HasMember("vertex_buffer"))
 		return false;
@@ -100,5 +107,6 @@ RenderMeshAsset::RenderMeshAsset()
 	renderObject.Set(new RenderMeshInstance());
 	auto instance = dynamic_cast<RenderMeshInstance*>(renderObject.Get());
 	instance->SetRenderMesh(this);
+	instance->SetBoundingBox(this->objectSpaceBoundingBox);
 	return true;
 }

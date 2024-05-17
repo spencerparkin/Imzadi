@@ -72,5 +72,5 @@ public:
 
 	virtual void Render(Scene* scene) = 0;
 
-	virtual Collision::AxisAlignedBoundingBox GetWorldBoundingBox() const = 0;
+	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const = 0;
 };

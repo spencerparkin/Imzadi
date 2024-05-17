@@ -115,6 +115,40 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 	return true;
 }
 
+bool AssetCache::LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector)
+{
+	if (!vectorValue.IsObject())
+		return false;
+
+	if (!vectorValue.HasMember("x") || !vectorValue.HasMember("y") || !vectorValue.HasMember("z"))
+		return false;
+
+	if (!vectorValue["x"].IsFloat() || !vectorValue["y"].IsFloat() || !vectorValue["z"].IsFloat())
+		return false;
+
+	vector.x = vectorValue["x"].GetFloat();
+	vector.y = vectorValue["y"].GetFloat();
+	vector.z = vectorValue["z"].GetFloat();
+	return true;
+}
+
+bool AssetCache::LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb)
+{
+	if (!aabbValue.IsObject())
+		return false;
+
+	if (!aabbValue.HasMember("min") || !aabbValue.HasMember("max"))
+		return false;
+
+	if (!this->LoadVector(aabbValue["min"], aabb.minCorner))
+		return false;
+
+	if (!this->LoadVector(aabbValue["max"], aabb.maxCorner))
+		return false;
+
+	return true;
+}
+
 //-------------------------------- Asset --------------------------------
 
 Asset::Asset()
