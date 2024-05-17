@@ -212,7 +212,11 @@ bool Game::Shutdown()
 {
 	// TODO: Do we need to wait for the GPU to finish?!
 
-	this->scene.Reset();
+	if (this->scene)
+	{
+		this->scene->Clear();
+		this->scene.Reset();
+	}
 
 	if (this->assetCache)
 	{

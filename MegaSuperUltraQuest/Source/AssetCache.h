@@ -20,6 +20,14 @@ public:
 	AssetCache();
 	virtual ~AssetCache();
 
+	/**
+	 * Load the asset at the given file location, hitting the cache if possible.
+	 * On cache miss, the cache is updated if the asset allows it.
+	 * 
+	 * @param[in] assetFile This is a relative or fully-qualified path to where the asset exists on disk.
+	 * @param[out] asset A reference to the asset is returned here.
+	 * @return True is returned if and only if the asset grab succeeded.  On failure, the given reference should be null.
+	 */
 	bool GrabAsset(const std::string& assetFile, Reference<Asset>& asset);
 
 	/**
@@ -27,13 +35,18 @@ public:
 	 */
 	void Clear();
 
+	/**
+	 * Resolve the given path into a fully qualified path, if it isn't already such a path.
+	 * 
+	 * @param[in, out] assetFile This is a string holding the path to resolve.
+	 */
+	bool ResolveAssetPath(std::string& assetFile);
+
 	void SetAssetFolder(const std::string& assetFolder) { this->assetFolder = assetFolder; }
 
 	std::string GetAssetFolder() const { return this->assetFolder.string(); }
 
 private:
-
-	bool ResolveAssetPath(std::string& assetFile);
 
 	std::filesystem::path assetFolder;
 

@@ -3,11 +3,13 @@
 #include "Buffer.h"
 #include "Shader.h"
 #include "Texture.h"
+#include "Game.h"
 #include <algorithm>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
 #include "rapidjson/reader.h"
+#include "rapidjson/error/en.h"
 
 //-------------------------------- AssetCache --------------------------------
 
@@ -92,7 +94,8 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 	{
 		asset.Reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
-		//...
+		const char* errorMsg = rapidjson::GetParseError_En(errorCode);
+		MessageBoxA(Game::Get()->GetMainWindowHandle(), errorMsg, "JSON parse error!", MB_ICONERROR | MB_OK);
 		return false;
 	}
 

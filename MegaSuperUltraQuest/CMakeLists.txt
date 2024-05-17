@@ -31,6 +31,7 @@ target_link_libraries(MegaSuperUltraQuest PRIVATE
     CollisionLib
     ControllerLib
     d3d11.lib
+    d3dcompiler.lib
 )
 
 target_compile_definitions(MegaSuperUltraQuest PRIVATE

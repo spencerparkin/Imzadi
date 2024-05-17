@@ -27,6 +27,7 @@ public:
 
 	ID3D11Device* GetDevice() { return this->device; }
 	ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
+	HWND GetMainWindowHandle() { return this->mainWindowHandle; }
 
 private:
 

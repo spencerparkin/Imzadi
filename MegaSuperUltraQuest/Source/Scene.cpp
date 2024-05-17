@@ -30,8 +30,9 @@ void Scene::Render()
 
 	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
 	{
-		if (!this->camera->IsApproximatelyVisible(renderObject.Get()))
-			continue;
+		// TODO: Activate this code when ready.
+		//if (!this->camera->IsApproximatelyVisible(renderObject.Get()))
+		//	continue;
 			
 		renderObject->Render(this);
 	}
