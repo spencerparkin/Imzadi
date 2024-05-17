@@ -57,7 +57,7 @@ Buffer::Buffer()
 	this->numElements = numComponents / strideComponents;
 	
 	D3D11_BUFFER_DESC bufferDesc{};
-	bufferDesc.ByteWidth = bufferValue.Size() * componentTypeSize;
+	bufferDesc.ByteWidth = numComponents * componentTypeSize;
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	bufferDesc.BindFlags = 0;
 
@@ -68,7 +68,7 @@ Buffer::Buffer()
 	else
 		return false;
 
-	uint8_t* componentBuffer = new uint8_t[bufferDesc.ByteWidth];
+	std::unique_ptr<uint8_t[]> componentBuffer(new uint8_t[bufferDesc.ByteWidth]);
 	int j = 0;
 
 	for (int i = 0; i < bufferValue.Size(); i++)
@@ -104,10 +104,8 @@ Buffer::Buffer()
 	}
 
 	D3D11_SUBRESOURCE_DATA subResourceData{};
-	subResourceData.pSysMem = componentBuffer;
+	subResourceData.pSysMem = componentBuffer.get();
 	HRESULT result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, &subResourceData, &this->buffer);
-	delete[] componentBuffer;
-
 	if (FAILED(result))
 		return false;
 
