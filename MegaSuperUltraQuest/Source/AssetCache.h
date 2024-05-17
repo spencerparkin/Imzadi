@@ -6,6 +6,7 @@
 #include <unordered_map>
 #include <filesystem>
 
+class Game;
 class Asset;
 class RenderObject;
 

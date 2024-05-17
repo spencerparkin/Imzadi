@@ -4,6 +4,8 @@
 #include "Camera.h"
 #include <format>
 
+Game* Game::gameSingleton = nullptr;
+
 Game::Game(HINSTANCE instance)
 {
 	this->instance = instance;
@@ -135,7 +137,7 @@ bool Game::Initialize()
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?
 	Reference<Asset> renderMeshAsset;
-	if (this->assetCache->GrabAsset("RenderMeshes/Triangle.render_mesh", renderMeshAsset))
+	if (this->assetCache->GrabAsset("Models/Triangle/Triangle.render_mesh", renderMeshAsset))
 	{
 		Reference<RenderObject> renderMesh;
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
@@ -211,7 +213,12 @@ bool Game::Shutdown()
 	// TODO: Do we need to wait for the GPU to finish?!
 
 	this->scene.Reset();
-	this->assetCache.Reset();
+
+	if (this->assetCache)
+	{
+		this->assetCache->Clear();
+		this->assetCache.Reset();
+	}
 
 	if (this->device)
 	{

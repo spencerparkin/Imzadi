@@ -22,6 +22,12 @@ public:
 	Scene* GetScene() { return this->scene.Get(); }
 	AssetCache* GetAssetCache() { return this->assetCache.Get(); }
 
+	static Game* Get() { return gameSingleton; }
+	static void Set(Game* game) { gameSingleton = game; }
+
+	ID3D11Device* GetDevice() { return this->device; }
+	ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
+
 private:
 
 	LRESULT WndProc(UINT msg, WPARAM wParam, LPARAM lParam);
@@ -37,4 +43,5 @@ private:
 	ID3D11RenderTargetView* frameBufferView;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
+	static Game* gameSingleton;
 };

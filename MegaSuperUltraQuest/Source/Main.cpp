@@ -4,6 +4,7 @@
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showCmd)
 {
 	Game game(instance);
+	Game::Set(&game);
 
 	if (game.Initialize())
 	{
