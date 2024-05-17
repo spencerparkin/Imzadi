@@ -72,6 +72,7 @@ void RenderMeshInstance::Render(Scene* scene)
 		}
 
 		deviceContext->Unmap(constantsBuffer, 0);
+		deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);
 	}
 
 	if (!indexBuffer)

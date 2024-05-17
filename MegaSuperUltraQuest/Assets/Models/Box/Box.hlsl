@@ -21,7 +21,7 @@ struct VS_Output
 VS_Output VS_Main(VS_Input input)
 {
     VS_Output output;
-    output.position = mul(float4(input.pos, 1.0f), objectToProjection);
+    output.position = mul(objectToProjection, float4(input.pos, 1.0f));
     output.color = float4(1.0f, 0.0f, 0.0f, 1.0f);
     return output;
 }
