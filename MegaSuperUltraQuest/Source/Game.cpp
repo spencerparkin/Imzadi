@@ -127,6 +127,23 @@ bool Game::Initialize()
 
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, nullptr);
 
+	D3D11_RASTERIZER_DESC rasterizerDesc;
+	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	rasterizerDesc.CullMode = D3D11_CULL_BACK;
+	rasterizerDesc.FrontCounterClockwise = TRUE;
+	rasterizerDesc.DepthBias = 0;
+	rasterizerDesc.DepthClipEnable = TRUE;
+	rasterizerDesc.ScissorEnable = FALSE;
+	rasterizerDesc.MultisampleEnable = FALSE;
+	rasterizerDesc.AntialiasedLineEnable = FALSE;
+
+	ID3D11RasterizerState* rasterizerState = nullptr;
+	result = this->device->CreateRasterizerState(&rasterizerDesc, &rasterizerState);
+	if (FAILED(result))
+		return false;
+
+	this->deviceContext->RSSetState(rasterizerState);
+
 	RECT clientRect;
 	GetClientRect(this->mainWindowHandle, &clientRect);
 
