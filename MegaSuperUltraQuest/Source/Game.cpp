@@ -127,6 +127,18 @@ bool Game::Initialize()
 
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, nullptr);
 
+	RECT clientRect;
+	GetClientRect(this->mainWindowHandle, &clientRect);
+
+	D3D11_VIEWPORT viewport;
+	viewport.TopLeftX = 0.0f;
+	viewport.TopLeftY = 0.0f;
+	viewport.Width = FLOAT(clientRect.right - clientRect.left);
+	viewport.Height = FLOAT(clientRect.bottom - clientRect.top);
+	viewport.MinDepth = 0.0f;
+	viewport.MaxDepth = 1.0f;
+	this->deviceContext->RSSetViewports(1, &viewport);
+
 	this->assetCache.Set(new AssetCache());
 	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
 
@@ -159,7 +171,7 @@ bool Game::Run()
 			DispatchMessage(&message);
 		}
 
-		FLOAT backgroundColor[4] = { 0.5f, 0.5f, 0.0f, 1.0f };
+		FLOAT backgroundColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		this->deviceContext->ClearRenderTargetView(this->frameBufferView, backgroundColor);
 
 		this->scene->Render();

@@ -2,6 +2,7 @@
 #include "Camera.h"
 #include "Scene.h"
 #include "Buffer.h"
+#include "Game.h"
 
 using namespace Collision;
 
@@ -22,7 +23,23 @@ void RenderMeshInstance::Render(Scene* scene)
 
 	// TODO: Build the object to projection space matrix here so the shader has it.
 
-	// TODO: Write this.
+	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
+
+	Shader* shader = this->mesh->GetShader();
+	Buffer* vertexBuffer = this->mesh->GetVertexBuffer();
+
+	deviceContext->IASetPrimitiveTopology(this->mesh->GetPrimType());
+	deviceContext->IASetInputLayout(shader->GetInputLayout());
+
+	deviceContext->VSSetShader(shader->GetVertexShader(), NULL, 0);
+	deviceContext->PSSetShader(shader->GetPixelShader(), NULL, 0);
+
+	UINT stride = vertexBuffer->GetStride();
+	UINT offset = 0;
+	ID3D11Buffer* vertexBufferArray = vertexBuffer->GetBuffer();
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferArray, &stride, &offset);
+
+	deviceContext->Draw(this->mesh->GetVertexBuffer()->GetNumElements(), 0);
 }
 
 /*virtual*/ void RenderMeshInstance::GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const
@@ -98,8 +115,11 @@ RenderMeshAsset::RenderMeshAsset()
 
 /*virtual*/ bool RenderMeshAsset::Unload()
 {
-	// TODO: Write this.
-	return false;
+	// Note that we don't want to unload our texture, buffers,
+	// or shaders here, because they may be in use by some
+	// other render mesh.  We don't leak anything by doing
+	// nothing here, because those types of assets unload themselves.
+	return true;
 }
 
 /*virtual*/ bool RenderMeshAsset::MakeRenderInstance(Reference<RenderObject>& renderObject)

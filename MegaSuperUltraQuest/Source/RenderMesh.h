@@ -45,6 +45,12 @@ public:
 	virtual bool Unload() override;
 	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) override;
 
+	D3D_PRIMITIVE_TOPOLOGY GetPrimType() const { return this->primType; }
+	Shader* GetShader() { return this->shader.Get(); }
+	Buffer* GetVertexBuffer() { return this->vertexBuffer.Get(); }
+	Buffer* GetIndexBuffer() { return this->indexBuffer.Get(); }
+	Texture* GetTexture() { return this->texture.Get(); }
+
 private:
 	D3D_PRIMITIVE_TOPOLOGY primType;
 	Reference<Buffer> vertexBuffer;
