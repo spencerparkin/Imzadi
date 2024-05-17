@@ -209,6 +209,7 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 		{
 			if (wParam == VK_ESCAPE)
 			{
+				// TODO: Why can't I just post a quit message?  Why doesn't that work?
 				this->keepRunning = false;
 			}
 			break;

@@ -9,7 +9,7 @@ using namespace Collision;
 
 Matrix4x4::Matrix4x4()
 {
-	this->Identity();
+	this->SetIdentity();
 }
 
 Matrix4x4::Matrix4x4(const Matrix4x4& matrix)
@@ -76,7 +76,7 @@ void Matrix4x4::operator=(const Matrix3x3& matrix)
 			this->ele[i][j] = matrix.ele[i][j];
 }
 
-void Matrix4x4::Identity()
+void Matrix4x4::SetIdentity()
 {
 	for (int i = 0; i < 4; i++)
 		for (int j = 0; j < 4; j++)
@@ -334,7 +334,7 @@ void Matrix4x4::SetRotation(const Vector3& axis, double angle)
 
 void Matrix4x4::RigidBodyMotion(const Vector3& axis, double angle, const Vector3& delta)
 {
-	this->Identity();
+	this->SetIdentity();
 	this->SetRotation(axis, angle);
 	this->SetTranslation(delta);
 }
@@ -369,12 +369,16 @@ bool Matrix4x4::OrthonormalizeOrientation()
 
 void Matrix4x4::Dump(std::ostream& stream) const
 {
-	// TODO: Write this.
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			stream.write((char*)&this->ele[i][j], sizeof(double));
 }
 
 void Matrix4x4::Restore(std::istream& stream)
 {
-	// TODO: Write this.
+	for (int i = 0; i < 4; i++)
+		for (int j = 0; j < 4; j++)
+			stream.read((char*)&this->ele[i][j], sizeof(double));
 }
 
 namespace Collision

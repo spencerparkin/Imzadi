@@ -11,6 +11,8 @@ Shader::Shader()
 	this->vertexShader = nullptr;
 	this->vsBlob = nullptr;
 	this->psBlob = nullptr;
+	this->constantsBuffer = nullptr;
+	this->constantsBufferSize = 0;
 }
 
 /*virtual*/ Shader::~Shader()
@@ -81,6 +83,81 @@ Shader::Shader()
 	this->psBlob->Release();
 	this->psBlob = nullptr;
 
+	if (jsonDoc.HasMember("constants") && jsonDoc["constants"].IsObject())
+	{
+		this->constantsBufferSize = 0;
+
+		const rapidjson::Value& constantsValue = jsonDoc["constants"];
+		for (auto iter = constantsValue.MemberBegin(); iter != constantsValue.MemberEnd(); ++iter)
+		{
+			const rapidjson::Value& constantsEntryName = iter->name;
+			const rapidjson::Value& constantsEntryValue = iter->value;
+
+			if (!constantsEntryValue.HasMember("offset") || !constantsEntryValue["offset"].IsInt())
+				return false;
+
+			if (!constantsEntryValue.HasMember("size") || !constantsEntryValue["size"].IsInt())
+				return false;
+
+			if (!constantsEntryValue.HasMember("type") || !constantsEntryValue["type"].IsString())
+				return false;
+
+			Constant constant;
+			constant.offset = constantsEntryValue["offset"].GetInt();
+			constant.size = constantsEntryValue["size"].GetInt();
+			std::string type = constantsEntryValue["type"].GetString();
+			if (type == "float")
+				constant.format = DXGI_FORMAT_R32_FLOAT;
+			else
+				return false;
+
+			std::string name = constantsEntryName.GetString();
+			this->constantsMap.insert(std::pair<std::string, Constant>(name, constant));
+
+			this->constantsBufferSize += constant.size;
+		}
+
+		// Sanity check the data in the constants map.  Note that we don't
+		// check for any overlap here, but we do check for proper bounds.
+		for (auto pair : this->constantsMap)
+		{
+			const Constant& constant = pair.second;
+			if (constant.size == 0)
+				return false;
+			if (constant.offset >= this->constantsBufferSize)
+				return false;
+			if (constant.offset + constant.size > this->constantsBufferSize)
+				return false;
+		}
+
+		if (this->constantsBufferSize > 0)
+		{
+			// Buffer size must be a multiple of 16.
+			while (this->constantsBufferSize % 16 != 0)
+				this->constantsBufferSize++;
+
+			D3D11_BUFFER_DESC bufferDesc{};
+			bufferDesc.ByteWidth = this->constantsBufferSize;
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+
+			result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, NULL, &this->constantsBuffer);
+			if (FAILED(result))
+				return false;
+		}
+	}
+
+	return true;
+}
+
+bool Shader::GetConstantInfo(const std::string& name, const Constant*& constant)
+{
+	ConstantsMap::iterator iter = this->constantsMap.find(name);
+	if (iter == this->constantsMap.end())
+		return false;
+
+	constant = &iter->second;
 	return true;
 }
 
@@ -183,6 +260,12 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 	{
 		this->inputLayout->Release();
 		this->inputLayout = nullptr;
+	}
+
+	if (this->constantsBuffer)
+	{
+		this->constantsBuffer->Release();
+		this->constantsBuffer = nullptr;
 	}
 
 	return false;

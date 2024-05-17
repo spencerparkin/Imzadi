@@ -7,6 +7,7 @@ Buffer::Buffer()
 	this->buffer = nullptr;
 	this->strideBytes = 0;
 	this->numElements = 0;
+	this->componentFormat = DXGI_FORMAT_UNKNOWN;
 }
 
 /*virtual*/ Buffer::~Buffer()
@@ -24,11 +25,20 @@ Buffer::Buffer()
 	UINT32 componentTypeSize = 0;
 	std::string componentType = jsonDoc["type"].GetString();
 	if (componentType == "float")
+	{
 		componentTypeSize = sizeof(float);
+		this->componentFormat = DXGI_FORMAT_R32_FLOAT;
+	}
 	else if (componentType == "int")
+	{
 		componentTypeSize = sizeof(int);
+		this->componentFormat = DXGI_FORMAT_R32_SINT;
+	}
 	else if (componentType == "short")
+	{
 		componentTypeSize = sizeof(short);
+		this->componentFormat = DXGI_FORMAT_R16_SINT;
+	}
 	else
 		return false;
 

@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Buffer.h"
 #include "Game.h"
+#include "Math/Matrix4x4.h"
 
 using namespace Collision;
 
@@ -20,13 +21,14 @@ RenderMeshInstance::RenderMeshInstance()
 void RenderMeshInstance::Render(Scene* scene)
 {
 	Camera* camera = scene->GetCamera();
-
-	// TODO: Build the object to projection space matrix here so the shader has it.
+	if (!camera)
+		return;
 
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
 	Shader* shader = this->mesh->GetShader();
 	Buffer* vertexBuffer = this->mesh->GetVertexBuffer();
+	Buffer* indexBuffer = this->mesh->GetIndexBuffer();
 
 	deviceContext->IASetPrimitiveTopology(this->mesh->GetPrimType());
 	deviceContext->IASetInputLayout(shader->GetInputLayout());
@@ -36,10 +38,43 @@ void RenderMeshInstance::Render(Scene* scene)
 
 	UINT stride = vertexBuffer->GetStride();
 	UINT offset = 0;
-	ID3D11Buffer* vertexBufferArray = vertexBuffer->GetBuffer();
-	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferArray, &stride, &offset);
+	ID3D11Buffer* vertexBufferIface = vertexBuffer->GetBuffer();
+	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferIface, &stride, &offset);
 
-	deviceContext->Draw(this->mesh->GetVertexBuffer()->GetNumElements(), 0);
+	ID3D11Buffer* constantsBuffer = shader->GetConstantsBuffer();
+	if (constantsBuffer)
+	{
+		D3D11_MAPPED_SUBRESOURCE mappedSubresource;
+		deviceContext->Map(constantsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+
+		UINT bufferSize = shader->GetConstantsBufferSize();
+		::memset(mappedSubresource.pData, 0, bufferSize);
+
+		// Is there somewhere in the constants buffer where we can communicate the object-space to project-space tranformation matrix?
+		const Shader::Constant* constant = nullptr;
+		if (shader->GetConstantInfo("object_to_projection", constant) && constant->size == 16 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
+		{
+			// TODO: Build the object to projection space matrix here.
+			Matrix4x4 objectToProjection;
+			objectToProjection.SetIdentity();
+			float* ele = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
+			for (int i = 0; i < 4; i++)
+				for (int j = 0; j < 4; j++)
+					*ele++ = float(objectToProjection.ele[i][j]);
+		}
+
+		deviceContext->Unmap(constantsBuffer, 0);
+	}
+
+	if (!indexBuffer)
+		deviceContext->Draw(this->mesh->GetVertexBuffer()->GetNumElements(), 0);
+	else
+	{
+		ID3D11Buffer* indexBufferIface = indexBuffer->GetBuffer();
+		deviceContext->IASetIndexBuffer(indexBufferIface, indexBuffer->GetFormat(), 0);
+
+		deviceContext->DrawIndexed(indexBuffer->GetNumElements(), 0, 0);
+	}
 }
 
 /*virtual*/ void RenderMeshInstance::GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const

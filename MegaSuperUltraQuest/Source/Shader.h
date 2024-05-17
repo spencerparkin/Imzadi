@@ -2,6 +2,7 @@
 
 #include "AssetCache.h"
 #include <d3d11.h>
+#include <unordered_map>
 
 class Shader : public Asset
 {
@@ -15,6 +16,17 @@ public:
 	ID3D11InputLayout* GetInputLayout() { return this->inputLayout; }
 	ID3D11VertexShader* GetVertexShader() { return this->vertexShader; }
 	ID3D11PixelShader* GetPixelShader() { return this->pixelShader; }
+	ID3D11Buffer* GetConstantsBuffer() { return this->constantsBuffer; }
+	UINT GetConstantsBufferSize() { return this->constantsBufferSize; }
+
+	struct Constant
+	{
+		UINT offset;
+		UINT size;
+		DXGI_FORMAT format;
+	};
+
+	bool GetConstantInfo(const std::string& name, const Constant*& constant);
 
 private:
 
@@ -25,6 +37,11 @@ private:
 	ID3D11InputLayout* inputLayout;
 	ID3D11VertexShader* vertexShader;
 	ID3D11PixelShader* pixelShader;
+	ID3D11Buffer* constantsBuffer;
+	UINT constantsBufferSize;
 	ID3DBlob* vsBlob;
 	ID3DBlob* psBlob;
+
+	typedef std::unordered_map<std::string, Constant> ConstantsMap;
+	ConstantsMap constantsMap;
 };
