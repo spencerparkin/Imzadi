@@ -2,6 +2,7 @@
 
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Transform.h"
+#include "Math/Vector4.h"
 #include "Scene.h"
 #include "AssetCache.h"
 #include "Shader.h"
@@ -27,10 +28,14 @@ public:
 	void SetBoundingBox(const Collision::AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 	void SetObjectToWorldTransform(const Collision::Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
 
+	const Collision::Vector4& GetColor() const { return this->color; }
+	void SetColor(const Collision::Vector4& color) { this->color = color; }
+
 private:
 	Reference<RenderMeshAsset> mesh;
 	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 	Collision::Transform objectToWorld;
+	Collision::Vector4 color;
 };
 
 /**

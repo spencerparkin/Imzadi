@@ -13,6 +13,7 @@ using namespace Collision;
 RenderMeshInstance::RenderMeshInstance()
 {
 	this->objectToWorld.SetIdentity();
+	this->color.SetComponents(1.0, 0.0, 0.0, 1.0);
 }
 
 /*virtual*/ RenderMeshInstance::~RenderMeshInstance()
@@ -76,12 +77,11 @@ void RenderMeshInstance::Render(Scene* scene)
 		// Is there somewhere in the constants buffer where we can communicate a color to the shader?
 		if (shader->GetConstantInfo("color", constant) && constant->size == 4 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
 		{
-			Vector4 color(0.0, 1.0, 0.5, 1.0);	// Just use this for now.
-			float* colorArray = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
-			colorArray[0] = color.x;
-			colorArray[1] = color.y;
-			colorArray[2] = color.z;
-			colorArray[3] = color.w;
+			float* colorComponentArray = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
+			colorComponentArray[0] = this->color.x;
+			colorComponentArray[1] = this->color.y;
+			colorComponentArray[2] = this->color.z;
+			colorComponentArray[3] = this->color.w;
 		}
 
 		deviceContext->Unmap(constantsBuffer, 0);
