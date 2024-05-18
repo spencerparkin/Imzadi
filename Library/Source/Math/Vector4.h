@@ -52,10 +52,10 @@ namespace Collision
 		void Lerp(const Vector4& vectorA, const Vector4& vectorB, double alpha);
 		void Slerp(const Vector4& vectorA, const Vector4& vectorB, double alpha);
 
-		union { double x, r; };
-		union { double y, g; };
-		union { double z, b; };
-		union { double w, a; };
+		double x;
+		double y;
+		double z;
+		double w;
 	};
 
 	COLLISION_LIB_API Vector4 operator+(const Vector4& leftVector, const Vector4& rightVector);

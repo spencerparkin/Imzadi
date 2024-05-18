@@ -67,4 +67,8 @@ namespace Collision
 	};
 
 	COLLISION_LIB_API Matrix4x4 operator*(const Matrix4x4& leftMatrix, const Matrix4x4& rightMatrix);
+
+	COLLISION_LIB_API Vector4 operator*(const Matrix4x4& leftMatrix, const Vector4& rightVector);
+
+	COLLISION_LIB_API Vector4 operator*(const Vector4& leftVector, const Matrix4x4& rightMatrix);
 }

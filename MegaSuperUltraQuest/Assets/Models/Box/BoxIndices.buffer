@@ -15,5 +15,5 @@
     ],
     "type": "ushort",
     "bind": "index",
-    "stride": 3
+    "stride": 1
 }

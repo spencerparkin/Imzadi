@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "Math/Transform.h"
 #include <format>
+#include <math.h>
 
 using namespace Collision;
 
@@ -167,9 +168,15 @@ bool Game::Initialize()
 	Reference<Camera> camera(new Camera());
 	this->scene->SetCamera(camera);
 	
+	double aspectRatio = double(viewport.Width) / double(viewport.Height);
+
+	Frustum frustum;
+	frustum.SetFromAspectRatio(aspectRatio, M_PI / 3.0, 0.1, 1000.0);
+	camera->SetFrustum(frustum);
+
 	Transform cameraTransform;
 	cameraTransform.matrix.SetIdentity();
-	cameraTransform.translation.SetComponents(0.0, 0.0, 10.0);
+	cameraTransform.translation.SetComponents(0.0, 0.0, 20.0);
 	camera->SetCameraToWorldTransform(cameraTransform);
 
 	// Test code: Can we just load a triangle render mesh asset and then draw it?

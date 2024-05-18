@@ -17,6 +17,11 @@
             "offset": 0,
             "size": 64,
             "type": "float"
+        },
+        "color": {
+            "offset": 64,
+            "size": 16,
+            "type": "float"
         }
     }
 }

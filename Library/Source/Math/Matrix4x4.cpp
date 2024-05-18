@@ -389,4 +389,48 @@ namespace Collision
 		product.Multiply(leftMatrix, rightMatrix);
 		return product;
 	}
+
+	Vector4 operator*(const Matrix4x4& leftMatrix, const Vector4& rightVector)
+	{
+		return Vector4(
+			leftMatrix.ele[0][0] * rightVector.x +
+			leftMatrix.ele[0][1] * rightVector.y +
+			leftMatrix.ele[0][2] * rightVector.z +
+			leftMatrix.ele[0][3] * rightVector.w,
+			leftMatrix.ele[1][0] * rightVector.x +
+			leftMatrix.ele[1][1] * rightVector.y +
+			leftMatrix.ele[1][2] * rightVector.z +
+			leftMatrix.ele[1][3] * rightVector.w,
+			leftMatrix.ele[2][0] * rightVector.x +
+			leftMatrix.ele[2][1] * rightVector.y +
+			leftMatrix.ele[2][2] * rightVector.z +
+			leftMatrix.ele[2][3] * rightVector.w,
+			leftMatrix.ele[3][0] * rightVector.x +
+			leftMatrix.ele[3][1] * rightVector.y +
+			leftMatrix.ele[3][2] * rightVector.z +
+			leftMatrix.ele[3][3] * rightVector.w
+		);
+	}
+
+	Vector4 operator*(const Vector4& leftVector, const Matrix4x4& rightMatrix)
+	{
+		return Vector4(
+			rightMatrix.ele[0][0] * leftVector.x +
+			rightMatrix.ele[1][0] * leftVector.y +
+			rightMatrix.ele[2][0] * leftVector.z +
+			rightMatrix.ele[3][0] * leftVector.w,
+			rightMatrix.ele[0][1] * leftVector.x +
+			rightMatrix.ele[1][1] * leftVector.y +
+			rightMatrix.ele[2][1] * leftVector.z +
+			rightMatrix.ele[3][1] * leftVector.w,
+			rightMatrix.ele[0][2] * leftVector.x +
+			rightMatrix.ele[1][2] * leftVector.y +
+			rightMatrix.ele[2][2] * leftVector.z +
+			rightMatrix.ele[3][2] * leftVector.w,
+			rightMatrix.ele[0][3] * leftVector.x +
+			rightMatrix.ele[1][3] * leftVector.y +
+			rightMatrix.ele[2][3] * leftVector.z +
+			rightMatrix.ele[3][3] * leftVector.w
+		);
+	}
 }

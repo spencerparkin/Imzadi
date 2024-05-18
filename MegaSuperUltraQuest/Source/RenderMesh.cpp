@@ -4,6 +4,7 @@
 #include "Buffer.h"
 #include "Game.h"
 #include "Math/Matrix4x4.h"
+#include "Math/Vector4.h"
 
 using namespace Collision;
 
@@ -50,8 +51,9 @@ void RenderMeshInstance::Render(Scene* scene)
 		UINT bufferSize = shader->GetConstantsBufferSize();
 		::memset(mappedSubresource.pData, 0, bufferSize);
 
-		// Is there somewhere in the constants buffer where we can communicate the object-space to project-space tranformation matrix?
 		const Shader::Constant* constant = nullptr;
+
+		// Is there somewhere in the constants buffer where we can communicate the object-space to project-space tranformation matrix?
 		if (shader->GetConstantInfo("object_to_projection", constant) && constant->size == 16 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
 		{
 			Matrix4x4 worldToCameraMat;
@@ -61,14 +63,25 @@ void RenderMeshInstance::Render(Scene* scene)
 			this->objectToWorld.GetToMatrix(objectToWorldMat);
 
 			Matrix4x4 cameraToProjMat;
-			camera->GetFrustum().ToProjectionMatrix(cameraToProjMat);
+			camera->GetFrustum().GetToProjectionMatrix(cameraToProjMat);
 
 			Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
 
 			float* ele = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
 			for (int i = 0; i < 4; i++)
 				for (int j = 0; j < 4; j++)
-					*ele++ = float(objectToProjMat.ele[i][j]);
+					*ele++ = float(objectToProjMat.ele[j][i]);	// Note the swap of i and j here!
+		}
+
+		// Is there somewhere in the constants buffer where we can communicate a color to the shader?
+		if (shader->GetConstantInfo("color", constant) && constant->size == 4 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
+		{
+			Vector4 color(0.0, 1.0, 0.5, 1.0);	// Just use this for now.
+			float* colorArray = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
+			colorArray[0] = color.x;
+			colorArray[1] = color.y;
+			colorArray[2] = color.z;
+			colorArray[3] = color.w;
 		}
 
 		deviceContext->Unmap(constantsBuffer, 0);

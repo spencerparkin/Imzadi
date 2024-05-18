@@ -47,19 +47,27 @@ bool Frustum::IntersectedBySphere(const Vector3& center, double radius) const
 	return false;
 }
 
-void Frustum::ToProjectionMatrix(Matrix4x4& matrix) const
+void Frustum::GetToProjectionMatrix(Matrix4x4& matrix) const
 {
 	matrix.SetIdentity();
-	matrix.ele[0][0] = 1.0 / tan(this->hfovi / 2.0);
-	matrix.ele[1][1] = 1.0 / tan(this->vfovi / 2.0);
-	matrix.ele[2][2] = -this->farClip / (this->farClip - this->nearClip);
+	matrix.ele[0][0] = -1.0 / tan(this->hfovi / 2.0);
+	matrix.ele[1][1] = -1.0 / tan(this->vfovi / 2.0);
+	matrix.ele[2][2] = this->farClip / (this->farClip - this->nearClip);
 	matrix.ele[3][3] = 0.0;
 	matrix.ele[2][3] = this->farClip * this->nearClip / (this->farClip - this->nearClip);
-	matrix.ele[3][2] = -1.0;
+	matrix.ele[3][2] = 1.0;
 }
 
-bool Frustum::FromProjectionMatrix(const Matrix4x4& matrix)
+bool Frustum::SetFromProjectionMatrix(const Matrix4x4& matrix)
 {
 	// TODO: Write this.
 	return false;
+}
+
+void Frustum::SetFromAspectRatio(double aspectRatio, double hfovi, double nearClip, double farClip)
+{
+	this->nearClip = nearClip;
+	this->farClip = farClip;
+	this->hfovi = hfovi;
+	this->vfovi = 2.0 * atan(tan(hfovi / 2.0) / aspectRatio);
 }

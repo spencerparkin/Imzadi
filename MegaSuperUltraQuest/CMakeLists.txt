@@ -37,6 +37,7 @@ target_link_libraries(MegaSuperUltraQuest PRIVATE
 target_compile_definitions(MegaSuperUltraQuest PRIVATE
     WIN32_LEAN_AND_MEAN
     NOMINMAX
+    _USE_MATH_DEFINES
 )
 
 target_include_directories(MegaSuperUltraQuest PRIVATE

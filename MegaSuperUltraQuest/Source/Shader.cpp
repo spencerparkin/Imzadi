@@ -209,6 +209,8 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 {
 	std::wstring shaderFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(shaderFile);
 
+	// TODO: Is there a way to kick out a .PDB file here for PIX?
+
 	ID3DBlob* errorsBlob = nullptr;
 	HRESULT result = D3DCompileFromFile(shaderFileW.c_str(), nullptr, nullptr, entryPoint.c_str(), shaderModel.c_str(), 0, 0, &blob, &errorsBlob);
 	if (FAILED(result))

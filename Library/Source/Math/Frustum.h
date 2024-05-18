@@ -58,12 +58,22 @@ namespace Collision
 		 * 
 		 * @param[out] matrix This is the returned projection matrix.
 		 */
-		void ToProjectionMatrix(Matrix4x4& matrix) const;
+		void GetToProjectionMatrix(Matrix4x4& matrix) const;
 
 		/**
 		 * TODO: Write this.
 		 */
-		bool FromProjectionMatrix(const Matrix4x4& matrix);
+		bool SetFromProjectionMatrix(const Matrix4x4& matrix);
+
+		/**
+		 * Initialize this frustum using an aspect-ratio and a horizontal field of vision.
+		 * 
+		 * @param[in] aspectRatio This is the width to height ratio of the projection screen.
+		 * @param[in] hfovi This is the angle of the horizontal field of vision in radians.
+		 * @param[in] nearClip This is the distance along the -Z axis to the near clipping plane.  It is a positive value.
+		 * @param[in] farClip This is the distance along the -Z axis to the far clipping plane.  It is a postivie value.
+		 */
+		void SetFromAspectRatio(double aspectRatio, double hfovi, double nearClip, double farClip);
 
 	public:
 		double hfovi;		///< This is the horizontal field of vision in radians.
