@@ -5,6 +5,10 @@
 #include "Shape.h"
 #include "Math/AxisAlignedBoundingBox.h"
 
+// TODO: Just ran across this: https://github.com/kevinmoran/GJK/blob/master/GJK.h
+//       He has some good references here on GJK and other collision detecdtion algorithms.
+//       I'm probably doing everything here in a really stupid way.
+
 namespace Collision
 {
 	class Shape;
