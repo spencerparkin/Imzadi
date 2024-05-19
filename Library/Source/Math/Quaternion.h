@@ -21,6 +21,7 @@ namespace Collision
 		Quaternion();
 		Quaternion(double w, double x, double y, double z);
 		Quaternion(const Quaternion& quat);
+		Quaternion(const Vector3& unitAxis, double angle);
 		virtual ~Quaternion();
 
 		void operator=(const Quaternion& quat);
@@ -47,8 +48,9 @@ namespace Collision
 		 * set the real part of this quaternion to zero.
 		 * 
 		 * @param[in] point This is the point to use as the imaginary part.
+		 * @return Return a reference to this quaternion for method-call chaining.
 		 */
-		void SetPoint(const Vector3& point);
+		Quaternion& SetPoint(const Vector3& point);
 
 		/**
 		 * Get the imaginary part of this quaternion as the returned point.
@@ -64,8 +66,9 @@ namespace Collision
 		 * 
 		 * @param[in] unitAxis This is the axis of the rotation and must be of unit-length.  If it is not of unit-length, the result is left undefined.
 		 * @param[in] angle This is the angle, in radians, determining the amount of rotation.
+		 * @return Return a reference to this quatenrion for method-call chaining.
 		 */
-		void SetFromAxisAngle(const Vector3& unitAxis, double angle);
+		Quaternion& SetFromAxisAngle(const Vector3& unitAxis, double angle);
 
 		/**
 		 * Extract from this quaternion the axis/angle pair for the

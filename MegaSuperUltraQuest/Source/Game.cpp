@@ -166,7 +166,7 @@ bool Game::Initialize()
 	this->scene.Set(new Scene());
 
 	Reference<Camera> camera(new Camera());
-	this->scene->SetCamera(camera);
+	this->SetCamera(camera);
 	
 	double aspectRatio = double(viewport.Width) / double(viewport.Height);
 
@@ -176,53 +176,42 @@ bool Game::Initialize()
 
 	Transform cameraTransform;
 	cameraTransform.matrix.SetIdentity();
-	cameraTransform.translation.SetComponents(0.0, 0.0, 20.0);
+	cameraTransform.translation.SetComponents(0.0, 10.0, 40.0);	// TODO: Add LookAt function to the camera.
 	camera->SetCameraToWorldTransform(cameraTransform);
 
+	this->LoadAndPlaceRenderMesh("Models/Box/Box.render_mesh", Vector3(-10.0, 6.0, 0.0), Quaternion(Vector3(1.0, 1.0, 0.0).Normalized(), M_PI / 4.0), Vector4(1.0, 0.0, 0.0, 1.0));
+	this->LoadAndPlaceRenderMesh("Models/Teapot/Teapot.render_mesh", Vector3(10.0, 6.0, 0.0), Quaternion(), Vector4(0.0, 1.0, 0.5, 1.0));
+	this->LoadAndPlaceRenderMesh("Models/GroundPlane/GroundPlane.render_mesh", Vector3(), Quaternion(), Vector4(0.5, 1.0, 0.5, 1.0));
+
+	this->keepRunning = true;
+	return true;
+}
+
+Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
+			const std::string& renderMeshFile,
+			const Collision::Vector3& position,
+			const Collision::Quaternion& orientation,
+			const Collision::Vector4& color)
+{
+	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
-	if (this->assetCache->GrabAsset("Models/Box/Box.render_mesh", renderMeshAsset))
+
+	if (this->assetCache->GrabAsset(renderMeshFile, renderMeshAsset))
 	{
-		Reference<RenderObject> renderMesh;
-		
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 		{
 			Transform objectToWorld;
-			objectToWorld.matrix.SetUniformScale(0.5);
-			objectToWorld.translation.SetComponents(0.0, 3.0, 0.0);
+			objectToWorld.matrix.SetFromQuat(orientation);
+			objectToWorld.translation = position;
 
 			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
-			instance->SetColor(Vector4(1.0, 0.0, 0.0, 1.0));
-			instance->SetObjectToWorldTransform(objectToWorld);
-			this->scene->AddRenderObject(renderMesh);
-		}
-
-		if (renderMeshAsset->MakeRenderInstance(renderMesh))
-		{
-			Transform objectToWorld;
-			objectToWorld.matrix.SetUniformScale(0.5);
-			objectToWorld.translation.SetComponents(-2.0, -2.0, 0.0);
-
-			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
-			instance->SetColor(Vector4(0.0, 1.0, 0.5, 1.0));
-			instance->SetObjectToWorldTransform(objectToWorld);
-			this->scene->AddRenderObject(renderMesh);
-		}
-
-		if (renderMeshAsset->MakeRenderInstance(renderMesh))
-		{
-			Transform objectToWorld;
-			objectToWorld.matrix.SetUniformScale(0.5);
-			objectToWorld.translation.SetComponents(2.0, -2.0, 0.0);
-
-			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
-			instance->SetColor(Vector4(1.0, 0.0, 0.5, 1.0));
+			instance->SetColor(color);
 			instance->SetObjectToWorldTransform(objectToWorld);
 			this->scene->AddRenderObject(renderMesh);
 		}
 	}
 
-	this->keepRunning = true;
-	return true;
+	return renderMesh;
 }
 
 bool Game::Run()
@@ -239,12 +228,19 @@ bool Game::Run()
 		FLOAT backgroundColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 		this->deviceContext->ClearRenderTargetView(this->frameBufferView, backgroundColor);
 
-		this->scene->Render();
+		this->Render();
 
 		this->swapChain->Present(1, 0);
 	}
 
 	return true;
+}
+
+void Game::Render()
+{
+	// TODO: Do shadow pass here before the main pass.
+
+	this->scene->Render(this->camera.Get());
 }
 
 LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)

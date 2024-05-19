@@ -29,20 +29,12 @@ public:
 	void AddRenderObject(Reference<RenderObject> renderObject);
 
 	/**
-	 * Submit draw-calls for everything approximately deemed visible in the scene.
+	 * Submit draw-calls for everything approximately deemed visible in the scene
+	 * to the given camera.
+	 * 
+	 * @param[in] camera This is the camera to use to render the scene.
 	 */
-	void Render();
-
-	/**
-	 * Assign the given camera to the scene.  This will dictate
-	 * how the scene is viewed and therefore rendered.
-	 */
-	void SetCamera(Reference<Camera> camera) { this->camera = camera; }
-
-	/**
-	 * Get access to the camera representing our view into the scene.
-	 */
-	Camera* GetCamera() { return this->camera.Get(); }
+	void Render(Camera* camera);
 
 private:
 	typedef std::list<Reference<RenderObject>> RenderObjectList;
@@ -54,11 +46,6 @@ private:
 	// that's as far as I'm going to take visible surface determination in
 	// this simple application.
 	RenderObjectList renderObjectList;
-
-	// Before a render mesh can draw, we must calculate its full object-space
-	// to projection-space transform, which is why we need to associate a
-	// camera with the scene.
-	Reference<Camera> camera;
 };
 
 /**
@@ -70,7 +57,7 @@ public:
 	RenderObject();
 	virtual ~RenderObject();
 
-	virtual void Render(Scene* scene) = 0;
+	virtual void Render(Camera* camera) = 0;
 
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const = 0;
 };

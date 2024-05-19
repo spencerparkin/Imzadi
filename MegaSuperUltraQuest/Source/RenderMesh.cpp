@@ -20,12 +20,8 @@ RenderMeshInstance::RenderMeshInstance()
 {
 }
 
-void RenderMeshInstance::Render(Scene* scene)
+void RenderMeshInstance::Render(Camera* camera)
 {
-	Camera* camera = scene->GetCamera();
-	if (!camera)
-		return;
-
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
 	Shader* shader = this->mesh->GetShader();

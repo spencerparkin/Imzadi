@@ -26,6 +26,11 @@ Quaternion::Quaternion(const Quaternion& quat)
 	this->z = quat.z;
 }
 
+Quaternion::Quaternion(const Vector3& unitAxis, double angle)
+{
+	this->SetFromAxisAngle(unitAxis, angle);
+}
+
 /*virtual*/ Quaternion::~Quaternion()
 {
 }
@@ -89,12 +94,14 @@ void Quaternion::SetIdentity()
 	this->z = 0.0;
 }
 
-void Quaternion::SetPoint(const Vector3& point)
+Quaternion& Quaternion::SetPoint(const Vector3& point)
 {
 	this->w = 0.0;
 	this->x = point.x;
 	this->y = point.y;
 	this->z = point.z;
+
+	return *this;
 }
 
 Vector3 Quaternion::GetPoint() const
@@ -106,7 +113,7 @@ Vector3 Quaternion::GetPoint() const
 	);
 }
 
-void Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
+Quaternion& Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
 {
 	double cosHalfAngle = ::cos(angle / 2.0);
 	double sinHalfAngle = ::sin(angle / 2.0);
@@ -115,6 +122,8 @@ void Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
 	this->x = unitAxis.x * sinHalfAngle;
 	this->y = unitAxis.y * sinHalfAngle;
 	this->z = unitAxis.z * sinHalfAngle;
+
+	return *this;
 }
 
 void Quaternion::GetToAxisAngle(Vector3& unitAxis, double& angle) const

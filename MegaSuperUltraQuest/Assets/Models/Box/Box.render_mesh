@@ -1,10 +1,18 @@
 {
-    "vertex_buffer": "Models/Box/BoxVertices.buffer",
-    "index_buffer": "Models/Box/BoxIndices.buffer",
-    "shader": "Models/Box/Box.shader",
-    "primitive_type": "TRIANGLE_LIST",
     "bounding_box": {
-        "min": {"x": -2.5, "y": -2.5, "z": -2.5},
-        "max": {"x": 2.5, "y": 2.5, "z": 2.5}
-    }
+        "max": {
+            "x": 2.5,
+            "y": 2.5,
+            "z": 2.5
+        },
+        "min": {
+            "x": -2.5,
+            "y": -2.5,
+            "z": -2.5
+        }
+    },
+    "index_buffer": "Models\\Box\\BoxIndices.buffer",
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "vertex_buffer": "Models\\Box\\BoxVertices.buffer"
 }

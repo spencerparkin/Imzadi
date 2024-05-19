@@ -6,7 +6,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 
 // TODO: Just ran across this: https://github.com/kevinmoran/GJK/blob/master/GJK.h
-//       He has some good references here on GJK and other collision detecdtion algorithms.
+//       He has some good references here on GJK and other collision detection algorithms.
 //       I'm probably doing everything here in a really stupid way.
 
 namespace Collision

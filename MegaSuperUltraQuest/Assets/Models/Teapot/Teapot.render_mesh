@@ -1,0 +1,18 @@
+{
+    "bounding_box": {
+        "max": {
+            "x": 6.8663,
+            "y": 3.8,
+            "z": 4.0
+        },
+        "min": {
+            "x": -6.0,
+            "y": -2.5,
+            "z": -4.0
+        }
+    },
+    "index_buffer": "Models\\Teapot\\TeapotIndices.buffer",
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "vertex_buffer": "Models\\Teapot\\TeapotVertices.buffer"
+}

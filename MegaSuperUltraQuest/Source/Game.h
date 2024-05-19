@@ -2,12 +2,18 @@
 
 #include <Windows.h>
 #include <d3d11.h>
+#include <string>
 #include "Reference.h"
+#include "Math/Vector3.h"
+#include "Math/Vector4.h"
+#include "Math/Quaternion.h"
 
 #define GAME_WINDOW_CLASS_NAME		TEXT("GameWindowClass")
 
 class Scene;
 class AssetCache;
+class Camera;
+class RenderObject;
 
 class Game
 {
@@ -21,6 +27,8 @@ public:
 
 	Scene* GetScene() { return this->scene.Get(); }
 	AssetCache* GetAssetCache() { return this->assetCache.Get(); }
+	Camera* GetCamera() { return this->camera.Get(); }
+	void SetCamera(Reference<Camera> camera) { this->camera = camera; }
 
 	static Game* Get() { return gameSingleton; }
 	static void Set(Game* game) { gameSingleton = game; }
@@ -30,6 +38,13 @@ public:
 	HWND GetMainWindowHandle() { return this->mainWindowHandle; }
 
 private:
+
+	void Render();
+	Reference<RenderObject> LoadAndPlaceRenderMesh(
+			const std::string& renderMeshFile,
+			const Collision::Vector3& position,
+			const Collision::Quaternion& orientation,
+			const Collision::Vector4& color);
 
 	LRESULT WndProc(UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -45,5 +60,6 @@ private:
 	ID3D11RasterizerState* rasterizerState;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
+	Reference<Camera> camera;
 	static Game* gameSingleton;
 };

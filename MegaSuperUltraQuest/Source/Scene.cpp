@@ -23,18 +23,15 @@ void Scene::AddRenderObject(Reference<RenderObject> renderObject)
 	this->renderObjectList.push_back(renderObject);
 }
 
-void Scene::Render()
+void Scene::Render(Camera* camera)
 {
-	if (!this->camera)
-		return;
-
 	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
 	{
 		// TODO: Activate this code when ready.
-		//if (!this->camera->IsApproximatelyVisible(renderObject.Get()))
+		//if (!camera->IsApproximatelyVisible(renderObject.Get()))
 		//	continue;
 			
-		renderObject->Render(this);
+		renderObject->Render(camera);
 	}
 }
 

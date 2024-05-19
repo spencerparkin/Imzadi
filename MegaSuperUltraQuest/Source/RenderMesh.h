@@ -27,7 +27,7 @@ public:
 	RenderMeshInstance();
 	virtual ~RenderMeshInstance();
 
-	virtual void Render(Scene* scene) override;
+	virtual void Render(Camera* camera) override;
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const override;
 
 	void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }

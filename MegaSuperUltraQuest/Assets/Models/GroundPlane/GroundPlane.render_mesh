@@ -1,0 +1,18 @@
+{
+    "bounding_box": {
+        "max": {
+            "x": 30.0,
+            "y": 0.0,
+            "z": 30.0
+        },
+        "min": {
+            "x": -30.0,
+            "y": 0.0,
+            "z": -30.0
+        }
+    },
+    "index_buffer": "Models\\GroundPlane\\GroundPlaneIndices.buffer",
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "vertex_buffer": "Models\\GroundPlane\\GroundPlaneVertices.buffer"
+}

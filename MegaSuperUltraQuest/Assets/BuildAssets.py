@@ -94,7 +94,7 @@ def append_vertex(vertex, vertex_array):
     vertex_array.append(vertex['normal'][1])
     vertex_array.append(vertex['normal'][2])
 
-def process_obj_file(obj_file):
+def process_obj_file(obj_file, assets_base_dir):
     model = OBJ_Model()
     model.load_from_file(obj_file)
     model.print_stats()
@@ -102,6 +102,7 @@ def process_obj_file(obj_file):
     name, ext = os.path.splitext(name)
     vertex_buffer_file = os.path.join(dir, name + 'Vertices.buffer')
     index_buffer_file = os.path.join(dir, name + 'Indices.buffer')
+    render_mesh_file = os.path.join(dir, name + ".render_mesh")
     vertex_map = {}
     vertex_array = []
     index_array = []
@@ -117,30 +118,61 @@ def process_obj_file(obj_file):
             else:
                 index = vertex_map[vertex_key]
                 index_array.append(index)
+
+    min_x = min([vertex[0] for vertex in model.vertex_list])
+    min_y = min([vertex[1] for vertex in model.vertex_list])
+    min_z = min([vertex[2] for vertex in model.vertex_list])
+
+    max_x = max([vertex[0] for vertex in model.vertex_list])
+    max_y = max([vertex[1] for vertex in model.vertex_list])
+    max_z = max([vertex[2] for vertex in model.vertex_list])
+
     if os.path.exists(vertex_buffer_file):
         os.remove(vertex_buffer_file)
     if os.path.exists(index_buffer_file):
         os.remove(index_buffer_file)
+    if os.path.exists(render_mesh_file):
+        os.remove(render_mesh_file)
+
     vertex_file_data = {
         'buffer': vertex_array,
         'type': 'float',
         'bind': 'vertex',
         'stride': 8
     }
+
     index_file_data = {
         'buffer': index_array,
         'type': 'ushort',
         'bind': 'index',
         'stride': 1
     }
+
+    render_mesh_file_data = {
+        'vertex_buffer': os.path.relpath(vertex_buffer_file, assets_base_dir),
+        'index_buffer': os.path.relpath(index_buffer_file, assets_base_dir),
+        'shader': 'Shaders/Standard.shader',
+        'primitive_type': 'TRIANGLE_LIST',
+        'bounding_box': {
+            'min': {'x': min_x, 'y': min_y, 'z': min_z},
+            'max': {'x': max_x, 'y': max_y, 'z': max_z}
+        }
+    }
+
     with open(vertex_buffer_file, 'w') as handle:
         json_text = json.dumps(vertex_file_data, sort_keys=True, indent=4)
         handle.write(json_text)
     print('Wrote file: %s!' % vertex_buffer_file)
+
     with open(index_buffer_file, 'w') as handle:
         json_text = json.dumps(index_file_data, sort_keys=True, indent=4)
         handle.write(json_text)
     print('Wrote file: %s!' % index_buffer_file)
+
+    with open(render_mesh_file, 'w') as handle:
+        json_text = json.dumps(render_mesh_file_data, sort_keys=True, indent=4)
+        handle.write(json_text)
+    print('Wrote file: %s!' % render_mesh_file)
 
 if __name__ == '__main__':
     assets_base_dir = os.getcwd()
@@ -148,5 +180,4 @@ if __name__ == '__main__':
     find_all_obj_files(assets_base_dir, obj_file_list)
     for obj_file in obj_file_list:
         print('Processing %s...' % obj_file)
-        process_obj_file(obj_file)
-        break       # Just do the first file for now.
+        process_obj_file(obj_file, assets_base_dir)
