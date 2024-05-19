@@ -179,13 +179,46 @@ bool Game::Initialize()
 	cameraTransform.translation.SetComponents(0.0, 0.0, 20.0);
 	camera->SetCameraToWorldTransform(cameraTransform);
 
-	// Test code: Can we just load a triangle render mesh asset and then draw it?
 	Reference<Asset> renderMeshAsset;
 	if (this->assetCache->GrabAsset("Models/Box/Box.render_mesh", renderMeshAsset))
 	{
 		Reference<RenderObject> renderMesh;
+		
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
+		{
+			Transform objectToWorld;
+			objectToWorld.matrix.SetUniformScale(0.5);
+			objectToWorld.translation.SetComponents(0.0, 3.0, 0.0);
+
+			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
+			instance->SetColor(Vector4(1.0, 0.0, 0.0, 1.0));
+			instance->SetObjectToWorldTransform(objectToWorld);
 			this->scene->AddRenderObject(renderMesh);
+		}
+
+		if (renderMeshAsset->MakeRenderInstance(renderMesh))
+		{
+			Transform objectToWorld;
+			objectToWorld.matrix.SetUniformScale(0.5);
+			objectToWorld.translation.SetComponents(-2.0, -2.0, 0.0);
+
+			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
+			instance->SetColor(Vector4(0.0, 1.0, 0.5, 1.0));
+			instance->SetObjectToWorldTransform(objectToWorld);
+			this->scene->AddRenderObject(renderMesh);
+		}
+
+		if (renderMeshAsset->MakeRenderInstance(renderMesh))
+		{
+			Transform objectToWorld;
+			objectToWorld.matrix.SetUniformScale(0.5);
+			objectToWorld.translation.SetComponents(2.0, -2.0, 0.0);
+
+			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
+			instance->SetColor(Vector4(1.0, 0.0, 0.5, 1.0));
+			instance->SetObjectToWorldTransform(objectToWorld);
+			this->scene->AddRenderObject(renderMesh);
+		}
 	}
 
 	this->keepRunning = true;

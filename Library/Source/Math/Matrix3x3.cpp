@@ -221,6 +221,36 @@ void Matrix3x3::SetForCrossProduct(const Vector3& vector)
 	this->ele[2][2] = 0.0;
 }
 
+void Matrix3x3::SetUniformScale(double scale)
+{
+	this->ele[0][0] = scale;
+	this->ele[0][1] = 0.0;
+	this->ele[0][2] = 0.0;
+
+	this->ele[1][0] = 0.0;
+	this->ele[1][1] = scale;
+	this->ele[1][2] = 0.0;
+
+	this->ele[2][0] = 0.0;
+	this->ele[2][1] = 0.0;
+	this->ele[2][2] = scale;
+}
+
+void Matrix3x3::SetNonUniformScale(const Vector3& scale)
+{
+	this->ele[0][0] = scale.x;
+	this->ele[0][1] = 0.0;
+	this->ele[0][2] = 0.0;
+
+	this->ele[1][0] = 0.0;
+	this->ele[1][1] = scale.y;
+	this->ele[1][2] = 0.0;
+
+	this->ele[2][0] = 0.0;
+	this->ele[2][1] = 0.0;
+	this->ele[2][2] = scale.z;
+}
+
 Matrix3x3 Matrix3x3::Orthonormalized() const
 {
 	Vector3 xAxis, yAxis, zAxis;

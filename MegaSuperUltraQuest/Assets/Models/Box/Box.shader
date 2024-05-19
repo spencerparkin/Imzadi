@@ -10,6 +10,18 @@
             "semantic_index": 0,
             "element_format": "R32G32B32_FLOAT",
             "slot": 0
+        },
+        {
+            "semantic": "TEX",
+            "semantic_index": 0,
+            "element_format": "R32G32_FLOAT",
+            "slot": 0
+        },
+        {
+            "semantic": "NORM",
+            "semantic_index": 0,
+            "element_format": "R32G32B32_FLOAT",
+            "slot": 0
         }
     ],
     "constants": {

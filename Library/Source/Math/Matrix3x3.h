@@ -147,6 +147,20 @@ namespace Collision
 		void SetForCrossProduct(const Vector3& vector);
 
 		/**
+		 * Set this matrix to a uniform scale matrix.
+		 * 
+		 * @param[in] scale This is the uniform scale factor.
+		 */
+		void SetUniformScale(double scale);
+
+		/**
+		 * Set this matrix to a non-uniform scale matrix.
+		 * 
+		 * @param[in] scale This is a vector holding the scale factors along the various axes.
+		 */
+		void SetNonUniformScale(const Vector3& scale);
+
+		/**
 		 * Calculate and return the orthonormalization of this matrix.
 		 * The result is left undefined if this matrix is singular.
 		 * Occational orthonormalization is sometimes needed in order

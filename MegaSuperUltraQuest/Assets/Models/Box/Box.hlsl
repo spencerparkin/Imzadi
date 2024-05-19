@@ -11,6 +11,8 @@ cbuffer constants : register(b0)
 struct VS_Input
 {
     float3 pos : POS;
+    float2 texCoord : TEX;
+    float3 normal : NORM;
 };
 
 struct VS_Output

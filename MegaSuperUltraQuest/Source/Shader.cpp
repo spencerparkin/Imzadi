@@ -70,6 +70,7 @@ Shader::Shader()
 
 	std::unique_ptr<D3D11_INPUT_ELEMENT_DESC[]> inputElementDescArray(new D3D11_INPUT_ELEMENT_DESC[inputLayoutValue.Size()]);
 	std::vector<std::string> semanticArray;
+	semanticArray.reserve(inputLayoutValue.Size());
 	if (!this->PopulateInputLayout(inputElementDescArray.get(), inputLayoutValue, semanticArray))
 		return false;
 
