@@ -50,14 +50,19 @@ private:
 
 	static LRESULT CALLBACK WndProcEntryFunc(HWND windowHandle, UINT msg, WPARAM wParam, LPARAM lParam);
 
+	bool RecreateViews();
+
 	HINSTANCE instance;
 	HWND mainWindowHandle;
 	bool keepRunning;
+	bool windowResized;
 	ID3D11Device* device;
 	ID3D11DeviceContext* deviceContext;
 	IDXGISwapChain* swapChain;
 	ID3D11RenderTargetView* frameBufferView;
+	ID3D11DepthStencilView* depthStencilView;
 	ID3D11RasterizerState* rasterizerState;
+	ID3D11DepthStencilState* depthStencilState;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
 	Reference<Camera> camera;
