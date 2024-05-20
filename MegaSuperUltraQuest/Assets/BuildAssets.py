@@ -197,7 +197,12 @@ def process_obj_file(obj_file, assets_base_dir):
         handle.write(json_text)
     print('Wrote file: %s!' % render_mesh_file)
 
-def compile_shader(fxc_exe, shader_data, config, prefix, assets_base_dir, shader_pdb_dir):
+def compile_shader(shader_data, config, prefix, assets_base_dir, shader_pdb_dir):
+    sdk_bin_dir = r'C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64'
+    compiler_exe = os.path.join(sdk_bin_dir, 'fxc.exe')     # Note that dxc.exe works here, but then the game crashes.  I have no idea what's going on.
+    if not os.path.exists(compiler_exe):
+        raise Exception('Could not locate: ' + compiler_exe)
+
     shader_obj_file = os.path.join(assets_base_dir, shader_data[prefix + '_shader_object'])
 
     name, ext = os.path.splitext(shader_obj_file)
@@ -213,7 +218,7 @@ def compile_shader(fxc_exe, shader_data, config, prefix, assets_base_dir, shader
         raise Exception('Could not locate: ' + shader_code_file)
 
     cmd_line = [
-        '"' + fxc_exe + '"',
+        '"' + compiler_exe + '"',
         shader_code_file,
     ]
 
@@ -235,16 +240,12 @@ def compile_shader(fxc_exe, shader_data, config, prefix, assets_base_dir, shader
     run_shell_proc(cmd_line)
 
 def process_shader_file(shader_file, assets_base_dir, config, shader_pdb_dir):
-    sdk_bin_dir = r'C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64'
-    fxc_exe = os.path.join(sdk_bin_dir, 'fxc.exe')
-    if not os.path.exists(fxc_exe):
-        raise Exception('Could not locate: ' + fxc_exe)
     with open(shader_file, 'r') as handle:
         json_text = handle.read()
         shader_data = json.loads(json_text)
-    if 'vs_shader_object' in shader_data and 'ps_shader_object' in shader_data and 'shader_code' in shader_data:
-        compile_shader(fxc_exe, shader_data, config, 'vs', assets_base_dir, shader_pdb_dir)
-        compile_shader(fxc_exe, shader_data, config, 'ps', assets_base_dir, shader_pdb_dir)
+        if 'vs_shader_object' in shader_data and 'ps_shader_object' in shader_data and 'shader_code' in shader_data:
+            compile_shader(shader_data, config, 'vs', assets_base_dir, shader_pdb_dir)
+            compile_shader(shader_data, config, 'ps', assets_base_dir, shader_pdb_dir)
 
 if __name__ == '__main__':
     assets_base_dir = os.getcwd()
