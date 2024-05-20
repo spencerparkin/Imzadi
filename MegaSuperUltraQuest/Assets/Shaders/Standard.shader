@@ -32,23 +32,28 @@
             "size": 64,
             "type": "float"
         },
-        "color": {
+        "object_to_world": {
             "offset": 64,
+            "size": 64,
+            "type": "float"
+        },
+        "color": {
+            "offset": 128,
             "size": 16,
             "type": "float"
         },
         "light_direction": {
-            "offset": 80,
+            "offset": 144,
             "size": 12,
             "type": "float"
         },
         "light_intensity": {
-            "offset": 92,
+            "offset": 156,
             "size": 4,
             "type": "float"
         },
         "light_color": {
-            "offset": 96,
+            "offset": 160,
             "size": 16,
             "type": "float"
         }

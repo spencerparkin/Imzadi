@@ -51,19 +51,25 @@ void RenderMeshInstance::Render(Camera* camera)
 
 		const Shader::Constant* constant = nullptr;
 
+		Matrix4x4 worldToCameraMat;
+		camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
+
+		Matrix4x4 objectToWorldMat;
+		this->objectToWorld.GetToMatrix(objectToWorldMat);
+
+		Matrix4x4 cameraToProjMat;
+		camera->GetFrustum().GetToProjectionMatrix(cameraToProjMat);
+
+		Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
+
 		if (shader->GetConstantInfo("object_to_projection", constant))
 		{
-			Matrix4x4 worldToCameraMat;
-			camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
-
-			Matrix4x4 objectToWorldMat;
-			this->objectToWorld.GetToMatrix(objectToWorldMat);
-
-			Matrix4x4 cameraToProjMat;
-			camera->GetFrustum().GetToProjectionMatrix(cameraToProjMat);
-
-			Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
 			StoreShaderConstant<Matrix4x4>(&mappedSubresource, constant, &objectToProjMat);
+		}
+
+		if (shader->GetConstantInfo("object_to_world", constant))
+		{
+			StoreShaderConstant<Matrix4x4>(&mappedSubresource, constant, &objectToWorldMat);
 		}
 
 		if (shader->GetConstantInfo("color", constant))
@@ -88,6 +94,7 @@ void RenderMeshInstance::Render(Camera* camera)
 
 		deviceContext->Unmap(constantsBuffer, 0);
 		deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);
+		deviceContext->PSSetConstantBuffers(0, 1, &constantsBuffer);
 	}
 
 	if (texture)

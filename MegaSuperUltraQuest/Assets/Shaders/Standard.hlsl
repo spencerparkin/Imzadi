@@ -8,6 +8,7 @@ SamplerState theSampler : register(s0);
 cbuffer constants : register(b0)
 {
     float4x4 objectToProjection;
+    float4x4 objectToWorld;
     float4 color;
     float3 lightDirection;
     float lightIntensity;
@@ -36,7 +37,7 @@ VS_Output VS_Main(VS_Input input)
     output.position /= output.position.w;
     output.color = color;
     output.texCoord = input.texCoord;
-    output.normal = input.normal;   // TODO: Transform object to world.
+    output.normal = mul(objectToWorld, float4(input.normal, 0.0));  // Assuming no shear or scale here.
     return output;
 }
 
@@ -44,14 +45,13 @@ VS_Output VS_Main(VS_Input input)
 
 float4 PS_Main(VS_Output input) : SV_TARGET
 {
-    /*float pi = 3.1415926536;
+    float pi = 3.1415926536;
     float angle = acos(dot(lightDirection, input.normal));
-    float lightFactor = angle / pi;
-    return input.color * lightFactor;*/
+    float lightFactor = clamp(angle / pi, 0.0, 1.0);
     
-    //return input.color;
+    float4 color = theTexture.Sample(theSampler, input.texCoord);
     
-    float4 texelColor = theTexture.Sample(theSampler, input.texCoord);
+    color *= lightFactor;
     
-    return texelColor;
+    return color;
 }
