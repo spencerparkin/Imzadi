@@ -25,6 +25,9 @@ Game::Game(HINSTANCE instance)
 	this->depthStencilState = NULL;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
+	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
+	this->lightParams.lightColor.SetComponents(1.0, 1.0, 1.0, 1.0);
+	this->lightParams.lightIntensity = 1.0;
 }
 
 /*virtual*/ Game::~Game()

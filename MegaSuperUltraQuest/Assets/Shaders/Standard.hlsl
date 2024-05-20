@@ -6,6 +6,9 @@ cbuffer constants : register(b0)
 {
     float4x4 objectToProjection;
     float4 color;
+    float3 lightDirection;
+    float lightIntensity;
+    float4 lightColor;
 };
 
 struct VS_Input
@@ -19,6 +22,7 @@ struct VS_Output
 {
     float4 position : SV_POSITION;
     float4 color : COL;
+    float3 normal : NORM;
 };
 
 VS_Output VS_Main(VS_Input input)
@@ -27,6 +31,7 @@ VS_Output VS_Main(VS_Input input)
     output.position = mul(objectToProjection, float4(input.pos, 1.0f));
     output.position /= output.position.w;
     output.color = color;
+    output.normal = input.normal;
     return output;
 }
 
@@ -34,5 +39,8 @@ VS_Output VS_Main(VS_Input input)
 
 float4 PS_Main(VS_Output input) : SV_TARGET
 {
-    return input.color;
+    float pi = 3.1415926536;
+    float angle = acos(dot(lightDirection, input.normal));
+    float lightFactor = angle / pi;
+    return input.color * lightFactor;
 }

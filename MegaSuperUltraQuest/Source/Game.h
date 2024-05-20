@@ -37,6 +37,16 @@ public:
 	ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
 	HWND GetMainWindowHandle() { return this->mainWindowHandle; }
 
+	struct LightParams
+	{
+		Collision::Vector3 lightDirection;
+		Collision::Vector4 lightColor;
+		double lightIntensity;
+	};
+
+	const LightParams& GetLightParams() const { return this->lightParams; }
+	LightParams& GetLightParams() { return this->lightParams; }
+
 private:
 
 	void Render();
@@ -66,5 +76,6 @@ private:
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
 	Reference<Camera> camera;
+	LightParams lightParams;
 	static Game* gameSingleton;
 };

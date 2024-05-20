@@ -34,6 +34,21 @@
             "offset": 64,
             "size": 16,
             "type": "float"
+        },
+        "light_direction": {
+            "offset": 80,
+            "size": 12,
+            "type": "float"
+        },
+        "light_intensity": {
+            "offset": 92,
+            "size": 4,
+            "type": "float"
+        },
+        "light_color": {
+            "offset": 96,
+            "size": 16,
+            "type": "float"
         }
     }
 }

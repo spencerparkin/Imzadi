@@ -2,7 +2,6 @@
 
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Transform.h"
-#include "Math/Vector4.h"
 #include "Scene.h"
 #include "AssetCache.h"
 #include "Shader.h"
@@ -13,7 +12,6 @@
 class RenderMeshAsset;
 
 // TODO: Add texture mapping.
-// TODO: Add lighting.
 // TODO: A bit ambitious, but what about shadows?  This requires a render pass of the
 //       scene from the perspective of a light source to capture a depth-buffer which
 //       is then used in the main render pass.

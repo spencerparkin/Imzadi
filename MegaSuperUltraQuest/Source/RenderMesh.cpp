@@ -50,8 +50,7 @@ void RenderMeshInstance::Render(Camera* camera)
 
 		const Shader::Constant* constant = nullptr;
 
-		// Is there somewhere in the constants buffer where we can communicate the object-space to project-space tranformation matrix?
-		if (shader->GetConstantInfo("object_to_projection", constant) && constant->size == 16 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
+		if (shader->GetConstantInfo("object_to_projection", constant))
 		{
 			Matrix4x4 worldToCameraMat;
 			camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
@@ -63,21 +62,27 @@ void RenderMeshInstance::Render(Camera* camera)
 			camera->GetFrustum().GetToProjectionMatrix(cameraToProjMat);
 
 			Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
-
-			float* ele = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
-			for (int i = 0; i < 4; i++)
-				for (int j = 0; j < 4; j++)
-					*ele++ = float(objectToProjMat.ele[j][i]);	// Note the swap of i and j here!
+			StoreShaderConstant<Matrix4x4>(&mappedSubresource, constant, &objectToProjMat);
 		}
 
-		// Is there somewhere in the constants buffer where we can communicate a color to the shader?
-		if (shader->GetConstantInfo("color", constant) && constant->size == 4 * sizeof(float) && constant->format == DXGI_FORMAT_R32_FLOAT)
+		if (shader->GetConstantInfo("color", constant))
 		{
-			float* colorComponentArray = (float*)&((uint8_t*)mappedSubresource.pData)[constant->offset];
-			colorComponentArray[0] = this->color.x;
-			colorComponentArray[1] = this->color.y;
-			colorComponentArray[2] = this->color.z;
-			colorComponentArray[3] = this->color.w;
+			StoreShaderConstant<Vector4>(&mappedSubresource, constant, &this->color);
+		}
+
+		if (shader->GetConstantInfo("light_direction", constant))
+		{
+			StoreShaderConstant<Vector3>(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightDirection);
+		}
+
+		if (shader->GetConstantInfo("light_intensity", constant))
+		{
+			StoreShaderConstant<double>(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightIntensity);
+		}
+
+		if (shader->GetConstantInfo("light_color", constant))
+		{
+			StoreShaderConstant<Vector4>(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightColor);
 		}
 
 		deviceContext->Unmap(constantsBuffer, 0);
