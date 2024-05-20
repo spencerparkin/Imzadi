@@ -166,6 +166,7 @@ bool Game::Initialize()
 	this->LoadAndPlaceRenderMesh("Models/Box/Box.render_mesh", Vector3(-10.0, 6.0, 0.0), Quaternion(Vector3(1.0, 1.0, 0.0).Normalized(), M_PI / 4.0), Vector4(1.0, 0.0, 0.0, 1.0));
 	this->LoadAndPlaceRenderMesh("Models/Teapot/Teapot.render_mesh", Vector3(10.0, 6.0, 0.0), Quaternion(), Vector4(0.0, 1.0, 0.5, 1.0));
 	this->LoadAndPlaceRenderMesh("Models/GroundPlane/GroundPlane.render_mesh", Vector3(), Quaternion(), Vector4(0.5, 1.0, 0.5, 1.0));
+	//this->LoadAndPlaceRenderMesh("Models/Quad/Quad.render_mesh", Vector3(0.0, 0.0, 0.0), Quaternion(), Vector4(1.0, 0.0, 0.0, 1.0));
 
 	this->keepRunning = true;
 	return true;

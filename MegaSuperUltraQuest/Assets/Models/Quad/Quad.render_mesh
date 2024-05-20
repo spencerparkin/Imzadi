@@ -1,0 +1,19 @@
+{
+    "bounding_box": {
+        "max": {
+            "x": 5.0,
+            "y": 5.0,
+            "z": -0.0
+        },
+        "min": {
+            "x": -5.0,
+            "y": -5.0,
+            "z": -0.0
+        }
+    },
+    "index_buffer": "Models\\Quad\\QuadIndices.buffer",
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "texture": "Models\\Quad\\Quad.texture",
+    "vertex_buffer": "Models\\Quad\\QuadVertices.buffer"
+}

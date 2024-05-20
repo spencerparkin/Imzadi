@@ -14,5 +14,6 @@
     "index_buffer": "Models\\GroundPlane\\GroundPlaneIndices.buffer",
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
+    "texture": "Models\\GroundPlane\\GroundPlane.texture",
     "vertex_buffer": "Models\\GroundPlane\\GroundPlaneVertices.buffer"
 }

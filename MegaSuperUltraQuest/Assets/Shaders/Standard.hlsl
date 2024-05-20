@@ -1,4 +1,7 @@
-// Box.hlsl
+// Standard.hlsl
+
+Texture2D theTexture : register(t0);
+SamplerState theSampler : register(s0);
 
 //----------------------------- VS_Main -----------------------------
 
@@ -23,6 +26,7 @@ struct VS_Output
     float4 position : SV_POSITION;
     float4 color : COL;
     float3 normal : NORM;
+    float2 texCoord : TEXCOORD;
 };
 
 VS_Output VS_Main(VS_Input input)
@@ -31,6 +35,7 @@ VS_Output VS_Main(VS_Input input)
     output.position = mul(objectToProjection, float4(input.pos, 1.0f));
     output.position /= output.position.w;
     output.color = color;
+    output.texCoord = input.texCoord;
     output.normal = input.normal;   // TODO: Transform object to world.
     return output;
 }
@@ -44,5 +49,9 @@ float4 PS_Main(VS_Output input) : SV_TARGET
     float lightFactor = angle / pi;
     return input.color * lightFactor;*/
     
-    return input.color;
+    //return input.color;
+    
+    float4 texelColor = theTexture.Sample(theSampler, input.texCoord);
+    
+    return texelColor;
 }

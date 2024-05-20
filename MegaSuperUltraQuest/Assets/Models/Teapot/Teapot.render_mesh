@@ -14,5 +14,6 @@
     "index_buffer": "Models\\Teapot\\TeapotIndices.buffer",
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
+    "texture": "Models\\Teapot\\Teapot.texture",
     "vertex_buffer": "Models\\Teapot\\TeapotVertices.buffer"
 }

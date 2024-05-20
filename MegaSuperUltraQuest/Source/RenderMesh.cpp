@@ -27,6 +27,7 @@ void RenderMeshInstance::Render(Camera* camera)
 	Shader* shader = this->mesh->GetShader();
 	Buffer* vertexBuffer = this->mesh->GetVertexBuffer();
 	Buffer* indexBuffer = this->mesh->GetIndexBuffer();
+	Texture* texture = this->mesh->GetTexture();
 
 	deviceContext->IASetPrimitiveTopology(this->mesh->GetPrimType());
 	deviceContext->IASetInputLayout(shader->GetInputLayout());
@@ -87,6 +88,20 @@ void RenderMeshInstance::Render(Camera* camera)
 
 		deviceContext->Unmap(constantsBuffer, 0);
 		deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);
+	}
+
+	if (texture)
+	{
+		ID3D11ShaderResourceView* textureView = texture->GetTextureView();
+		deviceContext->PSSetShaderResources(0, 1, &textureView);
+
+		ID3D11SamplerState* samplerState = texture->GetSamplerState();
+		deviceContext->PSSetSamplers(0, 1, &samplerState);
+	}
+	else
+	{
+		deviceContext->PSSetShaderResources(0, 0, NULL);
+		deviceContext->PSSetSamplers(0, 0, NULL);
 	}
 
 	if (!indexBuffer)
@@ -158,6 +173,16 @@ RenderMeshAsset::RenderMeshAsset()
 			return false;
 
 		this->indexBuffer.SafeSet(asset.Get());
+	}
+
+	if (jsonDoc.HasMember("texture"))
+	{
+		std::string textureFile = jsonDoc["texture"].GetString();
+
+		if (!assetCache->GrabAsset(textureFile, asset))
+			return false;
+
+		this->texture.SafeSet(asset.Get());
 	}
 
 	if (!jsonDoc.HasMember("primitive_type"))

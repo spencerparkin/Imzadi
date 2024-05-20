@@ -125,7 +125,8 @@ def process_obj_file(obj_file, assets_base_dir):
     name, ext = os.path.splitext(name)
     vertex_buffer_file = os.path.join(dir, name + 'Vertices.buffer')
     index_buffer_file = os.path.join(dir, name + 'Indices.buffer')
-    render_mesh_file = os.path.join(dir, name + ".render_mesh")
+    render_mesh_file = os.path.join(dir, name + '.render_mesh')
+    texture_file = os.path.join(dir, name + ".texture")
     vertex_map = {}
     vertex_array = []
     index_array = []
@@ -156,6 +157,8 @@ def process_obj_file(obj_file, assets_base_dir):
         os.remove(index_buffer_file)
     if os.path.exists(render_mesh_file):
         os.remove(render_mesh_file)
+    if os.path.exists(texture_file):
+        os.remove(texture_file)
 
     vertex_file_data = {
         'buffer': vertex_array,
@@ -181,6 +184,16 @@ def process_obj_file(obj_file, assets_base_dir):
             'max': {'x': max_x, 'y': max_y, 'z': max_z}
         }
     }
+
+    image_file = os.path.join(dir, name + '.png')
+    if os.path.exists(image_file):
+        with open(texture_file, 'w') as handle:
+            texture_data = {
+                'image_file': os.path.relpath(image_file, assets_base_dir)
+            }
+            json_text = json.dumps(texture_data, sort_keys=True, indent=4)
+            handle.write(json_text)
+        render_mesh_file_data['texture'] = os.path.relpath(texture_file, assets_base_dir)
 
     with open(vertex_buffer_file, 'w') as handle:
         json_text = json.dumps(vertex_file_data, sort_keys=True, indent=4)

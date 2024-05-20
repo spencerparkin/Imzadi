@@ -14,5 +14,6 @@
     "index_buffer": "Models\\Box\\BoxIndices.buffer",
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
+    "texture": "Models\\Box\\Box.texture",
     "vertex_buffer": "Models\\Box\\BoxVertices.buffer"
 }
