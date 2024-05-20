@@ -2,6 +2,7 @@
 
 import os
 import json
+import subprocess
 
 class OBJ_Model(object):
     def __init__(self):
@@ -65,12 +66,34 @@ class OBJ_Model(object):
                         self.parse_vertex(token_list[3])
                     ))
 
-def find_all_obj_files(search_dir, obj_file_list):
+def run_shell_proc(shell_command, working_dir=None, captured_output=None):
+    if working_dir is None:
+        working_dir = os.getcwd()
+    if type(shell_command) is list:
+        shell_command = ' '.join(shell_command)
+    print('Executing command: ' + shell_command)
+    print('CWD: ' + working_dir)
+    with subprocess.Popen(shell_command, cwd=working_dir, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True) as proc:
+        while True:
+            while True:
+                command_output = proc.stdout.readline()
+                if command_output is None or len(command_output) == 0:
+                    break
+                command_output = command_output.rstrip('\r\n')
+                if type(captured_output) == list:
+                    captured_output.append(command_output)
+                print(command_output)
+            if proc.poll() is not None:
+                break
+        if proc.returncode != 0:
+            raise Exception('Command exited with non-zero return code!  (Return code: %d)' % proc.returncode)
+
+def find_all_files(search_dir, found_file_list, desired_ext):
     for root_dir, dir_list, file_list in os.walk(search_dir):
         for file in file_list:
             name, ext = os.path.splitext(file)
-            if ext.lower() == '.obj':
-                obj_file_list.append(os.path.join(root_dir, file))
+            if ext.lower() == desired_ext:
+                found_file_list.append(os.path.join(root_dir, file))
 
 def make_vertex_key(vertex):
     key = '%f-%f-%f/%f-%f/%f-%f-%f' % (
@@ -174,10 +197,79 @@ def process_obj_file(obj_file, assets_base_dir):
         handle.write(json_text)
     print('Wrote file: %s!' % render_mesh_file)
 
+def compile_shader(fxc_exe, shader_data, config, prefix, assets_base_dir, shader_pdb_dir):
+    shader_obj_file = os.path.join(assets_base_dir, shader_data[prefix + '_shader_object'])
+
+    name, ext = os.path.splitext(shader_obj_file)
+    if ext != '.dxbc':
+        raise Exception('Must use .dxbc file extension for the shader object files.')
+
+    if os.path.exists(shader_obj_file):
+        os.remove(shader_obj_file)
+
+    shader_code_file = os.path.join(assets_base_dir, shader_data['shader_code'])
+
+    if not os.path.exists(shader_code_file):
+        raise Exception('Could not locate: ' + shader_code_file)
+
+    cmd_line = [
+        '"' + fxc_exe + '"',
+        shader_code_file,
+    ]
+
+    if config == 'debug':
+        cmd_line.append('/Zi')
+        cmd_line.append('/Zss')
+        cmd_line.append('/Fd %s\\' % shader_pdb_dir)    # Must have trailing backslash!
+    elif config == 'release':
+        cmd_line.append('/O4')
+
+    if prefix + '_entry_point' in shader_data:
+        cmd_line.append('/E ' + shader_data[prefix + '_entry_point'])
+
+    if prefix + '_model' in shader_data:
+        cmd_line.append('/T %s' % shader_data[prefix + '_model'])
+
+    cmd_line.append('/Fo ' + shader_obj_file)
+
+    run_shell_proc(cmd_line)
+
+def process_shader_file(shader_file, assets_base_dir, config, shader_pdb_dir):
+    sdk_bin_dir = r'C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64'
+    fxc_exe = os.path.join(sdk_bin_dir, 'fxc.exe')
+    if not os.path.exists(fxc_exe):
+        raise Exception('Could not locate: ' + fxc_exe)
+    with open(shader_file, 'r') as handle:
+        json_text = handle.read()
+        shader_data = json.loads(json_text)
+    if 'vs_shader_object' in shader_data and 'ps_shader_object' in shader_data and 'shader_code' in shader_data:
+        compile_shader(fxc_exe, shader_data, config, 'vs', assets_base_dir, shader_pdb_dir)
+        compile_shader(fxc_exe, shader_data, config, 'ps', assets_base_dir, shader_pdb_dir)
+
 if __name__ == '__main__':
     assets_base_dir = os.getcwd()
+
+    print('Processing all OBJ files...')
     obj_file_list = []
-    find_all_obj_files(assets_base_dir, obj_file_list)
+    find_all_files(assets_base_dir, obj_file_list, '.obj')
     for obj_file in obj_file_list:
         print('Processing %s...' % obj_file)
         process_obj_file(obj_file, assets_base_dir)
+
+    print('Deleting PDB files...')
+    shader_pdb_dir = os.path.join(assets_base_dir, 'ShaderPDBs')
+    os.makedirs(shader_pdb_dir, exist_ok=True)
+    pdb_file_list = []
+    find_all_files(shader_pdb_dir, pdb_file_list, '.pdb')
+    for pdb_file in pdb_file_list:
+        os.remove(pdb_file)
+        print('Deleted: ' + pdb_file)
+
+    print('Processing shader files...')
+    shader_file_list = []
+    find_all_files(assets_base_dir, shader_file_list, '.shader')
+    for shader_file in shader_file_list:
+        print('Processing %s...' % shader_file)
+        process_shader_file(shader_file, assets_base_dir, 'debug', shader_pdb_dir)
+
+    print('Asset build complete!')

@@ -24,40 +24,73 @@ Shader::Shader()
 	if (!jsonDoc.IsObject())
 		return false;
 
-	if (!jsonDoc.HasMember("shader_code") || !jsonDoc["shader_code"].IsString())
+	HRESULT result = 0;
+
+	if (jsonDoc.HasMember("vs_shader_object") && jsonDoc.HasMember("ps_shader_object"))
+	{
+		if (!jsonDoc["vs_shader_object"].IsString() || !jsonDoc["ps_shader_object"].IsString())
+			return false;
+
+		std::string vsShaderObjFile = jsonDoc["vs_shader_object"].GetString();
+		std::string psShaderObjFile = jsonDoc["ps_shader_object"].GetString();
+
+		if (!assetCache->ResolveAssetPath(vsShaderObjFile))
+			return false;
+
+		if (!assetCache->ResolveAssetPath(psShaderObjFile))
+			return false;
+
+		std::wstring vsShaderObjFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(vsShaderObjFile);
+		std::wstring psShaderObjFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(psShaderObjFile);
+
+		result = D3DReadFileToBlob(vsShaderObjFileW.c_str(), &this->vsBlob);
+		if (FAILED(result))
+			return false;
+
+		result = D3DReadFileToBlob(psShaderObjFileW.c_str(), &this->psBlob);
+		if (FAILED(result))
+			return false;
+	}
+	else if (jsonDoc.HasMember("shader_code"))
+	{
+		if (!jsonDoc["shader_code"].IsString())
+			return false;
+
+		std::string shaderCodeFile = jsonDoc["shader_code"].GetString();
+		if (!assetCache->ResolveAssetPath(shaderCodeFile))
+			return false;
+
+		std::string vsEntryPoint = "VS_Main";
+		if (jsonDoc.HasMember("vs_entry_point") && jsonDoc["vs_entry_point"].IsString())
+			vsEntryPoint = jsonDoc["vs_entry_point"].GetString();
+
+		std::string psEntryPoint = "PS_Main";
+		if (jsonDoc.HasMember("ps_entry_point") && jsonDoc["ps_entry_point"].IsString())
+			psEntryPoint = jsonDoc["ps_entry_point"].GetString();
+
+		std::string vsModel = "vs_5_0";
+		if (jsonDoc.HasMember("vs_model") && jsonDoc["vs_model"].IsString())
+			vsModel = jsonDoc["vs_model"].GetString();
+
+		std::string psModel = "ps_5_0";
+		if (jsonDoc.HasMember("ps_model") && jsonDoc["ps_model"].IsString())
+			psModel = jsonDoc["ps_model"].GetString();
+
+		if (!this->CompileShader(shaderCodeFile, vsEntryPoint, vsModel, this->vsBlob))
+			return false;
+
+		if (!this->CompileShader(shaderCodeFile, psEntryPoint, psModel, this->psBlob))
+			return false;
+	}
+
+	if (!this->vsBlob || !this->psBlob)
 		return false;
 
-	std::string shaderCodeFile = jsonDoc["shader_code"].GetString();
-	if (!assetCache->ResolveAssetPath(shaderCodeFile))
-		return false;
-
-	std::string vsEntryPoint = "VS_Main";
-	if (jsonDoc.HasMember("vs_entry_point") && jsonDoc["vs_entry_point"].IsString())
-		vsEntryPoint = jsonDoc["vs_entry_point"].GetString();
-
-	std::string psEntryPoint = "PS_Main";
-	if (jsonDoc.HasMember("ps_entry_point") && jsonDoc["ps_entry_point"].IsString())
-		psEntryPoint = jsonDoc["ps_entry_point"].GetString();
-
-	std::string vsModel = "vs_5_0";
-	if (jsonDoc.HasMember("vs_model") && jsonDoc["vs_model"].IsString())
-		vsModel = jsonDoc["vs_model"].GetString();
-
-	std::string psModel = "ps_5_0";
-	if (jsonDoc.HasMember("ps_model") && jsonDoc["ps_model"].IsString())
-		psModel = jsonDoc["ps_model"].GetString();
-
-	if (!this->CompileShader(shaderCodeFile, vsEntryPoint, vsModel, vsBlob))
-		return false;
-
-	HRESULT result = Game::Get()->GetDevice()->CreateVertexShader(vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), nullptr, &this->vertexShader);
+	result = Game::Get()->GetDevice()->CreateVertexShader(this->vsBlob->GetBufferPointer(), this->vsBlob->GetBufferSize(), nullptr, &this->vertexShader);
 	if (FAILED(result))
 		return false;
 
-	if (!this->CompileShader(shaderCodeFile, psEntryPoint, psModel, psBlob))
-		return false;
-
-	result = Game::Get()->GetDevice()->CreatePixelShader(psBlob->GetBufferPointer(), psBlob->GetBufferSize(), nullptr, &this->pixelShader);
+	result = Game::Get()->GetDevice()->CreatePixelShader(this->psBlob->GetBufferPointer(), this->psBlob->GetBufferSize(), nullptr, &this->pixelShader);
 	if (FAILED(result))
 		return false;
 

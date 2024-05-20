@@ -1,5 +1,7 @@
 {
     "shader_code": "Shaders/Standard.hlsl",
+    "vs_shader_object": "Shaders/StandardVS.dxbc",
+    "ps_shader_object": "Shaders/StandardPS.dxbc",
     "vs_entry_point": "VS_Main",
     "ps_entry_point": "PS_Main",
     "vs_model": "vs_5_0",
