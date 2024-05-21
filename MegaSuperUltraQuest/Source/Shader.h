@@ -51,12 +51,6 @@ private:
 	ConstantsMap constantsMap;
 };
 
-template<typename T>
-inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const T* value)
-{
-}
-
-template<>
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const double* scalar)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == sizeof(float))
@@ -65,7 +59,6 @@ inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Sha
 	}
 }
 
-template<>
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const Collision::Vector2* vector)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == 2 * sizeof(float))
@@ -76,7 +69,6 @@ inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Sha
 	}
 }
 
-template<>
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const Collision::Vector3* vector)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == 3 * sizeof(float))
@@ -88,7 +80,6 @@ inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Sha
 	}
 }
 
-template<>
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const Collision::Vector4* vector)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == 4 * sizeof(float))
@@ -101,7 +92,6 @@ inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Sha
 	}
 }
 
-template<>
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const Collision::Matrix3x3* matrix)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == 16 * sizeof(float))
@@ -113,7 +103,6 @@ inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Sha
 	}
 }
 
-template<>
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const Collision::Matrix4x4* matrix)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == 16 * sizeof(float))

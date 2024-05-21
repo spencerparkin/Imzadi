@@ -63,34 +63,22 @@ void RenderMeshInstance::Render(Camera* camera)
 		Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
 
 		if (shader->GetConstantInfo("object_to_projection", constant))
-		{
-			StoreShaderConstant<Matrix4x4>(&mappedSubresource, constant, &objectToProjMat);
-		}
+			StoreShaderConstant(&mappedSubresource, constant, &objectToProjMat);
 
 		if (shader->GetConstantInfo("object_to_world", constant))
-		{
-			StoreShaderConstant<Matrix4x4>(&mappedSubresource, constant, &objectToWorldMat);
-		}
+			StoreShaderConstant(&mappedSubresource, constant, &objectToWorldMat);
 
 		if (shader->GetConstantInfo("color", constant))
-		{
-			StoreShaderConstant<Vector4>(&mappedSubresource, constant, &this->color);
-		}
+			StoreShaderConstant(&mappedSubresource, constant, &this->color);
 
 		if (shader->GetConstantInfo("light_direction", constant))
-		{
-			StoreShaderConstant<Vector3>(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightDirection);
-		}
+			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightDirection);
 
 		if (shader->GetConstantInfo("light_intensity", constant))
-		{
-			StoreShaderConstant<double>(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightIntensity);
-		}
+			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightIntensity);
 
 		if (shader->GetConstantInfo("light_color", constant))
-		{
-			StoreShaderConstant<Vector4>(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightColor);
-		}
+			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightColor);
 
 		deviceContext->Unmap(constantsBuffer, 0);
 		deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);
