@@ -51,6 +51,15 @@ private:
 	ConstantsMap constantsMap;
 };
 
+inline uint32_t Align16(uint32_t offset)
+{
+	// I'm sure there is a fancy bit-twittling way
+	// to do this, but this is fine for now.
+	while (offset % 16 != 0)
+		offset++;
+	return offset;
+}
+
 inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const double* scalar)
 {
 	if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == sizeof(float))

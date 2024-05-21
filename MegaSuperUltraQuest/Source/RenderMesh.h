@@ -11,14 +11,8 @@
 
 class RenderMeshAsset;
 
-// TODO: Add texture mapping.
-// TODO: Add lighting.
-// TODO: A bit ambitious, but what about shadows?  This requires a render pass of the
-//       scene from the perspective of a light source to capture a depth-buffer which
-//       is then used in the main render pass.
-
 /**
- * 
+ * These are instances of a renderable mesh.  See the RenderMeshAsset class.
  */
 class RenderMeshInstance : public RenderObject
 {
@@ -33,18 +27,29 @@ public:
 	void SetBoundingBox(const Collision::AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 	void SetObjectToWorldTransform(const Collision::Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
 
-	const Collision::Vector4& GetColor() const { return this->color; }
-	void SetColor(const Collision::Vector4& color) { this->color = color; }
+	/**
+	 * These parameters are used in the lighting calculations of the surface of the mesh.
+	 */
+	struct SurfaceProperties
+	{
+		//double roughnessFactor;
+		double shininessExponent;
+	};
+
+	const SurfaceProperties& GetSurfaceProperties() const { return this->surfaceProperties; }
+	void SetSurfaceProperties(const SurfaceProperties& surfaceProperties) { this->surfaceProperties = surfaceProperties; }
 
 private:
 	Reference<RenderMeshAsset> mesh;
 	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 	Collision::Transform objectToWorld;
 	Collision::Vector4 color;
+	SurfaceProperties surfaceProperties;
 };
 
 /**
- * 
+ * This is everything that defines a renderable mesh without the
+ * particulars of an instance of such.
  */
 class RenderMeshAsset : public Asset
 {

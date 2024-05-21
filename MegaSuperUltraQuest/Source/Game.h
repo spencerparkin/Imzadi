@@ -41,7 +41,8 @@ public:
 	{
 		Collision::Vector3 lightDirection;
 		Collision::Vector4 lightColor;
-		double lightIntensity;
+		double directionalLightIntensity;
+		double ambientLightIntensity;
 	};
 
 	const LightParams& GetLightParams() const { return this->lightParams; }
@@ -53,8 +54,7 @@ private:
 	Reference<RenderObject> LoadAndPlaceRenderMesh(
 			const std::string& renderMeshFile,
 			const Collision::Vector3& position,
-			const Collision::Quaternion& orientation,
-			const Collision::Vector4& color);
+			const Collision::Quaternion& orientation);
 
 	LRESULT WndProc(UINT msg, WPARAM wParam, LPARAM lParam);
 

@@ -28,6 +28,11 @@ public:
 	void SetCameraToWorldTransform(const Collision::Transform& cameraToWorld);
 
 	/**
+	 * Get read-only access to this camera's camera-space to world-space transform.
+	 */
+	const Collision::Transform& GetCameraToWorldTransform() const { return this->cameraToWorld; }
+
+	/**
 	 * Get our cached world-to-camera transform, updating it if necessary.
 	 */
 	const Collision::Transform& GetWorldToCameraTransform() const;

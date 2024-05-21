@@ -37,24 +37,29 @@
             "size": 64,
             "type": "float"
         },
-        "color": {
-            "offset": 128,
-            "size": 16,
-            "type": "float"
-        },
         "light_direction": {
-            "offset": 144,
+            "offset": 128,
             "size": 12,
             "type": "float"
         },
-        "light_intensity": {
-            "offset": 156,
+        "directional_light_intensity": {
+            "offset": 140,
             "size": 4,
             "type": "float"
         },
-        "light_color": {
+        "ambient_light_intensity": {
+            "offset": 144,
+            "size": 4,
+            "type": "float"
+        },
+        "shininess_exponent": {
+            "offset": 148,
+            "size": 4,
+            "type": "float"
+        },
+        "camera_eye_point": {
             "offset": 160,
-            "size": 16,
+            "size": 12,
             "type": "float"
         }
     }

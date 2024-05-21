@@ -27,7 +27,8 @@ Game::Game(HINSTANCE instance)
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
 	this->lightParams.lightColor.SetComponents(1.0, 1.0, 1.0, 1.0);
-	this->lightParams.lightIntensity = 1.0;
+	this->lightParams.directionalLightIntensity = 1.0;
+	this->lightParams.ambientLightIntensity = 0.02;
 }
 
 /*virtual*/ Game::~Game()
@@ -163,10 +164,10 @@ bool Game::Initialize()
 
 	this->scene.Set(new Scene());
 
-	this->LoadAndPlaceRenderMesh("Models/Box/Box.render_mesh", Vector3(-10.0, 6.0, 0.0), Quaternion(Vector3(1.0, 1.0, 0.0).Normalized(), M_PI / 4.0), Vector4(1.0, 0.0, 0.0, 1.0));
-	this->LoadAndPlaceRenderMesh("Models/Teapot/Teapot.render_mesh", Vector3(10.0, 6.0, 0.0), Quaternion(), Vector4(0.0, 1.0, 0.5, 1.0));
-	this->LoadAndPlaceRenderMesh("Models/GroundPlane/GroundPlane.render_mesh", Vector3(), Quaternion(), Vector4(0.5, 1.0, 0.5, 1.0));
-	//this->LoadAndPlaceRenderMesh("Models/Quad/Quad.render_mesh", Vector3(0.0, 0.0, 0.0), Quaternion(), Vector4(1.0, 0.0, 0.0, 1.0));
+	this->LoadAndPlaceRenderMesh("Models/Box/Box.render_mesh", Vector3(-10.0, 6.0, 0.0), Quaternion(Vector3(1.0, 1.0, 0.0).Normalized(), M_PI / 4.0));
+	this->LoadAndPlaceRenderMesh("Models/Teapot/Teapot.render_mesh", Vector3(10.0, 6.0, 0.0), Quaternion());
+	this->LoadAndPlaceRenderMesh("Models/GroundPlane/GroundPlane.render_mesh", Vector3(), Quaternion());
+	//this->LoadAndPlaceRenderMesh("Models/Quad/Quad.render_mesh", Vector3(0.0, 0.0, 0.0), Quaternion());
 
 	this->keepRunning = true;
 	return true;
@@ -175,8 +176,7 @@ bool Game::Initialize()
 Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 			const std::string& renderMeshFile,
 			const Collision::Vector3& position,
-			const Collision::Quaternion& orientation,
-			const Collision::Vector4& color)
+			const Collision::Quaternion& orientation)
 {
 	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
@@ -190,7 +190,6 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 			objectToWorld.translation = position;
 
 			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
-			instance->SetColor(color);
 			instance->SetObjectToWorldTransform(objectToWorld);
 			this->scene->AddRenderObject(renderMesh);
 		}

@@ -14,6 +14,7 @@ RenderMeshInstance::RenderMeshInstance()
 {
 	this->objectToWorld.SetIdentity();
 	this->color.SetComponents(1.0, 0.0, 0.0, 1.0);
+	this->surfaceProperties.shininessExponent = 50.0;
 }
 
 /*virtual*/ RenderMeshInstance::~RenderMeshInstance()
@@ -68,17 +69,23 @@ void RenderMeshInstance::Render(Camera* camera)
 		if (shader->GetConstantInfo("object_to_world", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &objectToWorldMat);
 
-		if (shader->GetConstantInfo("color", constant))
-			StoreShaderConstant(&mappedSubresource, constant, &this->color);
-
 		if (shader->GetConstantInfo("light_direction", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightDirection);
 
-		if (shader->GetConstantInfo("light_intensity", constant))
-			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightIntensity);
+		if (shader->GetConstantInfo("directional_light_intensity", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().directionalLightIntensity);
+
+		if (shader->GetConstantInfo("ambient_light_intensity", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().ambientLightIntensity);
+
+		if (shader->GetConstantInfo("shininess_exponent", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &this->surfaceProperties.shininessExponent);
 
 		if (shader->GetConstantInfo("light_color", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightColor);
+
+		if (shader->GetConstantInfo("camera_eye_point", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &camera->GetCameraToWorldTransform().translation);
 
 		deviceContext->Unmap(constantsBuffer, 0);
 		deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);

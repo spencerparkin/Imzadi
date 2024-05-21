@@ -148,8 +148,12 @@ Shader::Shader()
 			std::string name = constantsEntryName.GetString();
 			this->constantsMap.insert(std::pair<std::string, Constant>(name, constant));
 
-			this->constantsBufferSize += constant.size;
+			if (this->constantsBufferSize < constant.offset + constant.size)
+				this->constantsBufferSize = constant.offset + constant.size;
 		}
+
+		// The buffer size must be a multiple of 16.
+		this->constantsBufferSize = Align16(this->constantsBufferSize);
 
 		// Sanity check the data in the constants map.  Note that we don't
 		// check for any overlap here, but we do check for proper bounds.
@@ -162,14 +166,16 @@ Shader::Shader()
 				return false;
 			if (constant.offset + constant.size > this->constantsBufferSize)
 				return false;
+			
+			// Make sure the constant doesn't straddle a 16-byte boundary.
+			UINT boundaryA = Align16(constant.offset);
+			UINT boundaryB = Align16(constant.offset + constant.size);
+			if (boundaryA != boundaryB && boundaryB < constant.offset + constant.size)
+				return false;
 		}
 
 		if (this->constantsBufferSize > 0)
 		{
-			// Buffer size must be a multiple of 16.
-			while (this->constantsBufferSize % 16 != 0)
-				this->constantsBufferSize++;
-
 			D3D11_BUFFER_DESC bufferDesc{};
 			bufferDesc.ByteWidth = this->constantsBufferSize;
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
