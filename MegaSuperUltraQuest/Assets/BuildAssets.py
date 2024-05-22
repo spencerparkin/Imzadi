@@ -189,7 +189,8 @@ def process_obj_file(obj_file, assets_base_dir):
     if os.path.exists(image_file):
         with open(texture_file, 'w') as handle:
             texture_data = {
-                'image_file': os.path.relpath(image_file, assets_base_dir)
+                'image_file': os.path.relpath(image_file, assets_base_dir),
+                'flip_vertical': True
             }
             json_text = json.dumps(texture_data, sort_keys=True, indent=4)
             handle.write(json_text)

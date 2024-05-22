@@ -23,7 +23,11 @@ Texture::Texture()
 	if (!assetCache->ResolveAssetPath(imageFile))
 		return false;
 
-	stbi_set_flip_vertically_on_load(1);
+	int flipVertical = 0;
+	if (jsonDoc.HasMember("flip_vertical") && jsonDoc["flip_vertical"].GetBool())
+		flipVertical = jsonDoc["flip_vertical"].GetBool() ? 1 : 0;
+
+	stbi_set_flip_vertically_on_load(flipVertical);
 
 	int textureWidth = 0, textureHeight = 0;
 	int textureChannels = 0;
