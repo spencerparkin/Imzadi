@@ -36,3 +36,23 @@ const Collision::Transform& Camera::GetWorldToCameraTransform() const
 
 	return this->worldToCamera;
 }
+
+bool Camera::LookAt(const Collision::Vector3& eyePoint, const Collision::Vector3& focalPoint, const Collision::Vector3& upVector)
+{
+	this->cameraToWorld.translation = eyePoint;
+
+	Vector3 xAxis, yAxis, zAxis;
+
+	zAxis = eyePoint - focalPoint;
+	if (!zAxis.Normalize())
+		return false;
+
+	xAxis = upVector.Cross(zAxis);
+	if (!xAxis.Normalize())
+		return false;
+
+	yAxis = zAxis.Cross(xAxis);
+
+	this->cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
+	return true;
+}

@@ -126,11 +126,8 @@ bool Game::Initialize()
 #endif
 
 	this->SetCamera(new Camera());
-
-	Transform cameraTransform;
-	cameraTransform.matrix.SetIdentity();
-	cameraTransform.translation.SetComponents(0.0, 10.0, 40.0);	// TODO: Add LookAt function to the camera.
-	this->camera->SetCameraToWorldTransform(cameraTransform);
+	if (!this->camera->LookAt(Vector3(-20.0, 30.0, 50.0), Vector3(0.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0)))
+		return false;
 
 	this->windowResized = false;
 	if (!this->RecreateViews())
@@ -154,6 +151,9 @@ bool Game::Initialize()
 	depthStencilDesc.DepthEnable = TRUE;
 	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
+	depthStencilDesc.StencilEnable = FALSE;
+	depthStencilDesc.StencilReadMask = 0;
+	depthStencilDesc.StencilWriteMask = 0;
 
 	result = this->device->CreateDepthStencilState(&depthStencilDesc, &this->depthStencilState);
 	if (FAILED(result))
