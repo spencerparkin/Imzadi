@@ -126,20 +126,9 @@ bool Game::Initialize()
 #endif
 
 	this->SetCamera(new Camera());
+	this->camera->SetViewMode(Camera::ViewMode::PERSPECTIVE);
 	if (!this->camera->LookAt(Vector3(-20.0, 30.0, 50.0), Vector3(0.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0)))
 		return false;
-
-	this->camera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
-
-	Camera::OrthographicParams orthoParams;
-	orthoParams.nearClip = 0.0;
-	orthoParams.farClip = 1000.0;
-	orthoParams.width = 100.0;
-	orthoParams.height = 100.0;
-	orthoParams.desiredAspectRatio = 0.0;
-	orthoParams.adjustWidth = false;
-
-	this->camera->SetOrthographicParams(orthoParams);
 
 	this->windowResized = false;
 	if (!this->RecreateViews())
