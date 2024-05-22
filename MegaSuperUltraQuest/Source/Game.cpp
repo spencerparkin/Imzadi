@@ -129,6 +129,18 @@ bool Game::Initialize()
 	if (!this->camera->LookAt(Vector3(-20.0, 30.0, 50.0), Vector3(0.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0)))
 		return false;
 
+	this->camera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
+
+	Camera::OrthographicParams orthoParams;
+	orthoParams.nearClip = 0.0;
+	orthoParams.farClip = 1000.0;
+	orthoParams.width = 100.0;
+	orthoParams.height = 100.0;
+	orthoParams.desiredAspectRatio = 0.0;
+	orthoParams.adjustWidth = false;
+
+	this->camera->SetOrthographicParams(orthoParams);
+
 	this->windowResized = false;
 	if (!this->RecreateViews())
 		return false;
@@ -268,6 +280,9 @@ bool Game::RecreateViews()
 	Frustum frustum;
 	frustum.SetFromAspectRatio(aspectRatio, M_PI / 3.0, 0.1, 1000.0);
 	this->camera->SetFrustum(frustum);
+	Camera::OrthographicParams orthoParams = this->camera->GetOrthographicParameters();
+	orthoParams.desiredAspectRatio = aspectRatio;
+	this->camera->SetOrthographicParams(orthoParams);
 
 	return true;
 }

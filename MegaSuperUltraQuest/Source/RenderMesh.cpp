@@ -59,7 +59,7 @@ void RenderMeshInstance::Render(Camera* camera)
 		this->objectToWorld.GetToMatrix(objectToWorldMat);
 
 		Matrix4x4 cameraToProjMat;
-		camera->GetFrustum().GetToProjectionMatrix(cameraToProjMat);
+		camera->GetProjectionMatrix(cameraToProjMat);
 
 		Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
 

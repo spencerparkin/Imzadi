@@ -15,6 +15,22 @@ public:
 	Camera();
 	virtual ~Camera();
 
+	enum ViewMode
+	{
+		PERSPECTIVE,
+		ORTHOGRAPHIC
+	};
+
+	struct OrthographicParams
+	{
+		double width;					///< This indicates the range [-width/2, width/2] along the X-axis.
+		double height;					///< This indicates the range [-height/2, height/2] along the Y-axis.
+		double nearClip;				///< This is a positive distance along the -Z-axis to the near clipping plane.
+		double farClip;					///< This is a positive distance along the -Z-axis to the far clipping plane.
+		double desiredAspectRatio;		///< If zero, this is ignored.  If not, width and height are adjusted (but not modified) just before the projection matrix is calculated.
+		bool adjustWidth;				///< When adjusting for aspect ratio, adjust the width to match the desired aspect ratio; the height, otherwise.
+	};
+
 	/**
 	 * False is returned here if the given render object is definitely not visible.
 	 * True is returned here if the given render object is likely visible.
@@ -48,6 +64,15 @@ public:
 	bool LookAt(const Collision::Vector3& eyePoint, const Collision::Vector3& focalPoint, const Collision::Vector3& upVector);
 
 	/**
+	 * Calculate and return the projection matrix for this camera.
+	 * This will be a perspective projection matrix if the view-mode is PERSPECTIVE.
+	 * This will be an orthographic projection matrix if the view-mode is ORTHOGRAPHIC.
+	 * 
+	 * @param[out] matrix The projection matrix is returned in this parameter.
+	 */
+	void GetProjectionMatrix(Collision::Matrix4x4& matrix) const;
+
+	/**
 	 * Get the frustum used by this camera.
 	 */
 	const Collision::Frustum& GetFrustum() const { return this->frustum; }
@@ -57,8 +82,15 @@ public:
 	 */
 	void SetFrustum(const Collision::Frustum& frustum) { this->frustum = frustum; }
 
-private:
+	ViewMode GetViewMode() const { return this->viewMode; }
+	void SetViewMode(ViewMode viewMode) { this->viewMode = viewMode; }
 
+	const OrthographicParams& GetOrthographicParameters() const { return this->orthoParams; }
+	void SetOrthographicParams(const OrthographicParams& orthoParams) { this->orthoParams = orthoParams; }
+
+private:
+	ViewMode viewMode;
+	OrthographicParams orthoParams;
 	Collision::Frustum frustum;
 	Collision::Transform cameraToWorld;
 	mutable Collision::Transform worldToCamera;

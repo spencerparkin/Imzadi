@@ -1,11 +1,19 @@
 #include "Camera.h"
 #include "Scene.h"
+#include "Math/Matrix4x4.h"
 
 using namespace Collision;
 
 Camera::Camera()
 {
 	this->worldToCameraValid = false;
+	this->viewMode = ViewMode::PERSPECTIVE;
+	this->orthoParams.width = 20.0;
+	this->orthoParams.height = 20.0;
+	this->orthoParams.nearClip = 0.0;
+	this->orthoParams.farClip = 1000.0;
+	this->orthoParams.desiredAspectRatio = 0.0;
+	this->orthoParams.adjustWidth = true;
 }
 
 /*virtual*/ Camera::~Camera()
@@ -55,4 +63,41 @@ bool Camera::LookAt(const Collision::Vector3& eyePoint, const Collision::Vector3
 
 	this->cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
 	return true;
+}
+
+void Camera::GetProjectionMatrix(Collision::Matrix4x4& matrix) const
+{
+	switch (this->viewMode)
+	{
+		case ViewMode::PERSPECTIVE:
+		{
+			this->frustum.GetToProjectionMatrix(matrix);
+			break;
+		}
+		case ViewMode::ORTHOGRAPHIC:
+		{
+			double width = this->orthoParams.width;
+			double height = this->orthoParams.height;
+
+			if (this->orthoParams.desiredAspectRatio != 0.0)
+			{
+				if (this->orthoParams.adjustWidth)
+					width += height * this->orthoParams.desiredAspectRatio - width;
+				else
+					height += width / this->orthoParams.desiredAspectRatio - height;
+			}
+
+			matrix.SetIdentity();
+			matrix.ele[0][0] = 2.0 / width;
+			matrix.ele[1][1] = 2.0 / height;
+			matrix.ele[2][2] = -1.0 / (this->orthoParams.farClip - this->orthoParams.nearClip);
+			matrix.ele[2][3] = -this->orthoParams.nearClip / (this->orthoParams.farClip - this->orthoParams.nearClip);
+			break;
+		}
+		default:
+		{
+			matrix.SetIdentity();
+			break;
+		}
+	}
 }
