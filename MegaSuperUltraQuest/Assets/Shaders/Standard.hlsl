@@ -9,9 +9,6 @@ SamplerState diffuseSampler : register(s0);
 Texture2D shadowTexture : register(t1);
 SamplerState shadowSampler : register(s1);
 
-// Note that no variable will straddle a 16-byte boundary,
-// so we have to take that into account when calculating
-// sizes and offsets.
 cbuffer constants : register(b0)
 {    
     float4x4 objectToProjection;

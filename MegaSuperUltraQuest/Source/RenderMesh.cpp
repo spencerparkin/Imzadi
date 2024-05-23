@@ -77,28 +77,28 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 
 		Matrix4x4 objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
 
-		if (shader->GetConstantInfo("object_to_projection", constant))
+		if (shader->GetConstantInfo("objectToProjection", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &objectToProjMat);
 
-		if (shader->GetConstantInfo("object_to_world", constant))
+		if (shader->GetConstantInfo("objectToWorld", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &objectToWorldMat);
 
-		if (shader->GetConstantInfo("light_direction", constant))
+		if (shader->GetConstantInfo("lightDirection", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightDirection);
 
-		if (shader->GetConstantInfo("directional_light_intensity", constant))
+		if (shader->GetConstantInfo("directionalLightIntensity", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().directionalLightIntensity);
 
-		if (shader->GetConstantInfo("ambient_light_intensity", constant))
+		if (shader->GetConstantInfo("ambientLightIntensity", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().ambientLightIntensity);
 
-		if (shader->GetConstantInfo("shininess_exponent", constant))
+		if (shader->GetConstantInfo("shininessExponent", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &this->surfaceProperties.shininessExponent);
 
-		if (shader->GetConstantInfo("light_color", constant))
+		if (shader->GetConstantInfo("lightColor", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &Game::Get()->GetLightParams().lightColor);
 
-		if (shader->GetConstantInfo("camera_eye_point", constant))
+		if (shader->GetConstantInfo("cameraEyePoint", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &camera->GetCameraToWorldTransform().translation);
 
 		deviceContext->Unmap(constantsBuffer, 0);
