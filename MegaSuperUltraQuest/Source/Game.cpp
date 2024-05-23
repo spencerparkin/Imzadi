@@ -24,6 +24,8 @@ Game::Game(HINSTANCE instance)
 	this->rasterizerState = NULL;
 	this->depthStencilState = NULL;
 	this->shadowBufferView = NULL;
+	this->shadowBufferViewForShader = NULL;
+	this->shadowBufferSamplerState = NULL;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
@@ -179,7 +181,7 @@ bool Game::Initialize()
 	shadowBufferDesc.ArraySize = 1;
 	shadowBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
 	shadowBufferDesc.SampleDesc.Count = 1;
-	shadowBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	shadowBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
 	shadowBufferDesc.Usage = D3D11_USAGE_DEFAULT;
 
 	ID3D11Texture2D* shadowBuffer = nullptr;
@@ -196,8 +198,32 @@ bool Game::Initialize()
 	if (FAILED(result))
 		return false;
 
+	D3D11_SHADER_RESOURCE_VIEW_DESC shadowShaderViewDesc{};
+	shadowShaderViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
+	shadowShaderViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+	shadowShaderViewDesc.Texture2D.MipLevels = 1;
+
+	result = this->device->CreateShaderResourceView(shadowBuffer, &shadowShaderViewDesc, &this->shadowBufferViewForShader);
+	if(FAILED(result))
+		return false;
+
 	shadowBuffer->Release();
 	shadowBuffer = nullptr;
+
+	D3D11_SAMPLER_DESC shadowSamplerDesc{};
+	shadowSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
+	shadowSamplerDesc.BorderColor[0] = 0.0f;
+	shadowSamplerDesc.BorderColor[1] = 0.0f;
+	shadowSamplerDesc.BorderColor[2] = 0.0f;
+	shadowSamplerDesc.BorderColor[3] = 0.0f;
+	shadowSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+	result = this->device->CreateSamplerState(&shadowSamplerDesc, &this->shadowBufferSamplerState);
+	if (FAILED(result))
+		return false;
 
 	this->assetCache.Set(new AssetCache());
 	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
@@ -353,6 +379,10 @@ void Game::Render()
 	this->deviceContext->OMSetRenderTargets(0, NULL, this->shadowBufferView);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
 	this->scene->Render(this->lightSourceCamera.Get(), RenderPass::SHADOW_PASS);
+	
+	// Not sure if this is necessary, but this will unbind the shadow buffer as a render target so that it can be bound later as a shader resource.
+	// Maybe it gets unbound anyway with the next OMSetRenderTargets call below?
+	this->deviceContext->OMSetRenderTargets(0, NULL, NULL);
 
 	// This is the main render pass.
 	FLOAT backgroundColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
@@ -361,6 +391,12 @@ void Game::Render()
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, this->depthStencilView);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
 	this->scene->Render(this->camera.Get(), RenderPass::MAIN_PASS);
+
+	// This will unbind the the shadow buffer as a shader resource so that it can be bound again as a render target.
+	ID3D11ShaderResourceView* shaderResourceViewArray[] = { NULL, NULL };
+	ID3D11SamplerState* samplerStateArray[] = { NULL, NULL };
+	this->deviceContext->PSSetShaderResources(0, 2, shaderResourceViewArray);
+	this->deviceContext->PSSetSamplers(0, 2, samplerStateArray);
 
 	this->swapChain->Present(1, 0);
 }
@@ -435,6 +471,18 @@ bool Game::Shutdown()
 	{
 		this->shadowBufferView->Release();
 		this->shadowBufferView = nullptr;
+	}
+
+	if (this->shadowBufferViewForShader)
+	{
+		this->shadowBufferViewForShader->Release();
+		this->shadowBufferViewForShader = nullptr;
+	}
+
+	if (this->shadowBufferSamplerState)
+	{
+		this->shadowBufferSamplerState->Release();
+		this->shadowBufferSamplerState = nullptr;
 	}
 
 	if (this->device)

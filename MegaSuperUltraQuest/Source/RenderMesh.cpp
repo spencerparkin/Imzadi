@@ -108,21 +108,26 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 
 	if (renderPass == RenderPass::MAIN_PASS)
 	{
+		std::vector<ID3D11ShaderResourceView*> shaderResourceViewArray;
+		std::vector<ID3D11SamplerState*> samplerStateArray;
+
 		if (texture)
 		{
-			ID3D11ShaderResourceView* textureView = texture->GetTextureView();
-			deviceContext->PSSetShaderResources(0, 1, &textureView);
-
-			ID3D11SamplerState* samplerState = texture->GetSamplerState();
-			deviceContext->PSSetSamplers(0, 1, &samplerState);
-
-			// TODO: Add the shadow buffer sampler here.
+			shaderResourceViewArray.push_back(texture->GetTextureView());
+			samplerStateArray.push_back(texture->GetSamplerState());
 		}
-		else
+
+		ID3D11ShaderResourceView* shadowBufferResourceView = Game::Get()->GetShadowBufferResourceViewForShader();
+		ID3D11SamplerState* shadowBufferSamplerState = Game::Get()->GetShadowBufferSamplerState();
+		
+		if (shadowBufferResourceView && shadowBufferSamplerState)
 		{
-			deviceContext->PSSetShaderResources(0, 0, NULL);
-			deviceContext->PSSetSamplers(0, 0, NULL);
+			shaderResourceViewArray.push_back(shadowBufferResourceView);
+			samplerStateArray.push_back(shadowBufferSamplerState);
 		}
+
+		deviceContext->PSSetShaderResources(0, shaderResourceViewArray.size(), shaderResourceViewArray.data());
+		deviceContext->PSSetSamplers(0, samplerStateArray.size(), samplerStateArray.data());
 	}
 	else if (renderPass == RenderPass::SHADOW_PASS)
 	{

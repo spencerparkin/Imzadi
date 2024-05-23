@@ -36,6 +36,8 @@ public:
 	ID3D11Device* GetDevice() { return this->device; }
 	ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
 	HWND GetMainWindowHandle() { return this->mainWindowHandle; }
+	ID3D11ShaderResourceView* GetShadowBufferResourceViewForShader() { return this->shadowBufferViewForShader; }
+	ID3D11SamplerState* GetShadowBufferSamplerState() { return this->shadowBufferSamplerState; }
 
 	struct LightParams
 	{
@@ -76,6 +78,8 @@ private:
 	ID3D11RasterizerState* rasterizerState;
 	ID3D11DepthStencilState* depthStencilState;
 	ID3D11DepthStencilView* shadowBufferView;
+	ID3D11ShaderResourceView* shadowBufferViewForShader;
+	ID3D11SamplerState* shadowBufferSamplerState;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
 	Reference<Camera> camera;
