@@ -20,7 +20,7 @@ public:
 	RenderMeshInstance();
 	virtual ~RenderMeshInstance();
 
-	virtual void Render(Camera* camera) override;
+	virtual void Render(Camera* camera, RenderPass renderPass) override;
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const override;
 
 	void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }
@@ -62,7 +62,8 @@ public:
 	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) override;
 
 	D3D_PRIMITIVE_TOPOLOGY GetPrimType() const { return this->primType; }
-	Shader* GetShader() { return this->shader.Get(); }
+	Shader* GetShader() { return this->mainPassShader.Get(); }
+	Shader* GetShadowShader() { return this->shadowPassShader.Get(); }
 	Buffer* GetVertexBuffer() { return this->vertexBuffer.Get(); }
 	Buffer* GetIndexBuffer() { return this->indexBuffer.Get(); }
 	Texture* GetTexture() { return this->texture.Get(); }
@@ -71,7 +72,8 @@ private:
 	D3D_PRIMITIVE_TOPOLOGY primType;
 	Reference<Buffer> vertexBuffer;
 	Reference<Buffer> indexBuffer;
-	Reference<Shader> shader;
+	Reference<Shader> mainPassShader;
+	Reference<Shader> shadowPassShader;
 	Reference<Texture> texture;
 	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 };

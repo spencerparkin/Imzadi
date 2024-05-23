@@ -43,6 +43,7 @@ public:
 		Collision::Vector4 lightColor;
 		double directionalLightIntensity;
 		double ambientLightIntensity;
+		double lightCameraDistance;
 	};
 
 	const LightParams& GetLightParams() const { return this->lightParams; }
@@ -51,6 +52,7 @@ public:
 private:
 
 	void Render();
+
 	Reference<RenderObject> LoadAndPlaceRenderMesh(
 			const std::string& renderMeshFile,
 			const Collision::Vector3& position,
@@ -73,9 +75,11 @@ private:
 	ID3D11DepthStencilView* depthStencilView;
 	ID3D11RasterizerState* rasterizerState;
 	ID3D11DepthStencilState* depthStencilState;
+	ID3D11DepthStencilView* shadowBufferView;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
 	Reference<Camera> camera;
+	Reference<Camera> lightSourceCamera;
 	LightParams lightParams;
 	static Game* gameSingleton;
 };

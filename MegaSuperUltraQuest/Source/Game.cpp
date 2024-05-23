@@ -23,12 +23,14 @@ Game::Game(HINSTANCE instance)
 	this->depthStencilView = NULL;
 	this->rasterizerState = NULL;
 	this->depthStencilState = NULL;
+	this->shadowBufferView = NULL;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
 	this->lightParams.lightColor.SetComponents(1.0, 1.0, 1.0, 1.0);
 	this->lightParams.directionalLightIntensity = 1.0;
 	this->lightParams.ambientLightIntensity = 0.02;
+	this->lightParams.lightCameraDistance = 50.0;
 }
 
 /*virtual*/ Game::~Game()
@@ -159,6 +161,43 @@ bool Game::Initialize()
 	result = this->device->CreateDepthStencilState(&depthStencilDesc, &this->depthStencilState);
 	if (FAILED(result))
 		return false;
+
+	Camera::OrthographicParams orthoParams{};
+	orthoParams.nearClip = 0.0;
+	orthoParams.farClip = 1000.0;
+	orthoParams.width = 200.0;
+	orthoParams.height = 200.0;
+
+	this->lightSourceCamera.Set(new Camera());
+	this->lightSourceCamera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
+	this->lightSourceCamera->SetOrthographicParams(orthoParams);
+
+	D3D11_TEXTURE2D_DESC shadowBufferDesc{};
+	shadowBufferDesc.Width = 1024;
+	shadowBufferDesc.Height = 1024;
+	shadowBufferDesc.MipLevels = 1;
+	shadowBufferDesc.ArraySize = 1;
+	shadowBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
+	shadowBufferDesc.SampleDesc.Count = 1;
+	shadowBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+	shadowBufferDesc.Usage = D3D11_USAGE_DEFAULT;
+
+	ID3D11Texture2D* shadowBuffer = nullptr;
+	result = this->device->CreateTexture2D(&shadowBufferDesc, NULL, &shadowBuffer);
+	if (FAILED(result))
+		return false;
+
+	D3D11_DEPTH_STENCIL_VIEW_DESC shadowViewDesc{};
+	shadowViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	shadowViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+	shadowViewDesc.Flags = 0;
+
+	result = this->device->CreateDepthStencilView(shadowBuffer, &shadowViewDesc, &this->shadowBufferView);
+	if (FAILED(result))
+		return false;
+
+	shadowBuffer->Release();
+	shadowBuffer = nullptr;
 
 	this->assetCache.Set(new AssetCache());
 	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
@@ -305,21 +344,23 @@ bool Game::Run()
 
 void Game::Render()
 {
+	this->deviceContext->RSSetState(rasterizerState);
+
+	// This is the shadow pass.
+	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
+	Vector3 lightCameraPosition = this->camera->GetEyePoint() - this->lightParams.lightCameraDistance * this->lightParams.lightDirection;
+	this->lightSourceCamera->LookAt(lightCameraPosition, this->camera->GetEyePoint(), Vector3(0.0, 1.0, 0.0));
+	this->deviceContext->OMSetRenderTargets(0, NULL, this->shadowBufferView);
+	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
+	this->scene->Render(this->lightSourceCamera.Get(), RenderPass::SHADOW_PASS);
+
+	// This is the main render pass.
 	FLOAT backgroundColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
 	this->deviceContext->ClearRenderTargetView(this->frameBufferView, backgroundColor);
-
 	this->deviceContext->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
-
-	// TODO: Do shadow pass here before the main pass.  I think we would set different render targets and
-	//       then call this->scene->render() with a different camera.  This would render into an off-screen
-	//       shadow depth map which would then be used in the main pass.
-
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, this->depthStencilView);
-
-	this->deviceContext->RSSetState(rasterizerState);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
-
-	this->scene->Render(this->camera.Get());
+	this->scene->Render(this->camera.Get(), RenderPass::MAIN_PASS);
 
 	this->swapChain->Present(1, 0);
 }
@@ -388,6 +429,12 @@ bool Game::Shutdown()
 	{
 		this->depthStencilState->Release();
 		this->depthStencilState = nullptr;
+	}
+
+	if (this->shadowBufferView)
+	{
+		this->shadowBufferView->Release();
+		this->shadowBufferView = nullptr;
 	}
 
 	if (this->device)

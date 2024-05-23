@@ -14,6 +14,7 @@
     "index_buffer": "Models\\Quad\\QuadIndices.buffer",
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
     "texture": "Models\\Quad\\Quad.texture",
     "vertex_buffer": "Models\\Quad\\QuadVertices.buffer"
 }

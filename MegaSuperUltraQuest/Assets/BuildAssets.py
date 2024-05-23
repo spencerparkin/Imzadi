@@ -178,6 +178,7 @@ def process_obj_file(obj_file, assets_base_dir):
         'vertex_buffer': os.path.relpath(vertex_buffer_file, assets_base_dir),
         'index_buffer': os.path.relpath(index_buffer_file, assets_base_dir),
         'shader': 'Shaders/Standard.shader',
+        'shadow_shader': 'Shaders/StandardShadow.shader',
         'primitive_type': 'TRIANGLE_LIST',
         'bounding_box': {
             'min': {'x': min_x, 'y': min_y, 'z': min_z},

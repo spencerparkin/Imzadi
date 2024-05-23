@@ -21,11 +21,25 @@ RenderMeshInstance::RenderMeshInstance()
 {
 }
 
-void RenderMeshInstance::Render(Camera* camera)
+void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 {
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
-	Shader* shader = this->mesh->GetShader();
+	Shader* shader = nullptr;
+	
+	switch (renderPass)
+	{
+	case RenderPass::MAIN_PASS:
+		shader = this->mesh->GetShader();
+		break;
+	case RenderPass::SHADOW_PASS:
+		shader = this->mesh->GetShadowShader();
+		break;
+	}
+
+	if (!shader)
+		return;
+
 	Buffer* vertexBuffer = this->mesh->GetVertexBuffer();
 	Buffer* indexBuffer = this->mesh->GetIndexBuffer();
 	Texture* texture = this->mesh->GetTexture();
@@ -92,15 +106,25 @@ void RenderMeshInstance::Render(Camera* camera)
 		deviceContext->PSSetConstantBuffers(0, 1, &constantsBuffer);
 	}
 
-	if (texture)
+	if (renderPass == RenderPass::MAIN_PASS)
 	{
-		ID3D11ShaderResourceView* textureView = texture->GetTextureView();
-		deviceContext->PSSetShaderResources(0, 1, &textureView);
+		if (texture)
+		{
+			ID3D11ShaderResourceView* textureView = texture->GetTextureView();
+			deviceContext->PSSetShaderResources(0, 1, &textureView);
 
-		ID3D11SamplerState* samplerState = texture->GetSamplerState();
-		deviceContext->PSSetSamplers(0, 1, &samplerState);
+			ID3D11SamplerState* samplerState = texture->GetSamplerState();
+			deviceContext->PSSetSamplers(0, 1, &samplerState);
+
+			// TODO: Add the shadow buffer sampler here.
+		}
+		else
+		{
+			deviceContext->PSSetShaderResources(0, 0, NULL);
+			deviceContext->PSSetSamplers(0, 0, NULL);
+		}
 	}
-	else
+	else if (renderPass == RenderPass::SHADOW_PASS)
 	{
 		deviceContext->PSSetShaderResources(0, 0, NULL);
 		deviceContext->PSSetSamplers(0, 0, NULL);
@@ -165,7 +189,16 @@ RenderMeshAsset::RenderMeshAsset()
 	if (!assetCache->GrabAsset(shaderFile, asset))
 		return false;
 
-	this->shader.SafeSet(asset.Get());
+	this->mainPassShader.SafeSet(asset.Get());
+
+	if (jsonDoc.HasMember("shadow_shader"))
+	{
+		std::string shadowShaderFile = jsonDoc["shadow_shader"].GetString();
+		if (!assetCache->GrabAsset(shadowShaderFile, asset))
+			return false;
+
+		this->shadowPassShader.SafeSet(asset.Get());
+	}
 
 	if (jsonDoc.HasMember("index_buffer"))
 	{

@@ -7,6 +7,12 @@
 class RenderObject;
 class Camera;
 
+enum RenderPass
+{
+	MAIN_PASS,
+	SHADOW_PASS
+};
+
 /**
  * This class represents the entire renderable scene and how we're viewing it.
  * It is a collection of RenderObject instances and can be asked to update and draw each frame.
@@ -33,8 +39,9 @@ public:
 	 * to the given camera.
 	 * 
 	 * @param[in] camera This is the camera to use to render the scene.
+	 * @param[in] renderPass Indicate the purpose of this render.
 	 */
-	void Render(Camera* camera);
+	void Render(Camera* camera, RenderPass renderPass);
 
 private:
 	typedef std::list<Reference<RenderObject>> RenderObjectList;
@@ -57,7 +64,7 @@ public:
 	RenderObject();
 	virtual ~RenderObject();
 
-	virtual void Render(Camera* camera) = 0;
+	virtual void Render(Camera* camera, RenderPass renderPass) = 0;
 
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const = 0;
 };

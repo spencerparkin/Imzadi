@@ -23,7 +23,7 @@ void Scene::AddRenderObject(Reference<RenderObject> renderObject)
 	this->renderObjectList.push_back(renderObject);
 }
 
-void Scene::Render(Camera* camera)
+void Scene::Render(Camera* camera, RenderPass renderPass)
 {
 	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
 	{
@@ -31,7 +31,7 @@ void Scene::Render(Camera* camera)
 		//if (!camera->IsApproximatelyVisible(renderObject.Get()))
 		//	continue;
 			
-		renderObject->Render(camera);
+		renderObject->Render(camera, renderPass);
 	}
 }
 

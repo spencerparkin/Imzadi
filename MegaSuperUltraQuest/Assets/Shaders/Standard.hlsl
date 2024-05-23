@@ -6,8 +6,6 @@
 Texture2D diffuseTexture : register(t0);
 SamplerState diffuseSampler : register(s0);
 
-//----------------------------- VS_Main -----------------------------
-
 // Note that no variable will straddle a 16-byte boundary,
 // so we have to take that into account when calculating
 // sizes and offsets.
@@ -43,6 +41,8 @@ struct VS_Output
     float2 texCoord : TEXCOORD;
     float3 normal : NORM;
 };
+
+//----------------------------- VS_Main -----------------------------
 
 VS_Output VS_Main(VS_Input input)
 {

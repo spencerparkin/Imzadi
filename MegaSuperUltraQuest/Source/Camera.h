@@ -88,6 +88,8 @@ public:
 	const OrthographicParams& GetOrthographicParameters() const { return this->orthoParams; }
 	void SetOrthographicParams(const OrthographicParams& orthoParams) { this->orthoParams = orthoParams; }
 
+	const Collision::Vector3& GetEyePoint() const { return this->cameraToWorld.translation; }
+
 private:
 	ViewMode viewMode;
 	OrthographicParams orthoParams;
