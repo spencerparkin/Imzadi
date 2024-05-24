@@ -151,11 +151,7 @@ Buffer::Buffer()
 
 /*virtual*/ bool Buffer::Unload()
 {
-	if (this->buffer)
-	{
-		this->buffer->Release();
-		this->buffer = nullptr;
-	}
+	SafeRelease(this->buffer);
 
 	return true;
 }

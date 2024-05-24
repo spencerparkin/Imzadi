@@ -277,41 +277,12 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 
 /*virtual*/ bool Shader::Unload()
 {
-	if (this->vsBlob)
-	{
-		this->vsBlob->Release();
-		this->vsBlob = nullptr;
-	}
+	SafeRelease(this->vsBlob);
+	SafeRelease(this->psBlob);
+	SafeRelease(this->vertexShader);
+	SafeRelease(this->pixelShader);
+	SafeRelease(this->inputLayout);
+	SafeRelease(this->constantsBuffer);
 
-	if (this->psBlob)
-	{
-		this->psBlob->Release();
-		this->psBlob = nullptr;
-	}
-
-	if (this->vertexShader)
-	{
-		this->vertexShader->Release();
-		this->vertexShader = nullptr;
-	}
-
-	if (this->pixelShader)
-	{
-		this->pixelShader->Release();
-		this->pixelShader = nullptr;
-	}
-
-	if (this->inputLayout)
-	{
-		this->inputLayout->Release();
-		this->inputLayout = nullptr;
-	}
-
-	if (this->constantsBuffer)
-	{
-		this->constantsBuffer->Release();
-		this->constantsBuffer = nullptr;
-	}
-
-	return false;
+	return true;
 }

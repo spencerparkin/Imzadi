@@ -91,3 +91,13 @@ private:
 	LightParams lightParams;
 	static Game* gameSingleton;
 };
+
+template<typename T>
+void SafeRelease(T*& thing)
+{
+	if (thing)
+	{
+		thing->Release();
+		thing = nullptr;
+	}
+}

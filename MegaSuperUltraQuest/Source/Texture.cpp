@@ -83,23 +83,9 @@ Texture::Texture()
 
 /*virtual*/ bool Texture::Unload()
 {
-	if (this->textureView)
-	{
-		this->textureView->Release();
-		this->textureView = nullptr;
-	}
+	SafeRelease(this->textureView);
+	SafeRelease(this->texture);
+	SafeRelease(this->samplerState);
 
-	if (this->texture)
-	{
-		this->texture->Release();
-		this->texture = nullptr;
-	}
-
-	if (this->samplerState)
-	{
-		this->samplerState->Release();
-		this->samplerState = nullptr;
-	}
-
-	return false;
+	return true;
 }

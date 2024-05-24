@@ -482,71 +482,17 @@ bool Game::Shutdown()
 		this->assetCache.Reset();
 	}
 
-	if (this->mainPassRasterizerState)
-	{
-		this->mainPassRasterizerState->Release();
-		this->mainPassRasterizerState = nullptr;
-	}
-
-	if (this->shadowPassRasterizerState)
-	{
-		this->shadowPassRasterizerState->Release();
-		this->shadowPassRasterizerState = nullptr;
-	}
-
-	if (this->depthStencilState)
-	{
-		this->depthStencilState->Release();
-		this->depthStencilState = nullptr;
-	}
-
-	if (this->shadowBufferView)
-	{
-		this->shadowBufferView->Release();
-		this->shadowBufferView = nullptr;
-	}
-
-	if (this->shadowBufferViewForShader)
-	{
-		this->shadowBufferViewForShader->Release();
-		this->shadowBufferViewForShader = nullptr;
-	}
-
-	if (this->shadowBufferSamplerState)
-	{
-		this->shadowBufferSamplerState->Release();
-		this->shadowBufferSamplerState = nullptr;
-	}
-
-	if (this->device)
-	{
-		this->device->Release();
-		this->device = nullptr;
-	}
-
-	if (this->deviceContext)
-	{
-		this->deviceContext->Release();
-		this->deviceContext = nullptr;
-	}
-
-	if (this->swapChain)
-	{
-		this->swapChain->Release();
-		this->swapChain = nullptr;
-	}
-
-	if (this->frameBufferView)
-	{
-		this->frameBufferView->Release();
-		this->frameBufferView = nullptr;
-	}
-
-	if (this->depthStencilView)
-	{
-		this->depthStencilView->Release();
-		this->depthStencilView = nullptr;
-	}
+	SafeRelease(this->mainPassRasterizerState);
+	SafeRelease(this->shadowPassRasterizerState);
+	SafeRelease(this->depthStencilState);
+	SafeRelease(this->shadowBufferView);
+	SafeRelease(this->shadowBufferViewForShader);
+	SafeRelease(this->shadowBufferSamplerState);
+	SafeRelease(this->device);
+	SafeRelease(this->deviceContext);
+	SafeRelease(this->swapChain);
+	SafeRelease(this->frameBufferView);
+	SafeRelease(this->depthStencilView);
 
 	if (this->mainWindowHandle)
 	{
