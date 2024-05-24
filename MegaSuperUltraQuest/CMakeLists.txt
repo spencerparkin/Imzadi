@@ -21,6 +21,18 @@ set(GAME_SOURCES
     Source/AssetCache.h
     Source/Reference.cpp
     Source/Reference.h
+    Source/Entity.cpp
+    Source/Entity.h
+    Source/Hero.cpp
+    Source/Hero.h
+    Source/Enemy.cpp
+    Source/Enemy.h
+    Source/Spectator.cpp
+    Source/Spectator.h
+    Source/Level.cpp
+    Source/Level.h
+    Source/FreeCam.cpp
+    Source/FreeCam.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})

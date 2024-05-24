@@ -62,6 +62,8 @@ bool Camera::LookAt(const Collision::Vector3& eyePoint, const Collision::Vector3
 	yAxis = zAxis.Cross(xAxis);
 
 	this->cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
+
+	this->worldToCameraValid = false;
 	return true;
 }
 

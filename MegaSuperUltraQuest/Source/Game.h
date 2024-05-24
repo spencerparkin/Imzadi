@@ -3,7 +3,10 @@
 #include <Windows.h>
 #include <d3d11.h>
 #include <string>
+#include <list>
+#include <time.h>
 #include "Reference.h"
+#include "Entity.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
@@ -14,6 +17,7 @@ class Scene;
 class AssetCache;
 class Camera;
 class RenderObject;
+class Entity;
 
 class Game
 {
@@ -52,14 +56,24 @@ public:
 	LightParams& GetLightParams() { return this->lightParams; }
 	Camera* GetLightSourceCamera() { return this->lightSourceCamera.Get(); }
 
-private:
-
-	void Render();
+	template<typename T>
+	T* SpawnEntity()
+	{
+		T* entity = new T();
+		entity->state = Entity::State::NEEDS_SETUP;
+		this->entityList.push_back(entity);
+		return entity;
+	}
 
 	Reference<RenderObject> LoadAndPlaceRenderMesh(
-			const std::string& renderMeshFile,
-			const Collision::Vector3& position,
-			const Collision::Quaternion& orientation);
+							const std::string& renderMeshFile,
+							const Collision::Vector3& position,
+							const Collision::Quaternion& orientation);
+
+private:
+
+	void AdvanceEntities(double deltaTimeSeconds, bool gameShuttingDown);
+	void Render();
 
 	LRESULT WndProc(UINT msg, WPARAM wParam, LPARAM lParam);
 
@@ -89,6 +103,8 @@ private:
 	Reference<Camera> camera;
 	Reference<Camera> lightSourceCamera;
 	LightParams lightParams;
+	std::list<Reference<Entity>> entityList;
+	clock_t lastTickTime;
 	static Game* gameSingleton;
 };
 

@@ -26,6 +26,7 @@ public:
 	void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }
 	void SetBoundingBox(const Collision::AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 	void SetObjectToWorldTransform(const Collision::Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
+	const Collision::Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
 
 	/**
 	 * These parameters are used in the lighting calculations of the surface of the mesh.

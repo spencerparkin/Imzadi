@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "RenderMesh.h"
 #include "Camera.h"
+#include "Level.h"
 #include "Math/Transform.h"
 #include <format>
 #include <math.h>
@@ -12,6 +13,7 @@ Game* Game::gameSingleton = nullptr;
 
 Game::Game(HINSTANCE instance)
 {
+	this->lastTickTime = 0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
 	this->keepRunning = false;
@@ -250,10 +252,8 @@ bool Game::Initialize()
 
 	this->scene.Set(new Scene());
 
-	this->LoadAndPlaceRenderMesh("Models/Box/Box.render_mesh", Vector3(-10.0, 6.0, 0.0), Quaternion(Vector3(1.0, 1.0, 0.0).Normalized(), M_PI / 4.0));
-	this->LoadAndPlaceRenderMesh("Models/Teapot/Teapot.render_mesh", Vector3(10.0, 6.0, 0.0), Quaternion());
-	this->LoadAndPlaceRenderMesh("Models/GroundPlane/GroundPlane.render_mesh", Vector3(), Quaternion());
-	//this->LoadAndPlaceRenderMesh("Models/Quad/Quad.render_mesh", Vector3(0.0, 0.0, 0.0), Quaternion());
+	Level* level = this->SpawnEntity<Level>();
+	level->SetLevelNumber(1);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
 
 	this->keepRunning = true;
 	return true;
@@ -286,17 +286,8 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 
 bool Game::RecreateViews()
 {
-	if (this->frameBufferView)
-	{
-		this->frameBufferView->Release();
-		this->frameBufferView = nullptr;
-	}
-
-	if (this->depthStencilView)
-	{
-		this->depthStencilView->Release();
-		this->depthStencilView = nullptr;
-	}
+	SafeRelease(this->frameBufferView);
+	SafeRelease(this->depthStencilView);
 
 	HRESULT result = 0;
 
@@ -363,6 +354,13 @@ bool Game::Run()
 {
 	while (this->keepRunning)
 	{
+		if (this->lastTickTime == 0)
+			this->lastTickTime = ::clock();
+
+		clock_t currentTickTime = ::clock();
+		clock_t deltaTickTime = currentTickTime - this->lastTickTime;
+		double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
+
 		MSG message{};
 		while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 		{
@@ -372,6 +370,8 @@ bool Game::Run()
 			TranslateMessage(&message);
 			DispatchMessage(&message);
 		}
+
+		this->AdvanceEntities(deltaTimeSeconds, false);
 
 		if (this->windowResized)
 		{
@@ -384,6 +384,46 @@ bool Game::Run()
 	}
 
 	return true;
+}
+
+void Game::AdvanceEntities(double deltaTimeSeconds, bool gameShuttingDown)
+{
+	// Note that we intend for the list to be modifable as we're iterating it here.
+	// An entity may add to our list at any time.  We may delete a list member at any time.
+	std::list<Reference<Entity>>::iterator iter = this->entityList.begin();
+	while (iter != this->entityList.end())
+	{
+		std::list<Reference<Entity>>::iterator nextIter(iter);
+		nextIter++;
+
+		Entity* entity = *iter;
+
+		switch (entity->state)
+		{
+			case Entity::NEEDS_SETUP:
+			{
+				if (!entity->Setup())
+					entity->state = Entity::NEEDS_SHUTDOWN;
+				else
+					entity->state = Entity::NEEDS_TICK;
+				break;
+			}
+			case Entity::NEEDS_TICK:
+			{
+				entity->Tick(deltaTimeSeconds);
+				break;
+			}
+			case Entity::NEEDS_SHUTDOWN:
+			{
+				entity->Shutdown(gameShuttingDown);
+				entity->state = Entity::State::AWAITING_DELETION;
+				this->entityList.erase(iter);
+				break;
+			}
+		}
+
+		iter = nextIter;
+	}
 }
 
 void Game::Render()
@@ -469,6 +509,12 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 bool Game::Shutdown()
 {
 	// TODO: Do we need to wait for the GPU to finish?!
+
+	for (Entity* entity : this->entityList)
+		entity->state = Entity::State::NEEDS_SHUTDOWN;
+
+	while (this->entityList.size() > 0)
+		this->AdvanceEntities(0.0, true);
 
 	if (this->scene)
 	{

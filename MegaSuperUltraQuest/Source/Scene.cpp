@@ -27,6 +27,9 @@ void Scene::Render(Camera* camera, RenderPass renderPass)
 {
 	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
 	{
+		if (renderObject->IsHidden())
+			continue;
+
 		// TODO: Activate this code when ready.
 		//if (!camera->IsApproximatelyVisible(renderObject.Get()))
 		//	continue;
@@ -39,6 +42,7 @@ void Scene::Render(Camera* camera, RenderPass renderPass)
 
 RenderObject::RenderObject()
 {
+	this->hide = false;
 }
 
 /*virtual*/ RenderObject::~RenderObject()

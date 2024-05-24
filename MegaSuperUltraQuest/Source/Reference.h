@@ -10,6 +10,9 @@
  * sure that only one of these is inherited.  Otherwise, you could get a double-delete.
  * 
  * This class works in conjunction with the Reference class.
+ * 
+ * Note that it is possible to create a memory leak by creating a direct or indirect
+ * circular reference.
  */
 class ReferenceCounted
 {
