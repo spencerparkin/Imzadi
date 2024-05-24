@@ -21,7 +21,8 @@ Game::Game(HINSTANCE instance)
 	this->swapChain = NULL;
 	this->frameBufferView = NULL;
 	this->depthStencilView = NULL;
-	this->rasterizerState = NULL;
+	this->mainPassRasterizerState = NULL;
+	this->shadowPassRasterizerState = NULL;
 	this->depthStencilState = NULL;
 	this->shadowBufferView = NULL;
 	this->shadowBufferViewForShader = NULL;
@@ -140,17 +141,17 @@ bool Game::Initialize()
 	if (!this->RecreateViews())
 		return false;
 
-	D3D11_RASTERIZER_DESC rasterizerDesc{};
-	rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	rasterizerDesc.CullMode = D3D11_CULL_BACK;
-	rasterizerDesc.FrontCounterClockwise = TRUE;
-	rasterizerDesc.DepthBias = 0;
-	rasterizerDesc.DepthClipEnable = TRUE;
-	rasterizerDesc.ScissorEnable = FALSE;
-	rasterizerDesc.MultisampleEnable = FALSE;
-	rasterizerDesc.AntialiasedLineEnable = FALSE;
+	D3D11_RASTERIZER_DESC mainPassRasterizerDesc{};
+	mainPassRasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	mainPassRasterizerDesc.CullMode = D3D11_CULL_BACK;
+	mainPassRasterizerDesc.FrontCounterClockwise = TRUE;
+	mainPassRasterizerDesc.DepthBias = 0;
+	mainPassRasterizerDesc.DepthClipEnable = TRUE;
+	mainPassRasterizerDesc.ScissorEnable = FALSE;
+	mainPassRasterizerDesc.MultisampleEnable = FALSE;
+	mainPassRasterizerDesc.AntialiasedLineEnable = FALSE;
 
-	result = this->device->CreateRasterizerState(&rasterizerDesc, &this->rasterizerState);
+	result = this->device->CreateRasterizerState(&mainPassRasterizerDesc, &this->mainPassRasterizerState);
 	if (FAILED(result))
 		return false;
 
@@ -163,6 +164,20 @@ bool Game::Initialize()
 	depthStencilDesc.StencilWriteMask = 0;
 
 	result = this->device->CreateDepthStencilState(&depthStencilDesc, &this->depthStencilState);
+	if (FAILED(result))
+		return false;
+
+	D3D11_RASTERIZER_DESC shadowPassRasterizerDesc{};
+	shadowPassRasterizerDesc.FillMode = D3D11_FILL_SOLID;
+	shadowPassRasterizerDesc.CullMode = D3D11_CULL_NONE;
+	shadowPassRasterizerDesc.FrontCounterClockwise = TRUE;
+	shadowPassRasterizerDesc.DepthBias = 0;
+	shadowPassRasterizerDesc.DepthClipEnable = TRUE;
+	shadowPassRasterizerDesc.ScissorEnable = FALSE;
+	shadowPassRasterizerDesc.MultisampleEnable = FALSE;
+	shadowPassRasterizerDesc.AntialiasedLineEnable = FALSE;
+
+	result = this->device->CreateRasterizerState(&shadowPassRasterizerDesc, &this->shadowPassRasterizerState);
 	if (FAILED(result))
 		return false;
 
@@ -373,8 +388,6 @@ bool Game::Run()
 
 void Game::Render()
 {
-	this->deviceContext->RSSetState(rasterizerState);
-
 	Vector3 lightCameraPosition = this->camera->GetEyePoint() - this->lightParams.lightCameraDistance * this->lightParams.lightDirection;
 	if (!this->lightSourceCamera->LookAt(lightCameraPosition, this->camera->GetEyePoint(), Vector3(0.0, 1.0, 0.0)))
 	{
@@ -385,6 +398,7 @@ void Game::Render()
 	}
 
 	// This is the shadow pass.
+	this->deviceContext->RSSetState(this->shadowPassRasterizerState);
 	this->deviceContext->RSSetViewports(1, &this->shadowPassViewport);
 	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->deviceContext->OMSetRenderTargets(0, NULL, this->shadowBufferView);
@@ -397,6 +411,7 @@ void Game::Render()
 
 	// This is the main render pass.
 	FLOAT backgroundColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	this->deviceContext->RSSetState(this->mainPassRasterizerState);
 	this->deviceContext->RSSetViewports(1, &this->mainPassViewport);
 	this->deviceContext->ClearRenderTargetView(this->frameBufferView, backgroundColor);
 	this->deviceContext->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -467,10 +482,16 @@ bool Game::Shutdown()
 		this->assetCache.Reset();
 	}
 
-	if (this->rasterizerState)
+	if (this->mainPassRasterizerState)
 	{
-		this->rasterizerState->Release();
-		this->rasterizerState = nullptr;
+		this->mainPassRasterizerState->Release();
+		this->mainPassRasterizerState = nullptr;
+	}
+
+	if (this->shadowPassRasterizerState)
+	{
+		this->shadowPassRasterizerState->Release();
+		this->shadowBufferSamplerState = nullptr;
 	}
 
 	if (this->depthStencilState)
