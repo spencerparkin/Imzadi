@@ -81,6 +81,8 @@ private:
 	ID3D11DepthStencilView* shadowBufferView;
 	ID3D11ShaderResourceView* shadowBufferViewForShader;
 	ID3D11SamplerState* shadowBufferSamplerState;
+	D3D11_VIEWPORT mainPassViewport;
+	D3D11_VIEWPORT shadowPassViewport;
 	Reference<Scene> scene;
 	Reference<AssetCache> assetCache;
 	Reference<Camera> camera;

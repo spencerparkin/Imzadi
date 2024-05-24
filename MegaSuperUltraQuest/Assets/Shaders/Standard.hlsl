@@ -69,20 +69,23 @@ VS_Output VS_Main(VS_Input input)
 
 float4 PS_Main(VS_Output input) : SV_TARGET
 {
-    float lambda = dot(lightCameraEyePoint - input.worldPosition.xyz, lightDirection);
-    float3 lightCameraPoint = input.worldPosition.xyz + lambda * lightDirection;
-    float lightCameraPointX = dot(lightCameraPoint, lightCameraXAxis);
-    float lightCameraPointY = dot(lightCameraPoint, lightCameraYAxis);
-    float2 lightCameraUVs;
-    lightCameraUVs.x = lightCameraPointX / lightCameraWidth + 0.5;
-    lightCameraUVs.y = lightCameraPointY / lightCameraHeight + 0.5;   
-    float depth = shadowTexture.Sample(shadowSampler, lightCameraUVs);
-    float shadowBufferDistance = lightCameraNear + depth * (lightCameraFar - lightCameraNear);
-    float surfacePointDistance = abs(lambda);
-    float tolerance = 1e-5;
     float shadowFactor = 1.0;
-    if(shadowBufferDistance + tolerance < surfacePointDistance)
-        shadowFactor = 0.5;
+    if(dot(lightDirection, input.normal) < -0.1)
+    {
+        float lambda = dot(lightCameraEyePoint - input.worldPosition, lightDirection);
+        float3 lightCameraPoint = input.worldPosition + lambda * lightDirection;
+        float lightCameraPointX = dot(lightCameraPoint - lightCameraEyePoint, lightCameraXAxis);
+        float lightCameraPointY = dot(lightCameraPoint - lightCameraEyePoint, lightCameraYAxis);
+        float2 lightCameraUVs;
+        lightCameraUVs.x = lightCameraPointX / lightCameraWidth + 0.5;
+        lightCameraUVs.y = -lightCameraPointY / lightCameraHeight + 0.5;
+        float depth = shadowTexture.Sample(shadowSampler, lightCameraUVs);
+        float shadowBufferDistance = lightCameraNear + depth * (lightCameraFar - lightCameraNear);
+        float surfacePointDistance = abs(lambda);
+        float tolerance = 0.5;
+        if(shadowBufferDistance + tolerance < surfacePointDistance)
+            shadowFactor = 0.5;
+    }
 
     float3 lightReflectionDirection = lightDirection - 2.0 * dot(lightDirection, input.normal) * input.normal;
     float3 directionToViewer = normalize(cameraEyePoint - input.position.xyz);

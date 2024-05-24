@@ -31,8 +31,10 @@ Game::Game(HINSTANCE instance)
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
 	this->lightParams.lightColor.SetComponents(1.0, 1.0, 1.0, 1.0);
 	this->lightParams.directionalLightIntensity = 1.0;
-	this->lightParams.ambientLightIntensity = 0.02;
+	this->lightParams.ambientLightIntensity = 0.1;
 	this->lightParams.lightCameraDistance = 50.0;
+	ZeroMemory(&this->mainPassViewport, sizeof(D3D11_VIEWPORT));
+	ZeroMemory(&this->shadowPassViewport, sizeof(D3D11_VIEWPORT));
 }
 
 /*virtual*/ Game::~Game()
@@ -174,9 +176,16 @@ bool Game::Initialize()
 	this->lightSourceCamera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
 	this->lightSourceCamera->SetOrthographicParams(orthoParams);
 
+	this->shadowPassViewport.Width = 2048.0f;
+	this->shadowPassViewport.Height = 2048.0f;
+	this->shadowPassViewport.TopLeftX = 0.0f;
+	this->shadowPassViewport.TopLeftY = 0.0f;
+	this->shadowPassViewport.MinDepth = 0.0f;
+	this->shadowPassViewport.MaxDepth = 1.0f;
+
 	D3D11_TEXTURE2D_DESC shadowBufferDesc{};
-	shadowBufferDesc.Width = 1024;
-	shadowBufferDesc.Height = 1024;
+	shadowBufferDesc.Width = 2048;
+	shadowBufferDesc.Height = 2048;
 	shadowBufferDesc.MipLevels = 1;
 	shadowBufferDesc.ArraySize = 1;
 	shadowBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
@@ -316,16 +325,14 @@ bool Game::RecreateViews()
 	RECT clientRect;
 	GetClientRect(this->mainWindowHandle, &clientRect);
 
-	D3D11_VIEWPORT viewport;
-	viewport.TopLeftX = 0.0f;
-	viewport.TopLeftY = 0.0f;
-	viewport.Width = FLOAT(clientRect.right - clientRect.left);
-	viewport.Height = FLOAT(clientRect.bottom - clientRect.top);
-	viewport.MinDepth = 0.0f;
-	viewport.MaxDepth = 1.0f;
-	this->deviceContext->RSSetViewports(1, &viewport);
+	this->mainPassViewport.TopLeftX = 0.0f;
+	this->mainPassViewport.TopLeftY = 0.0f;
+	this->mainPassViewport.Width = FLOAT(clientRect.right - clientRect.left);
+	this->mainPassViewport.Height = FLOAT(clientRect.bottom - clientRect.top);
+	this->mainPassViewport.MinDepth = 0.0f;
+	this->mainPassViewport.MaxDepth = 1.0f;
 
-	double aspectRatio = double(viewport.Width) / double(viewport.Height);
+	double aspectRatio = double(mainPassViewport.Width) / double(mainPassViewport.Height);
 
 	Frustum frustum;
 	frustum.SetFromAspectRatio(aspectRatio, M_PI / 3.0, 0.1, 1000.0);
@@ -368,10 +375,18 @@ void Game::Render()
 {
 	this->deviceContext->RSSetState(rasterizerState);
 
-	// This is the shadow pass.
-	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	Vector3 lightCameraPosition = this->camera->GetEyePoint() - this->lightParams.lightCameraDistance * this->lightParams.lightDirection;
-	this->lightSourceCamera->LookAt(lightCameraPosition, this->camera->GetEyePoint(), Vector3(0.0, 1.0, 0.0));
+	if (!this->lightSourceCamera->LookAt(lightCameraPosition, this->camera->GetEyePoint(), Vector3(0.0, 1.0, 0.0)))
+	{
+		Transform lightCameraToWorld;
+		lightCameraToWorld.translation = lightCameraPosition;
+		lightCameraToWorld.matrix.SetColumnVectors(Vector3(1.0, 0.0, 0.0), Vector3(0.0, 0.0, -1.0), Vector3(0.0, 1.0, 0.0));
+		this->lightSourceCamera->SetCameraToWorldTransform(lightCameraToWorld);
+	}
+
+	// This is the shadow pass.
+	this->deviceContext->RSSetViewports(1, &this->shadowPassViewport);
+	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->deviceContext->OMSetRenderTargets(0, NULL, this->shadowBufferView);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
 	this->scene->Render(this->lightSourceCamera.Get(), RenderPass::SHADOW_PASS);
@@ -382,6 +397,7 @@ void Game::Render()
 
 	// This is the main render pass.
 	FLOAT backgroundColor[4] = { 0.0f, 0.0f, 0.0f, 1.0f };
+	this->deviceContext->RSSetViewports(1, &this->mainPassViewport);
 	this->deviceContext->ClearRenderTargetView(this->frameBufferView, backgroundColor);
 	this->deviceContext->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, this->depthStencilView);
