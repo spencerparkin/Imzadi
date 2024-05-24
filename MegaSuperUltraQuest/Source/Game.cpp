@@ -491,7 +491,7 @@ bool Game::Shutdown()
 	if (this->shadowPassRasterizerState)
 	{
 		this->shadowPassRasterizerState->Release();
-		this->shadowBufferSamplerState = nullptr;
+		this->shadowPassRasterizerState = nullptr;
 	}
 
 	if (this->depthStencilState)
