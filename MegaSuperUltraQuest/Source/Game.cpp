@@ -212,13 +212,9 @@ bool Game::Initialize()
 
 	D3D11_SAMPLER_DESC shadowSamplerDesc{};
 	shadowSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_BORDER;
-	shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_BORDER;
-	shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_BORDER;
-	shadowSamplerDesc.BorderColor[0] = 0.0f;
-	shadowSamplerDesc.BorderColor[1] = 0.0f;
-	shadowSamplerDesc.BorderColor[2] = 0.0f;
-	shadowSamplerDesc.BorderColor[3] = 0.0f;
+	shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
 	shadowSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
 
 	result = this->device->CreateSamplerState(&shadowSamplerDesc, &this->shadowBufferSamplerState);

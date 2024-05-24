@@ -26,6 +26,15 @@ cbuffer constants : register(b0)
     
     // This is the world location of the camera view point.
     float3 cameraEyePoint;
+    
+    // These are additional variables needed for the shadow calculations.
+    float3 lightCameraEyePoint;
+    float3 lightCameraXAxis;
+    float3 lightCameraYAxis;
+    float lightCameraWidth;
+    float lightCameraHeight;
+    float lightCameraNear;
+    float lightCameraFar;
 };
 
 struct VS_Input
@@ -40,6 +49,7 @@ struct VS_Output
     float4 position : SV_POSITION;
     float2 texCoord : TEXCOORD;
     float3 normal : NORM;
+    float3 worldPosition : POS;
 };
 
 //----------------------------- VS_Main -----------------------------
@@ -51,6 +61,7 @@ VS_Output VS_Main(VS_Input input)
     output.position /= output.position.w;
     output.texCoord = input.texCoord;
     output.normal = mul(objectToWorld, float4(input.normal, 0.0)).xyz;  // We are assuming no shear or scale here.
+    output.worldPosition = mul(objectToWorld, float4(input.position, 1.0)).xyz;
     return output;
 }
 
@@ -58,6 +69,21 @@ VS_Output VS_Main(VS_Input input)
 
 float4 PS_Main(VS_Output input) : SV_TARGET
 {
+    float lambda = dot(lightCameraEyePoint - input.worldPosition.xyz, lightDirection);
+    float3 lightCameraPoint = input.worldPosition.xyz + lambda * lightDirection;
+    float lightCameraPointX = dot(lightCameraPoint, lightCameraXAxis);
+    float lightCameraPointY = dot(lightCameraPoint, lightCameraYAxis);
+    float2 lightCameraUVs;
+    lightCameraUVs.x = lightCameraPointX / lightCameraWidth + 0.5;
+    lightCameraUVs.y = lightCameraPointY / lightCameraHeight + 0.5;   
+    float depth = shadowTexture.Sample(shadowSampler, lightCameraUVs);
+    float shadowBufferDistance = lightCameraNear + depth * (lightCameraFar - lightCameraNear);
+    float surfacePointDistance = abs(lambda);
+    float tolerance = 1e-5;
+    float shadowFactor = 1.0;
+    if(shadowBufferDistance + tolerance < surfacePointDistance)
+        shadowFactor = 0.5;
+
     float3 lightReflectionDirection = lightDirection - 2.0 * dot(lightDirection, input.normal) * input.normal;
     float3 directionToViewer = normalize(cameraEyePoint - input.position.xyz);
     float4 diffuseColor = diffuseTexture.Sample(diffuseSampler, input.texCoord);
@@ -65,7 +91,6 @@ float4 PS_Main(VS_Output input) : SV_TARGET
     // This is my approximation of the Phong lighting model.  Colors here are
     // all properties of the surface material, and I think I'm only assuming
     // we have white light here.
-    // TODO: Factor a shadow-map into this calculation once we have that ready.
     float4 color = float4(0.0, 0.0, 0.0, 1.0);
     
     // Add the ambient component.
@@ -76,6 +101,9 @@ float4 PS_Main(VS_Output input) : SV_TARGET
     
     // Add the specular component.
     color += pow(clamp(dot(directionToViewer, lightReflectionDirection), 0.0, 1.0), shininessExponent) * float4(1.0, 1.0, 1.0, 0.0);
+    
+    // Lastly, account for the shadow factor.
+    color *= shadowFactor;
     
     // We're always opaque.
     color.a = 1.0;

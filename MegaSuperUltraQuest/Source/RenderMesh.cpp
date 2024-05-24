@@ -101,6 +101,48 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 		if (shader->GetConstantInfo("cameraEyePoint", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &camera->GetCameraToWorldTransform().translation);
 
+		if (renderPass == RenderPass::MAIN_PASS)
+		{
+			Camera* lightSourceCamera = Game::Get()->GetLightSourceCamera();
+			if (lightSourceCamera)
+			{
+				const Transform& lightCameraToWorld = lightSourceCamera->GetCameraToWorldTransform();
+				const Camera::OrthographicParams& orthoParams = lightSourceCamera->GetOrthographicParameters();
+
+				Vector3 lightCameraEyePoint = lightCameraToWorld.translation;
+				Vector3 lightCameraXAxis, lightCameraYAxis, lightCameraZAxis;
+				double lightCameraWidth = 0.0, lightCameraHeight = 0.0;
+				double lightCameraNear = 0.0, lightCameraFar = 0.0;
+
+				lightCameraToWorld.matrix.GetColumnVectors(lightCameraXAxis, lightCameraYAxis, lightCameraZAxis);
+				lightCameraWidth = orthoParams.width;
+				lightCameraHeight = orthoParams.height;
+				lightCameraNear = orthoParams.nearClip;
+				lightCameraFar = orthoParams.farClip;
+
+				if (shader->GetConstantInfo("lightCameraEyePoint", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraEyePoint);
+
+				if (shader->GetConstantInfo("lightCameraXAxis", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraXAxis);
+
+				if (shader->GetConstantInfo("lightCameraYAxis", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraYAxis);
+
+				if (shader->GetConstantInfo("lightCameraWidth", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraWidth);
+
+				if (shader->GetConstantInfo("lightCameraHeight", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraHeight);
+
+				if (shader->GetConstantInfo("lightCameraNear", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraNear);
+
+				if (shader->GetConstantInfo("lightCameraFar", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &lightCameraFar);
+			}
+		}
+
 		deviceContext->Unmap(constantsBuffer, 0);
 		deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);
 		deviceContext->PSSetConstantBuffers(0, 1, &constantsBuffer);

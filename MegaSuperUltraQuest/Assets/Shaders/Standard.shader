@@ -15,6 +15,41 @@
             "size": 4,
             "type": "float"
         },
+        "lightCameraEyePoint": {
+            "offset": 176,
+            "size": 12,
+            "type": "float"
+        },
+        "lightCameraFar": {
+            "offset": 232,
+            "size": 4,
+            "type": "float"
+        },
+        "lightCameraHeight": {
+            "offset": 224,
+            "size": 4,
+            "type": "float"
+        },
+        "lightCameraNear": {
+            "offset": 228,
+            "size": 4,
+            "type": "float"
+        },
+        "lightCameraWidth": {
+            "offset": 220,
+            "size": 4,
+            "type": "float"
+        },
+        "lightCameraXAxis": {
+            "offset": 192,
+            "size": 12,
+            "type": "float"
+        },
+        "lightCameraYAxis": {
+            "offset": 208,
+            "size": 12,
+            "type": "float"
+        },
         "lightDirection": {
             "offset": 128,
             "size": 12,

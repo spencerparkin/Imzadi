@@ -50,6 +50,7 @@ public:
 
 	const LightParams& GetLightParams() const { return this->lightParams; }
 	LightParams& GetLightParams() { return this->lightParams; }
+	Camera* GetLightSourceCamera() { return this->lightSourceCamera.Get(); }
 
 private:
 
