@@ -18,6 +18,16 @@ public:
 	bool IsEnabled() const { return this->enabled; }
 
 private:
+
+	enum StrafeMode
+	{
+		XZ_PLANE,
+		XY_PLANE
+	};
+
 	Reference<Camera> camera;
 	bool enabled;
+	double strafeSpeed;
+	double rotationRate;
+	StrafeMode strafeMode;
 };

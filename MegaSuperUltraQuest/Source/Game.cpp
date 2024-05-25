@@ -11,7 +11,7 @@ using namespace Collision;
 
 Game* Game::gameSingleton = nullptr;
 
-Game::Game(HINSTANCE instance)
+Game::Game(HINSTANCE instance) : controller(0)
 {
 	this->lastTickTime = 0;
 	this->instance = instance;
@@ -360,6 +360,7 @@ bool Game::Run()
 		clock_t currentTickTime = ::clock();
 		clock_t deltaTickTime = currentTickTime - this->lastTickTime;
 		double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
+		this->lastTickTime = currentTickTime;
 
 		MSG message{};
 		while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
@@ -371,6 +372,7 @@ bool Game::Run()
 			DispatchMessage(&message);
 		}
 
+		this->controller.Update();
 		this->AdvanceEntities(deltaTimeSeconds);
 
 		if (this->windowResized)

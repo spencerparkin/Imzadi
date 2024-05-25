@@ -79,6 +79,21 @@ namespace Collision
 		void SetRowVectors(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis);
 
 		/**
+		 * Return the i^{th} row-vector of this matrix.
+		 * 
+		 * @param[in] i This is an integer in [0,2] specifying the desired row.
+		 */
+		Vector3 GetRowVector(int i) const;
+
+		/**
+		 * Set the i^{th} row-vector of this matrix.
+		 * 
+		 * @param[in] i This is an integer in [0,2] specifying the desired row.
+		 * @return The ith row is returned as a vector, left to right.
+		 */
+		void SetRowVector(int i, const Vector3& vector);
+
+		/**
 		 * Return the columns of this matrix from left to right in the given vectors in
 		 * the order given.
 		 * 
@@ -97,6 +112,21 @@ namespace Collision
 		 * @param[in] zAxis This vector is assigned to the third column.
 		 */
 		void SetColumnVectors(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis);
+
+		/**
+		 * Return the ith column-vector of this matrix.
+		 *
+		 * @param[in] i This is an integer in [0,2] specifying the desired column.
+		 */
+		Vector3 GetColumnVector(int i) const;
+
+		/**
+		 * Set the i^{th} column-vector of this matrix.
+		 *
+		 * @param[in] i This is an integer in [0,2] specifying the desired column.
+		 * @return The i^{th} column is returned as a vector, top to bottom.
+		 */
+		void SetColumnVector(int i, const Vector3& vector);
 
 		/**
 		 * Formulate this matrix as a rotation matrix that performs the rotation
@@ -172,9 +202,10 @@ namespace Collision
 		 * 
 		 * Note that this method does not change the sign of the determinant of the matrix.
 		 * 
+		 * @param[in] anchorAxis This is one of (not an Or-ing of) the COLL_SYS_AXIS_FLAG_* defines, and indicates the anchor-axis used for the orthonormalization process.
 		 * @return An orthonormal matrix is returned as the result of the Gram-Schmit process performed on this matrix.
 		 */
-		Matrix3x3 Orthonormalized() const;
+		Matrix3x3 Orthonormalized(uint32_t anchorAxis) const;
 
 		/**
 		 * Calculate and return the inverse of this matrix.

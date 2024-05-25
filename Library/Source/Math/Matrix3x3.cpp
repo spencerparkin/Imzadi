@@ -105,6 +105,22 @@ void Matrix3x3::SetRowVectors(const Vector3& xAxis, const Vector3& yAxis, const 
 	this->ele[2][2] = zAxis.z;
 }
 
+Vector3 Matrix3x3::GetRowVector(int i) const
+{
+	return Vector3(
+		this->ele[i][0],
+		this->ele[i][1],
+		this->ele[i][2]
+	);
+}
+
+void Matrix3x3::SetRowVector(int i, const Vector3& vector)
+{
+	this->ele[i][0] = vector.x;
+	this->ele[i][1] = vector.y;
+	this->ele[i][2] = vector.z;
+}
+
 void Matrix3x3::GetColumnVectors(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) const
 {
 	xAxis.x = this->ele[0][0];
@@ -133,6 +149,22 @@ void Matrix3x3::SetColumnVectors(const Vector3& xAxis, const Vector3& yAxis, con
 	this->ele[0][2] = zAxis.x;
 	this->ele[1][2] = zAxis.y;
 	this->ele[2][2] = zAxis.z;
+}
+
+Vector3 Matrix3x3::GetColumnVector(int i) const
+{
+	return Vector3(
+		this->ele[0][i],
+		this->ele[1][i],
+		this->ele[2][i]
+	);
+}
+
+void Matrix3x3::SetColumnVector(int i, const Vector3& vector)
+{
+	this->ele[0][i] = vector.x;
+	this->ele[1][i] = vector.y;
+	this->ele[2][i] = vector.z;
 }
 
 void Matrix3x3::SetFromAxisAngle(const Vector3& unitAxis, double angle)
@@ -251,14 +283,35 @@ void Matrix3x3::SetNonUniformScale(const Vector3& scale)
 	this->ele[2][2] = scale.z;
 }
 
-Matrix3x3 Matrix3x3::Orthonormalized() const
+Matrix3x3 Matrix3x3::Orthonormalized(uint32_t anchorAxis) const
 {
 	Vector3 xAxis, yAxis, zAxis;
 	this->GetColumnVectors(xAxis, yAxis, zAxis);
 
-	xAxis.Normalize();
-	yAxis = yAxis.RejectedFrom(xAxis).Normalized();
-	zAxis = zAxis.RejectedFrom(xAxis).RejectedFrom(yAxis).Normalized();
+	switch (anchorAxis)
+	{
+		case COLL_SYS_AXIS_FLAG_X:
+		{
+			xAxis.Normalize();
+			yAxis = yAxis.RejectedFrom(xAxis).Normalized();
+			zAxis = zAxis.RejectedFrom(xAxis).RejectedFrom(yAxis).Normalized();
+			break;
+		}
+		case COLL_SYS_AXIS_FLAG_Y:
+		{
+			yAxis.Normalize();
+			zAxis = zAxis.RejectedFrom(yAxis).Normalized();
+			xAxis = xAxis.RejectedFrom(yAxis).RejectedFrom(zAxis).Normalized();
+			break;
+		}
+		case COLL_SYS_AXIS_FLAG_Z:
+		{
+			zAxis.Normalize();
+			xAxis = xAxis.RejectedFrom(zAxis).Normalized();
+			yAxis = yAxis.RejectedFrom(zAxis).RejectedFrom(xAxis).Normalized();
+			break;
+		}
+	}
 
 	Matrix3x3 result;
 	result.SetColumnVectors(xAxis, yAxis, zAxis);

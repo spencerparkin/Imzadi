@@ -418,7 +418,7 @@ void Canvas::Tick()
 					yAxisRotation.matrix.SetFromAxisAngle(yAxis, yAngle);
 
 					shapeToWorld = shapeToWorld * xAxisRotation * yAxisRotation;
-					shapeToWorld.matrix.Orthonormalized();
+					shapeToWorld.matrix.Orthonormalized(COLL_SYS_AXIS_FLAG_X);
 
 					auto command = system->Create<ObjectToWorldCommand>();
 					command->objectToWorld = shapeToWorld;

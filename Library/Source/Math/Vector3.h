@@ -303,6 +303,19 @@ namespace Collision
 		 */
 		void Restore(std::istream& stream);
 
+		/**
+		 * Calculate and return the angle between this vector and the given vector.
+		 * Note that we assume that _both_ this vector and the given vector are of
+		 * unit length.  If this is not the case, then we leave our result as undefined.
+		 * 
+		 * @param[in] unitVector This is a unit-length vector against which this vector is measured.
+		 * @return The angle between this vector and the given vector is returned in radians.
+		 */
+		double AngleBetween(const Vector3& unitVector) const
+		{
+			return ::acos(this->Dot(unitVector));
+		}
+
 	public:
 		double x, y, z;
 	};

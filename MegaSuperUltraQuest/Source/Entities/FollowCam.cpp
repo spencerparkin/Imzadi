@@ -35,6 +35,7 @@ FollowCam::FollowCam()
 	this->camera->LookAt(eyePoint, worldSpaceFocalPoint, Vector3(0.0, 1.0, 0.0));
 
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
+	this->freeCam->SetCamera(this->camera);
 	this->freeCam->SetEnabled(false);
 
 	return true;
@@ -52,8 +53,11 @@ FollowCam::FollowCam()
 	//       I'm going for Zelda-style controls here.  Left thumb-stick orbits the
 	//       player.  Z-button moves the camera behind the player.
 
-	// TODO: Toggle free-cam on/off with a controller button.  We don't do anything if the free cam is enabled,
-	//       except turn it off if we're toggled again.
+	Controller* controller = Game::Get()->GetController();
+	if (controller->ButtonPressed(XINPUT_GAMEPAD_START))
+	{
+		this->freeCam->SetEnabled(!this->freeCam->IsEnabled());
+	}
 
 	if (!this->freeCam->IsEnabled())
 	{

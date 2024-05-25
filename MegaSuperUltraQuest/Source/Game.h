@@ -10,6 +10,7 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
+#include "Controller.h"
 
 #define GAME_WINDOW_CLASS_NAME		TEXT("GameWindowClass")
 
@@ -69,6 +70,8 @@ public:
 								const Collision::Vector3& position,
 								const Collision::Quaternion& orientation);
 
+	Controller* GetController() { return &this->controller; }
+
 private:
 
 	void AdvanceEntities(double deltaTimeSeconds);
@@ -104,6 +107,7 @@ private:
 	LightParams lightParams;
 	std::list<Reference<Entity>> spawnedEntityQueue;
 	std::list<Reference<Entity>> tickingEntityList;
+	Controller controller;
 	clock_t lastTickTime;
 	static Game* gameSingleton;
 };
