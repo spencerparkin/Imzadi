@@ -60,19 +60,18 @@ public:
 	T* SpawnEntity()
 	{
 		T* entity = new T();
-		entity->state = Entity::State::NEEDS_SETUP;
-		this->entityList.push_back(entity);
+		this->spawnedEntityQueue.push_back(entity);
 		return entity;
 	}
 
 	Reference<RenderObject> LoadAndPlaceRenderMesh(
-							const std::string& renderMeshFile,
-							const Collision::Vector3& position,
-							const Collision::Quaternion& orientation);
+								const std::string& renderMeshFile,
+								const Collision::Vector3& position,
+								const Collision::Quaternion& orientation);
 
 private:
 
-	void AdvanceEntities(double deltaTimeSeconds, bool gameShuttingDown);
+	void AdvanceEntities(double deltaTimeSeconds);
 	void Render();
 
 	LRESULT WndProc(UINT msg, WPARAM wParam, LPARAM lParam);
@@ -103,7 +102,8 @@ private:
 	Reference<Camera> camera;
 	Reference<Camera> lightSourceCamera;
 	LightParams lightParams;
-	std::list<Reference<Entity>> entityList;
+	std::list<Reference<Entity>> spawnedEntityQueue;
+	std::list<Reference<Entity>> tickingEntityList;
 	clock_t lastTickTime;
 	static Game* gameSingleton;
 };

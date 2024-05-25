@@ -48,6 +48,7 @@ Level::Level()
 	return true;
 }
 
-/*virtual*/ void Level::Tick(double deltaTime)
+/*virtual*/ bool Level::Tick(double deltaTime)
 {
+	return true;
 }

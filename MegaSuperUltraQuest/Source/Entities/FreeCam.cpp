@@ -22,10 +22,12 @@ FreeCam::FreeCam()
 	return true;
 }
 
-/*virtual*/ void FreeCam::Tick(double deltaTime)
+/*virtual*/ bool FreeCam::Tick(double deltaTime)
 {
 	if (!this->enabled)
-		return;
+		return true;
 
 	// TODO: Use the controller to move the camera around.
+
+	return true;
 }

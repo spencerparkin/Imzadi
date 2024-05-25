@@ -1,5 +1,5 @@
 #include "Hero.h"
-#include "Spectator.h"
+#include "FollowCam.h"
 #include "Game.h"
 #include "RenderMesh.h"
 #include "Math/Quaternion.h"
@@ -20,9 +20,9 @@ Hero::Hero()
 	std::string heroModelFile = "Models/Hero/Hero.render_mesh";
 	this->renderMesh.SafeSet(Game::Get()->LoadAndPlaceRenderMesh(heroModelFile, this->restartLocation, Quaternion()));
 
-	Spectator* spectator = Game::Get()->SpawnEntity<Spectator>();
-	spectator->SetSubject(this);
-	spectator->SetCamera(Game::Get()->GetCamera());
+	FollowCam* followCam = Game::Get()->SpawnEntity<FollowCam>();
+	followCam->SetSubject(this);
+	followCam->SetCamera(Game::Get()->GetCamera());
 
 	return true;
 }
@@ -32,9 +32,11 @@ Hero::Hero()
 	return true;
 }
 
-/*virtual*/ void Hero::Tick(double deltaTime)
+/*virtual*/ bool Hero::Tick(double deltaTime)
 {
 	// TODO: Respond to controller input to move the character around.
+
+	return true;
 }
 
 /*virtual*/ bool Hero::GetTransform(Transform& transform)

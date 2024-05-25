@@ -1,4 +1,4 @@
-#include "Spectator.h"
+#include "FollowCam.h"
 #include "Math/Vector3.h"
 #include "Math/Matrix3x3.h"
 #include "Game.h"
@@ -6,7 +6,7 @@
 
 using namespace Collision;
 
-Spectator::Spectator()
+FollowCam::FollowCam()
 {
 	this->followParams.followingDistance = 20.0;
 	this->followParams.hoverHeight = 10.0;
@@ -14,11 +14,11 @@ Spectator::Spectator()
 	this->followParams.objectSpaceFocalPoint.SetComponents(0.0, 5.0, 0.0);
 }
 
-/*virtual*/ Spectator::~Spectator()
+/*virtual*/ FollowCam::~FollowCam()
 {
 }
 
-/*virtual*/ bool Spectator::Setup()
+/*virtual*/ bool FollowCam::Setup()
 {
 	if (!this->camera || !this->subject)
 		return false;
@@ -40,12 +40,12 @@ Spectator::Spectator()
 	return true;
 }
 
-/*virtual*/ bool Spectator::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool FollowCam::Shutdown(bool gameShuttingDown)
 {
 	return true;
 }
 
-/*virtual*/ void Spectator::Tick(double deltaTime)
+/*virtual*/ bool FollowCam::Tick(double deltaTime)
 {
 	// TODO: Respond to controller input here to move the camera around the subject.
 	//       The subject itself responds to controller input to walk/run around.
@@ -64,4 +64,6 @@ Spectator::Spectator()
 
 		// TODO: Ajust the camera position here in such a way that we're kind-of solving an IK problem.
 	}
+
+	return true;
 }

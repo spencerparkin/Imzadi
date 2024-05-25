@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "RenderMesh.h"
 #include "Camera.h"
-#include "Level.h"
+#include "Entities/Level.h"
 #include "Math/Transform.h"
 #include <format>
 #include <math.h>
@@ -371,7 +371,7 @@ bool Game::Run()
 			DispatchMessage(&message);
 		}
 
-		this->AdvanceEntities(deltaTimeSeconds, false);
+		this->AdvanceEntities(deltaTimeSeconds);
 
 		if (this->windowResized)
 		{
@@ -386,40 +386,29 @@ bool Game::Run()
 	return true;
 }
 
-void Game::AdvanceEntities(double deltaTimeSeconds, bool gameShuttingDown)
+void Game::AdvanceEntities(double deltaTimeSeconds)
 {
-	// Note that we intend for the list to be modifable as we're iterating it here.
-	// An entity may add to our list at any time.  We may delete a list member at any time.
-	std::list<Reference<Entity>>::iterator iter = this->entityList.begin();
-	while (iter != this->entityList.end())
+	while (this->spawnedEntityQueue.size() > 0)
+	{
+		std::list<Reference<Entity>>::iterator iter = this->spawnedEntityQueue.begin();
+		Reference<Entity> entity = *iter;
+		this->spawnedEntityQueue.erase(iter);
+		if (entity->Setup())
+			this->tickingEntityList.push_back(entity);
+	}
+
+	std::list<Reference<Entity>>::iterator iter = this->tickingEntityList.begin();
+	while (iter != this->tickingEntityList.end())
 	{
 		std::list<Reference<Entity>>::iterator nextIter(iter);
 		nextIter++;
 
 		Entity* entity = *iter;
 
-		switch (entity->state)
+		if (!entity->Tick(deltaTimeSeconds))
 		{
-			case Entity::NEEDS_SETUP:
-			{
-				if (!entity->Setup())
-					entity->state = Entity::NEEDS_SHUTDOWN;
-				else
-					entity->state = Entity::NEEDS_TICK;
-				break;
-			}
-			case Entity::NEEDS_TICK:
-			{
-				entity->Tick(deltaTimeSeconds);
-				break;
-			}
-			case Entity::NEEDS_SHUTDOWN:
-			{
-				entity->Shutdown(gameShuttingDown);
-				entity->state = Entity::State::AWAITING_DELETION;
-				this->entityList.erase(iter);
-				break;
-			}
+			entity->Shutdown(false);
+			this->tickingEntityList.erase(iter);
 		}
 
 		iter = nextIter;
@@ -510,11 +499,15 @@ bool Game::Shutdown()
 {
 	// TODO: Do we need to wait for the GPU to finish?!
 
-	for (Entity* entity : this->entityList)
-		entity->state = Entity::State::NEEDS_SHUTDOWN;
+	this->spawnedEntityQueue.clear();
 
-	while (this->entityList.size() > 0)
-		this->AdvanceEntities(0.0, true);
+	while (this->tickingEntityList.size() > 0)
+	{
+		std::list<Reference<Entity>>::iterator iter = this->tickingEntityList.begin();
+		Entity* entity = *iter;
+		entity->Shutdown(true);
+		this->tickingEntityList.erase(iter);
+	}
 
 	if (this->scene)
 	{

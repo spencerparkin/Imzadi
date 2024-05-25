@@ -4,7 +4,6 @@ using namespace Collision;
 
 Entity::Entity()
 {
-	this->state = State::NEWLY_CREATED;
 }
 
 /*virtual*/ Entity::~Entity()
@@ -21,8 +20,9 @@ Entity::Entity()
 	return true;
 }
 
-/*virtual*/ void Entity::Tick(double deltaTime)
+/*virtual*/ bool Entity::Tick(double deltaTime)
 {
+	return true;
 }
 
 /*virtual*/ bool Entity::GetTransform(Transform& transform)

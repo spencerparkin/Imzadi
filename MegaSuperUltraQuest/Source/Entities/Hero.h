@@ -14,7 +14,7 @@ public:
 
 	virtual bool Setup() override;
 	virtual bool Shutdown(bool gameShuttingDown) override;
-	virtual void Tick(double deltaTime) override;
+	virtual bool Tick(double deltaTime) override;
 	virtual bool GetTransform(Collision::Transform& transform) override;
 
 	void SetRestartLocation(const Collision::Vector3& restartLocation) { this->restartLocation = restartLocation; }

@@ -6,19 +6,17 @@
 class FreeCam;
 
 /**
- * An instance of this class is our follow-cam.  It can follow
- * any entity, but typically follows the hero to give us our
- * 3rd-person view during game-play.
+ * This class gives us our 3rd-person view of the player's character.
  */
-class Spectator : public Entity
+class FollowCam : public Entity
 {
 public:
-	Spectator();
-	virtual ~Spectator();
+	FollowCam();
+	virtual ~FollowCam();
 
 	virtual bool Setup() override;
 	virtual bool Shutdown(bool gameShuttingDown) override;
-	virtual void Tick(double deltaTime) override;
+	virtual bool Tick(double deltaTime) override;
 
 	void SetSubject(Entity* entity) { this->subject.SafeSet(entity); }
 	void SetCamera(Camera* camera) { this->camera.SafeSet(camera); }

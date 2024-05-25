@@ -28,7 +28,7 @@ public:
 	 * platform more challenging.  Really, the sky is the limit here
 	 * for what might tick in the level.
 	 */
-	virtual void Tick(double deltaTime) override;
+	virtual bool Tick(double deltaTime) override;
 
 	void SetLevelNumber(int levelNumber) { this->levelNumber = levelNumber; }
 	int GetLevelNumber() { return this->levelNumber; }

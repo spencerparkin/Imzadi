@@ -4,16 +4,10 @@
 #include "Math/Transform.h"
 
 /**
- * These are the living things that exist in a level, moving, walking and
- * jumping around.  Most are computer-controller.  Some are human-controlled.
- * Note that an entity doesn't need to be a character or even be something
- * that is rendred in the scene.  It's just anything that needs to tick as
- * the game plays.
+ * These are the elements of game-play and anything that needs to be ticked.
  */
 class Entity : public ReferenceCounted
 {
-	friend class Game;
-
 public:
 	Entity();
 	virtual ~Entity();
@@ -36,8 +30,9 @@ public:
 	 * Animate and/or simulate this entity.
 	 * 
 	 * @param[in] deltaTime This is the time, in seconds, between now and the last frame update.
+	 * @return False should be returned when the entity no longer wants to tick and must die.
 	 */
-	virtual void Tick(double deltaTime);
+	virtual bool Tick(double deltaTime);
 
 	/**
 	 * Return the location and orientation of this entity, if applicable.
@@ -45,16 +40,4 @@ public:
 	 * just returns false.
 	 */
 	virtual bool GetTransform(Collision::Transform& transform);
-
-private:
-	enum State
-	{
-		NEWLY_CREATED,
-		NEEDS_SETUP,
-		NEEDS_TICK,
-		NEEDS_SHUTDOWN,
-		AWAITING_DELETION
-	};
-
-	State state;
 };

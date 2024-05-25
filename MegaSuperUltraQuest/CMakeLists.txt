@@ -23,16 +23,16 @@ set(GAME_SOURCES
     Source/Reference.h
     Source/Entity.cpp
     Source/Entity.h
-    Source/Hero.cpp
-    Source/Hero.h
-    Source/Enemy.cpp
-    Source/Enemy.h
-    Source/Spectator.cpp
-    Source/Spectator.h
-    Source/Level.cpp
-    Source/Level.h
-    Source/FreeCam.cpp
-    Source/FreeCam.h
+    Source/Entities/Hero.cpp
+    Source/Entities/Hero.h
+    Source/Entities/Enemy.cpp
+    Source/Entities/Enemy.h
+    Source/Entities/FollowCam.cpp
+    Source/Entities/FollowCam.h
+    Source/Entities/Level.cpp
+    Source/Entities/Level.h
+    Source/Entities/FreeCam.cpp
+    Source/Entities/FreeCam.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})
@@ -54,4 +54,5 @@ target_compile_definitions(MegaSuperUltraQuest PRIVATE
 
 target_include_directories(MegaSuperUltraQuest PRIVATE
     "ThirdParty"
+    "Source"
 )
