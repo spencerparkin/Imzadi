@@ -78,12 +78,16 @@ float4 PS_Main(VS_Output input) : SV_TARGET
         float2 lightCameraUVs;
         lightCameraUVs.x = lightCameraPointX / lightCameraWidth + 0.5;
         lightCameraUVs.y = -lightCameraPointY / lightCameraHeight + 0.5;
-        float depth = shadowTexture.Sample(shadowSampler, lightCameraUVs);
-        float shadowBufferDistance = lightCameraNear + depth * (lightCameraFar - lightCameraNear);
-        float surfacePointDistance = abs(lambda);
-        float tolerance = 0.5;
-        if(shadowBufferDistance + tolerance < surfacePointDistance)
-            shadowFactor = 0.5;
+        if (0.0 <= lightCameraUVs.x && lightCameraUVs.x <= 1.0 &&
+            0.0 <= lightCameraUVs.y && lightCameraUVs.y <= 1.0)
+        {
+            float depth = shadowTexture.Sample(shadowSampler, lightCameraUVs);
+            float shadowBufferDistance = lightCameraNear + depth * (lightCameraFar - lightCameraNear);
+            float surfacePointDistance = abs(lambda);
+            float tolerance = 0.5;
+            if(shadowBufferDistance + tolerance < surfacePointDistance)
+                shadowFactor = 0.5;
+        }
     }
 
     float3 lightReflectionDirection = lightDirection - 2.0 * dot(lightDirection, input.normal) * input.normal;
