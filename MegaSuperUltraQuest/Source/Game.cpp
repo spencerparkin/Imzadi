@@ -145,7 +145,7 @@ bool Game::Initialize()
 
 	D3D11_RASTERIZER_DESC mainPassRasterizerDesc{};
 	mainPassRasterizerDesc.FillMode = D3D11_FILL_SOLID;
-	mainPassRasterizerDesc.CullMode = D3D11_CULL_NONE;		// Must do this since some of my geometries are two-sided polygons.
+	mainPassRasterizerDesc.CullMode = D3D11_CULL_BACK;
 	mainPassRasterizerDesc.FrontCounterClockwise = TRUE;
 	mainPassRasterizerDesc.DepthBias = 0;
 	mainPassRasterizerDesc.DepthClipEnable = TRUE;
