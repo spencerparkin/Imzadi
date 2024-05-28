@@ -69,7 +69,7 @@ public:
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const = 0;
 
 	bool IsHidden() const { return this->hide; }
-	void SetHIdden(bool hide) { this->hide = hide; }
+	void SetHidden(bool hide) { this->hide = hide; }
 
 private:
 	bool hide;
