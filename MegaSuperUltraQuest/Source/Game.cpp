@@ -35,7 +35,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->lightParams.lightColor.SetComponents(1.0, 1.0, 1.0, 1.0);
 	this->lightParams.directionalLightIntensity = 1.0;
 	this->lightParams.ambientLightIntensity = 0.1;
-	this->lightParams.lightCameraDistance = 50.0;
+	this->lightParams.lightCameraDistance = 200.0;
 	ZeroMemory(&this->mainPassViewport, sizeof(D3D11_VIEWPORT));
 	ZeroMemory(&this->shadowPassViewport, sizeof(D3D11_VIEWPORT));
 }
@@ -186,8 +186,8 @@ bool Game::Initialize()
 	Camera::OrthographicParams orthoParams{};
 	orthoParams.nearClip = 0.0;
 	orthoParams.farClip = 1000.0;
-	orthoParams.width = 200.0;
-	orthoParams.height = 200.0;
+	orthoParams.width = 400.0;
+	orthoParams.height = 400.0;
 
 	this->lightSourceCamera.Set(new Camera());
 	this->lightSourceCamera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
