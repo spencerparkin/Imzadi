@@ -50,12 +50,12 @@ bool Frustum::IntersectedBySphere(const Vector3& center, double radius) const
 void Frustum::GetToProjectionMatrix(Matrix4x4& matrix) const
 {
 	matrix.SetIdentity();
-	matrix.ele[0][0] = -1.0 / tan(this->hfovi / 2.0);
-	matrix.ele[1][1] = -1.0 / tan(this->vfovi / 2.0);
-	matrix.ele[2][2] = this->farClip / (this->farClip - this->nearClip);
+	matrix.ele[0][0] = 1.0 / tan(this->hfovi / 2.0);
+	matrix.ele[1][1] = 1.0 / tan(this->vfovi / 2.0);
+	matrix.ele[2][2] = -this->farClip / (this->farClip - this->nearClip);
 	matrix.ele[3][3] = 0.0;
-	matrix.ele[2][3] = this->farClip * this->nearClip / (this->farClip - this->nearClip);
-	matrix.ele[3][2] = 1.0;
+	matrix.ele[2][3] = -this->farClip * this->nearClip / (this->farClip - this->nearClip);
+	matrix.ele[3][2] = -1.0;
 }
 
 bool Frustum::SetFromProjectionMatrix(const Matrix4x4& matrix)

@@ -58,7 +58,6 @@ VS_Output VS_Main(VS_Input input)
 {
     VS_Output output;
     output.position = mul(objectToProjection, float4(input.position, 1.0f));
-    output.position /= output.position.w;
     output.texCoord = input.texCoord;
     output.normal = mul(objectToWorld, float4(input.normal, 0.0)).xyz;  // We are assuming no shear or scale here.
     output.worldPosition = mul(objectToWorld, float4(input.position, 1.0)).xyz;

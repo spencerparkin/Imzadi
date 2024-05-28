@@ -21,7 +21,6 @@ VS_Output VS_Main(VS_Input input)
 {
     VS_Output output;
     output.position = mul(objectToProjection, float4(input.position, 1.0f));
-    output.position /= output.position.w;
     return output;
 }
 
