@@ -457,10 +457,6 @@ void Game::Render()
 	this->deviceContext->PSSetShaderResources(0, 2, shaderResourceViewArray);
 	this->deviceContext->PSSetSamplers(0, 2, samplerStateArray);
 
-	// TODO: It would be nice if I could render the collision debug wire-frames here.
-	//       This would also be a chance to learn how to use a CPU-accessable buffer in DX11.
-	//       We could use a render-state with a Z min/max of 0/0 to ensure it draws over everything.
-
 	this->swapChain->Present(1, 0);
 }
 
