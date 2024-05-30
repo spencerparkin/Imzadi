@@ -35,6 +35,16 @@ namespace Collision
 		virtual bool IsValid() const override;
 
 		/**
+		 * Allocate and return a Sphere shape that is a copy of this sphere.
+		 */
+		virtual Shape* Clone() const override;
+
+		/**
+		 * Make this sphere the same as the given sphere.
+		 */
+		virtual bool Copy(const Shape* shape) override;
+
+		/**
 		 * Calculate and return the volume of this sphere.
 		 */
 		virtual double CalcSize() const override;

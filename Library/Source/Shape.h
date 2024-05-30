@@ -99,6 +99,37 @@ namespace Collision
 		virtual double CalcSize() const = 0;
 
 		/**
+		 * This is an alternative to doing a dynamic cast.
+		 */
+		template<typename T>
+		T* Cast()
+		{
+			return (T::StaticTypeID() == this->GetShapeID()) ? (T*)this : nullptr;
+		}
+
+		/**
+		 * This is the constant version of our dynamic cast alternative.
+		 */
+		template<typename T>
+		const T* Cast() const
+		{
+			return (T::StaticTypeID() == this->GetShapeID()) ? (const T*)this : nullptr;
+		}
+
+		/**
+		 * Allocate and return a clone of this shape.
+		 */
+		virtual Shape* Clone() const = 0;
+
+		/**
+		 * Abandon this shape's internals and clone those of the given shape.
+		 * Any override of this method should call this base method.
+		 * 
+		 * @param[in] shape This is assumed to be of the same derivative type as this shape.  A dynamic cast prevents crashing.
+		 */
+		virtual bool Copy(const Shape* shape);
+
+		/**
 		 * During insertion into the AABB tree, if splitting is allowed, and splitting is
 		 * supported by this shape, then this method can be used to split this shape across
 		 * box boundaries so that it can be inserted deeper into the tree.  The original

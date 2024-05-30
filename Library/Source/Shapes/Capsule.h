@@ -37,6 +37,16 @@ namespace Collision
 		virtual bool IsValid() const override;
 
 		/**
+		 * Allocate and return a Capsule shape that is a copy of this capsule.
+		 */
+		virtual Shape* Clone() const override;
+
+		/**
+		 * Make this capsule the same as the given capsule.
+		 */
+		virtual bool Copy(const Shape* shape) override;
+
+		/**
 		 * Calculate and return the volume of this capsule.
 		 */
 		virtual double CalcSize() const override;

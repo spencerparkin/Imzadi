@@ -38,6 +38,27 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 	return TypeID::CAPSULE;
 }
 
+/*virtual*/ Shape* CapsuleShape::Clone() const
+{
+	auto capsule = CapsuleShape::Create();
+	capsule->Copy(this);
+	return capsule;
+}
+
+/*virtual*/ bool CapsuleShape::Copy(const Shape* shape)
+{
+	if (!Shape::Copy(shape))
+		return false;
+
+	auto capsule = shape->Cast<CapsuleShape>();
+	if (!capsule)
+		return false;
+
+	this->lineSegment = capsule->lineSegment;
+	this->radius = capsule->radius;
+	return true;
+}
+
 /*virtual*/ bool CapsuleShape::IsValid() const
 {
 	if (!Shape::IsValid())

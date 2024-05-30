@@ -37,6 +37,27 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	return TypeID::SPHERE;
 }
 
+/*virtual*/ Shape* SphereShape::Clone() const
+{
+	auto sphere = SphereShape::Create();
+	sphere->Copy(this);
+	return sphere;
+}
+
+/*virtual*/ bool SphereShape::Copy(const Shape* shape)
+{
+	if (!Shape::Copy(shape))
+		return false;
+
+	auto sphere = shape->Cast<SphereShape>();
+	if (!sphere)
+		return false;
+
+	this->radius = sphere->radius;
+	this->center = sphere->center;
+	return true;
+}
+
 /*virtual*/ bool SphereShape::IsValid() const
 {
 	if (!Shape::IsValid())

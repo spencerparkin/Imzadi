@@ -1,6 +1,8 @@
 #include "Game.h"
 #include "Scene.h"
-#include "RenderMesh.h"
+#include "Assets/RenderMesh.h"
+#include "Assets/CollisionShapeSet.h"
+#include "RenderObjects/RenderMeshInstance.h"
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
@@ -237,7 +239,7 @@ bool Game::Initialize()
 	shadowBuffer = nullptr;
 
 	D3D11_SAMPLER_DESC shadowSamplerDesc{};
-	shadowSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	shadowSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 	shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
 	shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
 	shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -282,6 +284,23 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 	}
 
 	return renderMesh;
+}
+
+bool Game::LoadStaticCollision(const std::string& staticCollisionFile)
+{
+	Reference<Asset> asset;
+	if (!this->assetCache->GrabAsset(staticCollisionFile, asset))
+		return false;
+
+	auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(asset.Get());
+	if (!collisionShapeSet)
+		return false;
+
+	for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
+		this->collisionSystem.AddShape(shape, COLL_SYS_ADD_FLAG_ALLOW_SPLIT);
+
+	collisionShapeSet->Clear(false);
+	return true;
 }
 
 bool Game::RecreateViews()
@@ -455,6 +474,10 @@ void Game::Render()
 	ID3D11SamplerState* samplerStateArray[] = { NULL, NULL };
 	this->deviceContext->PSSetShaderResources(0, 2, shaderResourceViewArray);
 	this->deviceContext->PSSetSamplers(0, 2, samplerStateArray);
+
+	// TODO: It would be nice if I could render the collision debug wire-frames here.
+	//       This would also be a chance to learn how to use a CPU-accessable buffer in DX11.
+	//       We could use a render-state with a Z min/max of 0/0 to ensure it draws over everything.
 
 	this->swapChain->Present(1, 0);
 }

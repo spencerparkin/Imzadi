@@ -1,9 +1,10 @@
 #include "Hero.h"
 #include "FollowCam.h"
 #include "Game.h"
-#include "RenderMesh.h"
+#include "Assets/RenderMesh.h"
 #include "Math/Quaternion.h"
 #include "Math/Transform.h"
+#include "Math/Vector2.h"
 
 using namespace Collision;
 
@@ -34,7 +35,15 @@ Hero::Hero()
 
 /*virtual*/ bool Hero::Tick(double deltaTime)
 {
-	// TODO: Respond to controller input to move the character around.
+	Controller* controller = Game::Get()->GetController();
+
+	Vector2 leftStick;
+	controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
+
+	// TODO: We can't write the character movement code here until we can load the collision
+	//       shapes and even draw them too, because we're not really moving the render mesh.
+	//       What we're doing is moving the collision shape for the character and the rener
+	//       mesh is slaved to the collision shape.
 
 	return true;
 }

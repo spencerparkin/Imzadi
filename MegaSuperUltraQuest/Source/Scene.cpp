@@ -1,6 +1,5 @@
 #include "Scene.h"
 #include "Camera.h"
-#include "RenderMesh.h"
 
 //--------------------------- Scene ---------------------------
 

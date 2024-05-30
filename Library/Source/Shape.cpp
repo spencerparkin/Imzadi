@@ -63,6 +63,16 @@ ShapeID Shape::GetShapeID() const
 	return nullptr;
 }
 
+/*virtual*/ bool Shape::Copy(const Shape* shape)
+{
+	// We only copy here the defining characteristics of the shape.
+	// Everything else should be unique to the shape instance.
+	this->objectToWorld = shape->objectToWorld;
+	this->debugColor = shape->debugColor;
+
+	return true;
+}
+
 /*virtual*/ bool Shape::IsValid() const
 {
 	if (!this->objectToWorld.IsValid())

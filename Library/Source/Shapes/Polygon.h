@@ -53,6 +53,16 @@ namespace Collision
 		virtual bool IsValid() const override;
 
 		/**
+		 * Allocate and return a Polygon shape that is a copy of this polygon.
+		 */
+		virtual Shape* Clone() const override;
+
+		/**
+		 * Make this polygon the same as the given polygon.
+		 */
+		virtual bool Copy(const Shape* shape) override;
+
+		/**
 		 * Calculate and return the area of this polygon.
 		 */
 		virtual double CalcSize() const override;

@@ -44,6 +44,26 @@ BoxShape::BoxShape(const BoxShape& boxShape) : Shape(true)
 	return TypeID::BOX;
 }
 
+/*virtual*/ Shape* BoxShape::Clone() const
+{
+	auto box = BoxShape::Create();
+	box->Copy(this);
+	return box;
+}
+
+/*virtual*/ bool BoxShape::Copy(const Shape* shape)
+{
+	if (!Shape::Copy(shape))
+		return false;
+
+	auto box = shape->Cast<BoxShape>();
+	if (!box)
+		return false;
+
+	this->extents = box->extents;
+	return true;
+}
+
 void BoxShape::GetCornerMatrix(BoxVertexMatrix& boxVertices, bool worldSpace) const
 {
 	for (int i = 0; i < 2; i++)

@@ -11,6 +11,7 @@
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
 #include "Controller.h"
+#include "System.h"
 
 #define GAME_WINDOW_CLASS_NAME		TEXT("GameWindowClass")
 
@@ -34,6 +35,7 @@ public:
 	AssetCache* GetAssetCache() { return this->assetCache.Get(); }
 	Camera* GetCamera() { return this->camera.Get(); }
 	void SetCamera(Reference<Camera> camera) { this->camera = camera; }
+	Collision::System* GetCollisionSystem() { return &this->collisionSystem; }
 
 	static Game* Get() { return gameSingleton; }
 	static void Set(Game* game) { gameSingleton = game; }
@@ -69,6 +71,8 @@ public:
 								const std::string& renderMeshFile,
 								const Collision::Vector3& position,
 								const Collision::Quaternion& orientation);
+
+	bool LoadStaticCollision(const std::string& staticCollisionFile);
 
 	Controller* GetController() { return &this->controller; }
 
@@ -108,6 +112,7 @@ private:
 	std::list<Reference<Entity>> spawnedEntityQueue;
 	std::list<Reference<Entity>> tickingEntityList;
 	Controller controller;
+	Collision::System collisionSystem;
 	clock_t lastTickTime;
 	static Game* gameSingleton;
 };

@@ -12,7 +12,7 @@
  * This class works in conjunction with the Reference class.
  * 
  * Note that it is possible to create a memory leak by creating a direct or indirect
- * circular reference.
+ * circular reference.  No attempt is made to catch or detect circular references.
  */
 class ReferenceCounted
 {

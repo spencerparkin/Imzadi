@@ -28,6 +28,10 @@ Level::Level()
 	Hero* hero = Game::Get()->SpawnEntity<Hero>();
 	hero->SetRestartLocation(Vector3(0.0, 0.0, 0.0));		// TODO: Maybe get this from the level description file?
 
+	std::string staticCollisionFile = std::format("Models/Level{}/Level{}.collision", this->levelNumber, this->levelNumber);
+	if (!Game::Get()->LoadStaticCollision(staticCollisionFile))
+		return false;
+
 	return true;
 }
 

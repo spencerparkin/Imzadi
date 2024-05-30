@@ -7,22 +7,26 @@ set(GAME_SOURCES
     Source/Game.h
     Source/Scene.cpp
     Source/Scene.h
-    Source/RenderMesh.cpp
-    Source/RenderMesh.h
     Source/Camera.cpp
     Source/Camera.h
-    Source/Shader.cpp
-    Source/Shader.h
-    Source/Texture.cpp
-    Source/Texture.h
-    Source/Buffer.cpp
-    Source/Buffer.h
     Source/AssetCache.cpp
     Source/AssetCache.h
     Source/Reference.cpp
     Source/Reference.h
     Source/Entity.cpp
     Source/Entity.h
+    Source/RenderObjects/RenderMeshInstance.cpp
+    Source/RenderObjects/RenderMeshInstance.h
+    Source/Assets/RenderMesh.cpp
+    Source/Assets/RenderMesh.h
+    Source/Assets/Shader.cpp
+    Source/Assets/Shader.h
+    Source/Assets/Texture.cpp
+    Source/Assets/Texture.h
+    Source/Assets/Buffer.cpp
+    Source/Assets/Buffer.h
+    Source/Assets/CollisionShapeSet.cpp
+    Source/Assets/CollisionShapeSet.h
     Source/Entities/Hero.cpp
     Source/Entities/Hero.h
     Source/Entities/Enemy.cpp

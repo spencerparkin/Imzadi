@@ -1,8 +1,8 @@
 #include "AssetCache.h"
-#include "RenderMesh.h"
-#include "Buffer.h"
-#include "Shader.h"
-#include "Texture.h"
+#include "Assets/RenderMesh.h"
+#include "Assets/Buffer.h"
+#include "Assets/Shader.h"
+#include "Assets/Texture.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>

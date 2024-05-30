@@ -50,6 +50,29 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	return TypeID::POLYGON;
 }
 
+/*virtual*/ Shape* PolygonShape::Clone() const
+{
+	auto polygon = PolygonShape::Create();
+	polygon->Copy(this);
+	return polygon;
+}
+
+/*virtual*/ bool PolygonShape::Copy(const Shape* shape)
+{
+	if (!Shape::Copy(shape))
+		return false;
+
+	auto polygon = shape->Cast<PolygonShape>();
+	if (!polygon)
+		return false;
+
+	this->vertexArray->clear();
+	for (const Vector3& vertex : *polygon->vertexArray)
+		this->vertexArray->push_back(vertex);
+
+	return true;
+}
+
 /*virtual*/ bool PolygonShape::IsValid() const
 {
 	if (!Shape::IsValid())

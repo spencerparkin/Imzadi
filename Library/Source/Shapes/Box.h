@@ -42,6 +42,16 @@ namespace Collision
 		virtual bool IsValid() const override;
 
 		/**
+		 * Allocate and return a Box shape that is a copy of this box.
+		 */
+		virtual Shape* Clone() const override;
+
+		/**
+		 * Make this box the same as the given box.
+		 */
+		virtual bool Copy(const Shape* shape) override;
+
+		/**
 		 * Calculate and return the volume of this box.
 		 */
 		virtual double CalcSize() const override;

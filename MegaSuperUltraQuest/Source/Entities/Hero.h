@@ -1,7 +1,7 @@
 #include "Entity.h"
 #include "Math/Vector3.h"
 #include "Scene.h"
-#include "RenderMesh.h"
+#include "RenderObjects/RenderMeshInstance.h"
 
 /**
  * An instance of this class is the protagonist of our game saga.
