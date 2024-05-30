@@ -122,12 +122,45 @@ def process_obj_file(obj_file, assets_base_dir):
     model = OBJ_Model()
     model.load_from_file(obj_file)
     model.print_stats()
+
     dir, name = os.path.split(obj_file)
     name, ext = os.path.splitext(name)
+
     vertex_buffer_file = os.path.join(dir, name + 'Vertices.buffer')
     index_buffer_file = os.path.join(dir, name + 'Indices.buffer')
     render_mesh_file = os.path.join(dir, name + '.render_mesh')
     texture_file = os.path.join(dir, name + ".texture")
+    collision_file = os.path.join(dir, name + ".collision")
+
+    if name.lower().find('level') >= 0:
+        shape_set = []
+
+        for triangle in model.triangle_list:
+            vertex_array = [
+                triangle[0]['vertex'],
+                triangle[1]['vertex'],
+                triangle[2]['vertex']
+            ]
+
+            shape_info = {
+                'type': 'polygon',
+                'vertex_array': vertex_array
+            }
+
+            shape_set.append(shape_info)
+
+        collision_file_data = {
+            'shape_set': shape_set
+        }
+
+        if os.path.exists(collision_file):
+            os.remove(collision_file)
+
+        with open(collision_file, 'w') as handle:
+            json_text = json.dumps(collision_file_data, indent=4, sort_keys=True)
+            handle.write(json_text)
+        print('Wrote file: %s!' % collision_file)
+
     vertex_map = {}
     vertex_array = []
     index_array = []
