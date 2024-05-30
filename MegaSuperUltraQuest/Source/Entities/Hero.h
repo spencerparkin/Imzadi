@@ -2,6 +2,7 @@
 #include "Math/Vector3.h"
 #include "Scene.h"
 #include "RenderObjects/RenderMeshInstance.h"
+#include "Shape.h"
 
 /**
  * An instance of this class is the protagonist of our game saga.
@@ -21,5 +22,6 @@ public:
 
 private:
 	Collision::Vector3 restartLocation;
+	Collision::ShapeID shapeID;
 	Reference<RenderMeshInstance> renderMesh;
 };

@@ -5,11 +5,13 @@
 #include "Math/Quaternion.h"
 #include "Math/Transform.h"
 #include "Math/Vector2.h"
+#include "Shapes/Capsule.h"
 
 using namespace Collision;
 
 Hero::Hero()
 {
+	this->shapeID = 0;
 }
 
 /*virtual*/ Hero::~Hero()
@@ -25,11 +27,21 @@ Hero::Hero()
 	followCam->SetSubject(this);
 	followCam->SetCamera(Game::Get()->GetCamera());
 
+	auto capsule = CapsuleShape::Create();
+	capsule->SetVertex(0, Vector3(0.0, 0.0, 0.0));
+	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
+	capsule->SetRadius(2.0);
+	this->shapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
+	if (this->shapeID == 0)
+		return false;
+
 	return true;
 }
 
 /*virtual*/ bool Hero::Shutdown(bool gameShuttingDown)
 {
+	// No need to do anything here.  We'll get cleaned up when
+	// the scene and collision system is cleaned up.
 	return true;
 }
 
