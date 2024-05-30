@@ -2,6 +2,7 @@
 
 #include "AssetCache.h"
 #include "Shape.h"
+#include "Math/AxisAlignedBoundingBox.h"
 #include <vector>
 
 /**
@@ -21,6 +22,7 @@ public:
 	virtual bool Unload() override;
 
 	void Clear(bool deleteShapes);
+	bool GetBoundingBox(Collision::AxisAlignedBoundingBox& boundingBox) const;
 
 	const std::vector<Collision::Shape*>& GetCollisionShapeArray() { return this->collisionShapeArray; }
 

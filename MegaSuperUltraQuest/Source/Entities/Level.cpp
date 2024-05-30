@@ -2,8 +2,10 @@
 #include "Game.h"
 #include "Scene.h"
 #include "Hero.h"
+#include "AssetCache.h"
 #include "Math/Vector3.h"
 #include "Math/Quaternion.h"
+#include "Assets/CollisionShapeSet.h"
 #include <format>
 
 using namespace Collision;
@@ -29,16 +31,33 @@ Level::Level()
 	hero->SetRestartLocation(Vector3(0.0, 0.0, 0.0));		// TODO: Maybe get this from the level description file?
 
 	std::string staticCollisionFile = std::format("Models/Level{}/Level{}.collision", this->levelNumber, this->levelNumber);
-	if (!Game::Get()->LoadStaticCollision(staticCollisionFile))
+	Reference<Asset> collisionAsset;
+	if (!Game::Get()->GetAssetCache()->GrabAsset(staticCollisionFile, collisionAsset))
 		return false;
 
+	auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(collisionAsset.Get());
+	if (!collisionShapeSet)
+		return false;
+
+	AxisAlignedBoundingBox boundingBox;
+	if (!collisionShapeSet->GetBoundingBox(boundingBox))
+		return false;
+
+	boundingBox.Scale(1.5);
+	if (!Game::Get()->GetCollisionSystem()->Initialize(boundingBox))
+		return false;
+
+	for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
+		Game::Get()->GetCollisionSystem()->AddShape(shape, 0 /*COLL_SYS_ADD_FLAG_ALLOW_SPLIT*/);	// TODO: Figure out why splitting fails.
+
+	collisionShapeSet->Clear(false);
 	return true;
 }
 
 /*virtual*/ bool Level::Shutdown(bool gameShuttingDown)
 {
-	// TODO: Clean-up here.
-
+	Game::Get()->GetCollisionSystem()->Clear();
+	Game::Get()->GetCollisionSystem()->Shutdown();
 	Game::Get()->GetScene()->Clear();
 
 	if (!gameShuttingDown)

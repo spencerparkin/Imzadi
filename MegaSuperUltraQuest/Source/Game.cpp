@@ -1,7 +1,6 @@
 #include "Game.h"
 #include "Scene.h"
 #include "Assets/RenderMesh.h"
-#include "Assets/CollisionShapeSet.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "Camera.h"
 #include "Entities/Level.h"
@@ -284,23 +283,6 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 	}
 
 	return renderMesh;
-}
-
-bool Game::LoadStaticCollision(const std::string& staticCollisionFile)
-{
-	Reference<Asset> asset;
-	if (!this->assetCache->GrabAsset(staticCollisionFile, asset))
-		return false;
-
-	auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(asset.Get());
-	if (!collisionShapeSet)
-		return false;
-
-	for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
-		this->collisionSystem.AddShape(shape, COLL_SYS_ADD_FLAG_ALLOW_SPLIT);
-
-	collisionShapeSet->Clear(false);
-	return true;
 }
 
 bool Game::RecreateViews()

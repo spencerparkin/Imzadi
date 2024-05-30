@@ -3,6 +3,7 @@
 #include "Assets/Buffer.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
+#include "Assets/CollisionShapeSet.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
@@ -73,6 +74,8 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 		asset.Set(new Texture());
 	else if (ext == ".buffer")
 		asset.Set(new Buffer());
+	else if (ext == ".collision")
+		asset.Set(new CollisionShapeSet());
 	if (!asset)
 		return false;
 

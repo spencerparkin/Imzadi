@@ -72,8 +72,6 @@ public:
 								const Collision::Vector3& position,
 								const Collision::Quaternion& orientation);
 
-	bool LoadStaticCollision(const std::string& staticCollisionFile);
-
 	Controller* GetController() { return &this->controller; }
 
 private:

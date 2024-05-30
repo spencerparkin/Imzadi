@@ -1,4 +1,5 @@
 #include "CollisionShapeSet.h"
+#include "Shapes/Polygon.h"
 
 using namespace Collision;
 
@@ -13,7 +14,53 @@ CollisionShapeSet::CollisionShapeSet()
 
 /*virtual*/ bool CollisionShapeSet::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
-	// TODO: Load collision shapes here.  I'll need to write some Python script first to generate the asset files.
+	this->Clear(true);
+
+	if (!jsonDoc.IsObject() || !jsonDoc.HasMember("shape_set"))
+		return false;
+
+	const rapidjson::Value& shapeSetValue = jsonDoc["shape_set"];
+	if (!shapeSetValue.IsArray())
+		return false;
+
+	for (int i = 0; i < shapeSetValue.Size(); i++)
+	{
+		const rapidjson::Value& shapeValue = shapeSetValue[i];
+
+		if (!shapeValue.IsObject() || !shapeValue.HasMember("type") || !shapeValue["type"].IsString())
+			return false;
+
+		std::string shapeType = shapeValue["type"].GetString();
+
+		if (shapeType == "polygon")
+		{
+			auto polygon = PolygonShape::Create();
+			this->collisionShapeArray.push_back(polygon);
+
+			if (!shapeValue.HasMember("vertex_array") || !shapeValue["vertex_array"].IsArray())
+				return false;
+
+			const rapidjson::Value& vertexArrayValue = shapeValue["vertex_array"];
+			for (int j = 0; j < vertexArrayValue.Size(); j++)
+			{
+				const rapidjson::Value& vertexValue = vertexArrayValue[j];
+				if (!vertexValue.IsArray() || vertexValue.Size() != 3)
+					return false;
+
+				Vector3 vertex;
+				vertex.x = vertexValue[0].GetFloat();
+				vertex.y = vertexValue[1].GetFloat();
+				vertex.z = vertexValue[2].GetFloat();
+				polygon->AddVertex(vertex);
+			}
+		}
+		else
+		{
+			// TODO: Add support for other shape types.
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -31,4 +78,21 @@ void CollisionShapeSet::Clear(bool deleteShapes)
 			Shape::Free(shape);
 
 	this->collisionShapeArray.clear();
+}
+
+bool CollisionShapeSet::GetBoundingBox(Collision::AxisAlignedBoundingBox& boundingBox) const
+{
+	if (this->collisionShapeArray.size() == 0)
+		return false;
+
+	Shape* shape = this->collisionShapeArray[0];
+	boundingBox = shape->GetBoundingBox();
+
+	for (int i = 1; i < (signed)this->collisionShapeArray.size(); i++)
+	{
+		shape = this->collisionShapeArray[i];
+		boundingBox.Expand(shape->GetBoundingBox());
+	}
+
+	return true;
 }

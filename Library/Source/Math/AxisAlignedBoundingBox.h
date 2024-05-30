@@ -103,6 +103,13 @@ namespace Collision
 		void Expand(const AxisAlignedBoundingBox& box);
 
 		/**
+		 * Scale this box about its center.
+		 * 
+		 * @param[in] scale This box is scaled by this factor.
+		 */
+		void Scale(double scale);
+
+		/**
 		 * Cut this AABB exactly in half along a plane such that the resulting two
 		 * halfs are as close to cubical as possible.  That is, the longest dimension
 		 * of this AABB is determined, and then the plane is made orthogonal to this
