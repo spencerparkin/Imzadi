@@ -52,10 +52,13 @@ Hero::Hero()
 	Vector2 leftStick;
 	controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
 
-	// TODO: We can't write the character movement code here until we can load the collision
-	//       shapes and even draw them too, because we're not really moving the render mesh.
-	//       What we're doing is moving the collision shape for the character and the rener
-	//       mesh is slaved to the collision shape.
+	// TODO: Psuedo-code...
+	//       - Do we have a collision query result?
+	//       - No: Make one and bail.
+	//       - Yes:
+	//         - Solve constraints and apply deltas to this render mesh's object-to-world transform.
+	//         - Issue command setting collision shape object-to-world as a function of render mesh's object-to-world and a relative transform.
+	//         - Make collision query for next tick.
 
 	return true;
 }
