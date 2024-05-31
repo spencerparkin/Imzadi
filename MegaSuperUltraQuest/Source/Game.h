@@ -6,6 +6,7 @@
 #include <list>
 #include <time.h>
 #include "Reference.h"
+#include "RenderObjects/DebugLines.h"
 #include "Entity.h"
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
@@ -36,6 +37,7 @@ public:
 	Camera* GetCamera() { return this->camera.Get(); }
 	void SetCamera(Reference<Camera> camera) { this->camera = camera; }
 	Collision::System* GetCollisionSystem() { return &this->collisionSystem; }
+	DebugLines* GetDebugLines() { return this->debugLines.Get(); }
 
 	static Game* Get() { return gameSingleton; }
 	static void Set(Game* game) { gameSingleton = game; }
@@ -74,6 +76,9 @@ public:
 
 	Controller* GetController() { return &this->controller; }
 
+	void SetCollisionSystemDebugDrawFlags(uint32_t flags) { this->collisionSystemDebugDrawFlags = flags; }
+	uint32_t GetCollisionSystemDebugDrawFlags() { return this->collisionSystemDebugDrawFlags; }
+
 private:
 
 	void AdvanceEntities(double deltaTimeSeconds);
@@ -111,6 +116,9 @@ private:
 	std::list<Reference<Entity>> tickingEntityList;
 	Controller controller;
 	Collision::System collisionSystem;
+	Reference<DebugLines> debugLines;
+	uint32_t collisionSystemDebugDrawFlags;
+	Collision::TaskID collisionSystemDebugDrawTaskID;
 	clock_t lastTickTime;
 	static Game* gameSingleton;
 };

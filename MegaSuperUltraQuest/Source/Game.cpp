@@ -5,6 +5,8 @@
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
+#include "Query.h"
+#include "Result.h"
 #include <format>
 #include <math.h>
 
@@ -14,6 +16,8 @@ Game* Game::gameSingleton = nullptr;
 
 Game::Game(HINSTANCE instance) : controller(0)
 {
+	this->collisionSystemDebugDrawFlags = 0;
+	this->collisionSystemDebugDrawTaskID = 0;
 	this->lastTickTime = 0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
@@ -252,6 +256,8 @@ bool Game::Initialize()
 	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
 
 	this->scene.Set(new Scene());
+	this->debugLines.Set(new DebugLines());
+	this->scene->AddRenderObject(this->debugLines.Get());
 
 	Level* level = this->SpawnEntity<Level>();
 	level->SetLevelNumber(1);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
@@ -363,6 +369,15 @@ bool Game::Run()
 		double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
 		this->lastTickTime = currentTickTime;
 
+		this->debugLines->Clear();
+
+		if (this->collisionSystemDebugDrawFlags != 0)
+		{
+			auto query = new DebugRenderQuery();
+			query->SetDrawFlags(this->collisionSystemDebugDrawFlags);
+			this->collisionSystem.MakeQuery(query, this->collisionSystemDebugDrawTaskID);
+		}
+
 		MSG message{};
 		while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 		{
@@ -374,6 +389,11 @@ bool Game::Run()
 		}
 
 		this->controller.Update();
+
+		// This should be the one and only flush per frame of the collision system,
+		// and it is made just before we need it for entity ticking and rendering.
+		this->collisionSystem.FlushAllTasks();
+
 		this->AdvanceEntities(deltaTimeSeconds);
 
 		if (this->windowResized)
@@ -381,6 +401,20 @@ bool Game::Run()
 			this->deviceContext->OMSetRenderTargets(0, NULL, NULL);
 			this->RecreateViews();
 			this->windowResized = false;
+		}
+
+		if (this->collisionSystemDebugDrawTaskID != 0)
+		{
+			Result* result = this->collisionSystem.ObtainQueryResult(this->collisionSystemDebugDrawTaskID);
+			if (result)
+			{
+				auto debugRenderResult = dynamic_cast<DebugRenderResult*>(result);
+				if (debugRenderResult)
+					for (const DebugRenderResult::RenderLine& line : debugRenderResult->GetRenderLineArray())
+						this->debugLines->AddLine({ line.color, line.line });
+
+				this->collisionSystem.Free<Result>(result);
+			}
 		}
 
 		this->Render();
@@ -470,6 +504,16 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 				DestroyWindow(this->mainWindowHandle);
 			break;
 		}
+		case WM_KEYUP:
+		{
+			if (wParam == VK_F1)
+				this->collisionSystemDebugDrawFlags ^= COLL_SYS_DRAW_FLAG_SHAPES;
+			else if (wParam == VK_F2)
+				this->collisionSystemDebugDrawFlags ^= COLL_SYS_DRAW_FLAG_SHAPE_BOXES;
+			else if (wParam == VK_F3)
+				this->collisionSystemDebugDrawFlags ^= COLL_SYS_DRAW_FLAG_AABB_TREE;
+			break;
+		}
 		case WM_DESTROY:
 		{
 			PostQuitMessage(0);
@@ -511,6 +555,8 @@ bool Game::Shutdown()
 		entity->Shutdown(true);
 		this->tickingEntityList.erase(iter);
 	}
+
+	this->debugLines.Reset();
 
 	if (this->scene)
 	{

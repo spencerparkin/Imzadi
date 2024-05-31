@@ -2,6 +2,8 @@
 
 #include "Scene.h"
 #include "Math/LineSegment.h"
+#include "Assets/Shader.h"
+#include <d3d11.h>
 
 /**
  * These are lines drawn for debug visualization purposes.
@@ -21,11 +23,12 @@ public:
 		Collision::LineSegment segment;
 	};
 
-	void AddLine(const Line& line);
+	bool AddLine(const Line& line);
 	void Clear();
 
 private:
 	std::vector<Line> lineArray;
-	// TODO: Own CPU-accessable vertex buffer here.
-	// TODO: Own line shaders.
+	ID3D11Buffer* vertexBuffer;
+	Reference<Shader> shader;
+	int maxLines;
 };
