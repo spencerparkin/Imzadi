@@ -49,23 +49,23 @@ Vector3 Vector3::Rotated(const Vector3& unitAxis, double angle) const
 
 void Vector3::SetAsOrthogonalTo(const Vector3& vector)
 {
-	if (vector.x > vector.z && vector.y > vector.z)
-	{
-		this->x = -vector.y;
-		this->y = vector.x;
-		this->z = 0.0;
-	}
-	else if (vector.y > vector.x && vector.z > vector.x)
+	if (vector.x < vector.y && vector.x < vector.z)
 	{
 		this->x = 0.0;
-		this->y = -vector.z;
-		this->z = vector.y;
+		this->y = vector.z;
+		this->z = -vector.y;
+	}
+	else if (vector.y < vector.x && vector.y < vector.z)
+	{
+		this->x = vector.z;
+		this->y = 0.0;
+		this->z = -vector.x;
 	}
 	else
 	{
-		this->x = -vector.z;
-		this->y = 0.0;
-		this->z = vector.x;
+		this->x = vector.y;
+		this->y = -vector.x;
+		this->z = 0.0;
 	}
 }
 
