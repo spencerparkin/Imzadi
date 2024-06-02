@@ -12,6 +12,7 @@
 #include <filesystem>
 #include "rapidjson/reader.h"
 #include "rapidjson/error/en.h"
+#include "rapidjson/istreamwrapper.h"
 
 using namespace Collision;
 
@@ -91,16 +92,13 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 	if (!fileStream.is_open())
 		return false;
 
-	std::stringstream stringStream;
-	stringStream << fileStream.rdbuf();
-	std::string jsonText = stringStream.str();
-	fileStream.close();
-
+	rapidjson::IStreamWrapper streamWrapper(fileStream);
 	rapidjson::Document jsonDoc;
-	jsonDoc.Parse(jsonText.c_str());
+	jsonDoc.ParseStream(streamWrapper);
 
 	if (jsonDoc.HasParseError())
 	{
+		// TODO: It would be nice if we could get line and column numbers in the error message here.
 		asset.Reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
 		const char* errorMsg = rapidjson::GetParseError_En(errorCode);
