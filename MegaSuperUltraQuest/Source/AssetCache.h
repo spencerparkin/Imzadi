@@ -77,4 +77,5 @@ public:
 protected:
 	bool LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector);
 	bool LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat);
+	bool LoadStringArray(const rapidjson::Value& stringArrayValue, std::vector<std::string>& stringArray);
 };

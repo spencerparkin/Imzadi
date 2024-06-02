@@ -7,6 +7,7 @@
 #include "Math/Quaternion.h"
 #include "Assets/CollisionShapeSet.h"
 #include "Assets/LevelData.h"
+#include "MovingPlatform.h"
 #include <format>
 
 using namespace Collision;
@@ -32,16 +33,16 @@ Level::Level()
 	if (!levelData)
 		return false;
 
-	for (const std::string& modelFile : levelData->modelFilesArray)
+	for (const std::string& modelFile : levelData->GetModelFilesArray())
 		Game::Get()->LoadAndPlaceRenderMesh(modelFile, Vector3(), Quaternion());
 
 	Hero* hero = Game::Get()->SpawnEntity<Hero>();
-	hero->SetRestartLocation(levelData->playerStartPosition);
-	hero->SetRestartOrientation(levelData->playerStartOrientation);
+	hero->SetRestartLocation(levelData->GetPlayerStartPosition());
+	hero->SetRestartOrientation(levelData->GetPlayerStartOrientation());
 
 	AxisAlignedBoundingBox physicsWorldBox;
 	std::vector<Reference<CollisionShapeSet>> collisionShapeSetArray;
-	for (const std::string& collisionFile : levelData->collisionFilesArray)
+	for (const std::string& collisionFile : levelData->GetCollisionFilesArray())
 	{
 		if (!Game::Get()->GetAssetCache()->GrabAsset(collisionFile, asset))
 			return false;
@@ -71,9 +72,11 @@ Level::Level()
 		collisionShapeSet->Clear(false);
 	}
 
-	// TODO: Add support for floating platforms--those that animate up and down or
-	//       side-to-side.  This makes platforming more challenging as you have to
-	//       time your jumps from one place to another.
+	for (const std::string& movingPlatformFile : levelData->GetMovingPlatformFilesArray())
+	{
+		MovingPlatform* movingPlatform = Game::Get()->SpawnEntity<MovingPlatform>();
+		movingPlatform->SetMovingPlatformFile(movingPlatformFile);
+	}
 
 	return true;
 }

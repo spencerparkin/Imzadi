@@ -5,6 +5,7 @@
 #include "Assets/Texture.h"
 #include "Assets/CollisionShapeSet.h"
 #include "Assets/LevelData.h"
+#include "Assets/MovingPlatformData.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
@@ -83,6 +84,8 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 		asset.Set(new CollisionShapeSet());
 	else if (ext == ".level")
 		asset.Set(new LevelData());
+	else if (ext == ".mov_plat")
+		asset.Set(new MovingPlatformData());
 	if (!asset)
 		return false;
 
@@ -206,6 +209,25 @@ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision:
 
 	quat = yawQuat * pitchQuat * rollQuat;
 	quat = quat.Normalized();	// Do this just to account for any round-off error.
+
+	return true;
+}
+
+bool Asset::LoadStringArray(const rapidjson::Value& stringArrayValue, std::vector<std::string>& stringArray)
+{
+	if (!stringArrayValue.IsArray())
+		return false;
+
+	stringArray.clear();
+
+	for (int i = 0; i < stringArrayValue.Size(); i++)
+	{
+		const rapidjson::Value& stringValue = stringArrayValue[i];
+		if (!stringValue.IsString())
+			return false;
+
+		stringArray.push_back(stringValue.GetString());
+	}
 
 	return true;
 }

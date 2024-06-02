@@ -13,33 +13,17 @@ LevelData::LevelData()
 	if (!jsonDoc.IsObject())
 		return false;
 
-	if (!jsonDoc.HasMember("static_meshes") || !jsonDoc["static_meshes"].IsArray())
+	if (!jsonDoc.HasMember("static_meshes"))
 		return false;
 
-	this->modelFilesArray.clear();
-	const rapidjson::Value& staticMeshesArrayValue = jsonDoc["static_meshes"];
-	for (int i = 0; i < staticMeshesArrayValue.Size(); i++)
-	{
-		const rapidjson::Value& staticMeshValue = staticMeshesArrayValue[i];
-		if (!staticMeshValue.IsString())
-			return false;
-
-		this->modelFilesArray.push_back(staticMeshValue.GetString());
-	}
-
-	if (!jsonDoc.HasMember("static_collision") || !jsonDoc["static_collision"].IsArray())
+	if (!this->LoadStringArray(jsonDoc["static_meshes"], this->modelFilesArray))
 		return false;
 
-	this->collisionFilesArray.clear();
-	const rapidjson::Value& collisionFilesArrayValue = jsonDoc["static_collision"];
-	for (int i = 0; i < collisionFilesArrayValue.Size(); i++)
-	{
-		const rapidjson::Value& collisionFileValue = collisionFilesArrayValue[i];
-		if (!collisionFileValue.IsString())
-			return false;
+	if (!jsonDoc.HasMember("static_collision"))
+		return false;
 
-		this->collisionFilesArray.push_back(collisionFileValue.GetString());
-	}
+	if (!this->LoadStringArray(jsonDoc["static_collision"], this->collisionFilesArray))
+		return false;
 
 	this->playerStartPosition.SetComponents(0.0, 0.0, 0.0);
 	if (jsonDoc.HasMember("player_start_location") && !this->LoadVector(jsonDoc["player_start_location"], this->playerStartPosition))
@@ -49,6 +33,10 @@ LevelData::LevelData()
 	if (jsonDoc.HasMember("player_start_orientation") && !this->LoadEulerAngles(jsonDoc["player_start_orientation"], this->playerStartOrientation))
 		return false;
 
+	this->movingPlatformFilesArray.clear();
+	if (jsonDoc.HasMember("moving_platforms") && !this->LoadStringArray(jsonDoc["moving_platforms"], this->movingPlatformFilesArray))
+		return false;
+
 	return true;
 }
 
@@ -56,6 +44,7 @@ LevelData::LevelData()
 {
 	this->modelFilesArray.clear();
 	this->collisionFilesArray.clear();
+	this->movingPlatformFilesArray.clear();
 
 	return true;
 }

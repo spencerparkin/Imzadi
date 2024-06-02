@@ -1,0 +1,19 @@
+{
+    "mesh": "Models/Level1/Level1_PartC.render_mesh",
+    "collision": "Models/Level1/Level1_PartC.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 28.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "bounce",
+    "move_speed": 5.0
+}

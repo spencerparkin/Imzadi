@@ -31,16 +31,20 @@ set(GAME_SOURCES
     Source/Assets/CollisionShapeSet.h
     Source/Assets/LevelData.cpp
     Source/Assets/LevelData.h
+    Source/Assets/MovingPlatformData.cpp
+    Source/Assets/MovingPlatformData.h
     Source/Entities/Hero.cpp
     Source/Entities/Hero.h
     Source/Entities/Enemy.cpp
     Source/Entities/Enemy.h
     Source/Entities/FollowCam.cpp
     Source/Entities/FollowCam.h
-    Source/Entities/Level.cpp
-    Source/Entities/Level.h
     Source/Entities/FreeCam.cpp
     Source/Entities/FreeCam.h
+    Source/Entities/Level.cpp
+    Source/Entities/Level.h
+    Source/Entities/MovingPlatform.cpp
+    Source/Entities/MovingPlatform.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})

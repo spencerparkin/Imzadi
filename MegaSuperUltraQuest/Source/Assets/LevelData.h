@@ -22,8 +22,16 @@ public:
 	virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 	virtual bool Unload() override;
 
+	const std::vector<std::string>& GetModelFilesArray() { return this->modelFilesArray; }
+	const std::vector<std::string>& GetCollisionFilesArray() { return this->collisionFilesArray; }
+	const std::vector<std::string>& GetMovingPlatformFilesArray() { return this->movingPlatformFilesArray; }
+	const Collision::Vector3& GetPlayerStartPosition() { return this->playerStartPosition; }
+	const Collision::Quaternion& GetPlayerStartOrientation() { return this->playerStartOrientation; }
+
+private:
 	std::vector<std::string> modelFilesArray;
 	std::vector<std::string> collisionFilesArray;
+	std::vector<std::string> movingPlatformFilesArray;
 	Collision::Vector3 playerStartPosition;
 	Collision::Quaternion playerStartOrientation;
 };
