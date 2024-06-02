@@ -47,6 +47,7 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 
 bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset)
 {
+	// Of course, we'll have a problem here if two files have the same name but are in different directories.
 	std::filesystem::path assetPath(assetFile);
 	std::string key = assetPath.filename().string();
 	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return std::tolower(c); });

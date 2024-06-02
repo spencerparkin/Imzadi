@@ -1,9 +1,15 @@
 {
     "static_meshes": [
-        "Models/Level1/Level1.render_mesh"
+        "Models/Level1/Level1_PartA.render_mesh",
+        "Models/Level1/Level1_PartB.render_mesh",
+        "Models/Level1/Level1_PartC.render_mesh",
+        "Models/Level1/Level1_PartD.render_mesh"
     ],
     "static_collision": [
-        "Models/Level1/Level1.collision"
+        "Models/Level1/Level1_PartA.collision",
+        "Models/Level1/Level1_PartB.collision",
+        "Models/Level1/Level1_PartC.collision",
+        "Models/Level1/Level1_PartD.collision"
     ],
     "player_start_location": {
         "x": 0.0,
@@ -11,7 +17,7 @@
         "z": 0.0
     },
     "player_start_orientation": {
-        "yaw": 45.0,
+        "yaw": 0.0,
         "pitch": 0.0,
         "roll": 0.0
     }

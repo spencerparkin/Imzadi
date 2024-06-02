@@ -7,65 +7,13 @@ import re
 
 class OBJ_Model(object):
     def __init__(self):
-        self.vertex_list = []
-        self.texcoord_list = []
-        self.normal_list = []
+        self.name = ''
         self.triangle_list = []
 
     def print_stats(self):
-        print('Num vertices: %d' % len(self.vertex_list))
-        print('Num texcoords: %d' % len(self.texcoord_list))
-        print('Num normals: %d' % len(self.normal_list))
+        print('---------------------------')
+        print('Name: %s' % self.name)
         print('Num triangles: %d' % len(self.triangle_list))
-
-    def parse_vertex(self, vertex_str):
-        token_list = vertex_str.split('/')
-        if len(token_list) == 3:
-            vertex_index = int(token_list[0]) - 1
-            texcoord_index = int(token_list[1]) - 1
-            normal_index = int(token_list[2]) - 1
-            return {
-                'vertex': self.vertex_list[vertex_index],
-                'texcoord': self.texcoord_list[texcoord_index],
-                'normal': self.normal_list[normal_index]
-            }
-        else:
-            raise Exception('Bad vertex!')
-
-    def load_from_file(self, obj_file):
-        with open(obj_file, 'r') as handle:
-            while True:
-                line = handle.readline()
-                if not line:
-                    break
-                token_list = line.split()
-                if len(token_list) == 0 or token_list[0] == '#':
-                    continue
-                if token_list[0] == 'v' and len(token_list) == 4:
-                    self.vertex_list.append((
-                        float(token_list[1]),
-                        float(token_list[2]),
-                        float(token_list[3])
-                    ))
-                elif token_list[0] == 'vt' and len(token_list) >= 3:
-                    self.texcoord_list.append((
-                        float(token_list[1]),
-                        float(token_list[2])
-                    ))
-                elif token_list[0] == 'vn' and len(token_list) == 4:
-                    self.normal_list.append((
-                        float(token_list[1]),
-                        float(token_list[2]),
-                        float(token_list[3])
-                    ))
-                elif token_list[0] == 'f':
-                    if len(token_list) != 4:
-                        raise Exception('Only triangles are supported.')
-                    self.triangle_list.append((
-                        self.parse_vertex(token_list[1]),
-                        self.parse_vertex(token_list[2]),
-                        self.parse_vertex(token_list[3])
-                    ))
 
 def run_shell_proc(shell_command, working_dir=None, captured_output=None):
     if working_dir is None:
@@ -118,48 +66,111 @@ def append_vertex(vertex, vertex_array):
     vertex_array.append(vertex['normal'][1])
     vertex_array.append(vertex['normal'][2])
 
-def process_obj_file(obj_file, assets_base_dir):
+def parse_vertex(vertex_str, vertex_list, texcoord_list, normal_list):
+    token_list = vertex_str.split('/')
+    if len(token_list) == 3:
+        vertex_index = int(token_list[0]) - 1
+        texcoord_index = int(token_list[1]) - 1
+        normal_index = int(token_list[2]) - 1
+        return {
+            'vertex': vertex_list[vertex_index],
+            'texcoord': texcoord_list[texcoord_index],
+            'normal': normal_list[normal_index]
+        }
+    else:
+        raise Exception('Bad vertex!')
+
+def load_obj_file(obj_file):
+    vertex_list = []
+    texcoord_list = []
+    normal_list = []
+    model_array = []
     model = OBJ_Model()
-    model.load_from_file(obj_file)
+    with open(obj_file, 'r') as handle:
+        while True:
+            line = handle.readline()
+            if not line:
+                break
+            token_list = line.split()
+            if len(token_list) == 0 or token_list[0] == '#':
+                continue
+            if token_list[0] == 'v' and len(token_list) == 4:
+                if len(model.name) > 0:
+                    model_array.append(model)
+                    model = OBJ_Model()
+                vertex_list.append((
+                    float(token_list[1]),
+                    float(token_list[2]),
+                    float(token_list[3])
+                ))
+            elif token_list[0] == 'vt' and len(token_list) >= 3:
+                texcoord_list.append((
+                    float(token_list[1]),
+                    float(token_list[2])
+                ))
+            elif token_list[0] == 'vn' and len(token_list) == 4:
+                normal_list.append((
+                    float(token_list[1]),
+                    float(token_list[2]),
+                    float(token_list[3])
+                ))
+            elif token_list[0] == 'f':
+                if len(token_list) != 4:
+                    raise Exception('Only triangles are supported.')
+                model.triangle_list.append((
+                    parse_vertex(token_list[1], vertex_list, texcoord_list, normal_list),
+                    parse_vertex(token_list[2], vertex_list, texcoord_list, normal_list),
+                    parse_vertex(token_list[3], vertex_list, texcoord_list, normal_list)
+                ))
+            elif token_list[0] == 'o' and len(token_list) == 2:
+                model.name = token_list[1]
+
+    if len(model.name) > 0:
+        model_array.append(model)
+
+    return model_array
+
+def process_obj_file(obj_file, assets_base_dir):
+    model_dir, name = os.path.split(obj_file)
+    base_name, ext = os.path.splitext(name)
+    model_array = load_obj_file(obj_file)
+    for model in model_array:
+        process_model(model, base_name, model_dir, assets_base_dir)
+
+def process_model(model, base_name, model_dir, assets_base_dir):
     model.print_stats()
 
-    dir, name = os.path.split(obj_file)
-    name, ext = os.path.splitext(name)
+    vertex_buffer_file = os.path.join(model_dir, base_name + '_' + model.name + '_Vertices.buffer')
+    index_buffer_file = os.path.join(model_dir, base_name + '_' + model.name + '_Indices.buffer')
+    render_mesh_file = os.path.join(model_dir, base_name + '_' + model.name + '.render_mesh')
+    texture_file = os.path.join(model_dir, base_name + '_' + model.name + ".texture")
+    collision_file = os.path.join(model_dir, base_name + '_' + model.name + ".collision")
+    image_file = os.path.join(model_dir, base_name + '_' + model.name + '.png')
 
-    vertex_buffer_file = os.path.join(dir, name + 'Vertices.buffer')
-    index_buffer_file = os.path.join(dir, name + 'Indices.buffer')
-    render_mesh_file = os.path.join(dir, name + '.render_mesh')
-    texture_file = os.path.join(dir, name + ".texture")
-    collision_file = os.path.join(dir, name + ".collision")
-
-    if name.lower().find('level') >= 0:
-        shape_set = []
-
-        for triangle in model.triangle_list:
-            vertex_array = [
-                triangle[0]['vertex'],
-                triangle[1]['vertex'],
-                triangle[2]['vertex']
-            ]
-
-            shape_info = {
-                'type': 'polygon',
-                'vertex_array': vertex_array
-            }
-
-            shape_set.append(shape_info)
-
-        collision_file_data = {
-            'shape_set': shape_set
+    shape_set = []
+    for triangle in model.triangle_list:
+        vertex_array = [
+            triangle[0]['vertex'],
+            triangle[1]['vertex'],
+            triangle[2]['vertex']
+        ]
+        shape_info = {
+            'type': 'polygon',
+            'vertex_array': vertex_array
         }
+        shape_set.append(shape_info)
 
-        if os.path.exists(collision_file):
-            os.remove(collision_file)
+    collision_file_data = {
+        'shape_set': shape_set
+    }
 
-        with open(collision_file, 'w') as handle:
-            json_text = json.dumps(collision_file_data, indent=4, sort_keys=True)
-            handle.write(json_text)
-        print('Wrote file: %s!' % collision_file)
+    if os.path.exists(collision_file):
+        os.remove(collision_file)
+
+    with open(collision_file, 'w') as handle:
+        json_text = json.dumps(collision_file_data, indent=4, sort_keys=True)
+        handle.write(json_text)
+    print('Wrote file: %s!' % collision_file)
 
     vertex_map = {}
     vertex_array = []
@@ -177,13 +188,13 @@ def process_obj_file(obj_file, assets_base_dir):
                 index = vertex_map[vertex_key]
                 index_array.append(index)
 
-    min_x = min([vertex[0] for vertex in model.vertex_list])
-    min_y = min([vertex[1] for vertex in model.vertex_list])
-    min_z = min([vertex[2] for vertex in model.vertex_list])
+    min_x = min([min([vertex['vertex'][0] for vertex in triangle]) for triangle in model.triangle_list])
+    min_y = min([min([vertex['vertex'][1] for vertex in triangle]) for triangle in model.triangle_list])
+    min_z = min([min([vertex['vertex'][2] for vertex in triangle]) for triangle in model.triangle_list])
 
-    max_x = max([vertex[0] for vertex in model.vertex_list])
-    max_y = max([vertex[1] for vertex in model.vertex_list])
-    max_z = max([vertex[2] for vertex in model.vertex_list])
+    max_x = max([max([vertex['vertex'][0] for vertex in triangle]) for triangle in model.triangle_list])
+    max_y = max([max([vertex['vertex'][1] for vertex in triangle]) for triangle in model.triangle_list])
+    max_z = max([max([vertex['vertex'][2] for vertex in triangle]) for triangle in model.triangle_list])
 
     if os.path.exists(vertex_buffer_file):
         os.remove(vertex_buffer_file)
@@ -220,7 +231,6 @@ def process_obj_file(obj_file, assets_base_dir):
         }
     }
 
-    image_file = os.path.join(dir, name + '.png')
     if os.path.exists(image_file):
         with open(texture_file, 'w') as handle:
             texture_data = {
@@ -380,6 +390,7 @@ if __name__ == '__main__':
     obj_file_list = []
     find_all_files(assets_base_dir, obj_file_list, '.obj')
     for obj_file in obj_file_list:
+        print('=================================================================================')
         print('Processing %s...' % obj_file)
         process_obj_file(obj_file, assets_base_dir)
 

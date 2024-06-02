@@ -1,0 +1,20 @@
+{
+    "bounding_box": {
+        "max": {
+            "x": 80.4515,
+            "y": 63.2534,
+            "z": 70.8615
+        },
+        "min": {
+            "x": -57.2708,
+            "y": 27.4734,
+            "z": -144.1924
+        }
+    },
+    "index_buffer": "Models\\Level1\\Level1_PartD_Indices.buffer",
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "texture": "Models\\Level1\\Level1_PartD.texture",
+    "vertex_buffer": "Models\\Level1\\Level1_PartD_Vertices.buffer"
+}

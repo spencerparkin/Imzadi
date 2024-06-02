@@ -11,10 +11,10 @@
             "z": -24.0695
         }
     },
-    "index_buffer": "Models\\Level1\\Level1Indices.buffer",
+    "index_buffer": "Models\\Level1\\Level1_PartB_Indices.buffer",
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
     "shadow_shader": "Shaders/StandardShadow.shader",
-    "texture": "Models\\Level1\\Level1.texture",
-    "vertex_buffer": "Models\\Level1\\Level1Vertices.buffer"
+    "texture": "Models\\Level1\\Level1_PartB.texture",
+    "vertex_buffer": "Models\\Level1\\Level1_PartB_Vertices.buffer"
 }
