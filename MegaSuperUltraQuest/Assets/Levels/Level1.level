@@ -2,13 +2,11 @@
     "static_meshes": [
         "Models/Level1/Level1_PartA.render_mesh",
         "Models/Level1/Level1_PartB.render_mesh",
-        "Models/Level1/Level1_PartC.render_mesh",
         "Models/Level1/Level1_PartD.render_mesh"
     ],
     "static_collision": [
         "Models/Level1/Level1_PartA.collision",
         "Models/Level1/Level1_PartB.collision",
-        "Models/Level1/Level1_PartC.collision",
         "Models/Level1/Level1_PartD.collision"
     ],
     "player_start_location": {
@@ -20,5 +18,25 @@
         "yaw": 0.0,
         "pitch": 0.0,
         "roll": 0.0
-    }
+    },
+    "moving_platforms": [
+        {
+            "mesh": "Models/Level1/Level1_PartC.render_mesh",
+            "collision": "Models/Level1/Level1_PartC.collision",
+            "spline_deltas": [
+                {
+                    "x": 0.0,
+                    "y": 0.0,
+                    "z": 0.0
+                },
+                {
+                    "x": 28.0,
+                    "y": 0.0,
+                    "y": 0.0
+                }
+            ],
+            "spline_type": "lerp",
+            "spline_mode": "bounce"
+        }
+    ]
 }
