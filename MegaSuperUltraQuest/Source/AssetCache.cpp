@@ -4,6 +4,7 @@
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
 #include "Assets/CollisionShapeSet.h"
+#include "Assets/LevelData.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
@@ -11,6 +12,8 @@
 #include <filesystem>
 #include "rapidjson/reader.h"
 #include "rapidjson/error/en.h"
+
+using namespace Collision;
 
 //-------------------------------- AssetCache --------------------------------
 
@@ -76,6 +79,8 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 		asset.Set(new Buffer());
 	else if (ext == ".collision")
 		asset.Set(new CollisionShapeSet());
+	else if (ext == ".level")
+		asset.Set(new LevelData());
 	if (!asset)
 		return false;
 
@@ -160,4 +165,48 @@ Asset::Asset()
 
 /*virtual*/ Asset::~Asset()
 {
+}
+
+bool Asset::LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector)
+{
+	if (!vectorValue.IsObject())
+		return false;
+
+	if (!vectorValue.HasMember("x") || !vectorValue.HasMember("y") || !vectorValue.HasMember("z"))
+		return false;
+
+	if (!vectorValue["x"].IsFloat() || !vectorValue["y"].IsFloat() || !vectorValue["z"].IsFloat())
+		return false;
+
+	vector.x = vectorValue["x"].GetFloat();
+	vector.y = vectorValue["y"].GetFloat();
+	vector.z = vectorValue["z"].GetFloat();
+	return true;
+}
+
+bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat)
+{
+	if (!eulerAnglesValue.IsObject())
+		return false;
+
+	if (!eulerAnglesValue.HasMember("yaw") || !eulerAnglesValue.HasMember("pitch") || !eulerAnglesValue.HasMember("roll"))
+		return false;
+
+	if (!eulerAnglesValue["yaw"].IsFloat() || !eulerAnglesValue["pitch"].IsFloat() || !eulerAnglesValue["roll"].IsFloat())
+		return false;
+
+	double yawAngle = COLL_SYS_DEGS_TO_RADS(eulerAnglesValue["yaw"].GetFloat());
+	double pitchAngle = COLL_SYS_DEGS_TO_RADS(eulerAnglesValue["pitch"].GetFloat());
+	double rollAngle = COLL_SYS_DEGS_TO_RADS(eulerAnglesValue["roll"].GetFloat());
+
+	Quaternion yawQuat, pitchQuat, rollQuat;
+
+	yawQuat.SetFromAxisAngle(Vector3(0.0, 1.0, 0.0), yawAngle);
+	pitchQuat.SetFromAxisAngle(Vector3(1.0, 0.0, 0.0), pitchAngle);
+	rollQuat.SetFromAxisAngle(Vector3(0.0, 0.0, 1.0), rollAngle);
+
+	quat = yawQuat * pitchQuat * rollQuat;
+	quat = quat.Normalized();	// Do this just to account for any round-off error.
+
+	return true;
 }

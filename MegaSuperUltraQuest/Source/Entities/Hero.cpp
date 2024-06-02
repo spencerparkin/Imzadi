@@ -21,7 +21,7 @@ Hero::Hero()
 /*virtual*/ bool Hero::Setup()
 {
 	std::string heroModelFile = "Models/Hero/Hero.render_mesh";
-	this->renderMesh.SafeSet(Game::Get()->LoadAndPlaceRenderMesh(heroModelFile, this->restartLocation, Quaternion()));
+	this->renderMesh.SafeSet(Game::Get()->LoadAndPlaceRenderMesh(heroModelFile, this->restartLocation, this->restartOrientation));
 
 	FollowCam* followCam = Game::Get()->SpawnEntity<FollowCam>();
 	followCam->SetSubject(this);

@@ -1,5 +1,6 @@
 #include "Entity.h"
 #include "Math/Vector3.h"
+#include "Math/Quaternion.h"
 #include "Scene.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "Shape.h"
@@ -19,9 +20,11 @@ public:
 	virtual bool GetTransform(Collision::Transform& transform) override;
 
 	void SetRestartLocation(const Collision::Vector3& restartLocation) { this->restartLocation = restartLocation; }
+	void SetRestartOrientation(const Collision::Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }
 
 private:
 	Collision::Vector3 restartLocation;
+	Collision::Quaternion restartOrientation;
 	Collision::ShapeID shapeID;
 	Reference<RenderMeshInstance> renderMesh;
 };

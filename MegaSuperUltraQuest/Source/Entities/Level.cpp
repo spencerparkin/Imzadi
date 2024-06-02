@@ -6,6 +6,7 @@
 #include "Math/Vector3.h"
 #include "Math/Quaternion.h"
 #include "Assets/CollisionShapeSet.h"
+#include "Assets/LevelData.h"
 #include <format>
 
 using namespace Collision;
@@ -21,36 +22,59 @@ Level::Level()
 
 /*virtual*/ bool Level::Setup()
 {
-	// TODO: We might load up a JSON file here for the level describing where all
-	//       the enemies and trinkets go, as well as where the player start position is.
+	std::string levelFile = std::format("Levels/Level{}.level", this->levelNumber);
+	Reference<Asset> asset;
+	if (!Game::Get()->GetAssetCache()->GrabAsset(levelFile, asset))
+		return false;
 
-	std::string levelModelFile = std::format("Models/Level{}/Level{}.render_mesh", this->levelNumber, this->levelNumber);
-	Game::Get()->LoadAndPlaceRenderMesh(levelModelFile, Vector3(), Quaternion());
+	Reference<LevelData> levelData;
+	levelData.SafeSet(asset.Get());
+	if (!levelData)
+		return false;
+
+	for (const std::string& modelFile : levelData->modelFilesArray)
+		Game::Get()->LoadAndPlaceRenderMesh(modelFile, Vector3(), Quaternion());
 
 	Hero* hero = Game::Get()->SpawnEntity<Hero>();
-	hero->SetRestartLocation(Vector3(0.0, 0.0, 0.0));		// TODO: Maybe get this from the level description file?
+	hero->SetRestartLocation(levelData->playerStartPosition);
+	hero->SetRestartOrientation(levelData->playerStartOrientation);
 
-	std::string staticCollisionFile = std::format("Models/Level{}/Level{}.collision", this->levelNumber, this->levelNumber);
-	Reference<Asset> collisionAsset;
-	if (!Game::Get()->GetAssetCache()->GrabAsset(staticCollisionFile, collisionAsset))
+	AxisAlignedBoundingBox physicsWorldBox;
+	std::vector<Reference<CollisionShapeSet>> collisionShapeSetArray;
+	for (const std::string& collisionFile : levelData->collisionFilesArray)
+	{
+		if (!Game::Get()->GetAssetCache()->GrabAsset(collisionFile, asset))
+			return false;
+
+		auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(asset.Get());
+		if (!collisionShapeSet)
+			return false;
+
+		collisionShapeSetArray.push_back(collisionShapeSet);
+
+		AxisAlignedBoundingBox boundingBox;
+		if (!collisionShapeSet->GetBoundingBox(boundingBox))
+			return false;
+
+		physicsWorldBox.Expand(boundingBox);
+	}
+
+	physicsWorldBox.Scale(1.5);
+	if (!Game::Get()->GetCollisionSystem()->Initialize(physicsWorldBox))
 		return false;
 
-	auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(collisionAsset.Get());
-	if (!collisionShapeSet)
-		return false;
+	for(auto collisionShapeSet : collisionShapeSetArray)
+	{
+		for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
+			Game::Get()->GetCollisionSystem()->AddShape(shape, 0 /*COLL_SYS_ADD_FLAG_ALLOW_SPLIT*/);	// TODO: Figure out why splitting fails.
 
-	AxisAlignedBoundingBox boundingBox;
-	if (!collisionShapeSet->GetBoundingBox(boundingBox))
-		return false;
+		collisionShapeSet->Clear(false);
+	}
 
-	boundingBox.Scale(1.5);
-	if (!Game::Get()->GetCollisionSystem()->Initialize(boundingBox))
-		return false;
+	// TODO: Add support for floating platforms--those that animate up and down or
+	//       side-to-side.  This makes platforming more challenging as you have to
+	//       time your jumps from one place to another.
 
-	for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
-		Game::Get()->GetCollisionSystem()->AddShape(shape, 0 /*COLL_SYS_ADD_FLAG_ALLOW_SPLIT*/);	// TODO: Figure out why splitting fails.
-
-	collisionShapeSet->Clear(false);
 	return true;
 }
 
@@ -73,5 +97,6 @@ Level::Level()
 
 /*virtual*/ bool Level::Tick(double deltaTime)
 {
+	// TODO: Animate floating platforms here.  Don't forgot to move the collision as well.
 	return true;
 }

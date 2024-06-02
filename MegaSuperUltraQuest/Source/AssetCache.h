@@ -3,6 +3,7 @@
 #include "Reference.h"
 #include "rapidjson/document.h"
 #include "Math/Vector3.h"
+#include "Math/Quaternion.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include <string>
 #include <unordered_map>
@@ -72,4 +73,8 @@ public:
 	virtual bool Unload() = 0;
 	virtual bool CanBeCached() const { return true; }
 	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) { return false; }
+
+protected:
+	bool LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector);
+	bool LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat);
 };

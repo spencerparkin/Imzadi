@@ -29,6 +29,8 @@ set(GAME_SOURCES
     Source/Assets/Buffer.h
     Source/Assets/CollisionShapeSet.cpp
     Source/Assets/CollisionShapeSet.h
+    Source/Assets/LevelData.cpp
+    Source/Assets/LevelData.h
     Source/Entities/Hero.cpp
     Source/Entities/Hero.h
     Source/Entities/Enemy.cpp
