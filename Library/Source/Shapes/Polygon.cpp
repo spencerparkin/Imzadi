@@ -194,27 +194,19 @@ const std::vector<Vector3>& PolygonShape::GetWorldVertices() const
 	if (worldPlane.GetSide(point, tolerance) != Plane::Side::NEITHER)
 		return false;
 
+	std::vector<LineSegment> edgeArray;
+	this->GetWorldEdges(edgeArray);
+
 	// Is the point on an edge of the polygon?
-	const std::vector<Vector3>& worldVertexArray = this->GetWorldVertices();
-	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
-	{
-		int j = (i + 1) % worldVertexArray.size();
-
-		const Vector3& vertexA = worldVertexArray[i];
-		const Vector3& vertexB = worldVertexArray[j];
-
-		LineSegment edgeSegment(vertexA, vertexB);
+	for (const LineSegment& edgeSegment : edgeArray)
 		if (edgeSegment.ShortestDistanceTo(point) < tolerance)
 			return true;
-	}
 
 	// Is the point an interior point of the polygon?
-	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
+	for(const LineSegment& edgeSegment : edgeArray)
 	{
-		int j = (i + 1) % worldVertexArray.size();
-
-		const Vector3& vertexA = worldVertexArray[i];
-		const Vector3& vertexB = worldVertexArray[j];
+		const Vector3& vertexA = edgeSegment.point[0];
+		const Vector3& vertexB = edgeSegment.point[1];
 
 		double determinant = (vertexA - point).Cross(vertexB - point).Dot(worldPlane.unitNormal);
 		if (determinant < 0.0)
@@ -229,13 +221,11 @@ const std::vector<Vector3>& PolygonShape::GetWorldVertices() const
 	DebugRenderResult::RenderLine renderLine;
 	renderLine.color = this->debugColor;
 
-	const std::vector<Vector3>& worldVertexArray = this->GetWorldVertices();
-	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
+	std::vector<LineSegment> edgeArray;
+	this->GetWorldEdges(edgeArray);
+	for(const LineSegment& edge : edgeArray)
 	{
-		int j = (i + 1) % worldVertexArray.size();
-
-		renderLine.line.point[0] = worldVertexArray[i];
-		renderLine.line.point[1] = worldVertexArray[j];
+		renderLine.line = edge;
 		renderResult->AddRenderLine(renderLine);
 	}
 
@@ -613,14 +603,9 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 	}
 }
 
-Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
+void PolygonShape::GetWorldEdges(std::vector<LineSegment>& edgeArray) const
 {
-	const Plane& worldPlane = this->GetWorldPlane();
-	Vector3 closestPoint = worldPlane.ClosestPointTo(point);
-	if (this->ContainsPoint(closestPoint))
-		return closestPoint;
-
-	double smallestDistance = std::numeric_limits<double>::max();
+	edgeArray.clear();
 	const std::vector<Vector3>& worldVertexArray = this->GetWorldVertices();
 	for (int i = 0; i < (signed)worldVertexArray.size(); i++)
 	{
@@ -629,8 +614,22 @@ Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
 		const Vector3& pointA = worldVertexArray[i];
 		const Vector3& pointB = worldVertexArray[j];
 
-		LineSegment edge(pointA, pointB);
+		edgeArray.push_back(LineSegment(pointA, pointB));
+	}
+}
 
+Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
+{
+	const Plane& worldPlane = this->GetWorldPlane();
+	Vector3 closestPoint = worldPlane.ClosestPointTo(point);
+	if (this->ContainsPoint(closestPoint))
+		return closestPoint;
+
+	double smallestDistance = std::numeric_limits<double>::max();
+	std::vector<LineSegment> edgeArray;
+	this->GetWorldEdges(edgeArray);
+	for (const LineSegment& edge : edgeArray)
+	{
 		Vector3 edgePoint = edge.ClosestPointTo(point);
 		double distance = (point - edgePoint).Length();
 		if (distance < smallestDistance)

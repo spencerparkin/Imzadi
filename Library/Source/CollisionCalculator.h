@@ -175,4 +175,24 @@ namespace Collision
 		 */
 		bool GatherInfo(const BoxShape* homeBox, const BoxShape* awayBox, VertexPenetrationArray& vertexPenetrationArray, EdgeImpalementArray& edgeImpalementArray, FacePunctureArray& facePunctureArray);
 	};
+
+	/**
+	 * Calculate the collision status between a capsule and a polygon.
+	 */
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<CapsuleShape, PolygonShape> : public CollisionCalculatorInterface
+	{
+	public:
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
+
+	/**
+	 * Calculate the collision status between a polygon and a capsule.
+	 */
+	template<>
+	class COLLISION_LIB_API CollisionCalculator<PolygonShape, CapsuleShape> : public CollisionCalculatorInterface
+	{
+	public:
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
 }

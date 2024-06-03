@@ -207,8 +207,17 @@ namespace Collision
 		const std::vector<Vector3>& GetWorldVertices() const;
 
 		/**
+		 * Calculate and return a set of line-segments, each being a world edge of this polygon.
+		 * 
+		 * @param[out] edgeArray The edges are inserted here in CCW order.
+		 */
+		void GetWorldEdges(std::vector<LineSegment>& edgeArray) const;
+
+		/**
 		 * Calculate and return the point on this polygon (in world space) that is closest
-		 * to the given point (also in world space.)
+		 * to the given point.
+		 * 
+		 * @param point This should be a point in world space.
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
 

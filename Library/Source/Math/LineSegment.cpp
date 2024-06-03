@@ -65,8 +65,10 @@ double LineSegment::ShortestDistanceTo(const LineSegment& lineSegment) const
 	if (shortestConnector.SetAsShortestConnector(*this, lineSegment))
 		return shortestConnector.Length();
 
-	// TODO: We shouldn't actually fail in this case, because there is a correct answer; we're just not getting it.
-	return 0.0;
+	// In this case, the two line-segments are parallel, I think.
+	double distanceA = lineSegment.ShortestDistanceTo(this->point[0]);
+	double distanceB = lineSegment.ShortestDistanceTo(this->point[1]);
+	return COLL_SYS_MIN(distanceA, distanceB);
 }
 
 double LineSegment::ShortestDistanceTo(const Plane& plane) const

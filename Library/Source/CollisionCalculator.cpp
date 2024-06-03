@@ -420,3 +420,78 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 
 	return facePunctureArray.size() > 0 || edgeImpalementArray.size() > 0 || vertexPenetrationArray.size() > 0;
 }
+
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<CapsuleShape, PolygonShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	auto capsule = dynamic_cast<const CapsuleShape*>(shapeA);
+	auto polygon = dynamic_cast<const PolygonShape*>(shapeB);
+
+	if (!capsule || !polygon)
+	{
+		GetError()->AddErrorMessage("Failed to cast given shapes to capsule and polygon.");
+		return nullptr;
+	}
+
+	LineSegment capsuleSpine = capsule->GetObjectToWorldTransform().TransformLineSegment(capsule->GetSpine());
+	const Plane& worldPlane = polygon->GetWorldPlane();
+
+	std::vector<LineSegment> connectorArray;
+
+	Vector3 closestPoint0 = worldPlane.ClosestPointTo(capsuleSpine.point[0]);
+	if (polygon->ContainsPoint(closestPoint0))
+		connectorArray.push_back(LineSegment(closestPoint0, capsuleSpine.point[0]));
+
+	Vector3 closestPoint1 = worldPlane.ClosestPointTo(capsuleSpine.point[1]);
+	if (polygon->ContainsPoint(closestPoint1))
+		connectorArray.push_back(LineSegment(closestPoint1, capsuleSpine.point[1]));
+
+	std::vector<LineSegment> edgeArray;
+	polygon->GetWorldEdges(edgeArray);
+	for (const LineSegment& edge : edgeArray)
+	{
+		LineSegment connector;
+		if (connector.SetAsShortestConnector(edge, capsuleSpine))
+			connectorArray.push_back(connector);
+	}
+
+	const LineSegment* shortestConnector = nullptr;
+	double shortestDistance = std::numeric_limits<double>::max();
+	for (const LineSegment& connector : connectorArray)
+	{
+		double distance = connector.Length();
+		if (distance < shortestDistance)
+		{
+			shortestDistance = distance;
+			shortestConnector = &connector;
+		}
+	}
+
+	COLL_SYS_ASSERT(shortestConnector != nullptr);
+	
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+
+	if (shortestDistance < capsule->GetRadius())
+	{
+		collisionStatus->inCollision = true;
+		collisionStatus->collisionCenter = shortestConnector->point[0];	// TODO: This is dubious.  Fix it.
+
+		Vector3 delta = shortestConnector->GetDelta();
+		if (delta.Normalize())
+			collisionStatus->separationDelta = delta * (capsule->GetRadius() - shortestDistance);
+		else
+		{
+			// TODO: Let's deal with this, but only if it comes up in practice.
+			COLL_SYS_ASSERT(false);
+		}
+	}
+
+	return collisionStatus;
+}
+
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<PolygonShape, CapsuleShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<CapsuleShape, PolygonShape>().Calculate(shapeB, shapeA);
+	if (collisionStatus)
+		collisionStatus->separationDelta *= -1.0;
+	return collisionStatus;
+}
