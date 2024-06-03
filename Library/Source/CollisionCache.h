@@ -123,6 +123,11 @@ namespace Collision
 		bool AreInCollision() const { return this->inCollision; }
 
 	public:
+		/**
+		 * This is used internally so that we can re-use code comparing A against B in the case of B against A.
+		 */
+		void FlipContext();
+
 		bool inCollision;				///< Are the shapes in this pair thought to be in collision/overlapping?
 		Vector3 collisionCenter;		///< This is an approximate center of the overlap region between the two shapes, if they are thought to be in collision; undefined, otherwise.
 		Vector3 separationDelta;		///< This is a minimal translation delta that, if added to shape A or subtracted from shape B, will get them into a state of at most touching.  It is undefined if the shapes are not thought to be in collision.

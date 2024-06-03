@@ -85,7 +85,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 {
 	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<SphereShape, CapsuleShape>().Calculate(shapeB, shapeA);
 	if (collisionStatus)
-		collisionStatus->separationDelta *= -1.0;
+		collisionStatus->FlipContext();
 	return collisionStatus;
 }
 
@@ -181,7 +181,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 {
 	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<SphereShape, BoxShape>().Calculate(shapeB, shapeA);
 	if (collisionStatus)
-		collisionStatus->separationDelta *= -1.0;
+		collisionStatus->FlipContext();
 	return collisionStatus;
 }
 
@@ -223,7 +223,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 {
 	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<SphereShape, PolygonShape>().Calculate(shapeB, shapeA);
 	if (collisionStatus)
-		collisionStatus->separationDelta *= -1.0;
+		collisionStatus->FlipContext();
 	return collisionStatus;
 }
 
@@ -492,6 +492,6 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 {
 	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<CapsuleShape, PolygonShape>().Calculate(shapeB, shapeA);
 	if (collisionStatus)
-		collisionStatus->separationDelta *= -1.0;
+		collisionStatus->FlipContext();
 	return collisionStatus;
 }

@@ -191,3 +191,12 @@ double ShapePairCollisionStatus::GetSeparationDeltaLength() const
 
 	return this->separationDelta.Length();
 }
+
+void ShapePairCollisionStatus::FlipContext()
+{
+	this->separationDelta *= -1.0;
+
+	const Shape* shape = this->shapeA;
+	this->shapeA = this->shapeB;
+	this->shapeB = shape;
+}
