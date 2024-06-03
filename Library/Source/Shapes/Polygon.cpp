@@ -642,6 +642,26 @@ Vector3 PolygonShape::ClosestPointTo(const Vector3& point) const
 	return closestPoint;
 }
 
+bool PolygonShape::IntersectsWith(const LineSegment& lineSegment, Vector3& intersectionPoint) const
+{
+	Vector3 unitDirection = lineSegment.GetDelta();
+	double length = 0.0;
+	if (!unitDirection.Normalize(&length))
+		return false;
+
+	Ray ray(lineSegment.point[0], unitDirection);
+	const Plane& worldPlane = this->GetWorldPlane();
+	double alpha = 0.0;
+	if (!ray.CastAgainst(worldPlane, alpha))
+		return false;
+
+	if (alpha < 0.0 || alpha > length)
+		return false;
+
+	intersectionPoint = ray.CalculatePoint(alpha);
+	return this->ContainsPoint(intersectionPoint);
+}
+
 /*virtual*/ bool PolygonShape::Dump(std::ostream& stream) const
 {
 	if (!Shape::Dump(stream))

@@ -433,6 +433,10 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 	}
 
 	LineSegment capsuleSpine = capsule->GetObjectToWorldTransform().TransformLineSegment(capsule->GetSpine());
+	
+	Vector3 intersectionPoint;
+	bool intersectsSpine = polygon->IntersectsWith(capsuleSpine, intersectionPoint);
+
 	const Plane& worldPlane = polygon->GetWorldPlane();
 
 	std::vector<LineSegment> connectorArray;
@@ -470,18 +474,24 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 	
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
-	if (shortestDistance < capsule->GetRadius())
+	if (intersectsSpine || shortestDistance < capsule->GetRadius())
 	{
 		collisionStatus->inCollision = true;
 		collisionStatus->collisionCenter = shortestConnector->point[0];	// TODO: This is dubious.  Fix it.
 
 		Vector3 delta = shortestConnector->GetDelta();
-		if (delta.Normalize())
-			collisionStatus->separationDelta = delta * (capsule->GetRadius() - shortestDistance);
+		double distance = 0.0;
+		if (!delta.Normalize(&distance))
+		{
+			// TODO: Handle this case.
+			COLL_SYS_ASSERT(false);
+		}
 		else
 		{
-			// TODO: Let's deal with this, but only if it comes up in practice.
-			COLL_SYS_ASSERT(false);
+			if (intersectsSpine)
+				collisionStatus->separationDelta = -delta * (capsule->GetRadius() + distance);
+			else
+				collisionStatus->separationDelta = delta * (capsule->GetRadius() - shortestDistance);
 		}
 	}
 

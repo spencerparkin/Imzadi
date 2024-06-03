@@ -221,6 +221,15 @@ namespace Collision
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
 
+		/**
+		 * Tell the caller if and where the given line segment intersects this polygon.
+		 * 
+		 * @param[in] lineSegment This is the line-segment to test against this polygon.  It must be non-degenerate.
+		 * @param[out] intersectionPoint This will be the point on the given line-segment where it intersects this polygon, if at all; left undefined, otherwise.
+		 * @return True is returned if and only if the given line segment shares a single point in common with this polygon.
+		 */
+		bool IntersectsWith(const LineSegment& lineSegment, Vector3& intersectionPoint) const;
+
 	protected:
 
 		/**
