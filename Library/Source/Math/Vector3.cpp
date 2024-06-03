@@ -49,13 +49,17 @@ Vector3 Vector3::Rotated(const Vector3& unitAxis, double angle) const
 
 void Vector3::SetAsOrthogonalTo(const Vector3& vector)
 {
-	if (vector.x < vector.y && vector.x < vector.z)
+	double absX = ::fabs(vector.x);
+	double absY = ::fabs(vector.y);
+	double absZ = ::fabs(vector.z);
+
+	if (absX <= absY && absX <= absZ)
 	{
 		this->x = 0.0;
 		this->y = vector.z;
 		this->z = -vector.y;
 	}
-	else if (vector.y < vector.x && vector.y < vector.z)
+	else if (absY <= absX && absY <= absZ)
 	{
 		this->x = vector.z;
 		this->y = 0.0;
