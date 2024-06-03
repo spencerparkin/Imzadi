@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include "Camera.h"
+#include "Math/SphericalCoords.h"
 
 class FreeCam;
 
@@ -23,9 +24,7 @@ public:
 
 	struct FollowParams
 	{
-		double followingDistance;
-		double hoverHeight;
-		double rotationRate;
+		double maxRotationRate;
 		Collision::Vector3 objectSpaceFocalPoint;
 	};
 
@@ -33,8 +32,12 @@ public:
 	void SetFollowParams(const FollowParams& followParams) { this->followParams = followParams; }
 
 private:
+	void CalculateCameraPositionAndOrientation();
+	void MoveCameraOrbitBehindSubject();
+
 	Reference<Entity> subject;
 	Reference<Camera> camera;
 	Reference<FreeCam> freeCam;
 	FollowParams followParams;
+	Collision::SphericalCoords orbitLocation;
 };

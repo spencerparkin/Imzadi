@@ -56,6 +56,8 @@ set(LIBRARY_SOURCES
     Source/Math/Quadratic.h
     Source/Math/Interval.cpp
     Source/Math/Interval.h
+    Source/Math/SphericalCoords.cpp
+    Source/Math/SphericalCoords.h
     Source/Shapes/Box.cpp
     Source/Shapes/Box.h
     Source/Shapes/Capsule.cpp

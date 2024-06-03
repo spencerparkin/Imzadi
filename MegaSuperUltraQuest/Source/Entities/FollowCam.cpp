@@ -6,12 +6,17 @@
 
 using namespace Collision;
 
+// TODO: Extra challenge: Adjust the radius of our camera's orbit so that no
+//       collision object obstructs our view of the subject.  But don't really
+//       change the orbit, just the effective orbit until the camera can
+//       swivel out of the way.
 FollowCam::FollowCam()
 {
-	this->followParams.followingDistance = 20.0;
-	this->followParams.hoverHeight = 10.0;
-	this->followParams.rotationRate = M_PI / 16.0;
+	this->followParams.maxRotationRate = M_PI / 3.0;
 	this->followParams.objectSpaceFocalPoint.SetComponents(0.0, 5.0, 0.0);
+	this->orbitLocation.radius = 20.0;
+	this->orbitLocation.longitudeAngle = 0.0;
+	this->orbitLocation.latitudeAngle = 0.0;
 }
 
 /*virtual*/ FollowCam::~FollowCam()
@@ -23,16 +28,8 @@ FollowCam::FollowCam()
 	if (!this->camera || !this->subject)
 		return false;
 
-	Transform subjectTransform;
-	if (!this->subject->GetTransform(subjectTransform))
-		return false;
-
-	Vector3 xAxis, yAxis, zAxis;
-	subjectTransform.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
-
-	Vector3 worldSpaceFocalPoint = subjectTransform.TransformPoint(this->followParams.objectSpaceFocalPoint);
-	Vector3 eyePoint = worldSpaceFocalPoint + this->followParams.followingDistance * zAxis + this->followParams.hoverHeight * yAxis;
-	this->camera->LookAt(eyePoint, worldSpaceFocalPoint, Vector3(0.0, 1.0, 0.0));
+	this->MoveCameraOrbitBehindSubject();
+	this->CalculateCameraPositionAndOrientation();
 
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
 	this->freeCam->SetCamera(this->camera);
@@ -48,11 +45,6 @@ FollowCam::FollowCam()
 
 /*virtual*/ bool FollowCam::Tick(double deltaTime)
 {
-	// TODO: Respond to controller input here to move the camera around the subject.
-	//       The subject itself responds to controller input to walk/run around.
-	//       I'm going for Zelda-style controls here.  Left thumb-stick orbits the
-	//       player.  Z-button moves the camera behind the player.
-
 	Controller* controller = Game::Get()->GetController();
 	if (controller->ButtonPressed(XINPUT_GAMEPAD_START))
 	{
@@ -61,13 +53,60 @@ FollowCam::FollowCam()
 
 	if (!this->freeCam->IsEnabled())
 	{
-		Transform subjectTransform;
-		this->subject->GetTransform(subjectTransform);
+		if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+			this->MoveCameraOrbitBehindSubject();
 
-		Transform cameraTransform = this->camera->GetCameraToWorldTransform();
+		Vector2 rightStick;
+		controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
 
-		// TODO: Ajust the camera position here in such a way that we're kind-of solving an IK problem.
+		double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
+		double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;
+
+		this->orbitLocation.longitudeAngle += longitudeAngleDelta;
+		this->orbitLocation.latitudeAngle += latitudeAngleDelta;
+
+		this->CalculateCameraPositionAndOrientation();
 	}
 
 	return true;
+}
+
+void FollowCam::MoveCameraOrbitBehindSubject()
+{
+	Transform subjectObjectToWorld;
+	this->subject->GetTransform(subjectObjectToWorld);
+
+	Vector3 xAxis, yAxis, zAxis;
+	subjectObjectToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
+
+	Vector3 upVector(0.0, 1.0, 0.0);
+	Vector3 behindVector = zAxis.RejectedFrom(upVector).Normalized();
+	SphericalCoords coords;
+	coords.SetFromVector(behindVector);
+
+	this->orbitLocation.longitudeAngle = coords.longitudeAngle;
+}
+
+void FollowCam::CalculateCameraPositionAndOrientation()
+{
+	Transform subjectObjectToWorld;
+	this->subject->GetTransform(subjectObjectToWorld);
+
+	Vector3 worldSpaceFocalPoint = subjectObjectToWorld.TransformPoint(this->followParams.objectSpaceFocalPoint);
+
+	Vector3 cameraOffset = this->orbitLocation.GetToVector();
+
+	Transform cameraToWorld;
+	cameraToWorld.translation = worldSpaceFocalPoint + cameraOffset;
+
+	Vector3 xAxis, yAxis, zAxis;
+	Vector3 upAxis(0.0, 1.0, 0.0);
+
+	zAxis = cameraOffset.Normalized();
+	yAxis = upAxis.RejectedFrom(zAxis);
+	xAxis = yAxis.Cross(zAxis);
+
+	cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
+
+	this->camera->SetCameraToWorldTransform(cameraToWorld);
 }
