@@ -316,6 +316,30 @@ namespace Collision
 			return ::acos(this->Dot(unitVector));
 		}
 
+		/**
+		 * Set this vector as the linear interpolation of the two given vectors by the given amount.
+		 * 
+		 * @param[in] vectorA This is the result when alpha is zero.
+		 * @param[in] vectorB This is the result when alpha is one.
+		 * @param[in] alpha This is the amount by which to linearly interpolate.  It is typically in [0,1], but this is not a requirement.
+		 * @return A reference to this vector is returned for method-call chaining.
+		 */
+		Vector3& Lerp(const Vector3& vectorA, const Vector3& vectorB, double alpha);
+
+		/**
+		 * Set this vector as the spherical-linear interpolation of the two given vectors by the
+		 * given amount.  If the two given vectors are not of unit-length, then we leave the
+		 * result as undefined.  We also assume here that the two given vectors are not parallel
+		 * with one another.  That is, facing in the same or opposite directions.  If this assumption
+		 * is not met, then we again leave the result undefined.
+		 * 
+		 * @param[in] unitVectorA This is the result when alpha is zero.
+		 * @param[in] unitVectorB This is the result when alpha is one.
+		 * @param[in] alpha This is the amount by which to interpolate.  It is typically in [0,1], but this is not necessary.
+		 * @return A reference to this vector is returned for method-call chaining.
+		 */
+		Vector3& Slerp(const Vector3& unitVectorA, const Vector3& unitVectorB, double alpha);
+
 	public:
 		double x, y, z;
 	};

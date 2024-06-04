@@ -71,3 +71,11 @@ Vector3 SphericalCoords::GetToVector() const
 
 	return point;
 }
+
+SphericalCoords& SphericalCoords::Lerp(const SphericalCoords& coordsA, const SphericalCoords& coordsB, double alpha)
+{
+	this->radius = coordsA.radius + alpha * (coordsB.radius - coordsA.radius);
+	this->latitudeAngle = coordsA.latitudeAngle + alpha * (coordsB.latitudeAngle - coordsA.latitudeAngle);
+	this->longitudeAngle = coordsA.longitudeAngle + alpha * (coordsB.longitudeAngle - coordsA.longitudeAngle);
+	return *this;
+}

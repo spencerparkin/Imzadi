@@ -3,6 +3,7 @@
 #include "Math/Matrix3x3.h"
 #include "Game.h"
 #include "FreeCam.h"
+#include "Math/Angle.h"
 
 using namespace Collision;
 
@@ -12,7 +13,7 @@ using namespace Collision;
 //       swivel out of the way.
 FollowCam::FollowCam()
 {
-	this->followParams.maxRotationRate = M_PI / 3.0;
+	this->followParams.maxRotationRate = M_PI / 1.5;
 	this->followParams.objectSpaceFocalPoint.SetComponents(0.0, 5.0, 0.0);
 	this->orbitLocation.radius = 20.0;
 	this->orbitLocation.longitudeAngle = 0.0;
@@ -28,7 +29,7 @@ FollowCam::FollowCam()
 	if (!this->camera || !this->subject)
 		return false;
 
-	this->MoveCameraOrbitBehindSubject();
+	this->MoveCameraOrbitBehindSubject(true);
 	this->CalculateCameraPositionAndOrientation();
 
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
@@ -54,7 +55,7 @@ FollowCam::FollowCam()
 			this->freeCam->SetEnabled(true);
 
 		if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
-			this->MoveCameraOrbitBehindSubject();
+			this->MoveCameraOrbitBehindSubject(false);
 
 		Vector2 rightStick;
 		controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
@@ -62,8 +63,10 @@ FollowCam::FollowCam()
 		double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
 		double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;
 
-		this->orbitLocation.longitudeAngle += longitudeAngleDelta;
-		this->orbitLocation.latitudeAngle += latitudeAngleDelta;
+		this->targetOrbitLocation.longitudeAngle += longitudeAngleDelta;
+		this->targetOrbitLocation.latitudeAngle += latitudeAngleDelta;
+
+		this->orbitLocation.Lerp(this->orbitLocation, this->targetOrbitLocation, 0.3);
 
 		this->CalculateCameraPositionAndOrientation();
 	}
@@ -71,7 +74,7 @@ FollowCam::FollowCam()
 	return true;
 }
 
-void FollowCam::MoveCameraOrbitBehindSubject()
+void FollowCam::MoveCameraOrbitBehindSubject(bool immediate)
 {
 	Transform subjectObjectToWorld;
 	this->subject->GetTransform(subjectObjectToWorld);
@@ -84,7 +87,14 @@ void FollowCam::MoveCameraOrbitBehindSubject()
 	SphericalCoords coords;
 	coords.SetFromVector(behindVector);
 
-	this->orbitLocation.longitudeAngle = coords.longitudeAngle;
+	Angle::MakeClose(coords.longitudeAngle, this->orbitLocation.longitudeAngle);
+
+	this->targetOrbitLocation.latitudeAngle = this->orbitLocation.latitudeAngle;
+	this->targetOrbitLocation.longitudeAngle = coords.longitudeAngle;
+	this->targetOrbitLocation.radius = this->orbitLocation.radius;
+
+	if (immediate)
+		this->orbitLocation = this->targetOrbitLocation;
 }
 
 void FollowCam::CalculateCameraPositionAndOrientation()

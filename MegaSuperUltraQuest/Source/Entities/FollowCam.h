@@ -36,11 +36,12 @@ public:
 
 private:
 	void CalculateCameraPositionAndOrientation();
-	void MoveCameraOrbitBehindSubject();
+	void MoveCameraOrbitBehindSubject(bool immediate);
 
 	Reference<Entity> subject;
 	Reference<Camera> camera;
 	Reference<FreeCam> freeCam;
 	FollowParams followParams;
 	Collision::SphericalCoords orbitLocation;
+	Collision::SphericalCoords targetOrbitLocation;
 };

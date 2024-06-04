@@ -58,6 +58,8 @@ set(LIBRARY_SOURCES
     Source/Math/Interval.h
     Source/Math/SphericalCoords.cpp
     Source/Math/SphericalCoords.h
+    Source/Math/Angle.cpp
+    Source/Math/Angle.h
     Source/Shapes/Box.cpp
     Source/Shapes/Box.h
     Source/Shapes/Capsule.cpp

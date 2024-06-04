@@ -100,3 +100,16 @@ void Vector3::Restore(std::istream& stream)
 	stream.read((char*)&this->y, sizeof(this->y));
 	stream.read((char*)&this->z, sizeof(this->z));
 }
+
+Vector3& Vector3::Lerp(const Vector3& vectorA, const Vector3& vectorB, double alpha)
+{
+	*this = vectorA + alpha * (vectorB - vectorA);
+	return *this;
+}
+
+Vector3& Vector3::Slerp(const Vector3& unitVectorA, const Vector3& unitVectorB, double alpha)
+{
+	double angle = unitVectorA.AngleBetween(unitVectorB);
+	*this = (::sin((1.0 - alpha) * angle) * unitVectorA + ::sin(alpha * angle) * unitVectorB) / ::sin(angle);
+	return *this;
+}

@@ -37,6 +37,17 @@ namespace Collision
 		 */
 		Vector3 GetToVector() const;
 
+		/**
+		 * Set this set of coordinates to the linear interpolation of two given coordinates
+		 * by the given amount.  This is similar to a spherical-linear interpolation of vectors.
+		 * 
+		 * @param[in] coordsA This is the result when alpha is zero.
+		 * @param[in] coordsB This is the result when alpha is one.
+		 * @param[in] alpha This is the amount by which to linearly interpolate.
+		 * @return A reference to these coords is returned for method-call chaining.
+		 */
+		SphericalCoords& Lerp(const SphericalCoords& coordsA, const SphericalCoords& coordsB, double alpha);
+
 	public:
 		double radius;				///< This is the point's distance from the origin.
 		double longitudeAngle;		///< This is the longitudinal angle (in radians) of the point.  Two pi gets you around the sphere.
