@@ -6,6 +6,8 @@ Controller::Controller(DWORD userIndex)
 	this->userIndex = userIndex;
 	::ZeroMemory(this->stateBuffer, sizeof(this->stateBuffer));
 	this->stateIndex = 0;
+	this->consumedButtonPresses = 0;
+	this->consumedButtonReleases = 0;
 }
 
 /*virtual*/ Controller::~Controller()
@@ -17,6 +19,9 @@ void Controller::Update()
 	DWORD result = XInputGetState(this->userIndex, &this->stateBuffer[this->stateIndex]);
 	if (result == ERROR_SUCCESS)
 		this->stateIndex = 1 - this->stateIndex;
+
+	this->consumedButtonPresses = 0;
+	this->consumedButtonReleases = 0;
 }
 
 const XINPUT_STATE* Controller::GetCurrentState()
@@ -29,18 +34,24 @@ const XINPUT_STATE* Controller::GetPreviousState()
 	return &this->stateBuffer[this->stateIndex];
 }
 
-bool Controller::ButtonPressed(DWORD buttonFlag)
+bool Controller::ButtonPressed(DWORD buttonFlag, bool consume /*= false*/)
 {
 	DWORD currentButtonFlags = 0, previousButtonFlags = 0;
 	this->GetCurrentAndPreviousButtonFlags(currentButtonFlags, previousButtonFlags);
-	return((currentButtonFlags & buttonFlag) != 0 && (previousButtonFlags & buttonFlag) == 0);
+	bool pressed = ((currentButtonFlags & buttonFlag) != 0 && (previousButtonFlags & buttonFlag) == 0 && (this->consumedButtonPresses & buttonFlag) == 0);
+	if (consume)
+		this->consumedButtonPresses |= buttonFlag;
+	return pressed;
 }
 
-bool Controller::ButtonReleased(DWORD buttonFlag)
+bool Controller::ButtonReleased(DWORD buttonFlag, bool consume /*= false*/)
 {
 	DWORD currentButtonFlags = 0, previousButtonFlags = 0;
 	this->GetCurrentAndPreviousButtonFlags(currentButtonFlags, previousButtonFlags);
-	return((currentButtonFlags & buttonFlag) != 0 && (previousButtonFlags & buttonFlag) == 0);
+	bool released = ((currentButtonFlags & buttonFlag) != 0 && (previousButtonFlags & buttonFlag) == 0 && (this->consumedButtonReleases & buttonFlag) == 0);
+	if (consume)
+		this->consumedButtonReleases |= buttonFlag;
+	return released;
 }
 
 void Controller::GetCurrentAndPreviousButtonFlags(DWORD& currentButtonFlags, DWORD& previousButtonFlags)

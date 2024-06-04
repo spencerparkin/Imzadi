@@ -14,8 +14,7 @@ public:
 	virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
 	void SetCamera(Camera* camera) { this->camera.Set(camera); }
-	void SetEnabled(bool enabled) { this->enabled = enabled; }
-	bool IsEnabled() const { return this->enabled; }
+	void SetEnabled(bool enabled);
 
 private:
 
@@ -26,7 +25,6 @@ private:
 	};
 
 	Reference<Camera> camera;
-	bool enabled;
 	double strafeSpeed;
 	double rotationRate;
 	StrafeMode strafeMode;

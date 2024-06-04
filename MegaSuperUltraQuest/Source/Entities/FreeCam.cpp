@@ -6,7 +6,6 @@ using namespace Collision;
 
 FreeCam::FreeCam()
 {
-	this->enabled = false;
 	this->rotationRate = M_PI / 2.0;
 	this->strafeSpeed = 100.0;
 	this->strafeMode = StrafeMode::XZ_PLANE;
@@ -29,21 +28,31 @@ FreeCam::FreeCam()
 	return true;
 }
 
+void FreeCam::SetEnabled(bool enabled)
+{
+	if (enabled)
+		Game::Get()->PushControllerUser("FreeCam");
+	else
+		Game::Get()->PopControllerUser();
+}
+
 /*virtual*/ bool FreeCam::Tick(TickPass tickPass, double deltaTime)
 {
 	if (tickPass != TickPass::MID_TICK)
 		return true;
 
-	if (!this->enabled)
+	Controller* controller = Game::Get()->GetController("FreeCam");
+	if (!controller)
 		return true;
 
 	Transform cameraToWorld = camera->GetCameraToWorldTransform();
 
 	Vector3 xAxis, yAxis, zAxis;
 	cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
-
-	Controller* controller = Game::Get()->GetController();
 	
+	if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
+		this->SetEnabled(false);
+
 	if (controller->ButtonPressed(XINPUT_GAMEPAD_RIGHT_SHOULDER))
 	{
 		switch (this->strafeMode)

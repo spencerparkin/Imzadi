@@ -26,6 +26,8 @@ Hero::Hero()
 
 /*virtual*/ bool Hero::Setup()
 {
+	Game::Get()->PushControllerUser("Hero");
+
 	std::string heroModelFile = "Models/Hero/Hero.render_mesh";
 	this->renderMesh.SafeSet(Game::Get()->LoadAndPlaceRenderMesh(heroModelFile, this->restartLocation, this->restartOrientation));
 
@@ -50,6 +52,9 @@ Hero::Hero()
 {
 	// No need to do anything here.  We'll get cleaned up when
 	// the scene and collision system is cleaned up.
+
+	Game::Get()->PopControllerUser();
+
 	return true;
 }
 
@@ -61,10 +66,11 @@ Hero::Hero()
 	{
 		case TickPass::PRE_TICK:
 		{
-			Controller* controller = Game::Get()->GetController();
+			Vector2 leftStick(0.0, 0.0);
 
-			Vector2 leftStick;
-			controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
+			Controller* controller = Game::Get()->GetController("Hero");
+			if (controller)
+				controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
 
 			Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			Matrix3x3 targetOrienation = objectToWorld.matrix;

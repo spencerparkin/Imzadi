@@ -70,15 +70,17 @@ public:
 	 * Return true if and only if a button was pressed this frame.
 	 * 
 	 * @param[in] buttonFlag This is an OR-ing of XINPUT_BUTTON_* flags.
+	 * @param[in] consume If true, a subsequent call to ButtonPressed with the same flag before the next frame will indicate that the button was not pressed.
 	 */
-	bool ButtonPressed(DWORD buttonFlag);
+	bool ButtonPressed(DWORD buttonFlag, bool consume = false);
 
 	/**
 	 * Return true if and only if a button was released this frame.
 	 * 
 	 * @param[in] buttonFlag This is an OR-ing of the XINPUT_BUTTON_* flags.
+	 * @param[in] consume If true, a subsequent call to ButtonReleased with the same flag before the next frame will indicate that the button was not released.
 	 */
-	bool ButtonReleased(DWORD buttonFlag);
+	bool ButtonReleased(DWORD buttonFlag, bool consume = false);
 
 	/**
 	 * Return true if and only if a button is down this frame.
@@ -103,4 +105,6 @@ private:
 	XINPUT_STATE stateBuffer[2];
 	int stateIndex;
 	DWORD userIndex;
+	WORD consumedButtonPresses;
+	WORD consumedButtonReleases;
 };

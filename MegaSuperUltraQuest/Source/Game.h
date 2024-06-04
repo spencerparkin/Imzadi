@@ -22,6 +22,11 @@ class Camera;
 class RenderObject;
 class Entity;
 
+/**
+ * This is a melding of engine and game.  The term "engine" is used
+ * too generously here.  For that matter, so is the term "game".
+ * This class is my poor attempt to use DirectX to make a game.
+ */
 class Game
 {
 public:
@@ -74,7 +79,37 @@ public:
 								const Collision::Vector3& position,
 								const Collision::Quaternion& orientation);
 
-	Controller* GetController() { return &this->controller; }
+	/**
+	 * This doesn't seem like a terribly clever way to manage the controller
+	 * input, but it's an attempt to do so, nevertheless.
+	 * 
+	 * @param[in] controllerUser This is who's asking for the controller interface.
+	 * @return A pointer to the controller interface is returned if the given user is allowed to use it; null, otherwise.
+	 */
+	Controller* GetController(const std::string& controllerUser);
+
+	/**
+	 * Make the given user the current user that is allowed to get access
+	 * to the controller for input.  Note that if the given user is already
+	 * able to get the controller, this is a no-op and the stack is left unchanged.
+	 * 
+	 * @param[in] controllerUser This is who will become able to get the controller.
+	 */
+	void PushControllerUser(const std::string& controllerUser);
+
+	/**
+	 * The current controller user is removed in favor of whoever is next
+	 * in the stack.
+	 * 
+	 * @return The old top controller user is returned; the empty string on stack-underflow.
+	 */
+	std::string PopControllerUser();
+
+	/**
+	 * Return who can currently use the controller for input.
+	 */
+	std::string GetControllerUser();
+	
 
 	void SetCollisionSystemDebugDrawFlags(uint32_t flags) { this->collisionSystemDebugDrawFlags = flags; }
 	uint32_t GetCollisionSystemDebugDrawFlags() { return this->collisionSystemDebugDrawFlags; }
@@ -115,6 +150,7 @@ private:
 	std::list<Reference<Entity>> spawnedEntityQueue;
 	std::list<Reference<Entity>> tickingEntityList;
 	Controller controller;
+	std::vector<std::string> controllerUserStack;
 	Collision::System collisionSystem;
 	Reference<DebugLines> debugLines;
 	uint32_t collisionSystemDebugDrawFlags;

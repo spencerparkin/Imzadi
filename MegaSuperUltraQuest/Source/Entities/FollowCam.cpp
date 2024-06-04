@@ -33,7 +33,6 @@ FollowCam::FollowCam()
 
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
 	this->freeCam->SetCamera(this->camera);
-	this->freeCam->SetEnabled(false);
 
 	return true;
 }
@@ -48,14 +47,12 @@ FollowCam::FollowCam()
 	if (tickPass != TickPass::MID_TICK)
 		return true;
 
-	Controller* controller = Game::Get()->GetController();
-	if (controller->ButtonPressed(XINPUT_GAMEPAD_START))
+	Controller* controller = Game::Get()->GetController("Hero");
+	if (controller)
 	{
-		this->freeCam->SetEnabled(!this->freeCam->IsEnabled());
-	}
+		if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
+			this->freeCam->SetEnabled(true);
 
-	if (!this->freeCam->IsEnabled())
-	{
 		if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
 			this->MoveCameraOrbitBehindSubject();
 

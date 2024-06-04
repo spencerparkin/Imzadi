@@ -545,6 +545,36 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 	return DefWindowProc(windowHandle, msg, wParam, lParam);
 }
 
+Controller* Game::GetController(const std::string& controllerUser)
+{
+	if (controllerUser == this->GetControllerUser())
+		return &this->controller;
+
+	return nullptr;
+}
+
+void Game::PushControllerUser(const std::string& controllerUser)
+{
+	if (this->GetControllerUser() != controllerUser)
+		this->controllerUserStack.push_back(controllerUser);
+}
+
+std::string Game::GetControllerUser()
+{
+	if (this->controllerUserStack.size() == 0)
+		return "";
+
+	return this->controllerUserStack[this->controllerUserStack.size() - 1];
+}
+
+std::string Game::PopControllerUser()
+{
+	std::string controllerUser = this->GetControllerUser();
+	if (this->controllerUserStack.size() > 0)
+		this->controllerUserStack.pop_back();
+	return controllerUser;
+}
+
 bool Game::Shutdown()
 {
 	// TODO: Do we need to wait for the GPU to finish?!
