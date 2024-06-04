@@ -12,6 +12,7 @@
 
 #define COLL_SYS_MIN(a, b)			((a) < (b) ? (a) : (b))
 #define COLL_SYS_MAX(a, b)			((a) > (b) ? (a) : (b))
+#define COLL_SYS_CLAMP(x, a, b)		COLL_SYS_MAX(COLL_SYS_MIN(x, b), a)
 #define COLL_SYS_SQUARED(x)			((x) * (x))
 #define COLL_SYS_SIGN(x)			((x) < 0.0 ? -1.0 : 1.0)
 #define COLL_SYS_DEGS_TO_RADS(x)	((x) * (180.0 / M_PI))
