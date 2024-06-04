@@ -9,6 +9,7 @@
 #include "Command.h"
 #include "Query.h"
 #include "Result.h"
+#include "CollisionCache.h"
 
 using namespace Collision;
 
@@ -18,6 +19,7 @@ Hero::Hero()
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
 	this->boundsQueryTaskID = 0;
+	this->collisionQueryTaskID = 0;
 	this->inContactWithGround = false;
 }
 
@@ -39,9 +41,9 @@ Hero::Hero()
 	this->cameraHandle = followCam->GetHandle();
 
 	auto capsule = CapsuleShape::Create();
-	capsule->SetVertex(0, Vector3(0.0, 2.0, 0.0));
+	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
-	capsule->SetRadius(2.0);
+	capsule->SetRadius(1.0);
 	this->shapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
 	if (this->shapeID == 0)
 		return false;
@@ -61,7 +63,15 @@ Hero::Hero()
 {
 	PhysicsEntity::AccumulateForces(netForce);
 
-	// TODO: Maybe if the jump button is pushed we apply a jump force here?
+	Controller* controller = Game::Get()->GetController("Hero");
+	if (!controller)
+		return;
+
+	if (this->inContactWithGround && controller->ButtonPressed(XINPUT_GAMEPAD_Y))
+	{
+		Vector3 jumpForce(0.0, 1000.0, 0.0);
+		netForce += jumpForce;
+	}
 }
 
 /*virtual*/ void Hero::IntegrateVelocity(const Collision::Vector3& acceleration, double deltaTime)
@@ -142,6 +152,10 @@ Hero::Hero()
 			boundsQuery->SetShapeID(this->shapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
 
+			auto collisionQuery = CollisionQuery::Create();
+			collisionQuery->SetShapeID(this->shapeID);
+			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
+
 			break;
 		}
 		case TickPass::POST_TICK:
@@ -164,7 +178,33 @@ Hero::Hero()
 				}
 			}
 
-			// TODO: Solve constraints here.
+			if (this->collisionQueryTaskID)
+			{
+				Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
+				if (result)
+				{
+					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+					if (collisionResult)
+					{
+						const ShapePairCollisionStatus* status = collisionResult->GetMostEgregiousCollision();
+						if (status)
+						{
+							// TODO: If the ground is moving (e.g., we're on a moving platform), then this should move us too.
+							Vector3 separationDelta = status->GetSeparationDelta(this->shapeID);
+							Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+							objectToWorld.translation += separationDelta;
+							this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+							this->velocity = this->velocity.RejectedFrom(separationDelta.Normalized());
+							this->inContactWithGround = true;		// TODO: How do we know it's the ground we're colliding with?  What if it's something else?
+						}
+						else
+							this->inContactWithGround = false;
+					}
+
+					collisionSystem->Free<Result>(result);
+				}
+			}
+
 			break;
 		}
 	}

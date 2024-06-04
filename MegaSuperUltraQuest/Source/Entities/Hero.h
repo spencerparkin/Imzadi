@@ -36,4 +36,5 @@ private:
 	double maxMoveSpeed;
 	bool inContactWithGround;
 	Collision::TaskID boundsQueryTaskID;
+	Collision::TaskID collisionQueryTaskID;
 };

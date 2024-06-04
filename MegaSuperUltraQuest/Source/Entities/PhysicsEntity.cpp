@@ -24,7 +24,7 @@ PhysicsEntity::PhysicsEntity()
 {
 	Vector3 downVector(0.0, -1.0, 0.0);
 	Vector3 gravityForce = downVector * this->mass * Game::Get()->GetGravity();
-	//netForce += gravityForce;		TODO: Uncomment when ready.
+	netForce += gravityForce;
 }
 
 /*virtual*/ void PhysicsEntity::IntegrateVelocity(const Collision::Vector3& acceleration, double deltaTime)

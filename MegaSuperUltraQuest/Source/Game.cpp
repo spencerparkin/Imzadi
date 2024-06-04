@@ -16,7 +16,7 @@ Game* Game::gameSingleton = nullptr;
 
 Game::Game(HINSTANCE instance) : controller(0)
 {
-	this->accelerationDuetoGravity = 9.8;
+	this->accelerationDuetoGravity = 40.0;
 	this->collisionSystemDebugDrawFlags = 0;
 	this->lastTickTime = 0;
 	this->instance = instance;
@@ -368,6 +368,13 @@ bool Game::Run()
 		clock_t deltaTickTime = currentTickTime - this->lastTickTime;
 		double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
 		this->lastTickTime = currentTickTime;
+
+#if defined _DEBUG
+		// This is to prevent large deltas produced as a result of
+		// being broken in the debugger.
+		if (deltaTimeSeconds >= 1.0)
+			continue;
+#endif //_DEBUG
 
 		this->debugLines->Clear();
 
