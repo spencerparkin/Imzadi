@@ -6,6 +6,7 @@
 #include "Math/Transform.h"
 #include "Math/Vector2.h"
 #include "Shapes/Capsule.h"
+#include "Command.h"
 
 using namespace Collision;
 
@@ -32,7 +33,7 @@ Hero::Hero()
 	this->cameraHandle = followCam->GetHandle();
 
 	auto capsule = CapsuleShape::Create();
-	capsule->SetVertex(0, Vector3(0.0, 0.0, 0.0));
+	capsule->SetVertex(0, Vector3(0.0, 2.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(2.0);
 	this->shapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
@@ -89,6 +90,11 @@ Hero::Hero()
 	objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrienation, 0.8);
 
 	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+
+	auto command = ObjectToWorldCommand::Create();
+	command->SetShapeID(this->shapeID);
+	command->objectToWorld = objectToWorld;
+	Game::Get()->GetCollisionSystem()->IssueCommand(command);
 
 	// TODO: Psuedo-code...
 	//       - Do we have a collision query result?

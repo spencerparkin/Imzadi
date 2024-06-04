@@ -118,7 +118,6 @@ private:
 	Collision::System collisionSystem;
 	Reference<DebugLines> debugLines;
 	uint32_t collisionSystemDebugDrawFlags;
-	Collision::TaskID collisionSystemDebugDrawTaskID;
 	clock_t lastTickTime;
 	static Game* gameSingleton;
 };

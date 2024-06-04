@@ -17,7 +17,6 @@ Game* Game::gameSingleton = nullptr;
 Game::Game(HINSTANCE instance) : controller(0)
 {
 	this->collisionSystemDebugDrawFlags = 0;
-	this->collisionSystemDebugDrawTaskID = 0;
 	this->lastTickTime = 0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
@@ -371,13 +370,6 @@ bool Game::Run()
 
 		this->debugLines->Clear();
 
-		if (this->collisionSystemDebugDrawFlags != 0)
-		{
-			auto query = new DebugRenderQuery();
-			query->SetDrawFlags(this->collisionSystemDebugDrawFlags);
-			this->collisionSystem.MakeQuery(query, this->collisionSystemDebugDrawTaskID);
-		}
-
 		MSG message{};
 		while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
 		{
@@ -390,8 +382,9 @@ bool Game::Run()
 
 		this->controller.Update();
 
-		// This should be the one and only flush per frame of the collision system,
-		// and it is made just before we need it for entity ticking and rendering.
+		// This is typically the one and only flush per frame of the collision system async queries and commands,
+		// and is being performed just before we need the results or side-effects.  Any other flush should only
+		// be for debug-purposes.
 		this->collisionSystem.FlushAllTasks();
 
 		this->AdvanceEntities(deltaTimeSeconds);
@@ -403,9 +396,14 @@ bool Game::Run()
 			this->windowResized = false;
 		}
 
-		if (this->collisionSystemDebugDrawTaskID != 0)
+		if (this->collisionSystemDebugDrawFlags != 0)
 		{
-			Result* result = this->collisionSystem.ObtainQueryResult(this->collisionSystemDebugDrawTaskID);
+			auto query = new DebugRenderQuery();
+			query->SetDrawFlags(this->collisionSystemDebugDrawFlags);
+			TaskID collisionSystemDebugDrawTaskID = 0;
+			this->collisionSystem.MakeQuery(query, collisionSystemDebugDrawTaskID);
+			this->collisionSystem.FlushAllTasks();
+			Result* result = this->collisionSystem.ObtainQueryResult(collisionSystemDebugDrawTaskID);
 			if (result)
 			{
 				auto debugRenderResult = dynamic_cast<DebugRenderResult*>(result);
