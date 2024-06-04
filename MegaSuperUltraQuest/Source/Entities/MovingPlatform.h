@@ -29,7 +29,7 @@ public:
 	/**
 	 * Animate the platform's movement.
 	 */
-	virtual bool Tick(double deltaTime) override;
+	virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
 	/**
 	 * Specify where this platform's configuration data is on disk.

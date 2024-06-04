@@ -36,6 +36,22 @@ ErrorResult::ErrorResult()
 	return new ErrorResult();
 }
 
+//-------------------------------- BoolResult --------------------------------
+
+BoolResult::BoolResult()
+{
+	this->answer = false;
+}
+
+/*virtual*/ BoolResult::~BoolResult()
+{
+}
+
+/*static*/ BoolResult* BoolResult::Create()
+{
+	return new BoolResult();
+}
+
 //-------------------------------- DebugRenderResult --------------------------------
 
 DebugRenderResult::DebugRenderResult()

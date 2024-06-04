@@ -187,4 +187,27 @@ namespace Collision
 		 */
 		static CollisionQuery* Create();
 	};
+
+	/**
+	 * Use this query to find out if a given shape is still within
+	 * the bounds of the collision world.  If it's not, then it will
+	 * not have a place in the bounding-box tree, and so it can't
+	 * collide with anything else in the world.
+	 */
+	class COLLISION_LIB_API ShapeInBoundsQuery : public ShapeQuery
+	{
+	public:
+		ShapeInBoundsQuery();
+		virtual ~ShapeInBoundsQuery();
+
+		/**
+		 * See if the shape has a node in the bounding box tree.
+		 */
+		virtual Result* ExecuteQuery(Thread* thread) override;
+
+		/**
+		 * Create an instance of the ShapeInBoundsQuery class.
+		 */
+		static ShapeInBoundsQuery* Create();
+	};
 }

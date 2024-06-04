@@ -34,25 +34,17 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 
 	// Insertion begins either where the shape is already bound or, if not bound, at the root.
 	BoundingBoxNode* node = shape->node;
-	if (!node)
+	if (node)
+		node->UnbindFromShape(shape);
+	else
 	{
 		if (!this->rootNode)
 		{
-			this->rootNode = new BoundingBoxNode(nullptr, this);
+			this->rootNode = new BoundingBoxNode(nullptr);
 			this->rootNode->box = this->collisionWorldExtents;
 		}
 
 		node = this->rootNode;
-	}
-	else
-	{
-		if (node->tree != this)
-		{
-			GetError()->AddErrorMessage("Can't insert node that is already a member of some other tree.");
-			return false;
-		}
-
-		node->UnbindFromShape(shape);
 	}
 
 	// Bring the shape up the tree only as far as is necessary.
@@ -63,7 +55,7 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 	while (node)
 	{
 		// Make children for the current node if it doesn't already have them.
-		node->SplitIfNotAlreadySplit(this);
+		node->SplitIfNotAlreadySplit();
 
 		// Can the shape fit into any of the children?
 		BoundingBoxNode* foundNode = nullptr;
@@ -123,16 +115,11 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 		break;
 	}
 
-	if (!node)
-	{
-		GetError()->AddErrorMessage("Failed to insert shape!  It probably does not lie within the collision world extents.");
-		return false;
-	}
-
-	// At last, if we have a node/shape pair here, then complete insertion of the shape at this node and in this tree.
 	if (shape)
 	{
-		node->BindToShape(shape);
+		if (node)
+			node->BindToShape(shape);
+
 		this->shapeMap->insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
 	}
 
@@ -148,9 +135,8 @@ bool BoundingBoxTree::Remove(ShapeID shapeID)
 		return false;
 	}
 
-	// If the shape was found in our map, then these conditions must also be true or something has gone wrong in our book-keeping.
-	COLL_SYS_ASSERT(shape->node && shape->node->tree == this);
-	shape->node->UnbindFromShape(shape);
+	if (shape->node)
+		shape->node->UnbindFromShape(shape);
 	this->shapeMap->erase(shape->GetShapeID());
 	Shape::Free(shape);
 	return true;
@@ -225,12 +211,6 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 		return false;
 	}
 
-	if (node->tree != this)
-	{
-		GetError()->AddErrorMessage("The given shape is not a member of this AABB tree.");
-		return false;
-	}
-
 	// We have to start our traversal at the root, not the node of the shape,
 	// because there are some shapes that straddle boundaries at a higher level
 	// in the tree that can still intersect with shapes at a lower level.
@@ -273,10 +253,9 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 
 //--------------------------------- BoundingBoxNode ---------------------------------
 
-BoundingBoxNode::BoundingBoxNode(BoundingBoxNode* parentNode, BoundingBoxTree* tree)
+BoundingBoxNode::BoundingBoxNode(BoundingBoxNode* parentNode)
 {
 	this->parentNode = parentNode;
-	this->tree = tree;
 	this->childNodeArray = new std::vector<BoundingBoxNode*>();
 	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
 }
@@ -297,13 +276,13 @@ BoundingBoxNode::BoundingBoxNode(BoundingBoxNode* parentNode, BoundingBoxTree* t
 	delete this->childNodeArray;
 }
 
-void BoundingBoxNode::SplitIfNotAlreadySplit(BoundingBoxTree* tree)
+void BoundingBoxNode::SplitIfNotAlreadySplit()
 {
 	if (this->childNodeArray->size() > 0)
 		return;
 
-	auto nodeA = new BoundingBoxNode(this, tree);
-	auto nodeB = new BoundingBoxNode(this, tree);
+	auto nodeA = new BoundingBoxNode(this);
+	auto nodeB = new BoundingBoxNode(this);
 
 	this->box.Split(nodeA->box, nodeB->box, &this->dividingPlane);
 

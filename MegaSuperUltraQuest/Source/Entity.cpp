@@ -20,7 +20,7 @@ Entity::Entity()
 	return true;
 }
 
-/*virtual*/ bool Entity::Tick(double deltaTime)
+/*virtual*/ bool Entity::Tick(TickPass tickPass, double deltaTime)
 {
 	return true;
 }

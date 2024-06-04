@@ -43,8 +43,11 @@ FollowCam::FollowCam()
 	return true;
 }
 
-/*virtual*/ bool FollowCam::Tick(double deltaTime)
+/*virtual*/ bool FollowCam::Tick(TickPass tickPass, double deltaTime)
 {
+	if (tickPass != TickPass::MID_TICK)
+		return true;
+
 	Controller* controller = Game::Get()->GetController();
 	if (controller->ButtonPressed(XINPUT_GAMEPAD_START))
 	{

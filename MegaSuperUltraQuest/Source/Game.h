@@ -81,7 +81,7 @@ public:
 
 private:
 
-	void AdvanceEntities(double deltaTimeSeconds);
+	void AdvanceEntities(Entity::TickPass tickPass, double deltaTimeSeconds);
 	void Render();
 
 	LRESULT WndProc(UINT msg, WPARAM wParam, LPARAM lParam);

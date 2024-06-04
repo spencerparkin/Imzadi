@@ -71,8 +71,11 @@ MovingPlatform::MovingPlatform()
 	return true;
 }
 
-/*virtual*/ bool MovingPlatform::Tick(double deltaTime)
+/*virtual*/ bool MovingPlatform::Tick(TickPass tickPass, double deltaTime)
 {
+	if (tickPass != TickPass::PRE_TICK)
+		return true;
+
 	const Vector3& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
 
 	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();

@@ -256,6 +256,14 @@ namespace Collision
 		 */
 		void BumpRevisionNumber() { this->revisionNumber++; }
 
+		/**
+		 * Tell the caller if this shape is bound to a node in the bounding box tree.
+		 * This also means that the shape is, as of last insertion, still considered
+		 * to be within the bounds of the collision world.  Of course, the bounding
+		 * box of this shape may not actually be within the collision world.
+		 */
+		bool IsBound() const { return this->node != nullptr; }
+
 	private:
 
 		ShapeID shapeID;							///< This is a unique identifier that can be used to safely refer to this node on any thread.

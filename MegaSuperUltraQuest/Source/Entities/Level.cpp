@@ -40,7 +40,7 @@ Level::Level()
 	hero->SetRestartLocation(levelData->GetPlayerStartPosition());
 	hero->SetRestartOrientation(levelData->GetPlayerStartOrientation());
 
-	AxisAlignedBoundingBox physicsWorldBox;
+	AxisAlignedBoundingBox collisionWorldBox;
 	std::vector<Reference<CollisionShapeSet>> collisionShapeSetArray;
 	for (const std::string& collisionFile : levelData->GetCollisionFilesArray())
 	{
@@ -57,11 +57,13 @@ Level::Level()
 		if (!collisionShapeSet->GetBoundingBox(boundingBox))
 			return false;
 
-		physicsWorldBox.Expand(boundingBox);
+		collisionWorldBox.Expand(boundingBox);
 	}
 
-	physicsWorldBox.Scale(1.5);
-	if (!Game::Get()->GetCollisionSystem()->Initialize(physicsWorldBox))
+	collisionWorldBox.Scale(1.5);
+	collisionWorldBox.Scale(1.0, 3.0, 1.0);
+
+	if (!Game::Get()->GetCollisionSystem()->Initialize(collisionWorldBox))
 		return false;
 
 	for(auto collisionShapeSet : collisionShapeSetArray)
@@ -98,8 +100,8 @@ Level::Level()
 	return true;
 }
 
-/*virtual*/ bool Level::Tick(double deltaTime)
+/*virtual*/ bool Level::Tick(TickPass tickPass, double deltaTime)
 {
-	// TODO: Animate floating platforms here.  Don't forgot to move the collision as well.
+	// TODO: Maybe here detect when the level is complete?
 	return true;
 }

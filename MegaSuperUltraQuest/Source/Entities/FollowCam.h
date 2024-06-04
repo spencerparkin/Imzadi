@@ -17,7 +17,7 @@ public:
 
 	virtual bool Setup() override;
 	virtual bool Shutdown(bool gameShuttingDown) override;
-	virtual bool Tick(double deltaTime) override;
+	virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
 	void SetSubject(Entity* entity) { this->subject.SafeSet(entity); }
 	Entity* GetSubject() { return this->subject.Get(); }

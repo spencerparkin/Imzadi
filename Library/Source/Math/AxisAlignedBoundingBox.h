@@ -103,11 +103,20 @@ namespace Collision
 		void Expand(const AxisAlignedBoundingBox& box);
 
 		/**
-		 * Scale this box about its center.
+		 * Scale this box about its center uniformly.
 		 * 
 		 * @param[in] scale This box is scaled by this factor.
 		 */
 		void Scale(double scale);
+
+		/**
+		 * Scale this box about its center non-uniformly.
+		 * 
+		 * @param[in] scaleX This box is scaled by this factor in the X dimension.
+		 * @param[in] scaleY This box is scaled by this factor in the Y dimension.
+		 * @param[in] scaleZ This box is scaled by this factor in the Z dimension.
+		 */
+		void Scale(double scaleX, double scaleY, double scaleZ);
 
 		/**
 		 * Cut this AABB exactly in half along a plane such that the resulting two

@@ -86,9 +86,16 @@ bool AxisAlignedBoundingBox::Intersect(const AxisAlignedBoundingBox& aabbA, cons
 
 void AxisAlignedBoundingBox::Scale(double scale)
 {
+	this->Scale(scale, scale, scale);
+}
+
+void AxisAlignedBoundingBox::Scale(double scaleX, double scaleY, double scaleZ)
+{
 	Vector3 center = (this->minCorner + this->maxCorner) / 2.0;
 	Vector3 vector = this->maxCorner - center;
-	vector *= scale;
+	vector.x *= scaleX;
+	vector.y *= scaleY;
+	vector.z *= scaleZ;
 	this->minCorner = center - vector;
 	this->maxCorner = center + vector;
 }

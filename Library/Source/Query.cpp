@@ -152,3 +152,31 @@ CollisionQuery::CollisionQuery()
 {
 	return new CollisionQuery();
 }
+
+//--------------------------------- ShapeInBoundsQuery ---------------------------------
+
+ShapeInBoundsQuery::ShapeInBoundsQuery()
+{
+}
+
+/*virtual*/ ShapeInBoundsQuery::~ShapeInBoundsQuery()
+{
+}
+
+/*virtual*/ Result* ShapeInBoundsQuery::ExecuteQuery(Thread* thread)
+{
+	BoolResult* result = BoolResult::Create();
+	result->SetAnswer(false);
+
+	BoundingBoxTree& tree = thread->GetBoundingBoxTree();
+	Shape* shape = tree.FindShape(this->GetShapeID());
+	if (shape && shape->IsBound())
+		result->SetAnswer(true);
+
+	return result;
+}
+
+/*static*/ ShapeInBoundsQuery* ShapeInBoundsQuery::Create()
+{
+	return new ShapeInBoundsQuery();
+}

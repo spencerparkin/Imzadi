@@ -39,6 +39,14 @@ namespace Collision
 		 * is changed without re-insertion, then the results of algorithms
 		 * that operate on this tree are left undefined.
 		 * 
+		 * Nodes of the tree are created as needed to get optimal insertion.
+		 * Also, it's okay for a give shape to not fit in the tree's overall
+		 * bounds, in which case, it's tracked in our map, but does not occupy
+		 * a place in the tree.  Note that collision queries will not work against
+		 * anything that is not in the tree, even if it is in this class's map.
+		 * You can check to see if a shape landed in the tree by calling the
+		 * Shape::IsBound method on the shape.
+		 * 
 		 * Note that if the COLL_SYS_ADD_FLAG_ALLOW_SPLIT is passed in, then
 		 * we try to split the given shape up as needed to get it as deep into
 		 * the tree as possible, with a reasonable limit on how small a leaf
@@ -50,7 +58,7 @@ namespace Collision
 		 * Thus, splitting is designed for static collision shapes.  It doesn't
 		 * make sense to split dynamic collision shapes.
 		 * 
-		 * @param[in] shape This is the shape to insert into this tree.  It must not be a member of some other tree.  I can already be a member of this tree.
+		 * @param[in] shape This is the shape to insert (or re-insert) into this tree.
 		 * @param[in] flags This is an OR-ing of flags of the form COLL_SYS_ADD_FLAG_*.  In particular, we look at the COLL_SYS_ADD_FLAG_ALLOW_SPLIT flag to see if shape splitting is allowed.
 		 * @return True is returned on success; false, otherwise.
 		 */
@@ -130,7 +138,7 @@ namespace Collision
 		friend class BoundingBoxTree;
 
 	private:
-		BoundingBoxNode(BoundingBoxNode* parentNode, BoundingBoxTree* tree);
+		BoundingBoxNode(BoundingBoxNode* parentNode);
 		virtual ~BoundingBoxNode();
 
 		/**
@@ -147,7 +155,7 @@ namespace Collision
 		 * If this node has no children, create two children partitioning this node's
 		 * space into two ideal-sized sub-spaces.
 		 */
-		void SplitIfNotAlreadySplit(BoundingBoxTree* tree);
+		void SplitIfNotAlreadySplit();
 
 		/**
 		 * Render this node's space as a simple wire-frame box.
@@ -164,7 +172,6 @@ namespace Collision
 		bool RayCast(const Ray& ray, RayCastResult::HitData& hitData) const;
 
 	private:
-		BoundingBoxTree* tree;								///< This is the tree of which this node is a part.
 		AxisAlignedBoundingBox box;							///< This is the space represented by this node.
 		std::vector<BoundingBoxNode*>* childNodeArray;		///< These are the sub-space partitions of this node.
 		BoundingBoxNode* parentNode;						///< This is a pointer to the parent space containing this node.

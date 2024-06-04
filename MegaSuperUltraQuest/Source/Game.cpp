@@ -382,12 +382,17 @@ bool Game::Run()
 
 		this->controller.Update();
 
-		// This is typically the one and only flush per frame of the collision system async queries and commands,
-		// and is being performed just before we need the results or side-effects.  Any other flush should only
-		// be for debug-purposes.
+		// Can initiate collision queries in this pass.
+		this->AdvanceEntities(Entity::TickPass::PRE_TICK, deltaTimeSeconds);
+
+		// Do work that runs in parallel with the collision system.  (e.g., animating skeletons and performing skinning.)
+		this->AdvanceEntities(Entity::TickPass::MID_TICK, deltaTimeSeconds);
+
+		// Stall waiting for the collision system to complete all queries and commands.
 		this->collisionSystem.FlushAllTasks();
 
-		this->AdvanceEntities(deltaTimeSeconds);
+		// Collision queries can now be acquired and used in this pass.  (e.g., to solve constraints.)
+		this->AdvanceEntities(Entity::TickPass::POST_TICK, deltaTimeSeconds);
 
 		if (this->windowResized)
 		{
@@ -421,7 +426,7 @@ bool Game::Run()
 	return true;
 }
 
-void Game::AdvanceEntities(double deltaTimeSeconds)
+void Game::AdvanceEntities(Entity::TickPass tickPass, double deltaTimeSeconds)
 {
 	while (this->spawnedEntityQueue.size() > 0)
 	{
@@ -440,7 +445,7 @@ void Game::AdvanceEntities(double deltaTimeSeconds)
 
 		Entity* entity = *iter;
 
-		if (!entity->Tick(deltaTimeSeconds))
+		if (!entity->Tick(tickPass, deltaTimeSeconds))
 		{
 			entity->Shutdown(false);
 			this->tickingEntityList.erase(iter);

@@ -29,8 +29,11 @@ FreeCam::FreeCam()
 	return true;
 }
 
-/*virtual*/ bool FreeCam::Tick(double deltaTime)
+/*virtual*/ bool FreeCam::Tick(TickPass tickPass, double deltaTime)
 {
+	if (tickPass != TickPass::MID_TICK)
+		return true;
+
 	if (!this->enabled)
 		return true;
 

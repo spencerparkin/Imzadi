@@ -69,6 +69,34 @@ namespace Collision
 	};
 
 	/**
+	 * This result is returned by any query that requirse a yes/no answer.
+	 */
+	class COLLISION_LIB_API BoolResult : public Result
+	{
+	public:
+		BoolResult();
+		virtual ~BoolResult();
+
+		/**
+		 * Get at the boolean result of the query.
+		 */
+		bool GetAnswer() const { return this->answer; }
+
+		/**
+		 * This is used by the query to set the result.
+		 */
+		void SetAnswer(bool answer) { this->answer = answer; }
+
+		/**
+		 * Allocate and return a new BoolResult instance.
+		 */
+		static BoolResult* Create();
+
+	private:
+		bool answer;
+	};
+
+	/**
 	 * A result of a DebugRenderQuery class query, this class contains all of
 	 * wire-frame drawing information the user can use to visualize (render)
 	 * the collision system as far as what was requested in the query.

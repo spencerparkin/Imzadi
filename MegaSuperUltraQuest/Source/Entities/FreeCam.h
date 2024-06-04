@@ -11,7 +11,7 @@ public:
 
 	virtual bool Setup() override;
 	virtual bool Shutdown(bool gameShuttingDown) override;
-	virtual bool Tick(double deltaTime) override;
+	virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
 	void SetCamera(Camera* camera) { this->camera.Set(camera); }
 	void SetEnabled(bool enabled) { this->enabled = enabled; }
