@@ -45,6 +45,8 @@ set(GAME_SOURCES
     Source/Entities/Level.h
     Source/Entities/MovingPlatform.cpp
     Source/Entities/MovingPlatform.h
+    Source/Entities/PhysicsEntity.cpp
+    Source/Entities/PhysicsEntity.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_SOURCES})

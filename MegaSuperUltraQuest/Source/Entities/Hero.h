@@ -1,4 +1,4 @@
-#include "Entity.h"
+#include "PhysicsEntity.h"
 #include "Math/Vector3.h"
 #include "Math/Quaternion.h"
 #include "Math/Matrix3x3.h"
@@ -10,7 +10,7 @@
 /**
  * An instance of this class is the protagonist of our game saga.
  */
-class Hero : public Entity
+class Hero : public PhysicsEntity
 {
 public:
 	Hero();
@@ -20,6 +20,9 @@ public:
 	virtual bool Shutdown(bool gameShuttingDown) override;
 	virtual bool Tick(TickPass tickPass, double deltaTime) override;
 	virtual bool GetTransform(Collision::Transform& transform) override;
+	virtual void AccumulateForces(Collision::Vector3& netForce) override;
+	virtual void IntegrateVelocity(const Collision::Vector3& acceleration, double deltaTime) override;
+	virtual void Reset() override;
 
 	void SetRestartLocation(const Collision::Vector3& restartLocation) { this->restartLocation = restartLocation; }
 	void SetRestartOrientation(const Collision::Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }
@@ -31,5 +34,6 @@ private:
 	Reference<RenderMeshInstance> renderMesh;
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
+	bool inContactWithGround;
 	Collision::TaskID boundsQueryTaskID;
 };

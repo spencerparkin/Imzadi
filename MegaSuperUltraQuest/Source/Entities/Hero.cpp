@@ -18,6 +18,7 @@ Hero::Hero()
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
 	this->boundsQueryTaskID = 0;
+	this->inContactWithGround = false;
 }
 
 /*virtual*/ Hero::~Hero()
@@ -45,64 +46,90 @@ Hero::Hero()
 	if (this->shapeID == 0)
 		return false;
 
+	this->inContactWithGround = true;
 	return true;
 }
 
 /*virtual*/ bool Hero::Shutdown(bool gameShuttingDown)
 {
-	// No need to do anything here.  We'll get cleaned up when
-	// the scene and collision system is cleaned up.
-
 	Game::Get()->PopControllerUser();
 
 	return true;
 }
 
+/*virtual*/ void Hero::AccumulateForces(Collision::Vector3& netForce)
+{
+	PhysicsEntity::AccumulateForces(netForce);
+
+	// TODO: Maybe if the jump button is pushed we apply a jump force here?
+}
+
+/*virtual*/ void Hero::IntegrateVelocity(const Collision::Vector3& acceleration, double deltaTime)
+{
+	PhysicsEntity::IntegrateVelocity(acceleration, deltaTime);
+
+	if (this->inContactWithGround)
+	{
+		auto followCam = dynamic_cast<FollowCam*>(ReferenceCounted::GetObjectFromHandle(this->cameraHandle));
+		if (!followCam)
+			return;
+
+		Controller* controller = Game::Get()->GetController("Hero");
+		if (!controller)
+			return;
+
+		Vector2 leftStick(0.0, 0.0);
+		controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
+
+		Camera* camera = followCam->GetCamera();
+		if (!camera)
+			return;
+
+		Transform cameraToWorld = camera->GetCameraToWorldTransform();
+
+		Vector3 xAxis, yAxis, zAxis;
+		cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
+
+		Vector3 upVector(0.0, 1.0, 0.0);
+		xAxis = xAxis.RejectedFrom(upVector).Normalized();
+		zAxis = zAxis.RejectedFrom(upVector).Normalized();
+
+		Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
+
+		// We don't stomp the Y-component here, because we still want
+		// the effects of gravity applied on our character continuously.
+		this->velocity.x = moveDelta.x;
+		this->velocity.z = moveDelta.z;
+	}
+}
+
 /*virtual*/ bool Hero::Tick(TickPass tickPass, double deltaTime)
 {
+	if (!PhysicsEntity::Tick(tickPass, deltaTime))
+		return false;
+
 	System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 	switch (tickPass)
 	{
 		case TickPass::PRE_TICK:
 		{
-			Vector2 leftStick(0.0, 0.0);
-
-			Controller* controller = Game::Get()->GetController("Hero");
-			if (controller)
-				controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
-
 			Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			Matrix3x3 targetOrienation = objectToWorld.matrix;
 
-			auto followCam = dynamic_cast<FollowCam*>(ReferenceCounted::GetObjectFromHandle(this->cameraHandle));
-			if (followCam)
+			if (this->velocity.Length() > 0)
 			{
-				Camera* camera = followCam->GetCamera();
-				Transform cameraToWorld = camera->GetCameraToWorldTransform();
-
 				Vector3 xAxis, yAxis, zAxis;
-				cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
 
-				Vector3 upVector(0.0, 1.0, 0.0);
-				xAxis = xAxis.RejectedFrom(upVector);
-				zAxis = zAxis.RejectedFrom(upVector);
+				yAxis.SetComponents(0.0, 1.0, 0.0);
+				zAxis = -this->velocity.RejectedFrom(yAxis).Normalized();
+				xAxis = yAxis.Cross(zAxis);
 
-				Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed * deltaTime;
-
-				objectToWorld.translation += moveDelta;
-
-				if (moveDelta.Length() > 0)
-				{
-					zAxis = -moveDelta.Normalized();
-					yAxis = upVector.RejectedFrom(zAxis);
-					xAxis = yAxis.Cross(zAxis);
-
-					targetOrienation.SetColumnVectors(xAxis, yAxis, zAxis);
-				}
+				targetOrienation.SetColumnVectors(xAxis, yAxis, zAxis);
 			}
 
 			objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrienation, 0.8);
+			objectToWorld.translation += this->velocity * deltaTime;
 
 			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 
@@ -130,11 +157,7 @@ Hero::Hero()
 						// Our character has gone out of bounds of the collision world!
 						// This is probably because we fell off a platform into the infinite
 						// void down below.  We have died!
-						// TODO: What sort of penalty do we incur besides just respawning at the restart location?
-						Transform objectToWorld;
-						objectToWorld.translation = this->restartLocation;
-						objectToWorld.matrix.SetFromQuat(this->restartOrientation);
-						this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+						this->Reset();
 					}
 
 					collisionSystem->Free<Result>(result);
@@ -156,4 +179,14 @@ Hero::Hero()
 
 	transform = this->renderMesh->GetObjectToWorldTransform();
 	return true;
+}
+
+/*virtual*/ void Hero::Reset()
+{
+	PhysicsEntity::Reset();
+
+	Transform objectToWorld;
+	objectToWorld.translation = this->restartLocation;
+	objectToWorld.matrix.SetFromQuat(this->restartOrientation);
+	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 }

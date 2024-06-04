@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Entity.h"
+#include "PhysicsEntity.h"
 
 /**
  * These are the antagonists of our game saga.
  */
-class Enemy : public Entity
+class Enemy : public PhysicsEntity
 {
 public:
 	Enemy();

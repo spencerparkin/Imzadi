@@ -16,6 +16,7 @@ Game* Game::gameSingleton = nullptr;
 
 Game::Game(HINSTANCE instance) : controller(0)
 {
+	this->accelerationDuetoGravity = 9.8;
 	this->collisionSystemDebugDrawFlags = 0;
 	this->lastTickTime = 0;
 	this->instance = instance;

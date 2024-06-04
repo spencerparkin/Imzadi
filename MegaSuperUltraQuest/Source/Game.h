@@ -110,6 +110,16 @@ public:
 	 */
 	std::string GetControllerUser();
 	
+	/**
+	 * Return the current acceleration due to gravity.  For simplicity,
+	 * gravity is always in the -Y direction.
+	 */
+	double GetGravity() const { return this->accelerationDuetoGravity; }
+
+	/**
+	 * Set the current acceleration due to gravity.
+	 */
+	void SetGravity(double gravity) { this->accelerationDuetoGravity = gravity; }
 
 	void SetCollisionSystemDebugDrawFlags(uint32_t flags) { this->collisionSystemDebugDrawFlags = flags; }
 	uint32_t GetCollisionSystemDebugDrawFlags() { return this->collisionSystemDebugDrawFlags; }
@@ -152,6 +162,7 @@ private:
 	Controller controller;
 	std::vector<std::string> controllerUserStack;
 	Collision::System collisionSystem;
+	double accelerationDuetoGravity;
 	Reference<DebugLines> debugLines;
 	uint32_t collisionSystemDebugDrawFlags;
 	clock_t lastTickTime;
