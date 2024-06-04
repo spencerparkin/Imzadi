@@ -20,7 +20,10 @@ public:
 	virtual bool Tick(double deltaTime) override;
 
 	void SetSubject(Entity* entity) { this->subject.SafeSet(entity); }
+	Entity* GetSubject() { return this->subject.Get(); }
+
 	void SetCamera(Camera* camera) { this->camera.SafeSet(camera); }
+	Camera* GetCamera() { return this->camera.Get(); }
 
 	struct FollowParams
 	{

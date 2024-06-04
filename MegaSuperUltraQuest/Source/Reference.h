@@ -2,6 +2,7 @@
 
 #include <stdint.h>
 #include <assert.h>
+#include <unordered_map>
 
 /**
  * This is the base class for any dynamically allocated class that we would like to
@@ -13,17 +14,22 @@
  * 
  * Note that it is possible to create a memory leak by creating a direct or indirect
  * circular reference.  No attempt is made to catch or detect circular references.
+ * You can use handles instead of references to deal with the problem of circular references.
+ * Compare this mechanism to that of std::weak_ptr<>.
+ * 
+ * Note that this class and the Reference class are not thread-safe.
  */
 class ReferenceCounted
 {
 public:
 	/**
 	 * Construct a new reference-counted object with a ref-count of zero.
+	 * Add this object to the set of all referenced objects.
 	 */
 	ReferenceCounted();
 
 	/**
-	 * Do nothing.
+	 * Remove this object from the set of all referenced objects.
 	 */
 	virtual ~ReferenceCounted();
 
@@ -38,8 +44,30 @@ public:
 	 */
 	void DecRef() const;
 
+	/**
+	 * Return a handle that can be later used to get a pointer to this object
+	 * if it has not yet been destroyed.  Note that a valid handle is always
+	 * non-zero.
+	 */
+	uint32_t GetHandle() const { return this->handle; }
+
+	/**
+	 * Try to dereference the given handle into a reference-counted object.
+	 * Null is returned if the handle is invalid or if the reference-counted
+	 * object to which it once referred has already been destroyed.
+	 * 
+	 * @param[in] handle This is the handle returned by GetHandle on the desired object instance.
+	 * @return A pointer to the desired reference-counted object is returned, or null if it has gone out of scope.
+	 */
+	static ReferenceCounted* GetObjectFromHandle(uint32_t handle);
+
 private:
 	mutable uint32_t refCount;		///< This is used to keep track of how many Reference class instances are pointing to this object.
+	uint32_t handle;				///< This is used to track this object without holding onto a reference to the object.
+	static uint32_t nextHandle;		///< A new object is assigned this handle.
+	
+	typedef std::unordered_map<uint32_t, ReferenceCounted*> ObjectMap;
+	static ObjectMap objectMap;		///< The set of all referenced objects is maintained here for the purpose of handle dereferencing.
 };
 
 /**

@@ -1,6 +1,7 @@
 #include "Entity.h"
 #include "Math/Vector3.h"
 #include "Math/Quaternion.h"
+#include "Math/Matrix3x3.h"
 #include "Scene.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "Shape.h"
@@ -27,4 +28,6 @@ private:
 	Collision::Quaternion restartOrientation;
 	Collision::ShapeID shapeID;
 	Reference<RenderMeshInstance> renderMesh;
+	uint32_t cameraHandle;
+	double maxMoveSpeed;
 };

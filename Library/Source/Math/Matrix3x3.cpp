@@ -384,6 +384,18 @@ bool Matrix3x3::Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) 
 	return false;
 }
 
+void Matrix3x3::InterpolateOrientations(const Matrix3x3& orientationA, const Matrix3x3& orientationB, double alpha)
+{
+	Matrix3x3 quotient = orientationB / orientationA;
+	Vector3 unitAxis;
+	double angle = 0.0;
+	quotient.GetToAxisAngle(unitAxis, angle);
+	angle *= alpha;
+	Matrix3x3 rotation;
+	rotation.SetFromAxisAngle(unitAxis, angle);
+	*this = rotation * orientationA;
+}
+
 void Matrix3x3::Dump(std::ostream& stream) const
 {
 	for (int i = 0; i < 3; i++)

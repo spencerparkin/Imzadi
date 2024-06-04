@@ -12,6 +12,8 @@ using namespace Collision;
 Hero::Hero()
 {
 	this->shapeID = 0;
+	this->cameraHandle = 0;
+	this->maxMoveSpeed = 20.0;
 }
 
 /*virtual*/ Hero::~Hero()
@@ -26,6 +28,8 @@ Hero::Hero()
 	FollowCam* followCam = Game::Get()->SpawnEntity<FollowCam>();
 	followCam->SetSubject(this);
 	followCam->SetCamera(Game::Get()->GetCamera());
+
+	this->cameraHandle = followCam->GetHandle();
 
 	auto capsule = CapsuleShape::Create();
 	capsule->SetVertex(0, Vector3(0.0, 0.0, 0.0));
@@ -51,6 +55,40 @@ Hero::Hero()
 
 	Vector2 leftStick;
 	controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
+
+	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+	Matrix3x3 targetOrienation = objectToWorld.matrix;
+
+	auto followCam = dynamic_cast<FollowCam*>(ReferenceCounted::GetObjectFromHandle(this->cameraHandle));
+	if (followCam)
+	{
+		Camera* camera = followCam->GetCamera();
+		Transform cameraToWorld = camera->GetCameraToWorldTransform();
+
+		Vector3 xAxis, yAxis, zAxis;
+		cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
+
+		Vector3 upVector(0.0, 1.0, 0.0);
+		xAxis = xAxis.RejectedFrom(upVector);
+		zAxis = zAxis.RejectedFrom(upVector);
+
+		Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed * deltaTime;
+
+		objectToWorld.translation += moveDelta;
+
+		if (moveDelta.Length() > 0)
+		{
+			zAxis = -moveDelta.Normalized();
+			yAxis = upVector.RejectedFrom(zAxis);
+			xAxis = yAxis.Cross(zAxis);
+
+			targetOrienation.SetColumnVectors(xAxis, yAxis, zAxis);
+		}
+	}
+
+	objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrienation, 0.8);
+
+	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 
 	// TODO: Psuedo-code...
 	//       - Do we have a collision query result?

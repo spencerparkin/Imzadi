@@ -263,6 +263,20 @@ namespace Collision
 		bool Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) const;
 
 		/**
+		 * Calculate this matrix and an interpolation between the two given orientation matrices.
+		 * If the two given matrices are not orthonormal with determinant +1, then our result here
+		 * is left undefined.  We interpolate by rotating the first matrix into the other.  Since
+		 * rotation matrices form a group, we can divide one by the other and get a rotation matrix,
+		 * which can be thought of as an axis/angle pair.  The given alpha value is used to scale
+		 * this rotation angle.
+		 * 
+		 * @param[in] orientationA This is the matrix we get with alpha at zero.
+		 * @param[in] orientationB This is the matrix we get with alpha at one.
+		 * @param[in] alpha This is the interpolation value ranging from zero to one.
+		 */
+		void InterpolateOrientations(const Matrix3x3& orientationA, const Matrix3x3& orientationB, double alpha);
+
+		/**
 		 * Write this matrix to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;

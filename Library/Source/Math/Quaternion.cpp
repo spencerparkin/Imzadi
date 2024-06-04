@@ -129,7 +129,9 @@ Quaternion& Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
 void Quaternion::GetToAxisAngle(Vector3& unitAxis, double& angle) const
 {
 	angle = ::acos(this->w) / 2.0;
-	unitAxis = this->GetPoint().Normalized();
+	unitAxis = this->GetPoint();
+	if (!unitAxis.Normalize())
+		unitAxis.SetComponents(0.0, 0.0, 1.0);
 }
 
 double Quaternion::SquareMagnitude() const
