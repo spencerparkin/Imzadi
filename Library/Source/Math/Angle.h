@@ -18,5 +18,18 @@ namespace Collision
 		 * @param[in] angleB This is the target angle.
 		 */
 		static void MakeClose(double& angleA, double angleB);
+
+		enum Type
+		{
+			ACUTE,
+			OBTUSE,
+			RIGHT
+		};
+
+		/**
+		 * Tell the caler whether the angle is less than 90 degrees (acute),
+		 * greater than 90 degrees (obtuse), or a right angle.
+		 */
+		static Type Classify(double angle);
 	};
 }

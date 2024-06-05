@@ -27,7 +27,7 @@ RenderMeshAsset::RenderMeshAsset()
 
 	if (jsonDoc.HasMember("bounding_box"))
 	{
-		if (!assetCache->LoadBoundingBox(jsonDoc["bounding_box"], this->objectSpaceBoundingBox))
+		if (!this->LoadBoundingBox(jsonDoc["bounding_box"], this->objectSpaceBoundingBox))
 			return false;
 	}
 

@@ -17,3 +17,12 @@ using namespace Collision;
 		angleA += 2.0 * M_PI * COLL_SYS_SIGN(angleB - angleA);
 	}
 }
+
+/*static*/ Angle::Type Angle::Classify(double angle)
+{
+	if (angle < M_PI / 2.0)
+		return Type::ACUTE;
+	else if (angle > M_PI / 2.0)
+		return Type::OBTUSE;
+	return Type::RIGHT;
+}

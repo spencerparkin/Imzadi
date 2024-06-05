@@ -49,9 +49,6 @@ public:
 
 	std::string GetAssetFolder() const { return this->assetFolder.string(); }
 
-	bool LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector);
-	bool LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb);
-
 private:
 
 	std::filesystem::path assetFolder;
@@ -71,6 +68,7 @@ public:
 
 	virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) = 0;
 	virtual bool Unload() = 0;
+	virtual bool Save(rapidjson::Document& jsonDoc) const;
 	virtual bool CanBeCached() const { return true; }
 	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) { return false; }
 
@@ -78,4 +76,5 @@ protected:
 	bool LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector);
 	bool LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat);
 	bool LoadStringArray(const rapidjson::Value& stringArrayValue, std::vector<std::string>& stringArray);
+	bool LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb);
 };

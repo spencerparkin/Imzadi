@@ -14,7 +14,6 @@ using namespace Collision;
 RenderMeshInstance::RenderMeshInstance()
 {
 	this->objectToWorld.SetIdentity();
-	this->color.SetComponents(1.0, 0.0, 0.0, 1.0);
 	this->surfaceProperties.shininessExponent = 50.0;
 }
 

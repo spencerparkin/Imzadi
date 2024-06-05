@@ -40,6 +40,5 @@ private:
 	Reference<RenderMeshAsset> mesh;
 	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 	Collision::Transform objectToWorld;
-	Collision::Vector4 color;
 	SurfaceProperties surfaceProperties;
 };

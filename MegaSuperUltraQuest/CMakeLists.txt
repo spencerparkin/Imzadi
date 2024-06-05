@@ -33,6 +33,14 @@ set(GAME_SOURCES
     Source/Assets/LevelData.h
     Source/Assets/MovingPlatformData.cpp
     Source/Assets/MovingPlatformData.h
+    Source/Assets/Skeleton.cpp
+    Source/Assets/Skeleton.h
+    Source/Assets/SkinnedRenderMesh.cpp
+    Source/Assets/SkinnedRenderMesh.h
+    Source/Assets/SkinWeights.cpp
+    Source/Assets/SkinWeights.h
+    Source/Assets/Animation.cpp
+    Source/Assets/Animation.h
     Source/Entities/Hero.cpp
     Source/Entities/Hero.h
     Source/Entities/Enemy.cpp
