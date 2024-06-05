@@ -35,7 +35,7 @@ RenderMeshAsset::RenderMeshAsset()
 		return false;
 
 	std::string vertexBufferFile = jsonDoc["vertex_buffer"].GetString();
-	if (!assetCache->GrabAsset(vertexBufferFile, asset))
+	if (!assetCache->LoadAsset(vertexBufferFile, asset))
 		return false;
 
 	this->vertexBuffer.SafeSet(asset.Get());
@@ -44,7 +44,7 @@ RenderMeshAsset::RenderMeshAsset()
 		return false;
 
 	std::string shaderFile = jsonDoc["shader"].GetString();
-	if (!assetCache->GrabAsset(shaderFile, asset))
+	if (!assetCache->LoadAsset(shaderFile, asset))
 		return false;
 
 	this->mainPassShader.SafeSet(asset.Get());
@@ -52,7 +52,7 @@ RenderMeshAsset::RenderMeshAsset()
 	if (jsonDoc.HasMember("shadow_shader"))
 	{
 		std::string shadowShaderFile = jsonDoc["shadow_shader"].GetString();
-		if (!assetCache->GrabAsset(shadowShaderFile, asset))
+		if (!assetCache->LoadAsset(shadowShaderFile, asset))
 			return false;
 
 		this->shadowPassShader.SafeSet(asset.Get());
@@ -62,7 +62,7 @@ RenderMeshAsset::RenderMeshAsset()
 	{
 		std::string indexBufferFile = jsonDoc["index_buffer"].GetString();
 		
-		if (!assetCache->GrabAsset(indexBufferFile, asset))
+		if (!assetCache->LoadAsset(indexBufferFile, asset))
 			return false;
 
 		this->indexBuffer.SafeSet(asset.Get());
@@ -72,7 +72,7 @@ RenderMeshAsset::RenderMeshAsset()
 	{
 		std::string textureFile = jsonDoc["texture"].GetString();
 
-		if (!assetCache->GrabAsset(textureFile, asset))
+		if (!assetCache->LoadAsset(textureFile, asset))
 			return false;
 
 		this->texture.SafeSet(asset.Get());

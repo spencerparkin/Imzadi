@@ -130,8 +130,10 @@ double FreeCam::GetStrafeSpeed()
 	case Speed::MEDIUM:
 		return 100.0;
 	case Speed::FAST:
-		return 140.0;
+		return 200.0;
 	}
+
+	return 0.0;
 }
 
 double FreeCam::GetRotationRate()

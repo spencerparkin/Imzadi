@@ -34,10 +34,10 @@ Shader::Shader()
 		std::string vsShaderObjFile = jsonDoc["vs_shader_object"].GetString();
 		std::string psShaderObjFile = jsonDoc["ps_shader_object"].GetString();
 
-		if (!assetCache->ResolveAssetPath(vsShaderObjFile))
+		if (!assetCache->ResolveAssetPath(vsShaderObjFile, true))
 			return false;
 
-		if (!assetCache->ResolveAssetPath(psShaderObjFile))
+		if (!assetCache->ResolveAssetPath(psShaderObjFile, true))
 			return false;
 
 		std::wstring vsShaderObjFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(vsShaderObjFile);
@@ -57,7 +57,7 @@ Shader::Shader()
 			return false;
 
 		std::string shaderCodeFile = jsonDoc["shader_code"].GetString();
-		if (!assetCache->ResolveAssetPath(shaderCodeFile))
+		if (!assetCache->ResolveAssetPath(shaderCodeFile, true))
 			return false;
 
 		std::string vsEntryPoint = "VS_Main";

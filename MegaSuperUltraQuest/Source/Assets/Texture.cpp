@@ -20,7 +20,7 @@ Texture::Texture()
 		return false;
 
 	std::string imageFile = jsonDoc["image_file"].GetString();
-	if (!assetCache->ResolveAssetPath(imageFile))
+	if (!assetCache->ResolveAssetPath(imageFile, true))
 		return false;
 
 	int flipVertical = 0;

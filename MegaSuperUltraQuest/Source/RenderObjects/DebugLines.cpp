@@ -29,7 +29,7 @@ DebugLines::DebugLines()
 	if (!this->shader)
 	{
 		Reference<Asset> asset;
-		if (!Game::Get()->GetAssetCache()->GrabAsset("Shaders/DebugLine.shader", asset))
+		if (!Game::Get()->GetAssetCache()->LoadAsset("Shaders/DebugLine.shader", asset))
 			return;
 
 		this->shader.SafeSet(asset.Get());

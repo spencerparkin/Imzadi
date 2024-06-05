@@ -18,6 +18,7 @@
 #include "rapidjson/reader.h"
 #include "rapidjson/error/en.h"
 #include "rapidjson/istreamwrapper.h"
+#include "rapidjson/prettywriter.h"
 
 using namespace Collision;
 
@@ -42,67 +43,82 @@ void AssetCache::Clear()
 	this->assetMap.clear();
 }
 
-bool AssetCache::ResolveAssetPath(std::string& assetFile)
+bool AssetCache::ResolveAssetPath(std::string& assetFile, bool mustExist)
 {
 	std::filesystem::path assetPath(assetFile);
 	if (assetPath.is_relative())
 		assetFile = (this->assetFolder / assetPath).string();
 
-	return std::filesystem::exists(assetFile);
+	return !mustExist || std::filesystem::exists(assetFile);
 }
 
-bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset)
+std::string AssetCache::MakeKey(const std::string& assetFile)
 {
 	// Of course, we'll have a problem here if two files have the same name but are in different directories.
 	std::filesystem::path assetPath(assetFile);
 	std::string key = assetPath.filename().string();
 	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return std::tolower(c); });
+	return key;
+}
 
-	// Asset already cached?
-	AssetMap::iterator iter = this->assetMap.find(key);
-	if (iter != this->assetMap.end())
-	{
-		// Yes.  Here you go.  Enjoy your meal.
-		asset = iter->second;
-		return true;
-	}
+Asset* AssetCache::FindAsset(const std::string& assetFile, std::string* key /*= nullptr*/)
+{
+	std::string keyStorage;
+	if (!key)
+		key = &keyStorage;
+	*key = this->MakeKey(assetFile);
+	AssetMap::iterator iter = this->assetMap.find(*key);
+	if (iter == this->assetMap.end())
+		return nullptr;
+	return iter->second;
+}
 
-	// No.  We have to go load it.  First, resolve the path.
-	std::string resolvedAssetFile(assetFile);
-	if (!ResolveAssetPath(resolvedAssetFile))
-		return false;
-
-	// Next, what kind of asset is it?  We'll deduce this from the extension.
+Asset* AssetCache::CreateBlankAssetForFileType(const std::string& assetFile)
+{
+	std::filesystem::path assetPath(assetFile);
 	std::string ext = assetPath.extension().string();
 	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
-	asset.Reset();
 	if (ext == ".render_mesh")
-		asset.Set(new RenderMeshAsset());
+		return new RenderMeshAsset();
 	else if (ext == ".shader")
-		asset.Set(new Shader());
+		return new Shader();
 	else if (ext == ".texture")
-		asset.Set(new Texture());
+		return new Texture();
 	else if (ext == ".buffer")
-		asset.Set(new Buffer());
+		return new Buffer();
 	else if (ext == ".collision")
-		asset.Set(new CollisionShapeSet());
+		return new CollisionShapeSet();
 	else if (ext == ".level")
-		asset.Set(new LevelData());
+		return new LevelData();
 	else if (ext == ".mov_plat")
-		asset.Set(new MovingPlatformData());
+		return new MovingPlatformData();
 	else if (ext == ".skinned_render_mesh")
-		asset.Set(new SkinnedRenderMesh());
+		return new SkinnedRenderMesh();
 	else if (ext == ".animation")
-		asset.Set(new Animation());
+		return new Animation();
 	else if (ext == ".skin_weights")
-		asset.Set(new SkinWeights());
+		return new SkinWeights();
 	else if (ext == ".skeleton")
-		asset.Set(new Skeleton());
-	
+		return new Skeleton();
+
+	return nullptr;
+}
+
+bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset)
+{
+	std::string key;
+	asset.Set(this->FindAsset(assetFile, &key));
+	if (asset)
+		return true;
+
+	std::string resolvedAssetFile(assetFile);
+	if (!ResolveAssetPath(resolvedAssetFile, true))
+		return false;
+
+	asset.Set(this->CreateBlankAssetForFileType(assetFile));
 	if (!asset)
 		return false;
 
-	// Try to load the asset.
 	std::ifstream fileStream;
 	fileStream.open(resolvedAssetFile, std::ios::in);
 	if (!fileStream.is_open())
@@ -134,7 +150,41 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 	if (asset->CanBeCached())
 		this->assetMap.insert(std::pair<std::string, Reference<Asset>>(key, asset));
 
-	// Enjoy your meal.
+	return true;
+}
+
+bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset)
+{
+	if (!asset)
+	{
+		asset.Set(this->FindAsset(assetFile));
+		if (!asset)
+			return false;
+	}
+
+	rapidjson::Document doc;
+	if (!asset->Save(doc))
+		return false;
+
+	std::string resolvedAssetFile(assetFile);
+	if (!ResolveAssetPath(resolvedAssetFile, false))
+		return false;
+
+	if (std::filesystem::exists(resolvedAssetFile))
+		std::remove(assetFile.c_str());
+
+	std::ofstream fileStream;
+	fileStream.open(resolvedAssetFile, std::ios::out);
+	if (!fileStream.is_open())
+		return false;
+
+	rapidjson::StringBuffer stringBuffer;
+	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
+	if (!doc.Accept(prettyWriter))
+		return false;
+
+	fileStream << stringBuffer.GetString();
+	fileStream.close();
 	return true;
 }
 
@@ -153,7 +203,7 @@ Asset::Asset()
 	return false;
 }
 
-bool Asset::LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector)
+/*static*/ bool Asset::LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector)
 {
 	if (!vectorValue.IsObject())
 		return false;
@@ -170,7 +220,7 @@ bool Asset::LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& 
 	return true;
 }
 
-bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat)
+/*static*/ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat)
 {
 	if (!eulerAnglesValue.IsObject())
 		return false;
@@ -197,7 +247,25 @@ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision:
 	return true;
 }
 
-bool Asset::LoadStringArray(const rapidjson::Value& stringArrayValue, std::vector<std::string>& stringArray)
+/*static*/ bool Asset::LoadQuaternion(const rapidjson::Value& quaternionValue, Collision::Quaternion& quat)
+{
+	if (!quaternionValue.IsObject())
+		return false;
+
+	if (!quaternionValue.HasMember("x") || !quaternionValue.HasMember("y") || !quaternionValue.HasMember("z") || !quaternionValue.HasMember("w"))
+		return false;
+
+	if (!quaternionValue["x"].IsFloat() || !quaternionValue["y"].IsFloat() || !quaternionValue["z"].IsFloat() || !quaternionValue["w"].IsFloat())
+		return false;
+
+	quat.x = quaternionValue["x"].GetFloat();
+	quat.y = quaternionValue["y"].GetFloat();
+	quat.z = quaternionValue["z"].GetFloat();
+	quat.w = quaternionValue["w"].GetFloat();
+	return true;
+}
+
+/*static*/ bool Asset::LoadStringArray(const rapidjson::Value& stringArrayValue, std::vector<std::string>& stringArray)
 {
 	if (!stringArrayValue.IsArray())
 		return false;
@@ -216,7 +284,7 @@ bool Asset::LoadStringArray(const rapidjson::Value& stringArrayValue, std::vecto
 	return true;
 }
 
-bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb)
+/*static*/ bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb)
 {
 	if (!aabbValue.IsObject())
 		return false;
@@ -224,11 +292,117 @@ bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAl
 	if (!aabbValue.HasMember("min") || !aabbValue.HasMember("max"))
 		return false;
 
-	if (!this->LoadVector(aabbValue["min"], aabb.minCorner))
+	if (!LoadVector(aabbValue["min"], aabb.minCorner))
 		return false;
 
-	if (!this->LoadVector(aabbValue["max"], aabb.maxCorner))
+	if (!LoadVector(aabbValue["max"], aabb.maxCorner))
 		return false;
 
 	return true;
+}
+
+/*static*/ bool Asset::LoadTransform(const rapidjson::Value& transformValue, Collision::Transform& transform)
+{
+	if (!transformValue.IsObject())
+		return false;
+
+	if (!transformValue.HasMember("matrix") || !transformValue.HasMember("translation"))
+		return false;
+
+	if (!LoadMatrix(transformValue["matrix"], transform.matrix))
+		return false;
+
+	if (!LoadVector(transformValue["translation"], transform.translation))
+		return false;
+
+	return true;
+}
+
+/*static*/ bool Asset::LoadMatrix(const rapidjson::Value& matrixValue, Collision::Matrix3x3& matrix)
+{
+	if (!matrixValue.IsArray() || matrixValue.Size() != 9)
+		return false;
+
+	for (int i = 0; i < 9; i++)
+	{
+		const rapidjson::Value& elementValue = matrixValue[i];
+		if (!elementValue.IsFloat())
+			return false;
+
+		int row = i / 3;
+		int col = i % 3;
+		matrix.ele[row][col] = elementValue.GetFloat();
+	}
+
+	return true;
+}
+
+/*static*/ void Asset::SaveVector(rapidjson::Value& vectorValue, const Collision::Vector3& vector, rapidjson::Document* doc)
+{
+	vectorValue.SetObject();
+	vectorValue.AddMember("x", rapidjson::Value().SetFloat(vector.x), doc->GetAllocator());
+	vectorValue.AddMember("y", rapidjson::Value().SetFloat(vector.y), doc->GetAllocator());
+	vectorValue.AddMember("z", rapidjson::Value().SetFloat(vector.z), doc->GetAllocator());
+}
+
+/*static*/ void Asset::SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Collision::Quaternion& quat, rapidjson::Document* doc)
+{
+	eulerAnglesValue.SetObject();
+
+	// TODO: This requires a factorization!
+	assert(false);
+}
+
+/*static*/ void Asset::SaveQuaternion(rapidjson::Value& quaternionValue, const Collision::Quaternion& quat, rapidjson::Document* doc)
+{
+	quaternionValue.SetObject();
+	quaternionValue.AddMember("x", rapidjson::Value().SetFloat(quat.x), doc->GetAllocator());
+	quaternionValue.AddMember("y", rapidjson::Value().SetFloat(quat.y), doc->GetAllocator());
+	quaternionValue.AddMember("z", rapidjson::Value().SetFloat(quat.z), doc->GetAllocator());
+	quaternionValue.AddMember("w", rapidjson::Value().SetFloat(quat.w), doc->GetAllocator());
+}
+
+/*static*/ void Asset::SaveStringArray(rapidjson::Value& stringArrayValue, const std::vector<std::string>& stringArray, rapidjson::Document* doc)
+{
+	stringArrayValue.SetArray();
+
+	for (const std::string& str : stringArray)
+		stringArrayValue.PushBack(rapidjson::Value().SetString(str.c_str(), doc->GetAllocator()), doc->GetAllocator());
+}
+
+/*static*/ void Asset::SaveBoundingBox(rapidjson::Value& aabbValue, const Collision::AxisAlignedBoundingBox& aabb, rapidjson::Document* doc)
+{
+	rapidjson::Value minValue, maxValue;
+
+	SaveVector(minValue, aabb.minCorner, doc);
+	SaveVector(maxValue, aabb.maxCorner, doc);
+
+	aabbValue.SetObject();
+	aabbValue.AddMember("min", minValue, doc->GetAllocator());
+	aabbValue.AddMember("max", maxValue, doc->GetAllocator());
+}
+
+/*static*/ void Asset::SaveTransform(rapidjson::Value& transformValue, const Collision::Transform& transform, rapidjson::Document* doc)
+{
+	rapidjson::Value matrixValue, translationValue;
+
+	SaveMatrix(matrixValue, transform.matrix, doc);
+	SaveVector(translationValue, transform.translation, doc);
+
+	transformValue.SetObject();
+	transformValue.AddMember("matrix", matrixValue, doc->GetAllocator());
+	transformValue.AddMember("translation", translationValue, doc->GetAllocator());
+}
+
+/*static*/ void Asset::SaveMatrix(rapidjson::Value& matrixValue, const Collision::Matrix3x3& matrix, rapidjson::Document* doc)
+{
+	matrixValue.SetArray();
+
+	for (int i = 0; i < 9; i++)
+	{
+		int row = i / 3;
+		int col = i % 3;
+
+		matrixValue.PushBack(rapidjson::Value().SetFloat(matrix.ele[row][col]), doc->GetAllocator());
+	}
 }

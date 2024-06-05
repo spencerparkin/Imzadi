@@ -15,5 +15,6 @@
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
     "shadow_shader": "Shaders/StandardShadow.shader",
-    "vertex_buffer": "Models\\Hero\\Hero_Hero_Vertices.buffer"
+    "vertex_buffer": "Models\\Hero\\Hero_Hero_Vertices.buffer",
+    "skeleton": "Models/Hero/Hero.skeleton"
 }

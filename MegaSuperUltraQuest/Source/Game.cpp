@@ -274,7 +274,7 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
 
-	if (this->assetCache->GrabAsset(renderMeshFile, renderMeshAsset))
+	if (this->assetCache->LoadAsset(renderMeshFile, renderMeshAsset))
 	{
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 		{

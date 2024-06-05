@@ -100,6 +100,9 @@ public:
 
 	void DebugDraw(const Collision::Transform& objectToWorld) const;
 
+	bool Load(const rapidjson::Value& boneValue);
+	bool Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const;
+
 private:
 	std::string name;
 	Bone* parentBone;

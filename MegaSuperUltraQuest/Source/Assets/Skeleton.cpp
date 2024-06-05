@@ -18,7 +18,15 @@ Skeleton::Skeleton()
 
 /*virtual*/ bool Skeleton::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
-	return false;
+	if (!jsonDoc.HasMember("root_bone") || !jsonDoc["root_bone"].IsObject())
+		return false;
+
+	const rapidjson::Value& rootBoneValue = jsonDoc["root_bone"];
+	this->SetRootBone(new Bone());
+	if (!this->rootBone->Load(rootBoneValue))
+		return false;
+	
+	return true;
 }
 
 /*virtual*/ bool Skeleton::Unload()
@@ -29,7 +37,18 @@ Skeleton::Skeleton()
 
 /*virtual*/ bool Skeleton::Save(rapidjson::Document& jsonDoc) const
 {
-	return false;
+	if (!this->rootBone)
+		return false;
+
+	jsonDoc.SetObject();
+
+	rapidjson::Value rootBoneValue;
+	if (!this->rootBone->Save(rootBoneValue, &jsonDoc))
+		return false;
+
+	jsonDoc.AddMember("root_bone", rootBoneValue, jsonDoc.GetAllocator());
+
+	return true;
 }
 
 void Skeleton::SetRootBone(Bone* bone)
@@ -232,6 +251,63 @@ Bone::Bone()
 /*virtual*/ Bone::~Bone()
 {
 	this->DeleteAllChildBones();
+}
+
+bool Bone::Load(const rapidjson::Value& boneValue)
+{
+	if (!boneValue.HasMember("name") || !boneValue["name"].IsString())
+		return false;
+
+	this->name = boneValue["name"].GetString();
+
+	if (!boneValue.HasMember("bind_pose_transform"))
+		return false;
+
+	if (!Asset::LoadTransform(boneValue["bind_pose_transform"], this->bindPoseParentToChild))
+		return false;
+
+	if (!boneValue.HasMember("child_bone_array") || !boneValue["child_bone_array"].IsArray())
+		return false;
+
+	const rapidjson::Value& childBoneArrayValue = boneValue["child_bone_array"];
+	this->DeleteAllChildBones();
+	for (int i = 0; i < childBoneArrayValue.Size(); i++)
+	{
+		const rapidjson::Value& childBoneValue = childBoneArrayValue[i];
+		Bone* childBone = new Bone();
+		childBone->SetParentBone(this);
+		this->childBoneArray.push_back(childBone);
+		if (!childBone->Load(childBoneValue))
+			return false;
+	}
+
+	return true;
+}
+
+bool Bone::Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const
+{
+	rapidjson::Value bindPoseTransformValue;
+	Asset::SaveTransform(bindPoseTransformValue, this->bindPoseParentToChild, doc);
+
+	boneValue.SetObject();
+	boneValue.AddMember("name", rapidjson::Value().SetString(this->name.c_str(), doc->GetAllocator()), doc->GetAllocator());
+	boneValue.AddMember("bind_pose_transform", bindPoseTransformValue, doc->GetAllocator());
+
+	rapidjson::Value childBoneArrayValue;
+	childBoneArrayValue.SetArray();
+
+	for (const Bone* bone : this->childBoneArray)
+	{
+		rapidjson::Value childBoneValue;
+		if (!bone->Save(childBoneValue, doc))
+			return false;
+
+		childBoneArrayValue.PushBack(childBoneValue, doc->GetAllocator());
+	}
+
+	boneValue.AddMember("child_bone_array", childBoneArrayValue, doc->GetAllocator());
+
+	return true;
 }
 
 void Bone::AddChildBone(Bone* bone)

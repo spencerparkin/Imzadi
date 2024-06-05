@@ -17,12 +17,17 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!RenderMeshAsset::Load(jsonDoc, assetCache))
 		return false;
 
-	// TODO: Write this.
+	if (!jsonDoc.HasMember("skeleton") || !jsonDoc["skeleton"].IsString())
+		return false;
 
-	this->skeleton.Set(new Skeleton());
+	std::string skeletonFile = jsonDoc["skeleton"].GetString();
+	Reference<Asset> asset;
+	if (!assetCache->LoadAsset(skeletonFile, asset))
+		return false;
 
-	Vector3 scale(1.0, 1.0, 1.0);
-	this->skeleton->MakeBasicBiped(scale);
+	this->skeleton.SafeSet(asset.Get());
+	if (!this->skeleton)
+		return false;
 
 	return true;
 }
