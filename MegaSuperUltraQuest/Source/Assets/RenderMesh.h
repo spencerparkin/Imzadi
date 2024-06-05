@@ -30,7 +30,7 @@ public:
 	Buffer* GetIndexBuffer() { return this->indexBuffer.Get(); }
 	Texture* GetTexture() { return this->texture.Get(); }
 
-private:
+protected:
 	D3D_PRIMITIVE_TOPOLOGY primType;
 	Reference<Buffer> vertexBuffer;
 	Reference<Buffer> indexBuffer;

@@ -17,6 +17,8 @@ set(GAME_SOURCES
     Source/Entity.h
     Source/RenderObjects/RenderMeshInstance.cpp
     Source/RenderObjects/RenderMeshInstance.h
+    Source/RenderObjects/AnimatedMeshInstance.cpp
+    Source/RenderObjects/AnimatedMeshInstance.h
     Source/RenderObjects/DebugLines.cpp
     Source/RenderObjects/DebugLines.h
     Source/Assets/RenderMesh.cpp

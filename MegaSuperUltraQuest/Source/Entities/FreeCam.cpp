@@ -6,8 +6,7 @@ using namespace Collision;
 
 FreeCam::FreeCam()
 {
-	this->rotationRate = M_PI / 2.0;
-	this->strafeSpeed = 100.0;
+	this->speed = Speed::MEDIUM;
 	this->strafeMode = StrafeMode::XZ_PLANE;
 }
 
@@ -66,6 +65,22 @@ void FreeCam::SetEnabled(bool enabled)
 		}
 	}
 
+	if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+	{
+		switch (this->speed)
+		{
+		case Speed::SLOW:
+			this->speed = Speed::MEDIUM;
+			break;
+		case Speed::MEDIUM:
+			this->speed = Speed::FAST;
+			break;
+		case Speed::FAST:
+			this->speed = Speed::SLOW;
+			break;
+		}
+	}
+
 	Vector2 leftStick;
 	controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
 
@@ -74,10 +89,10 @@ void FreeCam::SetEnabled(bool enabled)
 	switch (this->strafeMode)
 	{
 	case StrafeMode::XZ_PLANE:
-		strafeDelta = (leftStick.x * xAxis - leftStick.y * zAxis) * this->strafeSpeed * deltaTime;
+		strafeDelta = (leftStick.x * xAxis - leftStick.y * zAxis) * this->GetStrafeSpeed() * deltaTime;
 		break;
 	case StrafeMode::XY_PLANE:
-		strafeDelta = (leftStick.x * xAxis + leftStick.y * yAxis) * this->strafeSpeed * deltaTime;
+		strafeDelta = (leftStick.x * xAxis + leftStick.y * yAxis) * this->GetStrafeSpeed() * deltaTime;
 		break;
 	}
 
@@ -86,8 +101,8 @@ void FreeCam::SetEnabled(bool enabled)
 	Vector2 rightStick;
 	controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
 
-	double headingDelta = -rightStick.x * this->rotationRate * deltaTime;
-	double pitchDelta = rightStick.y * this->rotationRate * deltaTime;
+	double headingDelta = -rightStick.x * this->GetRotationRate() * deltaTime;
+	double pitchDelta = rightStick.y * this->GetRotationRate() * deltaTime;
 
 	Matrix3x3 headingChangeMatrix, pitchChangeMatrix;
 
@@ -104,4 +119,31 @@ void FreeCam::SetEnabled(bool enabled)
 	camera->SetCameraToWorldTransform(cameraToWorld);
 
 	return true;
+}
+
+double FreeCam::GetStrafeSpeed()
+{
+	switch (this->speed)
+	{
+	case Speed::SLOW:
+		return 5.0;
+	case Speed::MEDIUM:
+		return 100.0;
+	case Speed::FAST:
+		return 140.0;
+	}
+}
+
+double FreeCam::GetRotationRate()
+{
+	switch (this->speed)
+	{
+	case Speed::SLOW:
+		return M_PI / 8.0;
+	case Speed::MEDIUM:
+	case Speed::FAST:
+		return M_PI / 2.0;
+	}
+
+	return 0.0;
 }

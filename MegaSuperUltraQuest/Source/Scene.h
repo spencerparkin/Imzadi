@@ -68,6 +68,8 @@ public:
 
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const = 0;
 
+	virtual int SortKey() const;
+
 	bool IsHidden() const { return this->hide; }
 	void SetHidden(bool hide) { this->hide = hide; }
 

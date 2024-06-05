@@ -16,6 +16,9 @@ public:
 
 	virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 	virtual bool Unload() override;
+	virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) override;
+
+	Skeleton* GetSkeleton() { return this->skeleton.Get(); }
 
 	/**
 	 * This is where we write the vertex buffer (that will be sent to the GPU for rendering)

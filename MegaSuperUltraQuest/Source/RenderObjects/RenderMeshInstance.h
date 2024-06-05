@@ -36,7 +36,7 @@ public:
 	const SurfaceProperties& GetSurfaceProperties() const { return this->surfaceProperties; }
 	void SetSurfaceProperties(const SurfaceProperties& surfaceProperties) { this->surfaceProperties = surfaceProperties; }
 
-private:
+protected:
 	Reference<RenderMeshAsset> mesh;
 	Collision::AxisAlignedBoundingBox objectSpaceBoundingBox;
 	Collision::Transform objectToWorld;

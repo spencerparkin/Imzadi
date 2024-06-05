@@ -6,6 +6,10 @@
 #include "Assets/CollisionShapeSet.h"
 #include "Assets/LevelData.h"
 #include "Assets/MovingPlatformData.h"
+#include "Assets/Animation.h"
+#include "Assets/SkinnedRenderMesh.h"
+#include "Assets/SkinWeights.h"
+#include "Assets/Skeleton.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
@@ -86,6 +90,15 @@ bool AssetCache::GrabAsset(const std::string& assetFile, Reference<Asset>& asset
 		asset.Set(new LevelData());
 	else if (ext == ".mov_plat")
 		asset.Set(new MovingPlatformData());
+	else if (ext == ".skinned_render_mesh")
+		asset.Set(new SkinnedRenderMesh());
+	else if (ext == ".animation")
+		asset.Set(new Animation());
+	else if (ext == ".skin_weights")
+		asset.Set(new SkinWeights());
+	else if (ext == ".skeleton")
+		asset.Set(new Skeleton());
+	
 	if (!asset)
 		return false;
 

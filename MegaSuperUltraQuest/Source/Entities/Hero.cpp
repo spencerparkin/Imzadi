@@ -31,7 +31,7 @@ Hero::Hero()
 {
 	Game::Get()->PushControllerUser("Hero");
 
-	std::string heroModelFile = "Models/Hero/Hero.render_mesh";
+	std::string heroModelFile = "Models/Hero/Hero_Hero.skinned_render_mesh";
 	this->renderMesh.SafeSet(Game::Get()->LoadAndPlaceRenderMesh(heroModelFile, this->restartLocation, this->restartOrientation));
 
 	FollowCam* followCam = Game::Get()->SpawnEntity<FollowCam>();

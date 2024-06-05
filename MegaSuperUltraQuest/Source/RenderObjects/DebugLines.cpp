@@ -136,3 +136,9 @@ void DebugLines::Clear()
 {
 	this->lineArray.clear();
 }
+
+/*virtual*/ int DebugLines::SortKey() const
+{
+	// Always draw debug lines after everything else.
+	return std::numeric_limits<int>::max();
+}

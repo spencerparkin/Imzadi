@@ -1,5 +1,7 @@
 #include "Animation.h"
 
+//------------------------------- Animation -------------------------------
+
 Animation::Animation()
 {
 }
@@ -18,7 +20,17 @@ Animation::Animation()
 	return false;
 }
 
-void Animation::PoseSkeleton(Skeleton* skeleton, double timeSeconds) const
+bool Animation::FindKeyFrames(const KeyFrame*& keyFrameA, const KeyFrame*& keyFrameB, double timeIndex, double& alpha) const
 {
-	// TODO: Write this.
+	return false;
+}
+
+//------------------------------- KeyFrame -------------------------------
+
+KeyFrame::KeyFrame()
+{
+}
+
+/*virtual*/ KeyFrame::~KeyFrame()
+{
 }

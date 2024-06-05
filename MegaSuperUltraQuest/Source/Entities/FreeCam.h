@@ -18,14 +18,23 @@ public:
 
 private:
 
+	double GetStrafeSpeed();
+	double GetRotationRate();
+
 	enum StrafeMode
 	{
 		XZ_PLANE,
 		XY_PLANE
 	};
 
+	enum Speed
+	{
+		SLOW,
+		MEDIUM,
+		FAST
+	};
+
 	Reference<Camera> camera;
-	double strafeSpeed;
-	double rotationRate;
+	Speed speed;
 	StrafeMode strafeMode;
 };

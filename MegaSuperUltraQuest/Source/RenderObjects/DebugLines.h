@@ -16,6 +16,7 @@ public:
 
 	virtual void Render(Camera* camera, RenderPass renderPass) override;
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const override;
+	virtual int SortKey() const override;
 
 	struct Line
 	{
