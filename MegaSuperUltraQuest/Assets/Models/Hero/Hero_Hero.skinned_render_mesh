@@ -11,10 +11,9 @@
             "z": -0.5746
         }
     },
-    "index_buffer": "Models\\Hero\\HeroIndices.buffer",
+    "index_buffer": "Models\\Hero\\Hero_Hero_Indices.buffer",
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
     "shadow_shader": "Shaders/StandardShadow.shader",
-    "texture": "Models\\Hero\\Hero.texture",
-    "vertex_buffer": "Models\\Hero\\HeroVertices.buffer"
+    "vertex_buffer": "Models\\Hero\\Hero_Hero_Vertices.buffer"
 }

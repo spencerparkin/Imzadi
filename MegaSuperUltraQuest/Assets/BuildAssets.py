@@ -4,6 +4,7 @@ import os
 import json
 import subprocess
 import re
+import math
 
 class OBJ_Model(object):
     def __init__(self):
@@ -109,11 +110,14 @@ def load_obj_file(obj_file):
                     float(token_list[2])
                 ))
             elif token_list[0] == 'vn' and len(token_list) == 4:
-                normal_list.append((
-                    float(token_list[1]),
-                    float(token_list[2]),
-                    float(token_list[3])
-                ))
+                x = float(token_list[1])
+                y = float(token_list[2])
+                z = float(token_list[3])
+                length = math.sqrt(x*x + y*y + z*z)
+                x /= length
+                y /= length
+                z /= length
+                normal_list.append((x, y, z))
             elif token_list[0] == 'f':
                 if len(token_list) != 4:
                     raise Exception('Only triangles are supported.')
