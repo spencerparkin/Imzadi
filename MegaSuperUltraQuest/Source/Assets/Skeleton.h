@@ -105,7 +105,12 @@ private:
  * A bone is a fixed-length vector at origin with a sub-space attached
  * to the tip of the vector.  A bone lives in its parent space.  The
  * space of the bone is the space at its tip.  Child bones of a bone
- * live in the space of the bone.
+ * live in the space of the bone.  Note that since the bone vector
+ * has a sub-space on its tip, this gives the vector orientation beyond
+ * that of a normal vector.  With a normal vector, rotating the vector
+ * about an axis parallel to it does not change it.  This is not the
+ * case, however, with our bone vectors, since the sub-space at its
+ * tip is a property of the vector.
  */
 class Bone
 {
