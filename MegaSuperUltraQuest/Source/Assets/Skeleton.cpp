@@ -256,14 +256,14 @@ bool Skeleton::GatherBones(std::vector<Bone*>& boneArray)
 	return true;
 }
 
-bool Skeleton::GatherBones(const Collision::Vector3& position, std::vector<Bone*>& boneArray)
+bool Skeleton::GatherBones(const Collision::Vector3& position, BoneTransformType boneTransformType, std::vector<Bone*>& boneArray)
 {
 	if (!this->GatherBones(boneArray))
 		return false;
 
-	std::sort(boneArray.begin(), boneArray.end(), [&position](const Bone* boneA, const Bone* boneB) -> bool {
-		const Vector3& centerA = boneA->CalcObjectSpaceCenter();
-		const Vector3& centerB = boneB->CalcObjectSpaceCenter();
+	std::sort(boneArray.begin(), boneArray.end(), [&position, boneTransformType](const Bone* boneA, const Bone* boneB) -> bool {
+		const Vector3& centerA = boneA->CalcObjectSpaceCenter(boneTransformType);
+		const Vector3& centerB = boneB->CalcObjectSpaceCenter(boneTransformType);
 		double distanceA = (position - centerA).Length();
 		double distanceB = (position - centerB).Length();
 		return distanceA < distanceB;
@@ -404,9 +404,10 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 		childBone->UpdateCachedTransforms(transformType);
 }
 
-Collision::Vector3 Bone::CalcObjectSpaceCenter() const
+Collision::Vector3 Bone::CalcObjectSpaceCenter(BoneTransformType transformType) const
 {
-	return this->currentPose.boneToObject.TransformPoint(Vector3(-this->length / 2.0, 0.0, 0.0));
+	const Transforms* transforms = this->GetTransforms(transformType);
+	return transforms->boneToObject.TransformPoint(Vector3(-this->length / 2.0, 0.0, 0.0));
 }
 
 void Bone::PopulateBoneMap(BoneMap& boneMap) const

@@ -50,10 +50,11 @@ public:
 	 * them closest to furthest from the given position.
 	 * 
 	 * @param[in] position Bones are sorted based on distance to this point from the bone centers.
+	 * @param[in] boneTransformType Are we looking at the bind pose or the current pose?
 	 * @param[out] boneArray The sorted list of bones is returned in this array.
 	 * @return False is returned if there are no bones to return; true, otherwise.
 	 */
-	bool GatherBones(const Collision::Vector3& position, std::vector<Bone*>& boneArray);
+	bool GatherBones(const Collision::Vector3& position, BoneTransformType boneTransformType, std::vector<Bone*>& boneArray);
 
 	/**
 	 * Orient the bones of this skeleton using the two given key-frames.  Note that
@@ -142,7 +143,7 @@ public:
 	bool Load(const rapidjson::Value& boneValue);
 	bool Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const;
 
-	Collision::Vector3 CalcObjectSpaceCenter() const;
+	Collision::Vector3 CalcObjectSpaceCenter(BoneTransformType transformType) const;
 
 private:
 

@@ -30,9 +30,13 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!this->skeleton)
 		return false;
 
-#if 0
 	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
 		return false;
+
+#if 0
+	//this->skinWeights.Set(new SkinWeights());
+	//this->skinWeights->AutoSkin(this->skeleton, this->bindPoseVertices, this->vertexBuffer->GetStride(), 0, 1.0);
+#endif
 
 	if (!jsonDoc.HasMember("skin_weights") || !jsonDoc["skin_weights"].IsString())
 		return false;
@@ -44,7 +48,6 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	this->skinWeights.SafeSet(asset.Get());
 	if (!skinWeights)
 		return false;
-#endif
 
 	return true;
 }
