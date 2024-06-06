@@ -27,7 +27,7 @@ public:
 	void DeformMesh();
 
 private:
-	Reference<Buffer> bindPoseVertices;
+	Reference<BareBuffer> bindPoseVertices;
 	Reference<Skeleton> skeleton;
 	Reference<SkinWeights> skinWeights;
 };

@@ -2,6 +2,8 @@
 #include "Game.h"
 #include <stdint.h>
 
+//-------------------------------------- Buffer --------------------------------------
+
 Buffer::Buffer()
 {
 	this->buffer = nullptr;
@@ -81,6 +83,16 @@ Buffer::Buffer()
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	bufferDesc.BindFlags = 0;
 
+	if (jsonDoc.HasMember("usage") && jsonDoc["usage"].IsString())
+	{
+		std::string usage = jsonDoc["usage"].GetString();
+		if (usage == "dynamic")
+		{
+			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+		}
+	}
+
 	if (bind == "vertex")
 		bufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	else if (bind == "index")
@@ -88,54 +100,73 @@ Buffer::Buffer()
 	else
 		return false;
 
+	BYTE* bareComponentBuffer = nullptr;
+	if (jsonDoc.HasMember("bare_buffer") && jsonDoc["bare_buffer"].IsBool() && jsonDoc["bare_buffer"].GetBool())
+	{
+		this->bareBuffer.Set(new BareBuffer());
+		this->bareBuffer->SetSize(bufferDesc.ByteWidth);
+		bareComponentBuffer = this->bareBuffer->GetBuffer();
+	}
+
 	std::unique_ptr<uint8_t[]> componentBuffer(new uint8_t[bufferDesc.ByteWidth]);
 	int j = 0;
+
+	union
+	{
+		float floatValue;
+		int intValue;
+		unsigned uintValue;
+		short shortValue;
+		unsigned short ushortValue;
+	} component;
 
 	for (int i = 0; i < bufferValue.Size(); i++)
 	{
 		const rapidjson::Value& bufferComponentValue = bufferValue[i];
 		
-		// I smell a template function here.
 		if (componentType == "float")
 		{
 			if (!bufferComponentValue.IsFloat())
 				return false;
 
-			float component = bufferComponentValue.GetFloat();
-			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+			component.floatValue = bufferComponentValue.GetFloat();
 		}
 		else if (componentType == "int")
 		{
 			if (!bufferComponentValue.IsInt())
 				return false;
 
-			int component = bufferComponentValue.GetInt();
-			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+			component.intValue = bufferComponentValue.GetInt();
 		}
 		else if (componentType == "short")
 		{
 			if (!bufferComponentValue.IsInt())
 				return false;
 
-			short component = (short)bufferComponentValue.GetInt();
-			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+			component.shortValue = (short)bufferComponentValue.GetInt();
 		}
 		else if (componentType == "uint")
 		{
 			if (!bufferComponentValue.IsInt())
 				return false;
 
-			unsigned int component = (unsigned int)bufferComponentValue.GetInt();
-			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+			component.uintValue = (unsigned int)bufferComponentValue.GetInt();
 		}
 		else if (componentType == "ushort")
 		{
 			if (!bufferComponentValue.IsInt())
 				return false;
 
-			unsigned short component = (unsigned short)bufferComponentValue.GetInt();
-			::memcpy(&componentBuffer[j], &component, componentTypeSize);
+			component.ushortValue = (unsigned short)bufferComponentValue.GetInt();
 		}
+		else
+		{
+			assert(false);
+		}
+
+		::memcpy(&componentBuffer[j], &component, componentTypeSize);
+		if (bareComponentBuffer)
+			::memcpy(&bareComponentBuffer[j], &component, componentTypeSize);
 
 		j += componentTypeSize;
 	}
@@ -154,4 +185,55 @@ Buffer::Buffer()
 	SafeRelease(this->buffer);
 
 	return true;
+}
+
+bool Buffer::GetBareBuffer(Reference<BareBuffer>& givenBareBuffer)
+{
+	if (!this->bareBuffer)
+	{
+		this->bareBuffer.Set(new BareBuffer());
+		this->bareBuffer->SetSize(this->numElements * this->strideBytes);
+		
+		ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
+		if (!deviceContext)
+			return false;
+
+		D3D11_MAPPED_SUBRESOURCE mappedSubresource{};
+		HRESULT result = deviceContext->Map(this->buffer, 0, D3D11_MAP_READ, 0, &mappedSubresource);
+		if (FAILED(result))
+			return false;
+
+		::memcpy(bareBuffer->GetBuffer(), mappedSubresource.pData, this->bareBuffer->GetSize());
+		deviceContext->Unmap(this->buffer, 0);
+	}
+
+	givenBareBuffer = this->bareBuffer;
+	return true;
+}
+
+//-------------------------------------- BareBuffer --------------------------------------
+
+BareBuffer::BareBuffer()
+{
+	this->buffer = nullptr;
+	this->bufferSize = 0;
+}
+
+/*virtual*/ BareBuffer::~BareBuffer()
+{
+	this->SetSize(0);
+}
+
+void BareBuffer::SetSize(UINT size)
+{
+	delete[] this->buffer;
+	this->buffer = nullptr;
+	this->bufferSize = size;
+	if (size > 0)
+		this->buffer = new BYTE[size];
+}
+
+UINT BareBuffer::GetSize() const
+{
+	return this->bufferSize;
 }

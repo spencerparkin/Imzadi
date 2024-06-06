@@ -1,4 +1,6 @@
 {
+    "usage": "dynamic",
+    "bare_buffer": true,
     "bind": "vertex",
     "buffer": [
         0.6769,

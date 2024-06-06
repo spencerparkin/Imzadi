@@ -29,6 +29,9 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!this->skeleton)
 		return false;
 
+	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
+		return false;
+
 	return true;
 }
 
