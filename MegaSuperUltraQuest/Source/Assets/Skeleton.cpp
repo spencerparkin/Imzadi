@@ -63,7 +63,7 @@ void Skeleton::InvalidateBoneMap() const
 	this->boneMapValid = false;
 }
 
-const Bone* Skeleton::FindBone(const std::string& name) const
+Bone* Skeleton::FindBone(const std::string& name)
 {
 	if (!this->rootBone)
 		return nullptr;
@@ -80,6 +80,11 @@ const Bone* Skeleton::FindBone(const std::string& name) const
 		return nullptr;
 
 	return iter->second;
+}
+
+const Bone* Skeleton::FindBone(const std::string& name) const
+{
+	return const_cast<Skeleton*>(this)->FindBone(name);
 }
 
 void Skeleton::DebugDraw(const Collision::Transform& objectToWorld) const
@@ -359,14 +364,24 @@ double Bone::GetBoneLength() const
 	return this->bindPoseChildToParent.translation.Length();
 }
 
-void Bone::SetBoneOrientation(const Collision::Matrix3x3& boneOrientation) const
+void Bone::SetBoneOrientation(const Collision::Matrix3x3& boneOrientation)
 {
 	this->currentPoseOrientation = boneOrientation;
 }
 
-void Bone::SetBoneOrientation(const Collision::Quaternion& boneOrientation) const
+void Bone::SetBoneOrientation(const Collision::Quaternion& boneOrientation)
 {
 	this->currentPoseOrientation.SetFromQuat(boneOrientation);
+}
+
+void Bone::GetBoneOrientation(Collision::Matrix3x3& boneOrientation) const
+{
+	boneOrientation = this->currentPoseOrientation;
+}
+
+void Bone::GetBoneOrientation(Collision::Quaternion& boneOrientation) const
+{
+	this->currentPoseOrientation.GetToQuat(boneOrientation);
 }
 
 bool Bone::UpdateCachedTransforms() const

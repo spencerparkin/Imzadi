@@ -20,6 +20,7 @@ public:
 	virtual void GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const override;
 
 	void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }
+	RenderMeshAsset* GetRenderMesh() { return this->mesh.Get(); }
 	void SetBoundingBox(const Collision::AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 	void SetObjectToWorldTransform(const Collision::Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
 	const Collision::Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }

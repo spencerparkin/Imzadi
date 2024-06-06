@@ -33,6 +33,7 @@ public:
 	Bone* GetRootBone() { return this->rootBone; }
 	const Bone* GetRootBone() const { return this->rootBone; }
 
+	Bone* FindBone(const std::string& name);
 	const Bone* FindBone(const std::string& name) const;
 	void InvalidateBoneMap() const;
 
@@ -103,8 +104,11 @@ public:
 
 	double GetBoneLength() const;
 
-	void SetBoneOrientation(const Collision::Matrix3x3& boneOrientation) const;
-	void SetBoneOrientation(const Collision::Quaternion& boneOrientation) const;
+	void SetBoneOrientation(const Collision::Matrix3x3& boneOrientation);
+	void SetBoneOrientation(const Collision::Quaternion& boneOrientation);
+
+	void GetBoneOrientation(Collision::Matrix3x3& boneOrientation) const;
+	void GetBoneOrientation(Collision::Quaternion& boneOrientation) const;
 
 	bool UpdateCachedTransforms() const;
 
@@ -120,7 +124,7 @@ private:
 	Bone* parentBone;
 	std::vector<Bone*> childBoneArray;
 	Collision::Transform bindPoseChildToParent;
-	mutable Collision::Matrix3x3 currentPoseOrientation;
+	Collision::Matrix3x3 currentPoseOrientation;
 	mutable Collision::Transform currentPoseChildToParent;
 	mutable Collision::Transform bindPoseChildToObject;
 	mutable Collision::Transform currentPoseChildToObject;

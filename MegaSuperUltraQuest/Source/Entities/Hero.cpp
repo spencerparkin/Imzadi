@@ -2,6 +2,8 @@
 #include "FollowCam.h"
 #include "Game.h"
 #include "Assets/RenderMesh.h"
+#include "Assets/SkinnedRenderMesh.h"
+#include "Assets/Skeleton.h"
 #include "Math/Quaternion.h"
 #include "Math/Transform.h"
 #include "Math/Vector2.h"
@@ -155,6 +157,39 @@ Hero::Hero()
 			auto collisionQuery = CollisionQuery::Create();
 			collisionQuery->SetShapeID(this->shapeID);
 			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
+
+			break;
+		}
+		case TickPass::MID_TICK:
+		{
+			// TODO: This is where we would do skinning/animation on our render mesh.
+
+			Controller* controller = Game::Get()->GetController("Hero");
+			if (controller)
+			{
+				double leftTrigger = controller->GetTrigger(Controller::Side::LEFT);
+				double rightTrigger = controller->GetTrigger(Controller::Side::RIGHT);
+
+				auto mesh = dynamic_cast<SkinnedRenderMesh*>(this->renderMesh->GetRenderMesh());
+				if (mesh)
+				{
+					Skeleton* skeleton = mesh->GetSkeleton();
+					Bone* bone = skeleton->FindBone("LeftShoulder");
+					if (bone)
+					{
+						Matrix3x3 boneOrientation;
+						bone->GetBoneOrientation(boneOrientation);
+
+						double angle = (M_PI / 12.0) * (leftTrigger - rightTrigger);
+
+						Matrix3x3 rotation;
+						rotation.SetFromAxisAngle(Vector3(0.0, 0.0, 1.0), angle);
+
+						boneOrientation = (rotation * boneOrientation).Orthonormalized(COLL_SYS_AXIS_FLAG_X);
+						bone->SetBoneOrientation(boneOrientation);
+					}
+				}
+			}
 
 			break;
 		}
