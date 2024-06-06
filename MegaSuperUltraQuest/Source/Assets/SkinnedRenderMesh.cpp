@@ -21,13 +21,6 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!jsonDoc.HasMember("skeleton") || !jsonDoc["skeleton"].IsString())
 		return false;
 
-	this->skeleton.Set(new Skeleton());
-	this->skeleton->MakeBasicBiped();
-	this->skeleton->UpdateCachedTransforms(BoneTransformType::BIND_POSE);
-	this->skeleton->ResetCurrentPose();
-	this->skeleton->UpdateCachedTransforms(BoneTransformType::CURRENT_POSE);
-
-#if 0
 	std::string skeletonFile = jsonDoc["skeleton"].GetString();
 	Reference<Asset> asset;
 	if (!assetCache->LoadAsset(skeletonFile, asset))
@@ -37,6 +30,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!this->skeleton)
 		return false;
 
+#if 0
 	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
 		return false;
 

@@ -1,153 +1,111 @@
 {
     "root_bone": {
         "name": "Pelvis",
-        "bind_pose_child_to_parent": {
-            "matrix": [
-                1.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0,
-                0.0,
-                0.0,
-                0.0,
-                1.0
-            ],
-            "translation": {
-                "x": 0.0,
-                "y": 2.700000047683716,
-                "z": 0.0
-            }
-        },
+        "bind_pose_orientation": [
+            6.123234262925839e-17,
+            -1.0,
+            0.0,
+            1.0,
+            6.123234262925839e-17,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "length": 2.700000047683716,
         "child_bone_array": [
             {
                 "name": "Chest",
-                "bind_pose_child_to_parent": {
-                    "matrix": [
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "translation": {
-                        "x": 0.0,
-                        "y": 1.7000000476837159,
-                        "z": 0.0
-                    }
-                },
+                "bind_pose_orientation": [
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "length": 1.7000000476837159,
                 "child_bone_array": [
                     {
                         "name": "Neck",
-                        "bind_pose_child_to_parent": {
-                            "matrix": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "translation": {
-                                "x": 0.0,
-                                "y": 0.5,
-                                "z": 0.0
-                            }
-                        },
+                        "bind_pose_orientation": [
+                            1.0,
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0,
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "length": 0.5,
                         "child_bone_array": [
                             {
                                 "name": "Head",
-                                "bind_pose_child_to_parent": {
-                                    "matrix": [
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": 1.0,
-                                        "z": 0.0
-                                    }
-                                },
+                                "bind_pose_orientation": [
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "length": 1.0,
                                 "child_bone_array": []
                             }
                         ]
                     },
                     {
                         "name": "LeftShoulder",
-                        "bind_pose_child_to_parent": {
-                            "matrix": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "translation": {
-                                "x": -0.800000011920929,
-                                "y": 0.0,
-                                "z": 0.0
-                            }
-                        },
+                        "bind_pose_orientation": [
+                            6.123234262925839e-17,
+                            -1.0,
+                            0.0,
+                            1.0,
+                            6.123234262925839e-17,
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "length": 0.800000011920929,
                         "child_bone_array": [
                             {
                                 "name": "LeftUpperArm",
-                                "bind_pose_child_to_parent": {
-                                    "matrix": [
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "translation": {
-                                        "x": -1.2000000476837159,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    }
-                                },
+                                "bind_pose_orientation": [
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "length": 1.2000000476837159,
                                 "child_bone_array": [
                                     {
                                         "name": "LeftLowerArm",
-                                        "bind_pose_child_to_parent": {
-                                            "matrix": [
-                                                1.0,
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                1.0,
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                1.0
-                                            ],
-                                            "translation": {
-                                                "x": -1.2000000476837159,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            }
-                                        },
+                                        "bind_pose_orientation": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0
+                                        ],
+                                        "length": 1.2000000476837159,
                                         "child_bone_array": []
                                     }
                                 ]
@@ -156,66 +114,48 @@
                     },
                     {
                         "name": "RightShoulder",
-                        "bind_pose_child_to_parent": {
-                            "matrix": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "translation": {
-                                "x": 0.800000011920929,
-                                "y": 0.0,
-                                "z": 0.0
-                            }
-                        },
+                        "bind_pose_orientation": [
+                            6.123234262925839e-17,
+                            1.0,
+                            0.0,
+                            -1.0,
+                            6.123234262925839e-17,
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "length": 0.800000011920929,
                         "child_bone_array": [
                             {
                                 "name": "RightUpperArm",
-                                "bind_pose_child_to_parent": {
-                                    "matrix": [
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "translation": {
-                                        "x": 1.2000000476837159,
-                                        "y": 0.0,
-                                        "z": 0.0
-                                    }
-                                },
+                                "bind_pose_orientation": [
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "length": 1.2000000476837159,
                                 "child_bone_array": [
                                     {
                                         "name": "RightLowerArm",
-                                        "bind_pose_child_to_parent": {
-                                            "matrix": [
-                                                1.0,
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                1.0,
-                                                0.0,
-                                                0.0,
-                                                0.0,
-                                                1.0
-                                            ],
-                                            "translation": {
-                                                "x": 1.2000000476837159,
-                                                "y": 0.0,
-                                                "z": 0.0
-                                            }
-                                        },
+                                        "bind_pose_orientation": [
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0,
+                                            0.0,
+                                            0.0,
+                                            0.0,
+                                            1.0
+                                        ],
+                                        "length": 1.2000000476837159,
                                         "child_bone_array": []
                                     }
                                 ]
@@ -226,66 +166,48 @@
             },
             {
                 "name": "LeftHip",
-                "bind_pose_child_to_parent": {
-                    "matrix": [
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "translation": {
-                        "x": -0.5,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
-                },
+                "bind_pose_orientation": [
+                    6.123234262925839e-17,
+                    -1.0,
+                    0.0,
+                    1.0,
+                    6.123234262925839e-17,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "length": 0.5,
                 "child_bone_array": [
                     {
                         "name": "LeftUpperLeg",
-                        "bind_pose_child_to_parent": {
-                            "matrix": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "translation": {
-                                "x": 0.0,
-                                "y": -1.25,
-                                "z": 0.0
-                            }
-                        },
+                        "bind_pose_orientation": [
+                            6.123234262925839e-17,
+                            -1.0,
+                            0.0,
+                            1.0,
+                            6.123234262925839e-17,
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "length": 1.25,
                         "child_bone_array": [
                             {
                                 "name": "LeftLowerLeg",
-                                "bind_pose_child_to_parent": {
-                                    "matrix": [
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": -1.25,
-                                        "z": 0.0
-                                    }
-                                },
+                                "bind_pose_orientation": [
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "length": 1.25,
                                 "child_bone_array": []
                             }
                         ]
@@ -294,66 +216,48 @@
             },
             {
                 "name": "RightHip",
-                "bind_pose_child_to_parent": {
-                    "matrix": [
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0,
-                        0.0,
-                        0.0,
-                        0.0,
-                        1.0
-                    ],
-                    "translation": {
-                        "x": 0.5,
-                        "y": 0.0,
-                        "z": 0.0
-                    }
-                },
+                "bind_pose_orientation": [
+                    6.123234262925839e-17,
+                    1.0,
+                    0.0,
+                    -1.0,
+                    6.123234262925839e-17,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ],
+                "length": 0.5,
                 "child_bone_array": [
                     {
                         "name": "RightUpperLeg",
-                        "bind_pose_child_to_parent": {
-                            "matrix": [
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0,
-                                0.0,
-                                0.0,
-                                0.0,
-                                1.0
-                            ],
-                            "translation": {
-                                "x": 0.0,
-                                "y": -1.25,
-                                "z": 0.0
-                            }
-                        },
+                        "bind_pose_orientation": [
+                            6.123234262925839e-17,
+                            1.0,
+                            0.0,
+                            -1.0,
+                            6.123234262925839e-17,
+                            0.0,
+                            0.0,
+                            0.0,
+                            1.0
+                        ],
+                        "length": 1.25,
                         "child_bone_array": [
                             {
                                 "name": "RightLowerLeg",
-                                "bind_pose_child_to_parent": {
-                                    "matrix": [
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0,
-                                        0.0,
-                                        0.0,
-                                        0.0,
-                                        1.0
-                                    ],
-                                    "translation": {
-                                        "x": 0.0,
-                                        "y": -1.25,
-                                        "z": 0.0
-                                    }
-                                },
+                                "bind_pose_orientation": [
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0,
+                                    0.0,
+                                    0.0,
+                                    0.0,
+                                    1.0
+                                ],
+                                "length": 1.25,
                                 "child_bone_array": []
                             }
                         ]

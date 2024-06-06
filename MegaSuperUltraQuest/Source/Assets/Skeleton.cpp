@@ -299,6 +299,11 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 	if (!Asset::LoadMatrix(boneValue["bind_pose_orientation"], this->bindPose.orientation))
 		return false;
 
+	if (!boneValue.HasMember("length") || !boneValue["length"].IsFloat())
+		return false;
+
+	this->length = boneValue["length"].GetFloat();
+
 	if (!boneValue.HasMember("child_bone_array") || !boneValue["child_bone_array"].IsArray())
 		return false;
 
