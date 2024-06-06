@@ -15,7 +15,48 @@ SkinWeights::SkinWeights()
 
 /*virtual*/ bool SkinWeights::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
-	return false;
+	if (!jsonDoc.IsObject())
+		return false;
+
+	if (!jsonDoc.HasMember("weighted_vertices"))
+		return false;
+
+	const rapidjson::Value& weightedVerticesArrayValue = jsonDoc["weighted_vertices"];
+	if (!weightedVerticesArrayValue.IsArray())
+		return false;
+
+	this->weightedVertexArray.clear();
+
+	for (int i = 0; i < weightedVerticesArrayValue.Size(); i++)
+	{
+		const rapidjson::Value& weightedVertexValue = weightedVerticesArrayValue[i];
+		if (!weightedVertexValue.IsArray())
+			return false;
+
+		std::vector<BoneWeight> boneWeightArray;
+
+		for (int j = 0; j < weightedVertexValue.Size(); j++)
+		{
+			const rapidjson::Value& boneWeightValue = weightedVertexValue[j];
+			if (!boneWeightValue.IsObject())
+				return false;
+
+			if (!boneWeightValue.HasMember("bone_name") || !boneWeightValue["bone_name"].IsString())
+				return false;
+
+			if (!boneWeightValue.HasMember("weight") || !boneWeightValue["weight"].IsFloat())
+				return false;
+
+			BoneWeight boneWeight;
+			boneWeight.boneName = boneWeightValue["bone_name"].GetString();
+			boneWeight.weight = boneWeightValue["weight"].GetFloat();
+			boneWeightArray.push_back(boneWeight);
+		}
+
+		this->weightedVertexArray.push_back(boneWeightArray);
+	}
+
+	return true;
 }
 
 /*virtual*/ bool SkinWeights::Unload()
@@ -25,7 +66,36 @@ SkinWeights::SkinWeights()
 
 /*virtual*/ bool SkinWeights::Save(rapidjson::Document& jsonDoc) const
 {
-	return false;
+	jsonDoc.SetObject();
+
+	rapidjson::Value weightedVerticesArrayValue;
+	weightedVerticesArrayValue.SetArray();
+
+	for (int i = 0; i < (signed)this->weightedVertexArray.size(); i++)
+	{
+		const std::vector<BoneWeight>& boneWeightArray = this->weightedVertexArray[i];
+
+		rapidjson::Value weightedVertexValue;
+		weightedVertexValue.SetArray();
+
+		for (int j = 0; j < (signed)boneWeightArray.size(); j++)
+		{
+			const BoneWeight& boneWeight = boneWeightArray[j];
+
+			rapidjson::Value boneWeightValue;
+			boneWeightValue.SetObject();
+			boneWeightValue.AddMember("bone_name", rapidjson::Value().SetString(boneWeight.boneName.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+			boneWeightValue.AddMember("weight", rapidjson::Value().SetFloat(boneWeight.weight), jsonDoc.GetAllocator());
+
+			weightedVertexValue.PushBack(boneWeightValue, jsonDoc.GetAllocator());
+		}
+
+		weightedVerticesArrayValue.PushBack(weightedVertexValue, jsonDoc.GetAllocator());
+	}
+
+	jsonDoc.AddMember("weighted_vertices", weightedVerticesArrayValue, jsonDoc.GetAllocator());
+
+	return true;
 }
 
 void SkinWeights::Clear()

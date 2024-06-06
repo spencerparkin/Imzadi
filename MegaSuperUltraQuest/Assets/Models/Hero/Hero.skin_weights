@@ -1,0 +1,2840 @@
+{
+    "weighted_vertices": [
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.8531668186187744
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.14683319628238679
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.8425958156585693
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.15740418434143067
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.8531668186187744
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.14683319628238679
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.8425958156585693
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.15740418434143067
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.5871976017951965
+            },
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.4128023684024811
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.681583046913147
+            },
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.318416953086853
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.7389767169952393
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26102325320243838
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.7370214462280273
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26297852396965029
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.8583885431289673
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.14161144196987153
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.8464696407318115
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.15353035926818849
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.7370214462280273
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26297852396965029
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.8583885431289673
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.14161144196987153
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.8464696407318115
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.15353035926818849
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.7389767169952393
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26102325320243838
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.7370214462280273
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26297852396965029
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.7389767169952393
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26102325320243838
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.5560219883918762
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.23955263197422028
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.20442534983158112
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4371355473995209
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3927783668041229
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1700860857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.3903605043888092
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3509526252746582
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2586868703365326
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.8464696407318115
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.15353035926818849
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.8583885431289673
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.14161144196987153
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.7033840417861939
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.1899755597114563
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.10664039105176926
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.43090617656707766
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.36129698157310488
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2077968418598175
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4844050109386444
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.40963900089263918
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.10595601052045822
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.5812913179397583
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.22743506729602815
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.19127361476421357
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.7033840417861939
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.1899755597114563
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.10664039105176926
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.9162439107894898
+            },
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 0.08375608175992966
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.8583885431289673
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.14161144196987153
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.7370214462280273
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26297852396965029
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.901850700378418
+            },
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 0.09814930707216263
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.5812913179397583
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.22743506729602815
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.19127361476421357
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.9162439107894898
+            },
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 0.08375608175992966
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.901850700378418
+            },
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 0.09814930707216263
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.6351113319396973
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.22352628409862519
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.14136239886283875
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.5560219883918762
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.23955263197422028
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.20442534983158112
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.9837374687194824
+            },
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 0.016262521967291833
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.7389767169952393
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.26102325320243838
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.8464696407318115
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.15353035926818849
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.9704421162605286
+            },
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 0.029557891190052034
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.9704421162605286
+            },
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 0.029557891190052034
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.9837374687194824
+            },
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 0.016262521967291833
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.6351113319396973
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.22352628409862519
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.14136239886283875
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerArm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4371355473995209
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3927783668041229
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1700860857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4844050109386444
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.40963900089263918
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.10595601052045822
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.43090617656707766
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.36129698157310488
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2077968418598175
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.3903605043888092
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3509526252746582
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2586868703365326
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.3903605043888092
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3509526252746582
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2586868703365326
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4371355473995209
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3927783668041229
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1700860857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5107009410858154
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3546336889266968
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1346653401851654
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.45852506160736086
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3166392743587494
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.22483564913272859
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4371355473995209
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3927783668041229
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1700860857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4844050109386444
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.40963900089263918
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.10595601052045822
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5759717226028442
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3657611906528473
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.058267079293727878
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5107009410858154
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3546336889266968
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1346653401851654
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.4844050109386444
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.40963900089263918
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.10595601052045822
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.43090617656707766
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.36129698157310488
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2077968418598175
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5165210962295532
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3197629749774933
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.1637159287929535
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5759717226028442
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3657611906528473
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.058267079293727878
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.43090617656707766
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.36129698157310488
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2077968418598175
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.3903605043888092
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3509526252746582
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.2586868703365326
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.45852506160736086
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3166392743587494
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.22483564913272859
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5165210962295532
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3197629749774933
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.1637159287929535
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.45852506160736086
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3166392743587494
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.22483564913272859
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5107009410858154
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3546336889266968
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1346653401851654
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.628537118434906
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.3714629113674164
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5107009410858154
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3546336889266968
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1346653401851654
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5759717226028442
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3657611906528473
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.058267079293727878
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.628537118434906
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.3714629113674164
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5107009410858154
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3546336889266968
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.1346653401851654
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5759717226028442
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3657611906528473
+            },
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.058267079293727878
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5165210962295532
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3197629749774933
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.1637159287929535
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5165210962295532
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3197629749774933
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.1637159287929535
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.45852506160736086
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3166392743587494
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.22483564913272859
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 0.5165210962295532
+            },
+            {
+                "bone_name": "Chest",
+                "weight": 0.3197629749774933
+            },
+            {
+                "bone_name": "RightShoulder",
+                "weight": 0.1637159287929535
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.628537118434906
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.3714629113674164
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftShoulder",
+                "weight": 0.628537118434906
+            },
+            {
+                "bone_name": "Neck",
+                "weight": 0.3714629113674164
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Neck",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightShoulder",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.8425958156585693
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.15740418434143067
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.8531668186187744
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.14683319628238679
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.7290828824043274
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.270917147397995
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4534602165222168
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.321766197681427
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2247735857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7456651329994202
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.25433486700057986
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.45851391553878786
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3571915030479431
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.18429458141326905
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.757925808429718
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.24207420647144319
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.8531668186187744
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.14683319628238679
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.757925808429718
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.24207420647144319
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.7290828824043274
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.270917147397995
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.8425958156585693
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.15740418434143067
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7270854115486145
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.2729146182537079
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7456651329994202
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.25433486700057986
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.6646659970283508
+            },
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.33533400297164919
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4593137204647064
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.35059690475463869
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1900893747806549
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.6757130026817322
+            },
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.32428696751594546
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4480735659599304
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.37527206540107729
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1766543835401535
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7270854115486145
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.2729146182537079
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.45851391553878786
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3571915030479431
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.18429458141326905
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4593137204647064
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.35059690475463869
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1900893747806549
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4480735659599304
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.37527206540107729
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1766543835401535
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4534602165222168
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.321766197681427
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2247735857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4534602165222168
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.321766197681427
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2247735857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.7290828824043274
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.270917147397995
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.5325545072555542
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.4674454629421234
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.42096641659736636
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.2405076026916504
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19786356389522553
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.08971661329269409
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.050945788621902469
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.5795285105705261
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.4204714596271515
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.5325545072555542
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.4674454629421234
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.757925808429718
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.24207420647144319
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.45851391553878786
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3571915030479431
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.18429458141326905
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4444104731082916
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3065577745437622
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19768126308918
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.05135048180818558
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.5795285105705261
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.4204714596271515
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.45851391553878786
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3571915030479431
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.18429458141326905
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4534602165222168
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.321766197681427
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2247735857963562
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.42096641659736636
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.2405076026916504
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19786356389522553
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.08971661329269409
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.050945788621902469
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4444104731082916
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3065577745437622
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19768126308918
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.05135048180818558
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.42096641659736636
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.2405076026916504
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19786356389522553
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.08971661329269409
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.050945788621902469
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.5325545072555542
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.4674454629421234
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.5872901678085327
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.4127098321914673
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightHip",
+                "weight": 0.5795285105705261
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.4204714596271515
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4444104731082916
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3065577745437622
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19768126308918
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.05135048180818558
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.6788453459739685
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.3211546838283539
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4444104731082916
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.3065577745437622
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19768126308918
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.05135048180818558
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.42096641659736636
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.2405076026916504
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.19786356389522553
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.08971661329269409
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.050945788621902469
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.5872901678085327
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.4127098321914673
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.6788453459739685
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.3211546838283539
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.5872901678085327
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.4127098321914673
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.5871976017951965
+            },
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.4128023684024811
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.6788453459739685
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.3211546838283539
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.681583046913147
+            },
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.318416953086853
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.6788453459739685
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.3211546838283539
+            }
+        ],
+        [
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.5872901678085327
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.4127098321914673
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.5871976017951965
+            },
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.4128023684024811
+            }
+        ],
+        [
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.681583046913147
+            },
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.318416953086853
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7456651329994202
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.25433486700057986
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7270854115486145
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.2729146182537079
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.5309404134750366
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.4690595865249634
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.5139057636260986
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.48609426617622378
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4593137204647064
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.35059690475463869
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1900893747806549
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7456651329994202
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.25433486700057986
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.5139057636260986
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.48609426617622378
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.44131216406822207
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2806127667427063
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.25983521342277529
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.018166091293096544
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.00007378519512712955
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.7270854115486145
+            },
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.2729146182537079
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4480735659599304
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.37527206540107729
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1766543835401535
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.3807348608970642
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.32998913526535036
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.28307023644447329
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.006205759011209011
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.5309404134750366
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.4690595865249634
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4480735659599304
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.37527206540107729
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1766543835401535
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.4593137204647064
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.35059690475463869
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.1900893747806549
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.44131216406822207
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2806127667427063
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.25983521342277529
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.018166091293096544
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.00007378519512712955
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.3807348608970642
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.32998913526535036
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.28307023644447329
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.006205759011209011
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.44131216406822207
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2806127667427063
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.25983521342277529
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.018166091293096544
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.00007378519512712955
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.5139057636260986
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.48609426617622378
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6564539670944214
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.343546062707901
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.5309404134750366
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.4690595865249634
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.3807348608970642
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.32998913526535036
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.28307023644447329
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.006205759011209011
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6767612099647522
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.3232388198375702
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.3807348608970642
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.32998913526535036
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.28307023644447329
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.006205759011209011
+            }
+        ],
+        [
+            {
+                "bone_name": "Pelvis",
+                "weight": 0.44131216406822207
+            },
+            {
+                "bone_name": "LeftHip",
+                "weight": 0.2806127667427063
+            },
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.25983521342277529
+            },
+            {
+                "bone_name": "RightHip",
+                "weight": 0.018166091293096544
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.00007378519512712955
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6564539670944214
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.343546062707901
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6767612099647522
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.3232388198375702
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6564539670944214
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.343546062707901
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.6646659970283508
+            },
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.33533400297164919
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6767612099647522
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.3232388198375702
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.6757130026817322
+            },
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.32428696751594546
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6767612099647522
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.3232388198375702
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftUpperLeg",
+                "weight": 0.6564539670944214
+            },
+            {
+                "bone_name": "RightUpperLeg",
+                "weight": 0.343546062707901
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.6646659970283508
+            },
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.33533400297164919
+            }
+        ],
+        [
+            {
+                "bone_name": "LeftLowerLeg",
+                "weight": 0.6757130026817322
+            },
+            {
+                "bone_name": "RightLowerLeg",
+                "weight": 0.32428696751594546
+            }
+        ]
+    ]
+}
