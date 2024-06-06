@@ -19,6 +19,16 @@ Matrix3x3::Matrix3x3(const Matrix3x3& matrix)
 			this->ele[i][j] = matrix.ele[i][j];
 }
 
+Matrix3x3::Matrix3x3(const Quaternion& unitQuat)
+{
+	this->SetFromQuat(unitQuat);
+}
+
+Matrix3x3::Matrix3x3(const Vector3& unitAxis, double angle)
+{
+	this->SetFromAxisAngle(unitAxis, angle);
+}
+
 /*virtual*/ Matrix3x3::~Matrix3x3()
 {
 }
@@ -68,11 +78,13 @@ bool Matrix3x3::IsValid() const
 	return true;
 }
 
-void Matrix3x3::SetIdentity()
+Matrix3x3& Matrix3x3::SetIdentity()
 {
 	for (int i = 0; i < 3; i++)
 		for (int j = 0; j < 3; j++)
 			this->ele[i][j] = (i == j) ? 1.0 : 0.0;
+
+	return *this;
 }
 
 void Matrix3x3::GetRowVectors(Vector3& xAxis, Vector3& yAxis, Vector3& zAxis) const

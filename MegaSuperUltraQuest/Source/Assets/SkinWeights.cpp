@@ -111,8 +111,7 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 	if (vertexOffset + 3 * sizeof(float) > elementStride)
 		return false;
 
-	if (!skeleton->UpdateCachedTransforms())
-		return false;
+	skeleton->UpdateCachedTransforms(BoneTransformType::BIND_POSE);
 
 	this->Clear();
 
@@ -126,8 +125,8 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 		position.y = *positionBuffer++;
 		position.z = *positionBuffer++;
 
-		std::vector<const Bone*> boneArray;
-		if (!skeleton->GatherBones(position, boneArray))
+		std::vector<Bone*> boneArray;
+		if (!const_cast<Skeleton*>(skeleton)->GatherBones(position, boneArray))
 			return false;
 
 		if (boneArray.size() == 0)
@@ -137,7 +136,7 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 
 		for (const Bone* bone : boneArray)
 		{
-			double distance = (position - bone->GetBindPoseChildToObject().translation).Length();
+			double distance = (position - bone->CalcObjectSpaceCenter()).Length();
 			BoneWeight boneWeight;
 			boneWeight.weight = radius - distance;
 			boneWeight.boneName = bone->GetName();

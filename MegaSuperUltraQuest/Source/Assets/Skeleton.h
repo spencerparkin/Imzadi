@@ -10,6 +10,12 @@ class KeyFrame;
 
 typedef std::unordered_map<std::string, Bone*> BoneMap;
 
+enum BoneTransformType
+{
+	BIND_POSE,
+	CURRENT_POSE
+};
+
 /**
  * A skeleton is a hierarchy of bones (or spaces).  By itself, that's all
  * it is, but when combined with a skinned render mesh, manipulating the bones
@@ -37,11 +43,17 @@ public:
 	const Bone* FindBone(const std::string& name) const;
 	void InvalidateBoneMap() const;
 
+	bool GatherBones(std::vector<Bone*>& boneArray);
+
 	/**
 	 * Gather all bones of the skeleton into the given array, but order
 	 * them closest to furthest from the given position.
+	 * 
+	 * @param[in] position Bones are sorted based on distance to this point from the bone centers.
+	 * @param[out] boneArray The sorted list of bones is returned in this array.
+	 * @return False is returned if there are no bones to return; true, otherwise.
 	 */
-	bool GatherBones(const Collision::Vector3& position, std::vector<const Bone*>& boneArray) const;
+	bool GatherBones(const Collision::Vector3& position, std::vector<Bone*>& boneArray);
 
 	/**
 	 * Orient the bones of this skeleton using the two given key-frames.  Note that
@@ -62,11 +74,16 @@ public:
 	 * Update all internally-cached transforms that are a function of our single-source-of-truth transforms.
 	 * This must be called after posing a skeleton and before using it to deform a mesh.
 	 */
-	bool UpdateCachedTransforms() const;
+	void UpdateCachedTransforms(BoneTransformType transformType) const;
 
-	void DebugDraw(const Collision::Transform& objectToWorld) const;
+	/**
+	 * Reset the current pose to the bind pose.
+	 */
+	void ResetCurrentPose();
 
-	void MakeBasicBiped(const Collision::Vector3& scale);
+	void DebugDraw(BoneTransformType transformType, const Collision::Transform& objectToWorld) const;
+
+	void MakeBasicBiped();
 
 private:
 	Bone* rootBone;
@@ -76,7 +93,18 @@ private:
 };
 
 /**
- * These are the nodes of the skeleton tree.
+ * These are the nodes of the skeleton tree.  A bone is realized
+ * in its parent space as a vector (of some fixed length) seated
+ * at origin and pointing down the +X-axis prior to being oriented.
+ * The space of the bone (a child space of the parent) mirrors the
+ * orientation of the bone, but with origin at the head of the vector.
+ * The parent space of the root bone is always object space.
+ * 
+ * Things live in spaces and sub-spaces can be attached to things.
+ * A bone is a fixed-length vector at origin with a sub-space attached
+ * to the tip of the vector.  A bone lives in its parent space.  The
+ * space of the bone is the space at its tip.  Child bones of a bone
+ * live in the space of the bone.
  */
 class Bone
 {
@@ -86,46 +114,52 @@ public:
 
 	void SetName(const std::string& name) { this->name = name; }
 	const std::string& GetName() const { return this->name; }
-
+	
 	void SetParentBone(Bone* bone) { this->parentBone = bone; }
 	Bone* GetParentBone() { return this->parentBone; }
-
+	
 	void AddChildBone(Bone* bone);
 	void DeleteAllChildBones();
 	Bone* GetChildBone(int i) { return this->childBoneArray[i]; }
 	const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
 	size_t GetNumChildBones() const { return this->childBoneArray.size(); }
 
-	void SetBindPoseChildToParent(const Collision::Transform& childToParent) { this->bindPoseChildToParent = childToParent; }
-	const Collision::Transform& GetBindPoseChildToParent() const { return this->bindPoseChildToParent; }
+	void SetLength(double length) { this->length = length; }
+	double GetLength() const { return this->length; }
 
-	const Collision::Transform& GetBindPoseChildToObject() const { return this->bindPoseChildToObject; }
-	const Collision::Transform& GetCurrentPoseChildToObject() const { return this->currentPoseChildToObject; }
+	void SetBindPoseOrientation(const Collision::Matrix3x3& orientation) { this->bindPose.orientation = orientation; }
+	const Collision::Matrix3x3& GetBindPoseOrientation() const { return this->bindPose.orientation; }
 
-	double GetBoneLength() const;
+	void SetCurrentPoseOrientation(const Collision::Matrix3x3& orientation) { this->currentPose.orientation = orientation; }
+	const Collision::Matrix3x3& GetCurrentPoseOrientation() const { return this->currentPose.orientation; }
 
-	void SetBoneOrientation(const Collision::Matrix3x3& boneOrientation);
-	void SetBoneOrientation(const Collision::Quaternion& boneOrientation);
-
-	void GetBoneOrientation(Collision::Matrix3x3& boneOrientation) const;
-	void GetBoneOrientation(Collision::Quaternion& boneOrientation) const;
-
-	bool UpdateCachedTransforms() const;
+	void UpdateCachedTransforms(BoneTransformType transformType);
 
 	void PopulateBoneMap(BoneMap& boneMap) const;
 
-	void DebugDraw(const Collision::Transform& objectToWorld) const;
+	void DebugDraw(BoneTransformType transformType, const Collision::Transform& objectToWorld) const;
 
 	bool Load(const rapidjson::Value& boneValue);
 	bool Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const;
 
+	Collision::Vector3 CalcObjectSpaceCenter() const;
+
 private:
+
+	struct Transforms
+	{
+		Collision::Matrix3x3 orientation;
+		Collision::Transform boneToObject;
+		Collision::Transform objectToBone;
+	};
+
+	Transforms* GetTransforms(BoneTransformType transformType);
+	const Transforms* GetTransforms(BoneTransformType transformType) const;
+
 	std::string name;
 	Bone* parentBone;
 	std::vector<Bone*> childBoneArray;
-	Collision::Transform bindPoseChildToParent;
-	Collision::Matrix3x3 currentPoseOrientation;
-	mutable Collision::Transform currentPoseChildToParent;
-	mutable Collision::Transform bindPoseChildToObject;
-	mutable Collision::Transform currentPoseChildToObject;
+	double length;
+	Transforms bindPose;
+	Transforms currentPose;
 };

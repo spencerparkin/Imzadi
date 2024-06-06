@@ -174,11 +174,10 @@ Hero::Hero()
 				if (mesh)
 				{
 					Skeleton* skeleton = mesh->GetSkeleton();
-					Bone* bone = skeleton->FindBone("LeftShoulder");
+					Bone* bone = skeleton->FindBone("LeftUpperArm");
 					if (bone)
 					{
-						Matrix3x3 boneOrientation;
-						bone->GetBoneOrientation(boneOrientation);
+						Matrix3x3 boneOrientation = bone->GetCurrentPoseOrientation();
 
 						double angle = (M_PI / 12.0) * (leftTrigger - rightTrigger);
 
@@ -186,7 +185,7 @@ Hero::Hero()
 						rotation.SetFromAxisAngle(Vector3(0.0, 0.0, 1.0), angle);
 
 						boneOrientation = (rotation * boneOrientation).Orthonormalized(COLL_SYS_AXIS_FLAG_X);
-						bone->SetBoneOrientation(boneOrientation);
+						bone->SetCurrentPoseOrientation(boneOrientation);
 					}
 				}
 			}

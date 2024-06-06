@@ -20,8 +20,8 @@ AnimatedMeshInstance::AnimatedMeshInstance()
 		if (skinnedMesh)
 		{
 			Skeleton* skeleton = skinnedMesh->GetSkeleton();
-
-			skeleton->DebugDraw(this->objectToWorld);
+			if (skeleton)
+				skeleton->DebugDraw(BoneTransformType::CURRENT_POSE, this->objectToWorld);
 		}
 	}
 }

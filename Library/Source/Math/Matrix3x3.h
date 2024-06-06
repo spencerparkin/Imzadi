@@ -19,6 +19,8 @@ namespace Collision
 	public:
 		Matrix3x3();
 		Matrix3x3(const Matrix3x3& matrix);
+		Matrix3x3(const Quaternion& unitQuat);
+		Matrix3x3(const Vector3& unitAxis, double angle);
 		virtual ~Matrix3x3();
 
 		/**
@@ -55,8 +57,10 @@ namespace Collision
 
 		/**
 		 * Set this matrix to the multiplicative identity.
+		 * 
+		 * @return A reference to this matrix is returned for method-call chaining.
 		 */
-		void SetIdentity();
+		Matrix3x3& SetIdentity();
 
 		/**
 		 * Return the rows of this matrix from top to bottom in the given vectors in
