@@ -37,6 +37,12 @@ public:
 	void InvalidateBoneMap() const;
 
 	/**
+	 * Gather all bones of the skeleton into the given array, but order
+	 * them closest to furthest from the given position.
+	 */
+	bool GatherBones(const Collision::Vector3& position, std::vector<const Bone*>& boneArray) const;
+
+	/**
 	 * Orient the bones of this skeleton using the two given key-frames.  Note that
 	 * these need not be taken from the same animation.  They can be from different
 	 * animations as a means of blending between animations.
@@ -85,9 +91,15 @@ public:
 
 	void AddChildBone(Bone* bone);
 	void DeleteAllChildBones();
+	Bone* GetChildBone(int i) { return this->childBoneArray[i]; }
+	const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
+	size_t GetNumChildBones() const { return this->childBoneArray.size(); }
 
 	void SetBindPoseTransform(const Collision::Transform& parentToChild);
 	const Collision::Transform& GetBindPoseTransform() const;
+
+	const Collision::Transform& GetBindPoseObjectToChild() const { return this->bindPoseObjectToChild; }
+	const Collision::Transform& GetCurrentPoseObjectToChild() const { return this->currentPoseObjectToChild; }
 
 	double GetBoneLength() const;
 

@@ -240,6 +240,36 @@ void Skeleton::MakeBasicBiped(const Collision::Vector3& scale)
 	rightUpperLeg->AddChildBone(rightLowerLeg);
 }
 
+bool Skeleton::GatherBones(const Collision::Vector3& position, std::vector<const Bone*>& boneArray) const
+{
+	if (!this->rootBone)
+		return false;
+
+	boneArray.clear();
+	std::list<const Bone*> boneQueue;
+	boneQueue.push_back(this->rootBone);
+	while (boneQueue.size() > 0)
+	{
+		const Bone* bone = boneQueue.front();
+		boneQueue.pop_front();
+
+		for (int i = 0; i < bone->GetNumChildBones(); i++)
+			boneQueue.push_back(bone->GetChildBone(i));
+
+		boneArray.push_back(bone);
+	}
+
+	std::sort(boneArray.begin(), boneArray.end(), [&position](const Bone* boneA, const Bone* boneB) -> bool {
+		const Vector3& boneOriginA = boneA->GetBindPoseObjectToChild().translation;
+		const Vector3& boneOriginB = boneB->GetBindPoseObjectToChild().translation;
+		double distanceA = (position - boneOriginA).Length();
+		double distanceB = (position - boneOriginB).Length();
+		return distanceA < distanceB;
+	});
+
+	return true;
+}
+
 //-------------------------------- Bone --------------------------------
 
 Bone::Bone()

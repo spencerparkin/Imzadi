@@ -1,6 +1,7 @@
 #include "SkinnedRenderMesh.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "Skeleton.h"
+#include "SkinWeights.h"
 
 using namespace Collision;
 
@@ -31,6 +32,9 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
 		return false;
+
+	this->skinWeights.Set(new SkinWeights());
+	this->skinWeights->AutoSkin(this->skeleton, this->bindPoseVertices, this->vertexBuffer->GetStride(), 0, 1.0);
 
 	return true;
 }
