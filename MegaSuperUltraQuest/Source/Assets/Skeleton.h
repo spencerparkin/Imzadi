@@ -72,6 +72,11 @@ public:
 	bool Pose(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB, double alpha) const;
 
 	/**
+	 * Create a key-frame from the current pose.
+	 */
+	KeyFrame* CreateKeyFrame() const;
+
+	/**
 	 * Update all internally-cached transforms that are a function of our single-source-of-truth transforms.
 	 * This must be called after posing a skeleton and before using it to deform a mesh.
 	 */

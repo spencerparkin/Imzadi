@@ -104,6 +104,11 @@ bool Skeleton::Pose(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB, double
 	return false;
 }
 
+KeyFrame* Skeleton::CreateKeyFrame() const
+{
+	return nullptr;
+}
+
 void Skeleton::UpdateCachedTransforms(BoneTransformType transformType) const
 {
 	if (this->rootBone)
