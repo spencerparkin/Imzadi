@@ -68,7 +68,7 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 
 		for (const Bone* bone : boneArray)
 		{
-			double distance = (position - bone->GetBindPoseObjectToChild().translation).Length();
+			double distance = (position - bone->GetBindPoseChildToObject().translation).Length();
 			BoneWeight boneWeight;
 			boneWeight.weight = radius - distance;
 			boneWeight.boneName = bone->GetName();

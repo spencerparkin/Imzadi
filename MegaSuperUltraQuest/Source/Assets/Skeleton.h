@@ -95,11 +95,11 @@ public:
 	const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
 	size_t GetNumChildBones() const { return this->childBoneArray.size(); }
 
-	void SetBindPoseTransform(const Collision::Transform& parentToChild);
-	const Collision::Transform& GetBindPoseTransform() const;
+	void SetBindPoseChildToParent(const Collision::Transform& childToParent) { this->bindPoseChildToParent = childToParent; }
+	const Collision::Transform& GetBindPoseChildToParent() const { return this->bindPoseChildToParent; }
 
-	const Collision::Transform& GetBindPoseObjectToChild() const { return this->bindPoseObjectToChild; }
-	const Collision::Transform& GetCurrentPoseObjectToChild() const { return this->currentPoseObjectToChild; }
+	const Collision::Transform& GetBindPoseChildToObject() const { return this->bindPoseChildToObject; }
+	const Collision::Transform& GetCurrentPoseChildToObject() const { return this->currentPoseChildToObject; }
 
 	double GetBoneLength() const;
 
@@ -119,9 +119,9 @@ private:
 	std::string name;
 	Bone* parentBone;
 	std::vector<Bone*> childBoneArray;
-	Collision::Transform bindPoseParentToChild;
+	Collision::Transform bindPoseChildToParent;
 	mutable Collision::Matrix3x3 currentPoseOrientation;
-	mutable Collision::Transform currentPoseParentToChild;
-	mutable Collision::Transform bindPoseObjectToChild;
-	mutable Collision::Transform currentPoseObjectToChild;
+	mutable Collision::Transform currentPoseChildToParent;
+	mutable Collision::Transform bindPoseChildToObject;
+	mutable Collision::Transform currentPoseChildToObject;
 };
