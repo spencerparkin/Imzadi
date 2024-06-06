@@ -37,21 +37,17 @@ public:
 	 */
 	bool AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseVertexBuffer, uint32_t elementStride, uint32_t vertexOffset, double radius);
 
-private:
-
 	struct BoneWeight
 	{
 		std::string boneName;
 		double weight;
 	};
 
-	struct WeightedVertex
-	{
-		uint32_t index;
-		std::vector<BoneWeight> boneWeightArray;
-	};
+	const std::vector<BoneWeight>& GetBoneWeightsForVertex(uint32_t vertex) const { return this->weightedVertexArray[vertex]; }
 
-	void NormalizeWeights(WeightedVertex& weightedVertex);
+private:
 
-	std::vector<WeightedVertex> weightedVertexArray;
+	void NormalizeWeights(std::vector<BoneWeight>& boneWeightArray);
+
+	std::vector<std::vector<BoneWeight>> weightedVertexArray;
 };

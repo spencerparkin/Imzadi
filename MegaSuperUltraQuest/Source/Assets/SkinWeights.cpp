@@ -56,15 +56,14 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 		position.y = *positionBuffer++;
 		position.z = *positionBuffer++;
 
-		WeightedVertex weightedVertex;
-		weightedVertex.index = i;
-
 		std::vector<const Bone*> boneArray;
 		if (!skeleton->GatherBones(position, boneArray))
 			return false;
 
 		if (boneArray.size() == 0)
 			return false;
+
+		std::vector<BoneWeight> boneWeightArray;
 
 		for (const Bone* bone : boneArray)
 		{
@@ -75,31 +74,31 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 			if (boneWeight.weight <= 0.0)
 				break;
 
-			weightedVertex.boneWeightArray.push_back(boneWeight);
+			boneWeightArray.push_back(boneWeight);
 		}
 
-		if (weightedVertex.boneWeightArray.size() > 0)
-			this->NormalizeWeights(weightedVertex);
+		if (boneWeightArray.size() > 0)
+			this->NormalizeWeights(boneWeightArray);
 		else
 		{
 			BoneWeight boneWeight;
 			boneWeight.weight = 1.0;
 			boneWeight.boneName = boneArray[0]->GetName();
-			weightedVertex.boneWeightArray.push_back(boneWeight);
+			boneWeightArray.push_back(boneWeight);
 		}
 
-		this->weightedVertexArray.push_back(weightedVertex);
+		this->weightedVertexArray.push_back(boneWeightArray);
 	}
 
 	return true;
 }
 
-void SkinWeights::NormalizeWeights(WeightedVertex& weightedVertex)
+void SkinWeights::NormalizeWeights(std::vector<BoneWeight>& boneWeightArray)
 {
 	double weightSum = 0.0;
-	for (BoneWeight& boneWeight : weightedVertex.boneWeightArray)
+	for (BoneWeight& boneWeight : boneWeightArray)
 		weightSum += boneWeight.weight;
 
-	for (BoneWeight& boneWeight : weightedVertex.boneWeightArray)
+	for (BoneWeight& boneWeight : boneWeightArray)
 		boneWeight.weight /= weightSum;
 }
