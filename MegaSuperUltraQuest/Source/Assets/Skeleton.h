@@ -135,8 +135,11 @@ public:
 	const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
 	size_t GetNumChildBones() const { return this->childBoneArray.size(); }
 
-	void SetLength(double length) { this->length = length; }
-	double GetLength() const { return this->length; }
+	void SetBindPoseLength(double length) { this->bindPose.length = length; }
+	double GetBindPoseLength() const { return this->bindPose.length; }
+
+	void SetCurrentPoseLength(double length) { this->currentPose.length = length; }
+	double GetCurrentPoseLength() const { return this->currentPose.length; }
 
 	void SetBindPoseOrientation(const Collision::Matrix3x3& orientation) { this->bindPose.orientation = orientation; }
 	const Collision::Matrix3x3& GetBindPoseOrientation() const { return this->bindPose.orientation; }
@@ -158,6 +161,7 @@ public:
 	struct Transforms
 	{
 		Collision::Matrix3x3 orientation;
+		double length;
 		Collision::Transform boneToObject;
 		Collision::Transform objectToBone;
 	};
@@ -170,7 +174,6 @@ private:
 	std::string name;
 	Bone* parentBone;
 	std::vector<Bone*> childBoneArray;
-	double length;
 	Transforms bindPose;
 	Transforms currentPose;
 };

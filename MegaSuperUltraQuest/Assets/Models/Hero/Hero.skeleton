@@ -12,7 +12,7 @@
             0.0,
             1.0
         ],
-        "length": 2.700000047683716,
+        "bind_pose_length": 2.700000047683716,
         "child_bone_array": [
             {
                 "name": "Chest",
@@ -27,7 +27,7 @@
                     0.0,
                     1.0
                 ],
-                "length": 1.7000000476837159,
+                "bind_pose_length": 1.7000000476837159,
                 "child_bone_array": [
                     {
                         "name": "Neck",
@@ -42,7 +42,7 @@
                             0.0,
                             1.0
                         ],
-                        "length": 0.5,
+                        "bind_pose_length": 0.5,
                         "child_bone_array": [
                             {
                                 "name": "Head",
@@ -57,7 +57,7 @@
                                     0.0,
                                     1.0
                                 ],
-                                "length": 1.0,
+                                "bind_pose_length": 1.0,
                                 "child_bone_array": []
                             }
                         ]
@@ -75,7 +75,7 @@
                             0.0,
                             1.0
                         ],
-                        "length": 0.800000011920929,
+                        "bind_pose_length": 0.800000011920929,
                         "child_bone_array": [
                             {
                                 "name": "LeftUpperArm",
@@ -90,7 +90,7 @@
                                     0.0,
                                     1.0
                                 ],
-                                "length": 1.2000000476837159,
+                                "bind_pose_length": 1.2000000476837159,
                                 "child_bone_array": [
                                     {
                                         "name": "LeftLowerArm",
@@ -105,7 +105,7 @@
                                             0.0,
                                             1.0
                                         ],
-                                        "length": 1.2000000476837159,
+                                        "bind_pose_length": 1.2000000476837159,
                                         "child_bone_array": []
                                     }
                                 ]
@@ -125,7 +125,7 @@
                             0.0,
                             1.0
                         ],
-                        "length": 0.800000011920929,
+                        "bind_pose_length": 0.800000011920929,
                         "child_bone_array": [
                             {
                                 "name": "RightUpperArm",
@@ -140,7 +140,7 @@
                                     0.0,
                                     1.0
                                 ],
-                                "length": 1.2000000476837159,
+                                "bind_pose_length": 1.2000000476837159,
                                 "child_bone_array": [
                                     {
                                         "name": "RightLowerArm",
@@ -155,7 +155,7 @@
                                             0.0,
                                             1.0
                                         ],
-                                        "length": 1.2000000476837159,
+                                        "bind_pose_length": 1.2000000476837159,
                                         "child_bone_array": []
                                     }
                                 ]
@@ -177,7 +177,7 @@
                     0.0,
                     1.0
                 ],
-                "length": 0.5,
+                "bind_pose_length": 0.5,
                 "child_bone_array": [
                     {
                         "name": "LeftUpperLeg",
@@ -192,7 +192,7 @@
                             0.0,
                             1.0
                         ],
-                        "length": 1.25,
+                        "bind_pose_length": 1.25,
                         "child_bone_array": [
                             {
                                 "name": "LeftLowerLeg",
@@ -207,7 +207,7 @@
                                     0.0,
                                     1.0
                                 ],
-                                "length": 1.25,
+                                "bind_pose_length": 1.25,
                                 "child_bone_array": []
                             }
                         ]
@@ -227,7 +227,7 @@
                     0.0,
                     1.0
                 ],
-                "length": 0.5,
+                "bind_pose_length": 0.5,
                 "child_bone_array": [
                     {
                         "name": "RightUpperLeg",
@@ -242,7 +242,7 @@
                             0.0,
                             1.0
                         ],
-                        "length": 1.25,
+                        "bind_pose_length": 1.25,
                         "child_bone_array": [
                             {
                                 "name": "RightLowerLeg",
@@ -257,7 +257,7 @@
                                     0.0,
                                     1.0
                                 ],
-                                "length": 1.25,
+                                "bind_pose_length": 1.25,
                                 "child_bone_array": []
                             }
                         ]

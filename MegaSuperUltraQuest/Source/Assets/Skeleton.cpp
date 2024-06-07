@@ -122,111 +122,111 @@ void Skeleton::MakeBasicBiped()
 	// Pelvis.
 	Bone* pelvis = this->GetRootBone();
 	pelvis->SetName("Pelvis");
-	pelvis->SetLength(2.7);
+	pelvis->SetBindPoseLength(2.7);
 	pelvis->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
 
 	// Chest.
 	Bone* chest = new Bone();
 	chest->SetName("Chest");
-	chest->SetLength(1.7);
+	chest->SetBindPoseLength(1.7);
 	chest->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	pelvis->AddChildBone(chest);
 
 	// Neck.
 	Bone* neck = new Bone();
 	neck->SetName("Neck");
-	neck->SetLength(0.5);
+	neck->SetBindPoseLength(0.5);
 	neck->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	chest->AddChildBone(neck);
 
 	// Head.
 	Bone* head = new Bone();
 	head->SetName("Head");
-	head->SetLength(1.0);
+	head->SetBindPoseLength(1.0);
 	head->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	neck->AddChildBone(head);
 
 	// Left shoulder.
 	Bone* leftShoulder = new Bone();
 	leftShoulder->SetName("LeftShoulder");
-	leftShoulder->SetLength(0.8);
+	leftShoulder->SetBindPoseLength(0.8);
 	leftShoulder->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
 	chest->AddChildBone(leftShoulder);
 
 	// Right shoulder.
 	Bone* rightShoulder = new Bone();
 	rightShoulder->SetName("RightShoulder");
-	rightShoulder->SetLength(0.8);
+	rightShoulder->SetBindPoseLength(0.8);
 	rightShoulder->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), -M_PI / 2.0));
 	chest->AddChildBone(rightShoulder);
 
 	// Left upper arm.
 	Bone* leftUpperArm = new Bone();
 	leftUpperArm->SetName("LeftUpperArm");
-	leftUpperArm->SetLength(1.2);
+	leftUpperArm->SetBindPoseLength(1.2);
 	leftUpperArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	leftShoulder->AddChildBone(leftUpperArm);
 
 	// Right upper arm.
 	Bone* rightUpperArm = new Bone();
 	rightUpperArm->SetName("RightUpperArm");
-	rightUpperArm->SetLength(1.2);
+	rightUpperArm->SetBindPoseLength(1.2);
 	rightUpperArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	rightShoulder->AddChildBone(rightUpperArm);
 
 	// Left lower arm.
 	Bone* leftLowerArm = new Bone();
 	leftLowerArm->SetName("LeftLowerArm");
-	leftLowerArm->SetLength(1.2);
+	leftLowerArm->SetBindPoseLength(1.2);
 	leftLowerArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	leftUpperArm->AddChildBone(leftLowerArm);
 
 	// Right lower arm.
 	Bone* rightLowerArm = new Bone();
 	rightLowerArm->SetName("RightLowerArm");
-	rightLowerArm->SetLength(1.2);
+	rightLowerArm->SetBindPoseLength(1.2);
 	rightLowerArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	rightUpperArm->AddChildBone(rightLowerArm);
 
 	// Left hip socket.
 	Bone* leftHip = new Bone();
 	leftHip->SetName("LeftHip");
-	leftHip->SetLength(0.5);
+	leftHip->SetBindPoseLength(0.5);
 	leftHip->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
 	pelvis->AddChildBone(leftHip);
 
 	// Right hip socket.
 	Bone* rightHip = new Bone();
 	rightHip->SetName("RightHip");
-	rightHip->SetLength(0.5);
+	rightHip->SetBindPoseLength(0.5);
 	rightHip->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), -M_PI / 2.0));
 	pelvis->AddChildBone(rightHip);
 
 	// Left upper leg.
 	Bone* leftUpperLeg = new Bone();
 	leftUpperLeg->SetName("LeftUpperLeg");
-	leftUpperLeg->SetLength(1.25);
+	leftUpperLeg->SetBindPoseLength(1.25);
 	leftUpperLeg->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
 	leftHip->AddChildBone(leftUpperLeg);
 
 	// Right upper leg.
 	Bone* rightUpperLeg = new Bone();
 	rightUpperLeg->SetName("RightUpperLeg");
-	rightUpperLeg->SetLength(1.25);
+	rightUpperLeg->SetBindPoseLength(1.25);
 	rightUpperLeg->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), -M_PI / 2.0));
 	rightHip->AddChildBone(rightUpperLeg);
 
 	// Left lower leg.
 	Bone* leftLowerLeg = new Bone();
 	leftLowerLeg->SetName("LeftLowerLeg");
-	leftLowerLeg->SetLength(1.25);
+	leftLowerLeg->SetBindPoseLength(1.25);
 	leftLowerLeg->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	leftUpperLeg->AddChildBone(leftLowerLeg);
 
 	// Right lower leg.
 	Bone* rightLowerLeg = new Bone();
 	rightLowerLeg->SetName("RightLowerLeg");
-	rightLowerLeg->SetLength(1.25);
+	rightLowerLeg->SetBindPoseLength(1.25);
 	rightLowerLeg->SetBindPoseOrientation(Matrix3x3().SetIdentity());
 	rightUpperLeg->AddChildBone(rightLowerLeg);
 }
@@ -234,9 +234,15 @@ void Skeleton::MakeBasicBiped()
 void Skeleton::ResetCurrentPose()
 {
 	std::vector<Bone*> boneArray;
+
 	if (this->GatherBones(boneArray))
+	{
 		for (Bone* bone : boneArray)
+		{
 			bone->SetCurrentPoseOrientation(bone->GetBindPoseOrientation());
+			bone->SetCurrentPoseLength(bone->GetBindPoseLength());
+		}
+	}
 }
 
 bool Skeleton::GatherBones(std::vector<Bone*>& boneArray)
@@ -282,8 +288,10 @@ bool Skeleton::GatherBones(const Collision::Vector3& position, BoneTransformType
 Bone::Bone()
 {
 	this->parentBone = nullptr;
+	this->bindPose.orientation.SetIdentity();
+	this->bindPose.length = 1.0;
 	this->currentPose.orientation.SetIdentity();
-	this->length = 0.0;
+	this->currentPose.length = 1.0;
 }
 
 /*virtual*/ Bone::~Bone()
@@ -304,10 +312,10 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 	if (!Asset::LoadMatrix(boneValue["bind_pose_orientation"], this->bindPose.orientation))
 		return false;
 
-	if (!boneValue.HasMember("length") || !boneValue["length"].IsFloat())
+	if (!boneValue.HasMember("bind_pose_length") || !boneValue["bind_pose_length"].IsFloat())
 		return false;
 
-	this->length = boneValue["length"].GetFloat();
+	this->bindPose.length = boneValue["bind_pose_length"].GetFloat();
 
 	if (!boneValue.HasMember("child_bone_array") || !boneValue["child_bone_array"].IsArray())
 		return false;
@@ -335,7 +343,7 @@ bool Bone::Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const
 	boneValue.SetObject();
 	boneValue.AddMember("name", rapidjson::Value().SetString(this->name.c_str(), doc->GetAllocator()), doc->GetAllocator());
 	boneValue.AddMember("bind_pose_orientation", bindPoseOrientationValue, doc->GetAllocator());
-	boneValue.AddMember("length", rapidjson::Value().SetFloat(this->length), doc->GetAllocator());
+	boneValue.AddMember("bind_pose_length", rapidjson::Value().SetFloat(this->bindPose.length), doc->GetAllocator());
 
 	rapidjson::Value childBoneArrayValue;
 	childBoneArrayValue.SetArray();
@@ -391,7 +399,7 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 	Transforms* parentTransforms = this->parentBone ? this->parentBone->GetTransforms(transformType) : nullptr;
 	Transforms* transforms = this->GetTransforms(transformType);
 
-	Vector3 boneVector(this->length, 0.0, 0.0);
+	Vector3 boneVector(transforms->length, 0.0, 0.0);
 	boneVector = transforms->orientation * boneVector;
 
 	if (!parentTransforms)
@@ -415,7 +423,7 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 Collision::Vector3 Bone::CalcObjectSpaceCenter(BoneTransformType transformType) const
 {
 	const Transforms* transforms = this->GetTransforms(transformType);
-	return transforms->boneToObject.TransformPoint(Vector3(-this->length / 2.0, 0.0, 0.0));
+	return transforms->boneToObject.TransformPoint(Vector3(-transforms->length / 2.0, 0.0, 0.0));
 }
 
 void Bone::PopulateBoneMap(BoneMap& boneMap) const
