@@ -23,11 +23,16 @@ public:
 	/**
 	 * This is where we write the vertex buffer (that will be sent to the GPU for rendering)
 	 * as a function of the the bind-pose vertex buffer, the skeleton, and the skin-weights.
+	 * 
+	 * Note that here we assume that all cached transforms of the skeleton are correct.
 	 */
 	void DeformMesh();
 
 private:
 	Reference<BareBuffer> bindPoseVertices;
+	Reference<BareBuffer> currentPoseVertices;
 	Reference<Skeleton> skeleton;
 	Reference<SkinWeights> skinWeights;
+	uint32_t positionOffset;
+	uint32_t normalOffset;
 };

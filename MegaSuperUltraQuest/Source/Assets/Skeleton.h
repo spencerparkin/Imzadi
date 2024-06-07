@@ -155,8 +155,6 @@ public:
 
 	Collision::Vector3 CalcObjectSpaceCenter(BoneTransformType transformType) const;
 
-private:
-
 	struct Transforms
 	{
 		Collision::Matrix3x3 orientation;
@@ -166,6 +164,8 @@ private:
 
 	Transforms* GetTransforms(BoneTransformType transformType);
 	const Transforms* GetTransforms(BoneTransformType transformType) const;
+
+private:
 
 	std::string name;
 	Bone* parentBone;

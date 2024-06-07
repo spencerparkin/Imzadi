@@ -48,6 +48,8 @@ public:
 	BYTE* GetBuffer() { return this->buffer; }
 	const BYTE* GetBuffer() const { return this->buffer; }
 
+	BareBuffer* Clone() const;
+
 private:
 	BYTE* buffer;
 	UINT bufferSize;

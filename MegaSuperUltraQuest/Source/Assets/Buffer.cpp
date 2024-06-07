@@ -237,3 +237,11 @@ UINT BareBuffer::GetSize() const
 {
 	return this->bufferSize;
 }
+
+BareBuffer* BareBuffer::Clone() const
+{
+	auto copy = new BareBuffer();
+	copy->SetSize(this->bufferSize);
+	::memcpy(copy->GetBuffer(), this->buffer, this->bufferSize);
+	return copy;
+}

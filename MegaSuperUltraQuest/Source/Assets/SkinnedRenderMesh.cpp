@@ -2,11 +2,14 @@
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "Skeleton.h"
 #include "SkinWeights.h"
+#include "Game.h"
 
 using namespace Collision;
 
 SkinnedRenderMesh::SkinnedRenderMesh()
 {
+	this->positionOffset = 0;
+	this->normalOffset = 0;
 }
 
 /*virtual*/ SkinnedRenderMesh::~SkinnedRenderMesh()
@@ -33,6 +36,8 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
 		return false;
 
+	this->currentPoseVertices.Set(this->bindPoseVertices->Clone());
+
 #if 0
 	//this->skinWeights.Set(new SkinWeights());
 	//this->skinWeights->AutoSkin(this->skeleton, this->bindPoseVertices, this->vertexBuffer->GetStride(), 0, 1.0);
@@ -49,6 +54,20 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!skinWeights)
 		return false;
 
+	if (!jsonDoc.HasMember("position_offset") || !jsonDoc["position_offset"].IsInt())
+		return false;
+
+	this->positionOffset = jsonDoc["position_offset"].GetInt();
+
+	if (!jsonDoc.HasMember("normal_offset") || !jsonDoc["normal_offset"].IsInt())
+		return false;
+
+	this->normalOffset = jsonDoc["normal_offset"].GetInt();
+
+	uint32_t strideBytes = this->vertexBuffer->GetStride();
+	if (this->positionOffset + 3 * sizeof(float) > strideBytes || this->normalOffset + 3 * sizeof(float) > strideBytes)
+		return false;
+
 	return true;
 }
 
@@ -61,7 +80,76 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 void SkinnedRenderMesh::DeformMesh()
 {
-	// TODO: Write this.
+	uint32_t numVertices = this->vertexBuffer->GetNumElements();
+	uint32_t strideBytes = this->vertexBuffer->GetStride();
+	BYTE* bindPoseBuffer = this->bindPoseVertices->GetBuffer();
+	BYTE* currentPoseBuffer = this->currentPoseVertices->GetBuffer();
+
+	for (uint32_t i = 0; i < numVertices; i++)
+	{
+		const std::vector<SkinWeights::BoneWeight>& boneWeightArray = this->skinWeights->GetBoneWeightsForVertex(i);
+
+		const float* bindPosePositionBuffer = (float*)&bindPoseBuffer[i * strideBytes + this->positionOffset];
+		float* currentPosePositionBuffer = (float*)&currentPoseBuffer[i * strideBytes + this->positionOffset];
+
+		const float* bindPoseNormalBuffer = (float*)&bindPoseBuffer[i * strideBytes + this->normalOffset];
+		float* currentPoseNormalBuffer = (float*)&currentPoseBuffer[i * strideBytes + this->normalOffset];
+
+		Vector3 bindPosePosition;
+		bindPosePosition.x = bindPosePositionBuffer[0];
+		bindPosePosition.y = bindPosePositionBuffer[1];
+		bindPosePosition.z = bindPosePositionBuffer[2];
+
+		Vector3 bindPoseNormal;
+		bindPoseNormal.x = bindPoseNormalBuffer[0];
+		bindPoseNormal.y = bindPoseNormalBuffer[1];
+		bindPoseNormal.z = bindPoseNormalBuffer[2];
+
+		Vector3 currentPosePosition(0.0, 0.0, 0.0);
+		Vector3 currentPoseNormal(0.0, 0.0, 0.0);
+
+		for (uint32_t j = 0; j < boneWeightArray.size(); j++)
+		{
+			const SkinWeights::BoneWeight& boneWeight = boneWeightArray[j];
+			const Bone* bone = this->skeleton->FindBone(boneWeight.boneName);
+			assert(bone != nullptr);
+
+			const Bone::Transforms* bindPoseTransforms = bone->GetTransforms(BoneTransformType::BIND_POSE);
+			const Bone::Transforms* currentPoseTransforms = bone->GetTransforms(BoneTransformType::CURRENT_POSE);
+
+			Vector3 skinPoint = bindPoseTransforms->objectToBone.TransformPoint(bindPosePosition);
+			skinPoint = currentPoseTransforms->boneToObject.TransformPoint(skinPoint);
+
+			Vector3 skinNormal = bindPoseTransforms->objectToBone.TransformNormal(bindPoseNormal);
+			skinNormal = currentPoseTransforms->boneToObject.TransformNormal(skinNormal);
+			
+			currentPosePosition += skinPoint * boneWeight.weight;
+			currentPoseNormal += skinNormal * boneWeight.weight;
+		}
+		
+		if (!currentPoseNormal.Normalize())
+			currentPoseNormal.SetComponents(0.0, 0.0, 1.0);
+
+		currentPosePositionBuffer[0] = currentPosePosition.x;
+		currentPosePositionBuffer[1] = currentPosePosition.y;
+		currentPosePositionBuffer[2] = currentPosePosition.z;
+
+		currentPoseNormalBuffer[0] = currentPoseNormal.x;
+		currentPoseNormalBuffer[1] = currentPoseNormal.y;
+		currentPoseNormalBuffer[2] = currentPoseNormal.z;
+	}
+
+	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
+
+	// Note that we read form a bare buffer and wrote into a bare buffer beforehand so that
+	// here we would be keeping the GPU buffer locked for as short a time as possible.
+	D3D11_MAPPED_SUBRESOURCE mappedSubresource{};
+	HRESULT result = deviceContext->Map(this->vertexBuffer->GetBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
+	if (FAILED(result))
+		return;
+
+	::memcpy(mappedSubresource.pData, this->currentPoseVertices->GetBuffer(), this->currentPoseVertices->GetSize());
+	deviceContext->Unmap(this->vertexBuffer->GetBuffer(), 0);
 }
 
 /*virtual*/ bool SkinnedRenderMesh::MakeRenderInstance(Reference<RenderObject>& renderObject)

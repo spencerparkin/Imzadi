@@ -17,5 +17,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "vertex_buffer": "Models\\Hero\\Hero_Hero_Vertices.buffer",
     "skeleton": "Models/Hero/Hero.skeleton",
-    "skin_weights": "Models/Hero/Hero.skin_weights"
+    "skin_weights": "Models/Hero/Hero.skin_weights",
+    "position_offset": 0,
+    "normal_offset": 20
 }
