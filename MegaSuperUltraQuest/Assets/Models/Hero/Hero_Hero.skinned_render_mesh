@@ -19,5 +19,9 @@
     "skeleton": "Models/Hero/Hero.skeleton",
     "skin_weights": "Models/Hero/Hero.skin_weights",
     "position_offset": 0,
-    "normal_offset": 20
+    "normal_offset": 20,
+    "animations": [
+        "Models/Hero/Hero_LeftWave.animation",
+        "Models/Hero/Hero_RightWave.animation"
+    ]
 }

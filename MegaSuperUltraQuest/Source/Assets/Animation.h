@@ -27,6 +27,9 @@ public:
 	virtual bool Unload() override;
 	virtual bool Save(rapidjson::Document& jsonDoc) const override;
 
+	void SetName(const std::string& name) { this->name = name; }
+	const std::string& GetName() const { return this->name; }
+
 	/**
 	 * Delete all key-frames and empty our list of such.
 	 */
@@ -89,6 +92,7 @@ public:
 
 private:
 	
+	std::string name;
 	std::vector<KeyFrame*> keyFrameArray;
 };
 

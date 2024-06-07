@@ -78,6 +78,33 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (this->positionOffset + 3 * sizeof(float) > strideBytes || this->normalOffset + 3 * sizeof(float) > strideBytes)
 		return false;
 
+	if (jsonDoc.HasMember("animations") && jsonDoc["animations"].IsArray())
+	{
+		this->animationMap.clear();
+
+		const rapidjson::Value& animationsArrayValue = jsonDoc["animations"];
+		for (int i = 0; i < animationsArrayValue.Size(); i++)
+		{
+			const rapidjson::Value& animationValue = animationsArrayValue[i];
+			if (!animationValue.IsString())
+				return false;
+
+			std::string animationFile = animationValue.GetString();
+			if (!assetCache->LoadAsset(animationFile, asset))
+				return false;
+
+			Reference<Animation> animation;
+			animation.SafeSet(asset.Get());
+			if (!animation)
+				return false;
+
+			if (this->animationMap.find(animation->GetName()) != this->animationMap.end())
+				return false;
+
+			this->animationMap.insert(std::pair<std::string, Reference<Animation>>(animation->GetName(), animation));
+		}
+	}
+
 	return true;
 }
 

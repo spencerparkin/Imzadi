@@ -1,4 +1,6 @@
 #include "RenderMesh.h"
+#include "Animation.h"
+#include <unordered_map>
 
 class Skeleton;
 class SkinWeights;
@@ -35,4 +37,6 @@ private:
 	Reference<SkinWeights> skinWeights;
 	uint32_t positionOffset;
 	uint32_t normalOffset;
+	typedef std::unordered_map<std::string, Reference<Animation>> AnimationMap;
+	AnimationMap animationMap;
 };

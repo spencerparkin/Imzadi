@@ -8,6 +8,7 @@ using namespace Collision;
 
 Animation::Animation()
 {
+	this->name = "Unknown";
 }
 
 /*virtual*/ Animation::~Animation()
@@ -21,6 +22,11 @@ Animation::Animation()
 
 	if (!jsonDoc.IsObject())
 		return false;
+
+	if (!jsonDoc.HasMember("name") || !jsonDoc["name"].IsString())
+		return false;
+
+	this->name = jsonDoc["name"].GetString();
 
 	if (!jsonDoc.HasMember("key_frame_array") || !jsonDoc["key_frame_array"].IsArray())
 		return false;
@@ -63,6 +69,7 @@ Animation::Animation()
 	}
 
 	jsonDoc.AddMember("key_frame_array", keyFrameArrayValue, jsonDoc.GetAllocator());
+	jsonDoc.AddMember("name", rapidjson::Value().SetString(this->name.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
 
 	return true;
 }
