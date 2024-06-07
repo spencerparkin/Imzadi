@@ -405,6 +405,9 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 		transforms->boneToObject.translation = parentTransforms->boneToObject.TransformPoint(boneVector);
 	}
 	
+	bool inverted = transforms->objectToBone.Invert(transforms->boneToObject);
+	assert(inverted);
+
 	for (Bone* childBone : this->childBoneArray)
 		childBone->UpdateCachedTransforms(transformType);
 }
