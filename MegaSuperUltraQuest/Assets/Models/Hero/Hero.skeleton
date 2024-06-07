@@ -1,6 +1,6 @@
 {
     "root_bone": {
-        "name": "Pelvis",
+        "name": "Root",
         "bind_pose_orientation": [
             6.123234262925839e-17,
             -1.0,
@@ -13,9 +13,10 @@
             1.0
         ],
         "bind_pose_length": 2.700000047683716,
+        "weightable": false,
         "child_bone_array": [
             {
-                "name": "Chest",
+                "name": "Torso",
                 "bind_pose_orientation": [
                     1.0,
                     0.0,
@@ -28,6 +29,7 @@
                     1.0
                 ],
                 "bind_pose_length": 1.7000000476837159,
+                "weightable": true,
                 "child_bone_array": [
                     {
                         "name": "Neck",
@@ -43,6 +45,7 @@
                             1.0
                         ],
                         "bind_pose_length": 0.5,
+                        "weightable": true,
                         "child_bone_array": [
                             {
                                 "name": "Head",
@@ -58,6 +61,7 @@
                                     1.0
                                 ],
                                 "bind_pose_length": 1.0,
+                                "weightable": true,
                                 "child_bone_array": []
                             }
                         ]
@@ -76,6 +80,7 @@
                             1.0
                         ],
                         "bind_pose_length": 0.800000011920929,
+                        "weightable": true,
                         "child_bone_array": [
                             {
                                 "name": "LeftUpperArm",
@@ -91,6 +96,7 @@
                                     1.0
                                 ],
                                 "bind_pose_length": 1.2000000476837159,
+                                "weightable": true,
                                 "child_bone_array": [
                                     {
                                         "name": "LeftLowerArm",
@@ -106,6 +112,7 @@
                                             1.0
                                         ],
                                         "bind_pose_length": 1.2000000476837159,
+                                        "weightable": true,
                                         "child_bone_array": []
                                     }
                                 ]
@@ -126,6 +133,7 @@
                             1.0
                         ],
                         "bind_pose_length": 0.800000011920929,
+                        "weightable": true,
                         "child_bone_array": [
                             {
                                 "name": "RightUpperArm",
@@ -141,6 +149,7 @@
                                     1.0
                                 ],
                                 "bind_pose_length": 1.2000000476837159,
+                                "weightable": true,
                                 "child_bone_array": [
                                     {
                                         "name": "RightLowerArm",
@@ -156,6 +165,7 @@
                                             1.0
                                         ],
                                         "bind_pose_length": 1.2000000476837159,
+                                        "weightable": true,
                                         "child_bone_array": []
                                     }
                                 ]
@@ -178,6 +188,7 @@
                     1.0
                 ],
                 "bind_pose_length": 0.5,
+                "weightable": true,
                 "child_bone_array": [
                     {
                         "name": "LeftUpperLeg",
@@ -193,6 +204,7 @@
                             1.0
                         ],
                         "bind_pose_length": 1.25,
+                        "weightable": true,
                         "child_bone_array": [
                             {
                                 "name": "LeftLowerLeg",
@@ -208,6 +220,7 @@
                                     1.0
                                 ],
                                 "bind_pose_length": 1.25,
+                                "weightable": true,
                                 "child_bone_array": []
                             }
                         ]
@@ -228,6 +241,7 @@
                     1.0
                 ],
                 "bind_pose_length": 0.5,
+                "weightable": true,
                 "child_bone_array": [
                     {
                         "name": "RightUpperLeg",
@@ -243,6 +257,7 @@
                             1.0
                         ],
                         "bind_pose_length": 1.25,
+                        "weightable": true,
                         "child_bone_array": [
                             {
                                 "name": "RightLowerLeg",
@@ -258,6 +273,7 @@
                                     1.0
                                 ],
                                 "bind_pose_length": 1.25,
+                                "weightable": true,
                                 "child_bone_array": []
                             }
                         ]

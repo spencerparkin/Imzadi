@@ -136,6 +136,9 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 
 		for (const Bone* bone : boneArray)
 		{
+			if (!bone->GetWeightable())
+				continue;
+
 			double distance = (position - bone->CalcObjectSpaceCenter(BoneTransformType::BIND_POSE)).Length();
 			BoneWeight boneWeight;
 			boneWeight.weight = radius - distance;
@@ -150,9 +153,22 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 			this->NormalizeWeights(boneWeightArray);
 		else
 		{
+			const Bone* foundBone = nullptr;
+			for (const Bone* bone : boneArray)
+			{
+				if (bone->GetWeightable())
+				{
+					foundBone = bone;
+					break;
+				}
+			}
+			
+			if (!foundBone)
+				return false;
+
 			BoneWeight boneWeight;
 			boneWeight.weight = 1.0;
-			boneWeight.boneName = boneArray[0]->GetName();
+			boneWeight.boneName = foundBone->GetName();
 			boneWeightArray.push_back(boneWeight);
 		}
 

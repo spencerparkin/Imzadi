@@ -121,6 +121,9 @@ public:
 	const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
 	size_t GetNumChildBones() const { return this->childBoneArray.size(); }
 
+	void SetWeightable(bool weightable) { this->canBeWeightedAgainst = weightable; }
+	bool GetWeightable() const { return this->canBeWeightedAgainst; }
+
 	void SetBindPoseState(const BoneState& boneState) { this->bindPose.boneState = boneState; }
 	const BoneState& GetBindPoseState() const { return this->bindPose.boneState; }
 
@@ -167,4 +170,5 @@ private:
 	std::vector<Bone*> childBoneArray;
 	Transforms bindPose;
 	Transforms currentPose;
+	bool canBeWeightedAgainst;
 };

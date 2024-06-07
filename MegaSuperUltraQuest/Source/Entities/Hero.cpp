@@ -177,7 +177,7 @@ Hero::Hero()
 					Skeleton* skeleton = mesh->GetSkeleton();
 					if (skeleton)
 					{
-						Bone* bone = skeleton->FindBone("Chest");
+						Bone* bone = skeleton->FindBone("Neck");
 						if (bone)
 						{
 							Matrix3x3 boneOrientation = bone->GetCurrentPoseOrientation();
