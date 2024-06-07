@@ -109,6 +109,9 @@ public:
 
 	void Sort();
 
+	bool Load(const rapidjson::Value& keyFrameValue);
+	bool Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDoc) const;
+
 	/**
 	 * Calculate this key-frame as the linear interpolation of the two given key-frames by
 	 * the given time index.  Note that there is no need for the two given key-frames to

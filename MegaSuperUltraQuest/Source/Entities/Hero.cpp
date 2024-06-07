@@ -181,7 +181,7 @@ Hero::Hero()
 						{
 							Matrix3x3 boneOrientation = bone->GetCurrentPoseOrientation();
 
-							double angle = (M_PI / 12.0) * (leftTrigger - rightTrigger);
+							double angle = (M_PI / 64.0) * (leftTrigger - rightTrigger);
 
 							Matrix3x3 rotation;
 							rotation.SetFromAxisAngle(Vector3(0.0, 0.0, 1.0), angle);

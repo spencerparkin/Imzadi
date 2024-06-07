@@ -17,7 +17,28 @@ Animation::Animation()
 
 /*virtual*/ bool Animation::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
-	return false;
+	this->Clear();
+
+	if (!jsonDoc.IsObject())
+		return false;
+
+	if (!jsonDoc.HasMember("key_frame_array") || !jsonDoc["key_frame_array"].IsArray())
+		return false;
+
+	const rapidjson::Value& keyFrameArrayValue = jsonDoc["key_frame_array"];
+
+	for (int i = 0; i < keyFrameArrayValue.Size(); i++)
+	{
+		const rapidjson::Value& keyFrameValue = keyFrameArrayValue[i];
+		auto keyFrame = new KeyFrame();
+		this->keyFrameArray.push_back(keyFrame);
+		if (!keyFrame->Load(keyFrameValue))
+			return false;
+	}
+
+	this->TimeSort();
+
+	return true;
 }
 
 /*virtual*/ bool Animation::Unload()
@@ -27,7 +48,23 @@ Animation::Animation()
 
 /*virtual*/ bool Animation::Save(rapidjson::Document& jsonDoc) const
 {
-	return false;
+	jsonDoc.SetObject();
+
+	rapidjson::Value keyFrameArrayValue;
+	keyFrameArrayValue.SetArray();
+
+	for (const KeyFrame* keyFrame : this->keyFrameArray)
+	{
+		rapidjson::Value keyFrameValue;
+		if (!keyFrame->Save(keyFrameValue, jsonDoc))
+			return false;
+
+		keyFrameArrayValue.PushBack(keyFrameValue, jsonDoc.GetAllocator());
+	}
+
+	jsonDoc.AddMember("key_frame_array", keyFrameArrayValue, jsonDoc.GetAllocator());
+
+	return true;
 }
 
 void Animation::Clear()
@@ -172,6 +209,78 @@ void KeyFrame::Sort()
 	std::sort(this->poseInfoArray.begin(), this->poseInfoArray.end(), [](const PoseInfo& infoA, const PoseInfo& infoB) -> bool {
 		return ::strcmp(infoA.boneName.c_str(), infoB.boneName.c_str()) < 0;
 	});
+}
+
+bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
+{
+	this->Clear();
+
+	if (!keyFrameValue.IsObject())
+		return false;
+
+	if (!keyFrameValue.HasMember("time") || !keyFrameValue["time"].IsFloat())
+		return false;
+
+	this->timeSeconds = keyFrameValue["time"].GetFloat();
+
+	if (!keyFrameValue.HasMember("pose_info_array") || !keyFrameValue["pose_info_array"].IsArray())
+		return false;
+
+	const rapidjson::Value& poseInfoArrayValue = keyFrameValue["pose_info_array"];
+
+	for (int i = 0; i < poseInfoArrayValue.Size(); i++)
+	{
+		const rapidjson::Value& poseInfoValue = poseInfoArrayValue[i];
+		if (!poseInfoValue.IsObject())
+			return false;
+
+		if (!poseInfoValue.HasMember("bone_name") || !poseInfoValue["bone_name"].IsString())
+			return false;
+
+		if (!poseInfoValue.HasMember("bone_orientation"))
+			return false;
+
+		if (!poseInfoValue.HasMember("bone_length") || !poseInfoValue["bone_length"].IsFloat())
+			return false;
+
+		PoseInfo poseInfo;
+		poseInfo.boneName = poseInfoValue["bone_name"].GetString();
+		poseInfo.boneState.length = poseInfoValue["bone_length"].GetFloat();
+		if (!Asset::LoadMatrix(poseInfoValue["bone_orientation"], poseInfo.boneState.orientation))
+			return false;
+
+		this->poseInfoArray.push_back(poseInfo);
+	}
+
+	return true;
+}
+
+bool KeyFrame::Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDoc) const
+{
+	keyFrameValue.SetObject();
+	keyFrameValue.AddMember("time", rapidjson::Value().SetFloat(this->timeSeconds), jsonDoc.GetAllocator());
+
+	rapidjson::Value poseInfoArrayValue;
+	poseInfoArrayValue.SetArray();
+
+	for (const PoseInfo& poseInfo : this->poseInfoArray)
+	{
+		rapidjson::Value poseInfoValue;
+		poseInfoValue.SetObject();
+
+		rapidjson::Value orientationValue;
+		Asset::SaveMatrix(orientationValue, poseInfo.boneState.orientation, &jsonDoc);
+
+		poseInfoValue.AddMember("bone_name", rapidjson::Value().SetString(poseInfo.boneName.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+		poseInfoValue.AddMember("bone_orientation", orientationValue, jsonDoc.GetAllocator());
+		poseInfoValue.AddMember("bone_length", rapidjson::Value().SetFloat(poseInfo.boneState.length), jsonDoc.GetAllocator());
+
+		poseInfoArrayValue.PushBack(poseInfoValue, jsonDoc.GetAllocator());
+	}
+
+	keyFrameValue.AddMember("pose_info_array", poseInfoArrayValue, jsonDoc.GetAllocator());
+
+	return true;
 }
 
 bool KeyFrame::Interpolate(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB, double timeSeconds)
