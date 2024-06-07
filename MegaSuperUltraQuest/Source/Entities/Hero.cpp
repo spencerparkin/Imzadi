@@ -8,6 +8,7 @@
 #include "Math/Transform.h"
 #include "Math/Vector2.h"
 #include "Shapes/Capsule.h"
+#include "RenderObjects/AnimatedMeshInstance.h"
 #include "Command.h"
 #include "Query.h"
 #include "Result.h"
@@ -176,7 +177,7 @@ Hero::Hero()
 					Skeleton* skeleton = mesh->GetSkeleton();
 					if (skeleton)
 					{
-						Bone* bone = skeleton->FindBone("LeftUpperArm");
+						Bone* bone = skeleton->FindBone("Chest");
 						if (bone)
 						{
 							Matrix3x3 boneOrientation = bone->GetCurrentPoseOrientation();
@@ -192,6 +193,29 @@ Hero::Hero()
 
 						skeleton->UpdateCachedTransforms(BoneTransformType::CURRENT_POSE);
 						mesh->DeformMesh();
+
+						/*
+						auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+						if (animatedMesh)
+						{
+							if (controller->ButtonPressed(XINPUT_GAMEPAD_B))
+							{
+								static double timeSeconds = 0.0;
+								KeyFrame* keyFrame = new KeyFrame();
+								keyFrame->MakePose(skeleton);
+								keyFrame->SetTime(timeSeconds);
+								animatedMesh->animation->AddKeyFrame(keyFrame);
+								timeSeconds += 0.1;
+							}
+
+							if (controller->ButtonPressed(XINPUT_GAMEPAD_A))
+							{
+								Reference<Asset> asset;
+								asset.Set(animatedMesh->animation.Get());
+								Game::Get()->GetAssetCache()->SaveAsset("Models/Hero/Hero_RightWave.animation", asset);
+							}
+						}
+						*/
 					}
 				}
 			}
