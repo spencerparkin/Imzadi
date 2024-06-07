@@ -99,16 +99,6 @@ void Skeleton::DebugDraw(BoneTransformType transformType, const Collision::Trans
 	}
 }
 
-bool Skeleton::Pose(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB, double alpha) const
-{
-	return false;
-}
-
-KeyFrame* Skeleton::CreateKeyFrame() const
-{
-	return nullptr;
-}
-
 void Skeleton::UpdateCachedTransforms(BoneTransformType transformType) const
 {
 	if (this->rootBone)
@@ -288,10 +278,10 @@ bool Skeleton::GatherBones(const Collision::Vector3& position, BoneTransformType
 Bone::Bone()
 {
 	this->parentBone = nullptr;
-	this->bindPose.orientation.SetIdentity();
-	this->bindPose.length = 1.0;
-	this->currentPose.orientation.SetIdentity();
-	this->currentPose.length = 1.0;
+	this->bindPose.boneState.orientation.SetIdentity();
+	this->bindPose.boneState.length = 1.0;
+	this->currentPose.boneState.orientation.SetIdentity();
+	this->currentPose.boneState.length = 1.0;
 }
 
 /*virtual*/ Bone::~Bone()
@@ -309,13 +299,13 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 	if (!boneValue.HasMember("bind_pose_orientation"))
 		return false;
 
-	if (!Asset::LoadMatrix(boneValue["bind_pose_orientation"], this->bindPose.orientation))
+	if (!Asset::LoadMatrix(boneValue["bind_pose_orientation"], this->bindPose.boneState.orientation))
 		return false;
 
 	if (!boneValue.HasMember("bind_pose_length") || !boneValue["bind_pose_length"].IsFloat())
 		return false;
 
-	this->bindPose.length = boneValue["bind_pose_length"].GetFloat();
+	this->bindPose.boneState.length = boneValue["bind_pose_length"].GetFloat();
 
 	if (!boneValue.HasMember("child_bone_array") || !boneValue["child_bone_array"].IsArray())
 		return false;
@@ -338,12 +328,12 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 bool Bone::Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const
 {
 	rapidjson::Value bindPoseOrientationValue;
-	Asset::SaveMatrix(bindPoseOrientationValue, this->bindPose.orientation, doc);
+	Asset::SaveMatrix(bindPoseOrientationValue, this->bindPose.boneState.orientation, doc);
 
 	boneValue.SetObject();
 	boneValue.AddMember("name", rapidjson::Value().SetString(this->name.c_str(), doc->GetAllocator()), doc->GetAllocator());
 	boneValue.AddMember("bind_pose_orientation", bindPoseOrientationValue, doc->GetAllocator());
-	boneValue.AddMember("bind_pose_length", rapidjson::Value().SetFloat(this->bindPose.length), doc->GetAllocator());
+	boneValue.AddMember("bind_pose_length", rapidjson::Value().SetFloat(this->bindPose.boneState.length), doc->GetAllocator());
 
 	rapidjson::Value childBoneArrayValue;
 	childBoneArrayValue.SetArray();
@@ -399,17 +389,17 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 	Transforms* parentTransforms = this->parentBone ? this->parentBone->GetTransforms(transformType) : nullptr;
 	Transforms* transforms = this->GetTransforms(transformType);
 
-	Vector3 boneVector(transforms->length, 0.0, 0.0);
-	boneVector = transforms->orientation * boneVector;
+	Vector3 boneVector(transforms->boneState.length, 0.0, 0.0);
+	boneVector = transforms->boneState.orientation * boneVector;
 
 	if (!parentTransforms)
 	{
-		transforms->boneToObject.matrix = transforms->orientation;
+		transforms->boneToObject.matrix = transforms->boneState.orientation;
 		transforms->boneToObject.translation = boneVector;
 	}
 	else
 	{
-		transforms->boneToObject.matrix = transforms->orientation * parentTransforms->boneToObject.matrix;
+		transforms->boneToObject.matrix = transforms->boneState.orientation * parentTransforms->boneToObject.matrix;
 		transforms->boneToObject.translation = parentTransforms->boneToObject.TransformPoint(boneVector);
 	}
 	
@@ -423,7 +413,7 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 Collision::Vector3 Bone::CalcObjectSpaceCenter(BoneTransformType transformType) const
 {
 	const Transforms* transforms = this->GetTransforms(transformType);
-	return transforms->boneToObject.TransformPoint(Vector3(-transforms->length / 2.0, 0.0, 0.0));
+	return transforms->boneToObject.TransformPoint(Vector3(-transforms->boneState.length / 2.0, 0.0, 0.0));
 }
 
 void Bone::PopulateBoneMap(BoneMap& boneMap) const

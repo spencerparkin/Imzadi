@@ -16,6 +16,12 @@ enum BoneTransformType
 	CURRENT_POSE
 };
 
+struct BoneState
+{
+	Collision::Matrix3x3 orientation;
+	double length;
+};
+
 /**
  * A skeleton is a hierarchy of bones (or spaces).  By itself, that's all
  * it is, but when combined with a skinned render mesh, manipulating the bones
@@ -55,26 +61,6 @@ public:
 	 * @return False is returned if there are no bones to return; true, otherwise.
 	 */
 	bool GatherBones(const Collision::Vector3& position, BoneTransformType boneTransformType, std::vector<Bone*>& boneArray);
-
-	/**
-	 * Orient the bones of this skeleton using the two given key-frames.  Note that
-	 * these need not be taken from the same animation.  They can be from different
-	 * animations as a means of blending between animations.
-	 * 
-	 * You'll notice that this is a constant function.  This is because posing a skeleton
-	 * does not change the defining characteristics of what a skeleton is.
-	 * 
-	 * @param[in] keyFrameA This can be thought of as the pose of the skeleton at interpolation value zero.
-	 * @param[in] keyFrameB this can be thought of as the pose of the skeleton at interpolation value one.
-	 * @param[in] alpha This is the interpolation value, typically ranging from zero to one.
-	 * @return False is returned if not all bones could be oriented by the given key-frame pair; true, otherwise.
-	 */
-	bool Pose(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB, double alpha) const;
-
-	/**
-	 * Create a key-frame from the current pose.
-	 */
-	KeyFrame* CreateKeyFrame() const;
 
 	/**
 	 * Update all internally-cached transforms that are a function of our single-source-of-truth transforms.
@@ -135,17 +121,23 @@ public:
 	const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
 	size_t GetNumChildBones() const { return this->childBoneArray.size(); }
 
-	void SetBindPoseLength(double length) { this->bindPose.length = length; }
-	double GetBindPoseLength() const { return this->bindPose.length; }
+	void SetBindPoseState(const BoneState& boneState) { this->bindPose.boneState = boneState; }
+	const BoneState& GetBindPoseState() const { return this->bindPose.boneState; }
 
-	void SetCurrentPoseLength(double length) { this->currentPose.length = length; }
-	double GetCurrentPoseLength() const { return this->currentPose.length; }
+	void SetCurrentPoseState(const BoneState& boneState) { this->currentPose.boneState = boneState; }
+	const BoneState& GetCurrentPoseState() { return this->currentPose.boneState; }
 
-	void SetBindPoseOrientation(const Collision::Matrix3x3& orientation) { this->bindPose.orientation = orientation; }
-	const Collision::Matrix3x3& GetBindPoseOrientation() const { return this->bindPose.orientation; }
+	void SetBindPoseLength(double length) { this->bindPose.boneState.length = length; }
+	double GetBindPoseLength() const { return this->bindPose.boneState.length; }
 
-	void SetCurrentPoseOrientation(const Collision::Matrix3x3& orientation) { this->currentPose.orientation = orientation; }
-	const Collision::Matrix3x3& GetCurrentPoseOrientation() const { return this->currentPose.orientation; }
+	void SetCurrentPoseLength(double length) { this->currentPose.boneState.length = length; }
+	double GetCurrentPoseLength() const { return this->currentPose.boneState.length; }
+
+	void SetBindPoseOrientation(const Collision::Matrix3x3& orientation) { this->bindPose.boneState.orientation = orientation; }
+	const Collision::Matrix3x3& GetBindPoseOrientation() const { return this->bindPose.boneState.orientation; }
+
+	void SetCurrentPoseOrientation(const Collision::Matrix3x3& orientation) { this->currentPose.boneState.orientation = orientation; }
+	const Collision::Matrix3x3& GetCurrentPoseOrientation() const { return this->currentPose.boneState.orientation; }
 
 	void UpdateCachedTransforms(BoneTransformType transformType);
 
@@ -160,8 +152,7 @@ public:
 
 	struct Transforms
 	{
-		Collision::Matrix3x3 orientation;
-		double length;
+		BoneState boneState;
 		Collision::Transform boneToObject;
 		Collision::Transform objectToBone;
 	};

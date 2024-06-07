@@ -127,6 +127,13 @@ namespace Collision
 		double Lerp(double alpha) const;
 
 		/**
+		 * Calculate and return the linear interpolation amount
+		 * needed to get the given value with such an interpolation.
+		 * This is a valid in [0,1] if the given value is in range [A,B].
+		 */
+		double Alpha(double value) const;
+
+		/**
 		 * Split this interval into two intervals by the given alpha value,
 		 * used to linearly interpolate between this interval's boundary
 		 * values.  If the given alpha value is not in [0,1], false is returned;
@@ -148,4 +155,64 @@ namespace Collision
 	public:
 		double A, B;
 	};
+
+	inline bool operator<(const Interval& intervalA, const Interval& intervalB)
+	{
+		return intervalA.B < intervalB.A;
+	}
+
+	inline bool operator>(const Interval& intervalA, const Interval& intervalB)
+	{
+		return intervalA.A > intervalB.B;
+	}
+
+	inline bool operator<(const Interval& interval, double value)
+	{
+		return interval.B < value;
+	}
+
+	inline bool operator>(const Interval& interval, double value)
+	{
+		return interval.A > value;
+	}
+
+	inline bool operator<(double value, const Interval& interval)
+	{
+		return value < interval.A;
+	}
+
+	inline bool operator>(double value, const Interval& interval)
+	{
+		return value > interval.B;
+	}
+
+	inline bool operator<=(const Interval& intervalA, const Interval& intervalB)
+	{
+		return intervalA.B <= intervalB.A;
+	}
+
+	inline bool operator>=(const Interval& intervalA, const Interval& intervalB)
+	{
+		return intervalA.A >= intervalB.B;
+	}
+
+	inline bool operator<=(const Interval& interval, double value)
+	{
+		return interval.B <= value;
+	}
+
+	inline bool operator>=(const Interval& interval, double value)
+	{
+		return interval.A >= value;
+	}
+
+	inline bool operator<=(double value, const Interval& interval)
+	{
+		return value <= interval.A;
+	}
+
+	inline bool operator>=(double value, const Interval& interval)
+	{
+		return value >= interval.B;
+	}
 }

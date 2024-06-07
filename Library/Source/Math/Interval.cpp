@@ -146,6 +146,11 @@ double Interval::Lerp(double alpha) const
 	return this->A + (this->B - this->A) * alpha;
 }
 
+double Interval::Alpha(double value) const
+{
+	return (value - this->A) / (this->B - this->A);
+}
+
 bool Interval::Split(double alpha, Interval& intervalA, Interval& intervalB) const
 {
 	double lerpValue = this->Lerp(alpha);
