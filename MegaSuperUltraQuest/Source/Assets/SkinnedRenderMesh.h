@@ -1,3 +1,5 @@
+#pragma once
+
 #include "RenderMesh.h"
 #include "Animation.h"
 #include <unordered_map>
@@ -29,6 +31,8 @@ public:
 	 * Note that here we assume that all cached transforms of the skeleton are correct.
 	 */
 	void DeformMesh();
+
+	Animation* GetAnimation(const std::string& animationName);
 
 private:
 	Reference<BareBuffer> bindPoseVertices;

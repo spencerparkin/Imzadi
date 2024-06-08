@@ -163,62 +163,18 @@ Hero::Hero()
 		}
 		case TickPass::MID_TICK:
 		{
-			// TODO: This is where we would do skinning/animation on our render mesh.
-
-			Controller* controller = Game::Get()->GetController("Hero");
-			if (controller)
+#if 0
+			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+			if (animatedMesh)
 			{
-				double leftTrigger = controller->GetTrigger(Controller::Side::LEFT);
-				double rightTrigger = controller->GetTrigger(Controller::Side::RIGHT);
+				// TODO: What animation we play should depend on how we're moving about the world,
+				//       but this is our initial test of the animation system.  Remove when ready.
+				if (!animatedMesh->GetAnimation())
+					animatedMesh->SetAnimation("LeftWave");
 
-				auto mesh = dynamic_cast<SkinnedRenderMesh*>(this->renderMesh->GetRenderMesh());
-				if (mesh)
-				{
-					Skeleton* skeleton = mesh->GetSkeleton();
-					if (skeleton)
-					{
-						Bone* bone = skeleton->FindBone("Neck");
-						if (bone)
-						{
-							Matrix3x3 boneOrientation = bone->GetCurrentPoseOrientation();
-
-							double angle = (M_PI / 64.0) * (leftTrigger - rightTrigger);
-
-							Matrix3x3 rotation;
-							rotation.SetFromAxisAngle(Vector3(0.0, 0.0, 1.0), angle);
-
-							boneOrientation = (rotation * boneOrientation).Orthonormalized(COLL_SYS_AXIS_FLAG_X);
-							bone->SetCurrentPoseOrientation(boneOrientation);
-						}
-
-						skeleton->UpdateCachedTransforms(BoneTransformType::CURRENT_POSE);
-						mesh->DeformMesh();
-
-						/*
-						auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
-						if (animatedMesh)
-						{
-							if (controller->ButtonPressed(XINPUT_GAMEPAD_B))
-							{
-								static double timeSeconds = 0.0;
-								KeyFrame* keyFrame = new KeyFrame();
-								keyFrame->MakePose(skeleton);
-								keyFrame->SetTime(timeSeconds);
-								animatedMesh->animation->AddKeyFrame(keyFrame);
-								timeSeconds += 0.1;
-							}
-
-							if (controller->ButtonPressed(XINPUT_GAMEPAD_A))
-							{
-								Reference<Asset> asset;
-								asset.Set(animatedMesh->animation.Get());
-								Game::Get()->GetAssetCache()->SaveAsset("Models/Hero/Hero_RightWave.animation", asset);
-							}
-						}
-						*/
-					}
-				}
+				animatedMesh->AdvanceAnimation(deltaTime);
 			}
+#endif
 
 			break;
 		}

@@ -144,6 +144,8 @@ public:
 	 */
 	void MakePose(const Skeleton* skeleton);
 
+	size_t GetPoseCount() const { return this->poseInfoArray.size(); }
+
 private:
 
 	double timeSeconds;

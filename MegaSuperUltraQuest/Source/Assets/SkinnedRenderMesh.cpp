@@ -195,5 +195,15 @@ void SkinnedRenderMesh::DeformMesh()
 	auto instance = dynamic_cast<AnimatedMeshInstance*>(renderObject.Get());
 	instance->SetRenderMesh(this);
 	instance->SetBoundingBox(this->objectSpaceBoundingBox);
+	instance->SetSkinnedMesh(this);
 	return true;
+}
+
+Animation* SkinnedRenderMesh::GetAnimation(const std::string& animationName)
+{
+	AnimationMap::iterator iter = this->animationMap.find(animationName);
+	if (iter == this->animationMap.end())
+		return nullptr;
+
+	return iter->second;
 }
