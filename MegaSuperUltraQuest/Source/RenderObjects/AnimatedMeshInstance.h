@@ -12,10 +12,10 @@ public:
 
 	virtual void Render(Camera* camera, RenderPass renderPass) override;
 
-	void SetTransitionTime(double transitionTimeSeconds) { this->transitionTimeSeconds = transitionTimeSeconds; }
-	double GetTransitionTime() const { return this->transitionTimeSeconds; }
+	void SetTransitionTime(double transitionTime) { this->transitionTime = transitionTime; }
+	double GetTransitionTime() const { return this->transitionTime; }
 
-	void AdvanceAnimation(double deltaTime);
+	bool AdvanceAnimation(double deltaTime);
 	bool SetAnimation(const std::string& animationName);
 	Animation* GetAnimation() { return this->animation.Get(); }
 
@@ -23,8 +23,10 @@ public:
 	SkinnedRenderMesh* GetSkinnedMesh() { return this->skinnedMesh.Get(); }
 
 private:
-	double transitionTimeSeconds;
+	double transitionTime;
+	double currentTransitionTime;
 	KeyFrame transitionalKeyFrame;
+	KeyFrame currentKeyFrame;
 	Reference<Animation> animation;
 	Animation::Cursor cursor;
 	Reference<SkinnedRenderMesh> skinnedMesh;

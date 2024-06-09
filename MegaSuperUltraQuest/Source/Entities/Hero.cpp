@@ -163,18 +163,20 @@ Hero::Hero()
 		}
 		case TickPass::MID_TICK:
 		{
-#if 0
-			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
-			if (animatedMesh)
+			Controller* controller = Game::Get()->GetController("Hero");
+			if (controller)
 			{
-				// TODO: What animation we play should depend on how we're moving about the world,
-				//       but this is our initial test of the animation system.  Remove when ready.
-				if (!animatedMesh->GetAnimation())
-					animatedMesh->SetAnimation("LeftWave");
+				auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+				if (animatedMesh)
+				{
+					if (controller->ButtonPressed(XINPUT_GAMEPAD_A))
+						animatedMesh->SetAnimation("LeftWave");
+					else if (controller->ButtonPressed(XINPUT_GAMEPAD_B))
+						animatedMesh->SetAnimation("RightWave");
 
-				animatedMesh->AdvanceAnimation(deltaTime);
+					animatedMesh->AdvanceAnimation(deltaTime);
+				}
 			}
-#endif
 
 			break;
 		}

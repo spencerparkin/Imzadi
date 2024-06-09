@@ -94,21 +94,18 @@ void Animation::TimeSort()
 	});
 }
 
-bool Animation::FindKeyFramesFromTime(const KeyFrame*& keyFrameA, const KeyFrame*& keyFrameB, double timeSeconds) const
+bool Animation::MakeCursorFromTime(Cursor& cursor, double timeSeconds) const
 {
-	if (this->keyFrameArray.size() == 0)
+	if (this->keyFrameArray.size() < 2)
 		return false;
 
 	int i = 0;
 	int j = this->keyFrameArray.size() - 1;
 
-	while (true)
+	while (i != j - 1)
 	{
-		keyFrameA = this->keyFrameArray[i];
-		keyFrameB = this->keyFrameArray[j];
-
-		if (i == j - 1)
-			break;
+		const KeyFrame* keyFrameA = this->keyFrameArray[i];
+		const KeyFrame* keyFrameB = this->keyFrameArray[j];
 
 		Interval interval(keyFrameA->GetTime(), keyFrameB->GetTime());
 		if (!interval.IsValid())
@@ -118,6 +115,11 @@ bool Animation::FindKeyFramesFromTime(const KeyFrame*& keyFrameA, const KeyFrame
 			return false;
 
 		int k = (i + j) / 2;
+		if (k == i)
+			k++;
+		else if (k == j)
+			k--;
+
 		const KeyFrame* midKeyFrame = this->keyFrameArray[k];
 		if (!interval.ContainsValue(midKeyFrame->GetTime()))
 			return false;
@@ -128,40 +130,68 @@ bool Animation::FindKeyFramesFromTime(const KeyFrame*& keyFrameA, const KeyFrame
 			i = k;
 	}
 
+	cursor.timeSeconds = timeSeconds;
+	cursor.i = i;
 	return true;
 }
 
-bool Animation::GetKeyFramesFromCursor(const Cursor& cursor, const KeyFrame*& keyFrameA, const KeyFrame*& keyFrameB) const
+bool Animation::FindKeyFramesFromTime(double timeSeconds, KeyFramePair& keyFramePair) const
+{
+	Cursor cursor;
+	if (!this->MakeCursorFromTime(cursor, timeSeconds))
+		return false;
+
+	return this->GetKeyFramesFromCursor(cursor, keyFramePair);
+}
+
+bool Animation::GetKeyFramesFromCursor(const Cursor& cursor, KeyFramePair& keyFramePair) const
 {
 	int i = cursor.i;
 	if (!(0 <= i && i < this->keyFrameArray.size()))
 		return false;
 
 	int j = i + 1;
-	if (cursor.loop)
-		j = j % this->keyFrameArray.size();
-
 	if (!(0 <= j && j < this->keyFrameArray.size()))
 		return false;
 
-	keyFrameA = this->keyFrameArray[i];
-	keyFrameB = this->keyFrameArray[j];
+	keyFramePair.lowerBound = this->keyFrameArray[i];
+	keyFramePair.upperBound = this->keyFrameArray[j];
 	return true;
 }
 
-bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds) const
+double Animation::GetStartTime() const
+{
+	if (this->keyFrameArray.size() == 0)
+		return 0.0;
+
+	return this->keyFrameArray[0]->GetTime();
+}
+
+double Animation::GetEndTime() const
+{
+	if (this->keyFrameArray.size() == 0)
+		return 0.0;
+
+	return this->keyFrameArray[this->keyFrameArray.size() - 1]->GetTime();
+}
+
+double Animation::GetDuration() const
+{
+	return this->GetEndTime() - this->GetStartTime();
+}
+
+bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop) const
 {
 	cursor.timeSeconds += deltaTimeSeconds;
 
 	// Typically we'd do one or two interations at most here.
 	for (int i = 0; i < this->keyFrameArray.size(); i++)
 	{
-		const KeyFrame* keyFrameA = nullptr;
-		const KeyFrame* keyFrameB = nullptr;
-		if (!this->GetKeyFramesFromCursor(cursor, keyFrameA, keyFrameB))
+		KeyFramePair keyFramePair{};
+		if (!this->GetKeyFramesFromCursor(cursor, keyFramePair))
 			return false;
 
-		Interval interval(keyFrameA->GetTime(), keyFrameB->GetTime());
+		Interval interval(keyFramePair.lowerBound->GetTime(), keyFramePair.upperBound->GetTime());
 		if (!interval.IsValid())
 			return false;
 
@@ -171,12 +201,17 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds) const
 		if (cursor.timeSeconds > interval)
 		{
 			cursor.i++;
-			if (cursor.i >= this->keyFrameArray.size())
+			if (cursor.i >= this->keyFrameArray.size() - 1)
 			{
-				if (cursor.loop)
-					cursor.i = 0;
-				else
+				if (!loop)
+				{
+					cursor.i--;
+					cursor.timeSeconds = this->keyFrameArray[this->keyFrameArray.size() - 1]->GetTime();
 					return false;
+				}
+				
+				cursor.i = 0;
+				cursor.timeSeconds -= this->GetDuration();
 			}
 		}
 		else if (cursor.timeSeconds < interval)
@@ -184,10 +219,15 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds) const
 			cursor.i--;
 			if (cursor.i < 0)
 			{
-				if (cursor.loop)
-					cursor.i = this->keyFrameArray.size() - 1;
-				else
+				if (!loop)
+				{
+					cursor.i++;
+					cursor.timeSeconds = this->keyFrameArray[0]->GetTime();
 					return false;
+				}
+
+				cursor.i = this->keyFrameArray.size() - 2;
+				cursor.timeSeconds += this->GetDuration();
 			}
 		}
 	}
@@ -216,6 +256,16 @@ void KeyFrame::Sort()
 	std::sort(this->poseInfoArray.begin(), this->poseInfoArray.end(), [](const PoseInfo& infoA, const PoseInfo& infoB) -> bool {
 		return ::strcmp(infoA.boneName.c_str(), infoB.boneName.c_str()) < 0;
 	});
+}
+
+void KeyFrame::Copy(const KeyFrame& keyFrame)
+{
+	this->Clear();
+
+	for (const PoseInfo& info : keyFrame.poseInfoArray)
+		this->poseInfoArray.push_back(info);
+
+	this->timeSeconds = keyFrame.timeSeconds;
 }
 
 bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
@@ -290,12 +340,12 @@ bool KeyFrame::Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDo
 	return true;
 }
 
-bool KeyFrame::Interpolate(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB, double timeSeconds)
+bool KeyFrame::Interpolate(const KeyFramePair& keyFramePair, double timeSeconds)
 {
-	if (keyFrameA->poseInfoArray.size() != keyFrameB->poseInfoArray.size())
+	if (keyFramePair.lowerBound->poseInfoArray.size() != keyFramePair.upperBound->poseInfoArray.size())
 		return false;
 
-	Interval interval(keyFrameA->GetTime(), keyFrameB->GetTime());
+	Interval interval(keyFramePair.lowerBound->GetTime(), keyFramePair.upperBound->GetTime());
 	if (!interval.IsValid())
 		return false;
 
@@ -305,10 +355,10 @@ bool KeyFrame::Interpolate(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB,
 
 	this->Clear();
 
-	for (int i = 0; i < keyFrameA->poseInfoArray.size(); i++)
+	for (int i = 0; i < keyFramePair.lowerBound->poseInfoArray.size(); i++)
 	{
-		const PoseInfo& poseInfoA = keyFrameA->poseInfoArray[i];
-		const PoseInfo& poseInfoB = keyFrameB->poseInfoArray[i];
+		const PoseInfo& poseInfoA = keyFramePair.lowerBound->poseInfoArray[i];
+		const PoseInfo& poseInfoB = keyFramePair.upperBound->poseInfoArray[i];
 
 		if (poseInfoA.boneName != poseInfoB.boneName)
 			return false;
@@ -323,7 +373,7 @@ bool KeyFrame::Interpolate(const KeyFrame* keyFrameA, const KeyFrame* keyFrameB,
 	return true;
 }
 
-int KeyFrame::Pose(Skeleton* skeleton) const
+int KeyFrame::PoseSkeleton(Skeleton* skeleton) const
 {
 	int poseCount = 0;
 
@@ -340,7 +390,7 @@ int KeyFrame::Pose(Skeleton* skeleton) const
 	return poseCount;
 }
 
-void KeyFrame::MakePose(const Skeleton* skeleton)
+void KeyFrame::MakePoseFromSkeleton(const Skeleton* skeleton)
 {
 	this->Clear();
 

@@ -4,9 +4,9 @@
 
 AnimatedMeshInstance::AnimatedMeshInstance()
 {
-	this->transitionTimeSeconds = 0.2;
+	this->transitionTime = 0.2;
+	this->currentTransitionTime = 0.0;
 	cursor.i = 0;
-	cursor.loop = true;
 	cursor.timeSeconds = 0.0;
 }
 
@@ -29,67 +29,64 @@ AnimatedMeshInstance::AnimatedMeshInstance()
 
 bool AnimatedMeshInstance::SetAnimation(const std::string& animationName)
 {
-	// TODO: This is all crap. Rewrite/rethink it all.
-
-	if (this->animation)
-	{
-		this->transitionalKeyFrame.Clear();
-
-		const KeyFrame* keyFrameA = nullptr;
-		const KeyFrame* keyFrameB = nullptr;
-		if (this->animation->GetKeyFramesFromCursor(this->cursor, keyFrameA, keyFrameB))
-			this->transitionalKeyFrame.Interpolate(keyFrameA, keyFrameB, this->cursor.timeSeconds);
-	}
+	this->transitionalKeyFrame.Copy(this->currentKeyFrame);
 
 	this->animation.Set(this->skinnedMesh->GetAnimation(animationName));
 	if (!this->animation)
 		return false;
 
-	this->cursor.i = 0;
-	this->cursor.loop = true;
-	this->cursor.timeSeconds = 0.0;
+	if (!this->animation->MakeCursorFromTime(this->cursor, this->animation->GetStartTime()))
+	{
+		this->animation.Set(nullptr);
+		return false;
+	}
 
 	if (this->transitionalKeyFrame.GetPoseCount() > 0)
 	{
-		this->transitionalKeyFrame.SetTime(-this->transitionTimeSeconds);
-		this->cursor.timeSeconds = -this->transitionTimeSeconds;
+		this->currentTransitionTime = this->animation->GetStartTime() - this->transitionTime;
+		this->transitionalKeyFrame.SetTime(this->currentTransitionTime);
 	}
 
 	return true;
 }
 
-void AnimatedMeshInstance::AdvanceAnimation(double deltaTime)
+bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime)
 {
 	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
 	if (!skeleton)
-		return;
+		return false;
 
 	if (!this->animation)
-	{
-		skeleton->ResetCurrentPose();
-		return;
-	}
+		return false;
 
-	KeyFrame keyFrame;
+	KeyFramePair keyFramePair{};
 
 	if (this->transitionalKeyFrame.GetPoseCount() > 0)
 	{
-		//keyFrame.Interpolate(this->transitionalKeyFrame, ...)
+		this->animation->GetKeyFramesFromCursor(this->cursor, keyFramePair);
+
+		this->currentTransitionTime += deltaTime;
+		KeyFramePair transitionPair{ &this->transitionalKeyFrame, keyFramePair.lowerBound };
+
+		if (this->currentTransitionTime < keyFramePair.lowerBound->GetTime())
+			this->currentKeyFrame.Interpolate(transitionPair, this->currentTransitionTime);
+		else
+		{
+			this->animation->AdvanceCursor(cursor, this->currentTransitionTime - keyFramePair.lowerBound->GetTime(), true);
+			this->animation->GetKeyFramesFromCursor(this->cursor, keyFramePair);
+			this->currentKeyFrame.Interpolate(keyFramePair, this->cursor.timeSeconds);
+			this->transitionalKeyFrame.Clear();
+		}
 	}
 	else
 	{
-		const KeyFrame* keyFrameA = nullptr;
-		const KeyFrame* keyFrameB = nullptr;
-		if (!this->animation->GetKeyFramesFromCursor(this->cursor, keyFrameA, keyFrameB))
-		{
-			skeleton->ResetCurrentPose();
-			return;
-		}
-		
-		this->transitionalKeyFrame.Interpolate(keyFrameA, keyFrameB, this->cursor.timeSeconds);
+		this->animation->AdvanceCursor(cursor, deltaTime, true);
+		this->animation->GetKeyFramesFromCursor(this->cursor, keyFramePair);
+		this->currentKeyFrame.Interpolate(keyFramePair, this->cursor.timeSeconds);
 	}
 
-	keyFrame.Pose(skeleton);
+	this->currentKeyFrame.PoseSkeleton(skeleton);
 	skeleton->UpdateCachedTransforms(BoneTransformType::CURRENT_POSE);
 	this->skinnedMesh->DeformMesh();
+	return true;
 }
