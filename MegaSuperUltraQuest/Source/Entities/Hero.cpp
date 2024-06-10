@@ -141,7 +141,7 @@ Hero::Hero()
 				targetOrienation.SetColumnVectors(xAxis, yAxis, zAxis);
 			}
 
-			objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrienation, 0.8);
+			objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrienation, 0.2);
 			objectToWorld.translation += this->velocity * deltaTime;
 
 			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
