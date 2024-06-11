@@ -1,5 +1,7 @@
 #include "LevelData.h"
 
+using namespace Imzadi;
+
 LevelData::LevelData()
 {
 }

@@ -2,6 +2,8 @@
 #include "Assets/SkinnedRenderMesh.h"
 #include "Assets/Skeleton.h"
 
+using namespace Imzadi;
+
 AnimatedMeshInstance::AnimatedMeshInstance()
 {
 	this->transitionTime = 0.2;

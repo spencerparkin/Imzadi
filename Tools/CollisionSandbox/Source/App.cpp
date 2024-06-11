@@ -4,12 +4,12 @@
 
 wxIMPLEMENT_APP(App);
 
-using namespace Collision;
+using namespace Imzadi;
 
 App::App()
 {
 	this->frame = nullptr;
-	this->collisionSystem = new Collision::System();
+	this->collisionSystem = new Imzadi::CollisionSystem();
 }
 
 /*virtual*/ App::~App()

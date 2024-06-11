@@ -1,6 +1,6 @@
 #include "Entity.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Entity::Entity()
 {

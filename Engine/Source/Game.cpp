@@ -5,12 +5,12 @@
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
-#include "Query.h"
-#include "Result.h"
+#include "Collision/Query.h"
+#include "Collision/Result.h"
 #include <format>
 #include <math.h>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Game* Game::gameSingleton = nullptr;
 
@@ -43,21 +43,22 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->lightParams.lightCameraDistance = 200.0;
 	ZeroMemory(&this->mainPassViewport, sizeof(D3D11_VIEWPORT));
 	ZeroMemory(&this->shadowPassViewport, sizeof(D3D11_VIEWPORT));
+	lstrcpy(this->windowTitle, "Imzadi Game Engine");
 }
 
 /*virtual*/ Game::~Game()
 {
 }
 
-bool Game::Initialize()
+/*virtual*/ bool Game::CreateRenderWindow()
 {
 	WNDCLASSEX winClass;
 	::ZeroMemory(&winClass, sizeof(winClass));
 	winClass.cbSize = sizeof(WNDCLASSEX);
 	winClass.style = CS_HREDRAW | CS_VREDRAW;
 	winClass.lpfnWndProc = &Game::WndProcEntryFunc;
-	winClass.lpszClassName = GAME_WINDOW_CLASS_NAME;
-	
+	winClass.lpszClassName = IMZADI_GAME_WINDOW_CLASS_NAME;
+
 	if (!RegisterClassEx(&winClass))
 	{
 		DWORD errorCode = GetLastError();
@@ -73,7 +74,7 @@ bool Game::Initialize()
 
 	this->mainWindowHandle = CreateWindowEx(WS_EX_OVERLAPPEDWINDOW,
 												winClass.lpszClassName,
-												TEXT("Mega Super Ultra Quest"),
+												this->windowTitle,
 												WS_OVERLAPPEDWINDOW | WS_VISIBLE,
 												CW_USEDEFAULT, CW_USEDEFAULT,
 												width,
@@ -89,6 +90,44 @@ bool Game::Initialize()
 	}
 
 	SetWindowLongPtr(this->mainWindowHandle, GWLP_USERDATA, LONG_PTR(this));
+
+	return true;
+}
+
+/*virtual*/ bool Game::PreInit()
+{
+	return true;
+}
+
+/*virtual*/ bool Game::PostInit()
+{
+	this->assetCache.Set(new AssetCache());
+	this->assetCache->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Engine\Assets)");	// TODO: Need to not hard-code a path here.
+
+	this->scene.Set(new Scene());
+	this->debugLines.Set(new DebugLines());
+	this->scene->AddRenderObject(this->debugLines.Get());
+
+	return true;
+}
+
+/*static*/ Game* Game::Get()
+{
+	return gameSingleton;
+}
+
+/*static*/ void Game::Set(Game* game)
+{
+	gameSingleton = game;
+}
+
+/*virtual*/ bool Game::Initialize()
+{
+	if (!this->PreInit())
+		return false;
+
+	if (!this->CreateRenderWindow())
+		return false;
 
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1 };
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -252,15 +291,8 @@ bool Game::Initialize()
 	if (FAILED(result))
 		return false;
 
-	this->assetCache.Set(new AssetCache());
-	this->assetCache->SetAssetFolder("E:\\ENG_DEV\\CollisionSystem\\MegaSuperUltraQuest\\Assets");	// TODO: Need to get this a different way, obviously.
-
-	this->scene.Set(new Scene());
-	this->debugLines.Set(new DebugLines());
-	this->scene->AddRenderObject(this->debugLines.Get());
-
-	Level* level = this->SpawnEntity<Level>();
-	level->SetLevelNumber(1);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
+	if (!this->PostInit())
+		return false;
 
 	this->keepRunning = true;
 	return true;
@@ -268,8 +300,8 @@ bool Game::Initialize()
 
 Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
 			const std::string& renderMeshFile,
-			const Collision::Vector3& position,
-			const Collision::Quaternion& orientation)
+			const Imzadi::Vector3& position,
+			const Imzadi::Quaternion& orientation)
 {
 	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
@@ -357,84 +389,81 @@ bool Game::RecreateViews()
 	return true;
 }
 
-bool Game::Run()
+/*virtual*/ bool Game::Run()
 {
-	while (this->keepRunning)
-	{
-		if (this->lastTickTime == 0)
-			this->lastTickTime = ::clock();
+	if (this->lastTickTime == 0)
+		this->lastTickTime = ::clock();
 
-		clock_t currentTickTime = ::clock();
-		clock_t deltaTickTime = currentTickTime - this->lastTickTime;
-		double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
-		this->lastTickTime = currentTickTime;
+	clock_t currentTickTime = ::clock();
+	clock_t deltaTickTime = currentTickTime - this->lastTickTime;
+	double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
+	this->lastTickTime = currentTickTime;
 
 #if defined _DEBUG
-		// This is to prevent large deltas produced as a result of
-		// being broken in the debugger.
-		if (deltaTimeSeconds >= 1.0)
-			continue;
+	// This is to prevent large deltas produced as a result of
+	// being broken in the debugger.
+	if (deltaTimeSeconds >= 1.0)
+		return true;
 #endif //_DEBUG
 
-		this->debugLines->Clear();
+	this->debugLines->Clear();
 
-		MSG message{};
-		while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
-		{
-			if (message.message == WM_QUIT)
-				this->keepRunning = false;
+	MSG message{};
+	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
+	{
+		if (message.message == WM_QUIT)
+			this->keepRunning = false;
 
-			TranslateMessage(&message);
-			DispatchMessage(&message);
-		}
-
-		this->controller.Update();
-
-		// Can initiate collision queries in this pass.
-		this->AdvanceEntities(Entity::TickPass::PRE_TICK, deltaTimeSeconds);
-
-		// Do work that runs in parallel with the collision system.  (e.g., animating skeletons and performing skinning.)
-		this->AdvanceEntities(Entity::TickPass::MID_TICK, deltaTimeSeconds);
-
-		// Stall waiting for the collision system to complete all queries and commands.
-		this->collisionSystem.FlushAllTasks();
-
-		// Collision queries can now be acquired and used in this pass.  (e.g., to solve constraints.)
-		this->AdvanceEntities(Entity::TickPass::POST_TICK, deltaTimeSeconds);
-
-		if (this->windowResized)
-		{
-			this->deviceContext->OMSetRenderTargets(0, NULL, NULL);
-			this->RecreateViews();
-			this->windowResized = false;
-		}
-
-		if (this->collisionSystemDebugDrawFlags != 0)
-		{
-			auto query = new DebugRenderQuery();
-			query->SetDrawFlags(this->collisionSystemDebugDrawFlags);
-			TaskID collisionSystemDebugDrawTaskID = 0;
-			this->collisionSystem.MakeQuery(query, collisionSystemDebugDrawTaskID);
-			this->collisionSystem.FlushAllTasks();
-			Result* result = this->collisionSystem.ObtainQueryResult(collisionSystemDebugDrawTaskID);
-			if (result)
-			{
-				auto debugRenderResult = dynamic_cast<DebugRenderResult*>(result);
-				if (debugRenderResult)
-					for (const DebugRenderResult::RenderLine& line : debugRenderResult->GetRenderLineArray())
-						this->debugLines->AddLine({ line.color, line.line });
-
-				this->collisionSystem.Free<Result>(result);
-			}
-		}
-
-		this->Render();
+		TranslateMessage(&message);
+		DispatchMessage(&message);
 	}
 
-	return true;
+	this->controller.Update();
+
+	// Can initiate collision queries in this pass.
+	this->Tick(TickPass::PRE_TICK, deltaTimeSeconds);
+
+	// Do work that runs in parallel with the collision system.  (e.g., animating skeletons and performing skinning.)
+	this->Tick(TickPass::MID_TICK, deltaTimeSeconds);
+
+	// Stall waiting for the collision system to complete all queries and commands.
+	this->collisionSystem.FlushAllTasks();
+
+	// Collision queries can now be acquired and used in this pass.  (e.g., to solve constraints.)
+	this->Tick(TickPass::POST_TICK, deltaTimeSeconds);
+
+	if (this->windowResized)
+	{
+		this->deviceContext->OMSetRenderTargets(0, NULL, NULL);
+		this->RecreateViews();
+		this->windowResized = false;
+	}
+
+	if (this->collisionSystemDebugDrawFlags != 0)
+	{
+		auto query = new DebugRenderQuery();
+		query->SetDrawFlags(this->collisionSystemDebugDrawFlags);
+		TaskID collisionSystemDebugDrawTaskID = 0;
+		this->collisionSystem.MakeQuery(query, collisionSystemDebugDrawTaskID);
+		this->collisionSystem.FlushAllTasks();
+		Result* result = this->collisionSystem.ObtainQueryResult(collisionSystemDebugDrawTaskID);
+		if (result)
+		{
+			auto debugRenderResult = dynamic_cast<DebugRenderResult*>(result);
+			if (debugRenderResult)
+				for (const DebugRenderResult::RenderLine& line : debugRenderResult->GetRenderLineArray())
+					this->debugLines->AddLine({ line.color, line.line });
+
+			this->collisionSystem.Free<Result>(result);
+		}
+	}
+
+	this->Render();
+
+	return this->keepRunning;
 }
 
-void Game::AdvanceEntities(Entity::TickPass tickPass, double deltaTimeSeconds)
+void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 {
 	while (this->spawnedEntityQueue.size() > 0)
 	{
@@ -463,7 +492,7 @@ void Game::AdvanceEntities(Entity::TickPass tickPass, double deltaTimeSeconds)
 	}
 }
 
-void Game::Render()
+/*virtual*/ void Game::Render()
 {
 	Vector3 lightCameraPosition = this->camera->GetEyePoint() - this->lightParams.lightCameraDistance * this->lightParams.lightDirection;
 	if (!this->lightSourceCamera->LookAt(lightCameraPosition, this->camera->GetEyePoint(), Vector3(0.0, 1.0, 0.0)))
@@ -505,7 +534,7 @@ void Game::Render()
 	this->swapChain->Present(1, 0);
 }
 
-LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
+/*virtual*/ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch (msg)
 	{
@@ -518,11 +547,11 @@ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
 		case WM_KEYUP:
 		{
 			if (wParam == VK_F1)
-				this->collisionSystemDebugDrawFlags ^= COLL_SYS_DRAW_FLAG_SHAPES;
+				this->collisionSystemDebugDrawFlags ^= IMZADI_DRAW_FLAG_SHAPES;
 			else if (wParam == VK_F2)
-				this->collisionSystemDebugDrawFlags ^= COLL_SYS_DRAW_FLAG_SHAPE_BOXES;
+				this->collisionSystemDebugDrawFlags ^= IMZADI_DRAW_FLAG_SHAPE_BOXES;
 			else if (wParam == VK_F3)
-				this->collisionSystemDebugDrawFlags ^= COLL_SYS_DRAW_FLAG_AABB_TREE;
+				this->collisionSystemDebugDrawFlags ^= IMZADI_DRAW_FLAG_AABB_TREE;
 			break;
 		}
 		case WM_DESTROY:
@@ -583,8 +612,25 @@ std::string Game::PopControllerUser()
 	return controllerUser;
 }
 
-bool Game::Shutdown()
+/*virtual*/ void Game::Tick(TickPass tickPass, double deltaTimeSeconds)
 {
+	this->AdvanceEntities(tickPass, deltaTimeSeconds);
+}
+
+/*virtual*/ bool Game::PreShutdown()
+{
+	return true;
+}
+
+/*virtual*/ bool Game::PostShutdown()
+{
+	return true;
+}
+
+/*virtual*/ bool Game::Shutdown()
+{
+	this->PreShutdown();
+
 	// TODO: Do we need to wait for the GPU to finish?!
 
 	this->spawnedEntityQueue.clear();
@@ -629,7 +675,9 @@ bool Game::Shutdown()
 		this->mainWindowHandle = nullptr;
 	}
 
-	UnregisterClass(GAME_WINDOW_CLASS_NAME, this->instance);
+	UnregisterClass(IMZADI_GAME_WINDOW_CLASS_NAME, this->instance);
+
+	this->PostShutdown();
 
 	return true;
 }

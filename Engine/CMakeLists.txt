@@ -14,6 +14,8 @@ set(GAME_ENGINE_SOURCES
     Source/Reference.h
     Source/Scene.cpp
     Source/Scene.h
+    Source/Controller.cpp
+    Source/Controller.h
     Source/Entities/Enemy.cpp
     Source/Entities/Enemy.h
     Source/Entities/FollowCam.cpp
@@ -46,8 +48,6 @@ set(GAME_ENGINE_SOURCES
     Source/Collision/CollisionCalculator.h
     Source/Collision/Shape.cpp
     Source/Collision/Shape.h
-    Source/Collision/Error.cpp
-    Source/Collision/Error.h
     Source/Collision/Result.cpp
     Source/Collision/Result.h
     Source/Collision/BoundingBoxTree.cpp
@@ -133,8 +133,17 @@ add_library(ImzadiGameEngine SHARED
 target_compile_definitions(ImzadiGameEngine PRIVATE
     IMZADI_EXPORT
     _USE_MATH_DEFINES
+    WIN32_LEAN_AND_MEAN
+    NOMINMAX
+)
+
+target_link_libraries(ImzadiGameEngine PRIVATE
+    d3d11.lib
+    d3dcompiler.lib    
+    Xinput9_1_0.lib
 )
 
 target_include_directories(ImzadiGameEngine PUBLIC
     "Source"
+    ${PROJECT_SOURCE_DIR}/ThirdParty
 )

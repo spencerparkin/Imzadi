@@ -1,14 +1,16 @@
 #include "Main.h"
-#include "Game.h"
+#include "GameApp.h"
 
 int WINAPI WinMain(HINSTANCE instance, HINSTANCE prevInstance, LPSTR cmdLine, int showCmd)
 {
-	Game game(instance);
-	Game::Set(&game);
+	GameApp game(instance);
+	GameApp::Set(&game);
 
 	if (game.Initialize())
 	{
-		game.Run();
+		while (game.Run())
+		{
+		}
 	}
 
 	game.Shutdown();

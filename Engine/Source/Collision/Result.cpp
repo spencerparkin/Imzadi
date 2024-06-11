@@ -2,7 +2,7 @@
 #include "CollisionCache.h"
 #include "Math/AxisAlignedBoundingBox.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 //-------------------------------- Result --------------------------------
 
@@ -217,5 +217,5 @@ Vector3 CollisionQueryResult::GetAverageSeparationDelta(ShapeID shapeID) const
 		}
 	}
 
-	return averageSeparationDelta / COLL_SYS_MAX(count, 1.0);
+	return averageSeparationDelta / IMZADI_MAX(count, 1.0);
 }

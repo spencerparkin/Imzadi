@@ -8,7 +8,7 @@
 #include <ostream>
 #include <istream>
 
-namespace Collision
+namespace Imzadi
 {
 	class DebugRenderResult;
 	class BoundingBoxNode;
@@ -33,7 +33,7 @@ namespace Collision
 	 * would be the most flexible type of collision shape I can think of, but is presently well beyond
 	 * the capabilities of this system.
 	 */
-	class COLLISION_LIB_API Shape
+	class IMZADI_API Shape
 	{
 		friend class BoundingBoxTree;
 		friend class BoundingBoxNode;

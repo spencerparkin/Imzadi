@@ -4,7 +4,7 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	class Vector2;
 
@@ -13,7 +13,7 @@ namespace Collision
 	 * library is primarly concerned with 3D space, 2-dimensional problems
 	 * often arrise.
 	 */
-	class COLLISION_LIB_API Matrix2x2
+	class IMZADI_API Matrix2x2
 	{
 	public:
 		Matrix2x2();
@@ -149,7 +149,7 @@ namespace Collision
 	 * @param[in] matrixB The second matrix taken in the sum.
 	 * @return The sum of matrixA and matrixB is returned.
 	 */
-	COLLISION_LIB_API Matrix2x2 operator+(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
+	IMZADI_API Matrix2x2 operator+(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
 
 	/**
 	 * Calculate and return the difference of the two 2x2 given matrices.  This is a non-commutative operation.
@@ -158,7 +158,7 @@ namespace Collision
 	 * @param[in] matrixB The second matrix taken in the difference.
 	 * @return The second matrix taken away from the first is returned.
 	 */
-	COLLISION_LIB_API Matrix2x2 operator-(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
+	IMZADI_API Matrix2x2 operator-(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
 
 	/**
 	 * Calculate and return the product of the two given 2x2 matrices.  This is a non-commutative operation.
@@ -167,7 +167,7 @@ namespace Collision
 	 * @param[in] matrixB The second matrix taken in the product.
 	 * @return The product of matrixA and matrixB is returned, in that order.
 	 */
-	COLLISION_LIB_API Matrix2x2 operator*(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
+	IMZADI_API Matrix2x2 operator*(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
 
 	/**
 	 * Calculate and return the quotient of the two given 2x2 matrices.  This is a non-commutative operation,
@@ -177,7 +177,7 @@ namespace Collision
 	 * @param[in] matrixB The second matrix taken in the quotient (the divisor.)
 	 * @return The quotient of matrixA and matrixB is returned, in that order.
 	 */
-	COLLISION_LIB_API Matrix2x2 operator/(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
+	IMZADI_API Matrix2x2 operator/(const Matrix2x2& matrixA, const Matrix2x2& matrixB);
 
 	/**
 	 * Calculate and return the given 2x2 matrix scaled by the given scalar.  This is a commutative operation.
@@ -186,12 +186,12 @@ namespace Collision
 	 * @param[in] scalar This is the amount by which the matrix is scaled.
 	 * @return The product of the matrix and the scalar is returned.
 	 */
-	COLLISION_LIB_API Matrix2x2 operator*(const Matrix2x2& matrix, double scalar);
+	IMZADI_API Matrix2x2 operator*(const Matrix2x2& matrix, double scalar);
 
 	/**
 	 * See the documentation for the other variation of this function.
 	 */
-	COLLISION_LIB_API Matrix2x2 operator*(double scalar, const Matrix2x2& matrix);
+	IMZADI_API Matrix2x2 operator*(double scalar, const Matrix2x2& matrix);
 
 	/**
 	 * Treating the given vector as a 2x1 column vector, calculate and return
@@ -201,7 +201,7 @@ namespace Collision
 	 * @param[in] vector This is the vector taken in the product.
 	 * @return A 2x1 column vector is returned.
 	 */
-	COLLISION_LIB_API Vector2 operator*(const Matrix2x2& matrix, const Vector2& vector);
+	IMZADI_API Vector2 operator*(const Matrix2x2& matrix, const Vector2& vector);
 
 	/**
 	 * Treating the given vector as a 1x2 row vector, calculate and return
@@ -211,5 +211,5 @@ namespace Collision
 	 * @param[in] matrix This is the matrix taken in the product.
 	 * @return A 1x2 row vector is returned.
 	 */
-	COLLISION_LIB_API Vector2 operator*(const Vector2& vector, const Matrix2x2& matrix);
+	IMZADI_API Vector2 operator*(const Vector2& vector, const Matrix2x2& matrix);
 }

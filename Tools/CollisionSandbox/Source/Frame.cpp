@@ -1,20 +1,19 @@
 #include "Frame.h"
 #include "App.h"
 #include "Canvas.h"
-#include "Error.h"
-#include "Loader.h"
+#include "Collision/Loader.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
-#include "Shapes/Box.h"
-#include "Shapes/Capsule.h"
-#include "Shapes/Polygon.h"
-#include "Shapes/Sphere.h"
-#include "Command.h"
+#include "Collision/Shapes/Box.h"
+#include "Collision/Shapes/Capsule.h"
+#include "Collision/Shapes/Polygon.h"
+#include "Collision/Shapes/Sphere.h"
+#include "Collision/Command.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Sandbox", pos, size), timer(this, ID_Timer)
 {
@@ -90,13 +89,13 @@ void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 	switch (event.GetId())
 	{
 	case ID_DrawShapes:
-		event.Check((this->canvas->GetDebugDrawFlags() & COLL_SYS_DRAW_FLAG_SHAPES) != 0);
+		event.Check((this->canvas->GetDebugDrawFlags() & IMZADI_DRAW_FLAG_SHAPES) != 0);
 		break;
 	case ID_DrawShapeBoxes:
-		event.Check((this->canvas->GetDebugDrawFlags() & COLL_SYS_DRAW_FLAG_SHAPE_BOXES) != 0);
+		event.Check((this->canvas->GetDebugDrawFlags() & IMZADI_DRAW_FLAG_SHAPE_BOXES) != 0);
 		break;
 	case ID_DrawBoxTree:
-		event.Check((this->canvas->GetDebugDrawFlags() & COLL_SYS_DRAW_FLAG_AABB_TREE) != 0);
+		event.Check((this->canvas->GetDebugDrawFlags() & IMZADI_DRAW_FLAG_AABB_TREE) != 0);
 		break;
 	}
 }
@@ -129,14 +128,14 @@ void Frame::OnExit(wxCommandEvent& event)
 
 void Frame::OnClearWorld(wxCommandEvent& event)
 {
-	System* system = wxGetApp().GetCollisionSystem();
+	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 	system->Clear();
 	this->canvas->Refresh();
 }
 
 void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 {
-	System* system = wxGetApp().GetCollisionSystem();
+	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 	switch (event.GetId())
 	{
@@ -151,15 +150,9 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 					wxRemoveFile(fileName);
 
 				if (!system->DumpToFile(fileName))
-				{
-					wxString errorMsg(GetError()->GetAllErrorMessages().c_str());
-					GetError()->Clear();
-					wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
-				}
+					wxMessageBox(wxString::Format("Failed to dump file: %s", fileName.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 				else
-				{
 					wxMessageBox("Physics world dumped!", "Success!", wxICON_INFORMATION | wxOK, this);
-				}
 			}
 
 			break;
@@ -171,15 +164,9 @@ void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 			{
 				std::string fileName((const char*)fileDialog.GetPath().c_str());
 				if (!system->RestoreFromFile(fileName))
-				{
-					wxString errorMsg(GetError()->GetAllErrorMessages().c_str());
-					GetError()->Clear();
-					wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
-				}
+					wxMessageBox(wxString::Format("Failed to restore from file: %s", fileName.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 				else
-				{
 					wxMessageBox("Physics world restored!", "Success!", wxICON_INFORMATION | wxOK, this);
-				}
 			}
 
 			break;
@@ -205,11 +192,7 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 			else
 			{
 				if (!shapeLoader->LoadShapes((const char*)filePath.c_str(), shapeArray))
-				{
-					std::string errorMsg = GetError()->GetAllErrorMessages();
-					GetError()->Clear();
-					wxMessageBox(wxString::Format("Failed to load all shapes from file: %s\n\n%s", filePath.c_str(), errorMsg.c_str()), "Error!", wxICON_ERROR | wxOK, this);
-				}
+					wxMessageBox(wxString::Format("Failed to load all shapes from file: %s", filePath.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 
 				ShapeLoader::Free(shapeLoader);
 			}
@@ -219,16 +202,16 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 		{
 			wxMessageBox(wxString::Format("%d shapes loaded!", int(shapeArray.size())), "Shape Loading", wxICON_INFORMATION | wxOK, this);
 
-			System* system = wxGetApp().GetCollisionSystem();
+			CollisionSystem* system = wxGetApp().GetCollisionSystem();
 			for (auto shape : shapeArray)
-				system->AddShape(shape, COLL_SYS_ADD_FLAG_ALLOW_SPLIT);
+				system->AddShape(shape, IMZADI_ADD_FLAG_ALLOW_SPLIT);
 		}
 	}
 }
 
 void Frame::OnAddShape(wxCommandEvent& event)
 {
-	System* system = wxGetApp().GetCollisionSystem();
+	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 	Shape* shape = nullptr;
 
 	// TODO: Maybe ask the user for size information?
@@ -306,13 +289,13 @@ void Frame::OnDebugDrawToggle(wxCommandEvent& event)
 	switch (event.GetId())
 	{
 	case ID_DrawShapes:
-		toggleFlag = COLL_SYS_DRAW_FLAG_SHAPES;
+		toggleFlag = IMZADI_DRAW_FLAG_SHAPES;
 		break;
 	case ID_DrawShapeBoxes:
-		toggleFlag = COLL_SYS_DRAW_FLAG_SHAPE_BOXES;
+		toggleFlag = IMZADI_DRAW_FLAG_SHAPE_BOXES;
 		break;
 	case ID_DrawBoxTree:
-		toggleFlag = COLL_SYS_DRAW_FLAG_AABB_TREE;
+		toggleFlag = IMZADI_DRAW_FLAG_AABB_TREE;
 		break;
 	}
 
@@ -327,7 +310,7 @@ void Frame::OnAbout(wxCommandEvent& event)
 	wxAboutDialogInfo aboutDialogInfo;
 
 	aboutDialogInfo.SetName("Sandbox");
-	aboutDialogInfo.SetDescription("This program is design to help test and develop the CollisionLib library.");
+	aboutDialogInfo.SetDescription("This program is design to help test and develop the collision system of the Imzadi game engine library.");
 
 	wxAboutBox(aboutDialogInfo);
 }

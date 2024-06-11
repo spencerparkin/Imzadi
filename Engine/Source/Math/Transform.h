@@ -3,7 +3,7 @@
 #include "Vector3.h"
 #include "Matrix3x3.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class Plane;
 	class Ray;
@@ -19,7 +19,7 @@ namespace Collision
 	 * 4x4 matrix algebra might aide in formulating some of the methods, but it is not a user-facing concept.
 	 * We're not doing anything here with homogenous coordinates, for example.
 	 */
-	class COLLISION_LIB_API Transform
+	class IMZADI_API Transform
 	{
 	public:
 		/**
@@ -166,5 +166,5 @@ namespace Collision
 	 * @param[in] transformB The second transform taken in the function composition.
 	 * @return The transform composed by first evaluating transformB, then sending its result to transformA.
 	 */
-	COLLISION_LIB_API Transform operator*(const Transform& transformA, const Transform& transformB);
+	IMZADI_API Transform operator*(const Transform& transformA, const Transform& transformB);
 }

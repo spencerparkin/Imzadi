@@ -10,7 +10,7 @@
 #include "MovingPlatform.h"
 #include <format>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Level::Level()
 {
@@ -69,7 +69,7 @@ Level::Level()
 	for(auto collisionShapeSet : collisionShapeSetArray)
 	{
 		for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
-			Game::Get()->GetCollisionSystem()->AddShape(shape, 0 /*COLL_SYS_ADD_FLAG_ALLOW_SPLIT*/);	// TODO: Figure out why splitting fails.
+			Game::Get()->GetCollisionSystem()->AddShape(shape, 0 /*IMZADI_ADD_FLAG_ALLOW_SPLIT*/);	// TODO: Figure out why splitting fails.
 
 		collisionShapeSet->Clear(false);
 	}

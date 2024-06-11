@@ -4,7 +4,7 @@
 #include <string>
 #include <vector>
 
-namespace Collision
+namespace Imzadi
 {
 	class Shape;
 
@@ -12,7 +12,7 @@ namespace Collision
 	 * This is the base class for any derivative that knows how to load shapes
 	 * from a file on disk.
 	 */
-	class COLLISION_LIB_API ShapeLoader
+	class IMZADI_API ShapeLoader
 	{
 	public:
 		ShapeLoader();
@@ -77,7 +77,7 @@ namespace Collision
 	/**
 	 * This class knows how to load polygon shapes from .OBJ files.
 	 */
-	class COLLISION_LIB_API OBJ_ShapeLoader : public ShapeLoader
+	class IMZADI_API OBJ_ShapeLoader : public ShapeLoader
 	{
 	public:
 		OBJ_ShapeLoader();

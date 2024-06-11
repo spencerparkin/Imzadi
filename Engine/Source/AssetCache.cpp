@@ -20,16 +20,18 @@
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/prettywriter.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 //-------------------------------- AssetCache --------------------------------
 
 AssetCache::AssetCache()
 {
+	this->assetFolderArray = new std::vector<std::filesystem::path>();
 }
 
 /*virtual*/ AssetCache::~AssetCache()
 {
+	delete this->assetFolderArray;
 }
 
 void AssetCache::Clear()
@@ -43,18 +45,34 @@ void AssetCache::Clear()
 	this->assetMap.clear();
 }
 
-bool AssetCache::ResolveAssetPath(std::string& assetFile, bool mustExist)
+bool AssetCache::ResolveAssetPath(std::string& assetFile)
 {
-	std::filesystem::path assetPath(assetFile);
-	if (assetPath.is_relative())
-		assetFile = (this->assetFolder / assetPath).string();
+	std::string fullyQualifiedPath;
 
-	return !mustExist || std::filesystem::exists(assetFile);
+	for (const std::filesystem::path& assetFolder : *this->assetFolderArray)
+	{
+		std::filesystem::path assetPath(assetFile);
+		if (assetPath.is_relative())
+			fullyQualifiedPath = (assetFolder / assetPath).string();
+
+		if (std::filesystem::exists(fullyQualifiedPath))
+		{
+			assetFile = fullyQualifiedPath;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+void AssetCache::AddAssetFolder(const std::string& assetFolder)
+{
+	this->assetFolderArray->push_back(std::filesystem::path(assetFolder));
 }
 
 std::string AssetCache::MakeKey(const std::string& assetFile)
 {
-	// Of course, we'll have a problem here if two files have the same name but are in different directories.
+	// TODO: Of course, we'll have a problem here if two files have the same name but are in different directories.
 	std::filesystem::path assetPath(assetFile);
 	std::string key = assetPath.filename().string();
 	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return std::tolower(c); });
@@ -73,7 +91,7 @@ Asset* AssetCache::FindAsset(const std::string& assetFile, std::string* key /*= 
 	return iter->second;
 }
 
-Asset* AssetCache::CreateBlankAssetForFileType(const std::string& assetFile)
+/*virtual*/ Asset* AssetCache::CreateBlankAssetForFileType(const std::string& assetFile)
 {
 	std::filesystem::path assetPath(assetFile);
 	std::string ext = assetPath.extension().string();
@@ -112,7 +130,7 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 		return true;
 
 	std::string resolvedAssetFile(assetFile);
-	if (!ResolveAssetPath(resolvedAssetFile, true))
+	if (!ResolveAssetPath(resolvedAssetFile))
 		return false;
 
 	asset.Set(this->CreateBlankAssetForFileType(assetFile));
@@ -166,15 +184,11 @@ bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset
 	if (!asset->Save(doc))
 		return false;
 
-	std::string resolvedAssetFile(assetFile);
-	if (!ResolveAssetPath(resolvedAssetFile, false))
-		return false;
-
-	if (std::filesystem::exists(resolvedAssetFile))
+	if (std::filesystem::exists(assetFile))
 		std::remove(assetFile.c_str());
 
 	std::ofstream fileStream;
-	fileStream.open(resolvedAssetFile, std::ios::out);
+	fileStream.open(assetFile, std::ios::out);
 	if (!fileStream.is_open())
 		return false;
 
@@ -203,7 +217,7 @@ Asset::Asset()
 	return false;
 }
 
-/*static*/ bool Asset::LoadVector(const rapidjson::Value& vectorValue, Collision::Vector3& vector)
+/*static*/ bool Asset::LoadVector(const rapidjson::Value& vectorValue, Imzadi::Vector3& vector)
 {
 	if (!vectorValue.IsObject())
 		return false;
@@ -220,7 +234,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Collision::Quaternion& quat)
+/*static*/ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Imzadi::Quaternion& quat)
 {
 	if (!eulerAnglesValue.IsObject())
 		return false;
@@ -231,9 +245,9 @@ Asset::Asset()
 	if (!eulerAnglesValue["yaw"].IsFloat() || !eulerAnglesValue["pitch"].IsFloat() || !eulerAnglesValue["roll"].IsFloat())
 		return false;
 
-	double yawAngle = COLL_SYS_DEGS_TO_RADS(eulerAnglesValue["yaw"].GetFloat());
-	double pitchAngle = COLL_SYS_DEGS_TO_RADS(eulerAnglesValue["pitch"].GetFloat());
-	double rollAngle = COLL_SYS_DEGS_TO_RADS(eulerAnglesValue["roll"].GetFloat());
+	double yawAngle = IMZADI_DEGS_TO_RADS(eulerAnglesValue["yaw"].GetFloat());
+	double pitchAngle = IMZADI_DEGS_TO_RADS(eulerAnglesValue["pitch"].GetFloat());
+	double rollAngle = IMZADI_DEGS_TO_RADS(eulerAnglesValue["roll"].GetFloat());
 
 	Quaternion yawQuat, pitchQuat, rollQuat;
 
@@ -247,7 +261,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadQuaternion(const rapidjson::Value& quaternionValue, Collision::Quaternion& quat)
+/*static*/ bool Asset::LoadQuaternion(const rapidjson::Value& quaternionValue, Imzadi::Quaternion& quat)
 {
 	if (!quaternionValue.IsObject())
 		return false;
@@ -284,7 +298,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, Collision::AxisAlignedBoundingBox& aabb)
+/*static*/ bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, Imzadi::AxisAlignedBoundingBox& aabb)
 {
 	if (!aabbValue.IsObject())
 		return false;
@@ -301,7 +315,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadTransform(const rapidjson::Value& transformValue, Collision::Transform& transform)
+/*static*/ bool Asset::LoadTransform(const rapidjson::Value& transformValue, Imzadi::Transform& transform)
 {
 	if (!transformValue.IsObject())
 		return false;
@@ -318,7 +332,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadMatrix(const rapidjson::Value& matrixValue, Collision::Matrix3x3& matrix)
+/*static*/ bool Asset::LoadMatrix(const rapidjson::Value& matrixValue, Imzadi::Matrix3x3& matrix)
 {
 	if (!matrixValue.IsArray() || matrixValue.Size() != 9)
 		return false;
@@ -337,7 +351,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ void Asset::SaveVector(rapidjson::Value& vectorValue, const Collision::Vector3& vector, rapidjson::Document* doc)
+/*static*/ void Asset::SaveVector(rapidjson::Value& vectorValue, const Imzadi::Vector3& vector, rapidjson::Document* doc)
 {
 	vectorValue.SetObject();
 	vectorValue.AddMember("x", rapidjson::Value().SetFloat(vector.x), doc->GetAllocator());
@@ -345,7 +359,7 @@ Asset::Asset()
 	vectorValue.AddMember("z", rapidjson::Value().SetFloat(vector.z), doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Collision::Quaternion& quat, rapidjson::Document* doc)
+/*static*/ void Asset::SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Imzadi::Quaternion& quat, rapidjson::Document* doc)
 {
 	eulerAnglesValue.SetObject();
 
@@ -353,7 +367,7 @@ Asset::Asset()
 	assert(false);
 }
 
-/*static*/ void Asset::SaveQuaternion(rapidjson::Value& quaternionValue, const Collision::Quaternion& quat, rapidjson::Document* doc)
+/*static*/ void Asset::SaveQuaternion(rapidjson::Value& quaternionValue, const Imzadi::Quaternion& quat, rapidjson::Document* doc)
 {
 	quaternionValue.SetObject();
 	quaternionValue.AddMember("x", rapidjson::Value().SetFloat(quat.x), doc->GetAllocator());
@@ -370,7 +384,7 @@ Asset::Asset()
 		stringArrayValue.PushBack(rapidjson::Value().SetString(str.c_str(), doc->GetAllocator()), doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveBoundingBox(rapidjson::Value& aabbValue, const Collision::AxisAlignedBoundingBox& aabb, rapidjson::Document* doc)
+/*static*/ void Asset::SaveBoundingBox(rapidjson::Value& aabbValue, const Imzadi::AxisAlignedBoundingBox& aabb, rapidjson::Document* doc)
 {
 	rapidjson::Value minValue, maxValue;
 
@@ -382,7 +396,7 @@ Asset::Asset()
 	aabbValue.AddMember("max", maxValue, doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveTransform(rapidjson::Value& transformValue, const Collision::Transform& transform, rapidjson::Document* doc)
+/*static*/ void Asset::SaveTransform(rapidjson::Value& transformValue, const Imzadi::Transform& transform, rapidjson::Document* doc)
 {
 	rapidjson::Value matrixValue, translationValue;
 
@@ -394,7 +408,7 @@ Asset::Asset()
 	transformValue.AddMember("translation", translationValue, doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveMatrix(rapidjson::Value& matrixValue, const Collision::Matrix3x3& matrix, rapidjson::Document* doc)
+/*static*/ void Asset::SaveMatrix(rapidjson::Value& matrixValue, const Imzadi::Matrix3x3& matrix, rapidjson::Document* doc)
 {
 	matrixValue.SetArray();
 

@@ -3,7 +3,7 @@
 #include "Vector3.h"
 #include <vector>
 
-namespace Collision
+namespace Imzadi
 {
 	class Plane;
 	class LineSegment;
@@ -16,7 +16,7 @@ namespace Collision
 	 * face points of the box are members of the set.  Note that all methods are left
 	 * undefined if the stored corners of this AABB are invalid.
 	 */
-	class COLLISION_LIB_API AxisAlignedBoundingBox
+	class IMZADI_API AxisAlignedBoundingBox
 	{
 	public:
 		/**

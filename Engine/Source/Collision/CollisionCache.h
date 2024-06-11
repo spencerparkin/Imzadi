@@ -7,7 +7,7 @@
 #include <unordered_map>
 #include <string>
 
-namespace Collision
+namespace Imzadi
 {
 	class ShapePairCollisionStatus;
 
@@ -19,7 +19,7 @@ namespace Collision
 	 * is to prevent the work of calculating a collision between two shapes from being
 	 * needlessly redone, such as in the cases thus described.
 	 */
-	class COLLISION_LIB_API CollisionCache
+	class IMZADI_API CollisionCache
 	{
 	public:
 		CollisionCache();
@@ -73,7 +73,7 @@ namespace Collision
 	 * by the collision system user.  They are made private, but don't be tempted to hack the structure,
 	 * because read/write or even just read-only access to them is not thread-safe.
 	 */
-	class COLLISION_LIB_API ShapePairCollisionStatus
+	class IMZADI_API ShapePairCollisionStatus
 	{
 	public:
 		ShapePairCollisionStatus(const Shape* shapeA, const Shape* shapeB);

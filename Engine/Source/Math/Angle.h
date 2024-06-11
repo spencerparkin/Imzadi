@@ -2,13 +2,13 @@
 
 #include "Defines.h"
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * This class just contains some static methods that are useful when
 	 * dealing with angles (in radians.)
 	 */
-	class COLLISION_LIB_API Angle
+	class IMZADI_API Angle
 	{
 	public:
 		/**

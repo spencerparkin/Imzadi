@@ -5,10 +5,10 @@
 #include "Math/LineSegment.h"
 #include "Math/Matrix3x3.h"
 #include "Math/Interval.h"
-#include "Result.h"
+#include "Collision/Result.h"
 #include <list>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //----------------------------- PolygonShape -----------------------------
 
@@ -530,8 +530,8 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 			planarPointCloudB.push_back(point);
 	}
 
-	COLL_SYS_ASSERT(planarPointCloudA.size() > 0);
-	COLL_SYS_ASSERT(planarPointCloudB.size() > 0);
+	IMZADI_ASSERT(planarPointCloudA.size() > 0);
+	IMZADI_ASSERT(planarPointCloudB.size() > 0);
 
 	// Divided, go conquer.
 	PolygonShape polygonA(true), polygonB(true);

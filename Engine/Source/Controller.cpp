@@ -1,6 +1,8 @@
 #include "Controller.h"
 #include <math.h>
 
+using namespace Imzadi;
+
 Controller::Controller(DWORD userIndex)
 {
 	this->userIndex = userIndex;

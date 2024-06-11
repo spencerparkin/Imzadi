@@ -2,7 +2,7 @@
 #include "Game.h"
 #include "Math/Vector2.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 FreeCam::FreeCam()
 {
@@ -114,7 +114,7 @@ void FreeCam::SetEnabled(bool enabled)
 	xAxis = cameraToWorld.matrix.GetColumnVector(0);
 	xAxis = xAxis.RejectedFrom(Vector3(0.0, 1.0, 0.0));
 	cameraToWorld.matrix.SetColumnVector(0, xAxis);
-	cameraToWorld.matrix = cameraToWorld.matrix.Orthonormalized(COLL_SYS_AXIS_FLAG_X);
+	cameraToWorld.matrix = cameraToWorld.matrix.Orthonormalized(IMZADI_AXIS_FLAG_X);
 
 	camera->SetCameraToWorldTransform(cameraToWorld);
 

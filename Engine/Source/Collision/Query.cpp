@@ -1,11 +1,10 @@
 #include "Query.h"
 #include "Result.h"
 #include "Thread.h"
-#include "Error.h"
 #include "BoundingBoxTree.h"
 #include <format>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //--------------------------------- Query ---------------------------------
 
@@ -20,7 +19,7 @@ Query::Query()
 /*virtual*/ void Query::Execute(Thread* thread)
 {
 	Result* result = this->ExecuteQuery(thread);
-	COLL_SYS_ASSERT(result != nullptr);
+	IMZADI_ASSERT(result != nullptr);
 	thread->StoreResult(result, this->GetTaskID());
 }
 

@@ -4,6 +4,8 @@
 #include <codecvt>
 #include <locale>
 
+using namespace Imzadi;
+
 Shader::Shader()
 {
 	this->inputLayout = nullptr;
@@ -34,10 +36,10 @@ Shader::Shader()
 		std::string vsShaderObjFile = jsonDoc["vs_shader_object"].GetString();
 		std::string psShaderObjFile = jsonDoc["ps_shader_object"].GetString();
 
-		if (!assetCache->ResolveAssetPath(vsShaderObjFile, true))
+		if (!assetCache->ResolveAssetPath(vsShaderObjFile))
 			return false;
 
-		if (!assetCache->ResolveAssetPath(psShaderObjFile, true))
+		if (!assetCache->ResolveAssetPath(psShaderObjFile))
 			return false;
 
 		std::wstring vsShaderObjFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(vsShaderObjFile);
@@ -57,7 +59,7 @@ Shader::Shader()
 			return false;
 
 		std::string shaderCodeFile = jsonDoc["shader_code"].GetString();
-		if (!assetCache->ResolveAssetPath(shaderCodeFile, true))
+		if (!assetCache->ResolveAssetPath(shaderCodeFile))
 			return false;
 
 		std::string vsEntryPoint = "VS_Main";

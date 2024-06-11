@@ -2,7 +2,7 @@
 #include "Math/Vector3.h"
 #include <math.h>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Vector4::Vector4()
 {
@@ -226,7 +226,7 @@ void Vector4::Restore(std::istream& stream)
 	stream.read((char*)&this->z, sizeof(this->z));
 }
 
-namespace Collision
+namespace Imzadi
 {
 	Vector4 operator+(const Vector4& leftVector, const Vector4& rightVector)
 	{

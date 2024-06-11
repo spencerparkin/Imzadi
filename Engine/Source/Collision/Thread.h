@@ -11,7 +11,7 @@
 #include <semaphore>
 #include <unordered_map>
 
-namespace Collision
+namespace Imzadi
 {
 	class Task;
 	class Result;
@@ -25,7 +25,7 @@ namespace Collision
 	 * of this class are meant to be called only from the main thread, or only from
 	 * the collision thread.
 	 */
-	class COLLISION_LIB_API Thread
+	class IMZADI_API Thread
 	{
 		friend class ExitThreadCommand;
 
@@ -83,7 +83,7 @@ namespace Collision
 		 * Add the given shape to the collision world.
 		 * 
 		 * @param[in] shape This is the shape to add.
-		 * @param[in] flags These are an OR-ing of the COLL_SYS_ADD_FLAG_* flags.
+		 * @param[in] flags These are an OR-ing of the IMZADI_ADD_FLAG_* flags.
 		 */
 		void AddShape(Shape* shape, uint32_t flags);
 
@@ -111,7 +111,7 @@ namespace Collision
 		 * Produce a debug visualization of the collision system.
 		 * 
 		 * @param[out] renderResult This is populated with line-segments of various colors to produce a wire-frame rendering of the system.
-		 * @param[in] drawFlags An OR-ing of the COLL_SYS_DRAW_FLAG_* defines is given here to determine what's produced in the result.
+		 * @param[in] drawFlags An OR-ing of the IMZADI_DRAW_FLAG_* defines is given here to determine what's produced in the result.
 		 */
 		void DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags);
 

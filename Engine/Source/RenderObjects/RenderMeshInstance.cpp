@@ -9,7 +9,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/Vector4.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 RenderMeshInstance::RenderMeshInstance()
 {
@@ -190,7 +190,7 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 	}
 }
 
-/*virtual*/ void RenderMeshInstance::GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const
+/*virtual*/ void RenderMeshInstance::GetWorldBoundingSphere(Vector3& center, double& radius) const
 {
 	this->objectSpaceBoundingBox.GetSphere(center, radius);
 	center = this->objectToWorld.TransformPoint(center);

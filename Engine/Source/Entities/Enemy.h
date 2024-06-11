@@ -2,14 +2,17 @@
 
 #include "PhysicsEntity.h"
 
-/**
- * These are the antagonists of our game saga.
- */
-class Enemy : public PhysicsEntity
+namespace Imzadi
 {
-public:
-	Enemy();
-	virtual ~Enemy();
+	/**
+	 * These are the antagonists of our game saga.
+	 */
+	class IMZADI_API Enemy : public PhysicsEntity
+	{
+	public:
+		Enemy();
+		virtual ~Enemy();
 
-	// TODO: Path following?
-};
+		// TODO: Path following?
+	};
+}

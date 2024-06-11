@@ -5,14 +5,14 @@
 #include <ostream>
 #include <istream>
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * These are closed intervals (i.e., [A,B] where A and B are finite real values.)
 	 * The result of any method of this class is left undefined if this or a
 	 * given interval is invalid.
 	 */
-	class COLLISION_LIB_API Interval
+	class IMZADI_API Interval
 	{
 	public:
 		/**

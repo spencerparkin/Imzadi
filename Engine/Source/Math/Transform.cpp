@@ -4,7 +4,7 @@
 #include "LineSegment.h"
 #include "Matrix4x4.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Transform::Transform()
 {
@@ -143,7 +143,7 @@ void Transform::Restore(std::istream& stream)
 	this->translation.Restore(stream);
 }
 
-namespace Collision
+namespace Imzadi
 {
 	Transform operator*(const Transform& transformA, const Transform& transformB)
 	{

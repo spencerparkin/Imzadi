@@ -2,32 +2,37 @@
 #include "Camera.h"
 #include <algorithm>
 
+using namespace Imzadi;
+
 //--------------------------- Scene ---------------------------
 
 Scene::Scene()
 {
+	this->renderObjectList = new RenderObjectList();
 }
 
 /*virtual*/ Scene::~Scene()
 {
 	this->Clear();
+
+	delete this->renderObjectList;
 }
 
 void Scene::Clear()
 {
-	this->renderObjectList.clear();
+	this->renderObjectList->clear();
 }
 
 void Scene::AddRenderObject(Reference<RenderObject> renderObject)
 {
-	this->renderObjectList.push_back(renderObject);
+	this->renderObjectList->push_back(renderObject);
 }
 
 void Scene::Render(Camera* camera, RenderPass renderPass)
 {
 	std::vector<RenderObject*> visibleObjects;
 
-	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
+	for (/*const*/ Reference<RenderObject>& renderObject : *this->renderObjectList)
 	{
 		if (renderObject->IsHidden())
 			continue;

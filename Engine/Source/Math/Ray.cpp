@@ -4,7 +4,7 @@
 #include "LineSegment.h"
 #include <algorithm>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Ray::Ray()
 {

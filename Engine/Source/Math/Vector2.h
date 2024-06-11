@@ -5,14 +5,14 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * Instances of this class are members of fa 2-dimensional euclidean vector space.
 	 * Though this library focuses mainly on 3D space, 2-dimensional problems often
 	 * arrise.
 	 */
-	class COLLISION_LIB_API Vector2
+	class IMZADI_API Vector2
 	{
 	public:
 		Vector2()

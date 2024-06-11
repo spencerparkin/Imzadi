@@ -2,7 +2,7 @@
 #include "LineSegment.h"
 #include "Plane.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 AxisAlignedBoundingBox::AxisAlignedBoundingBox()
 {
@@ -73,13 +73,13 @@ bool AxisAlignedBoundingBox::ContainsBox(const AxisAlignedBoundingBox& box) cons
 
 bool AxisAlignedBoundingBox::Intersect(const AxisAlignedBoundingBox& aabbA, const AxisAlignedBoundingBox& aabbB)
 {
-	this->minCorner.x = COLL_SYS_MAX(aabbA.minCorner.x, aabbB.minCorner.x);
-	this->minCorner.y = COLL_SYS_MAX(aabbA.minCorner.y, aabbB.minCorner.y);
-	this->minCorner.z = COLL_SYS_MAX(aabbA.minCorner.z, aabbB.minCorner.z);
+	this->minCorner.x = IMZADI_MAX(aabbA.minCorner.x, aabbB.minCorner.x);
+	this->minCorner.y = IMZADI_MAX(aabbA.minCorner.y, aabbB.minCorner.y);
+	this->minCorner.z = IMZADI_MAX(aabbA.minCorner.z, aabbB.minCorner.z);
 
-	this->maxCorner.x = COLL_SYS_MIN(aabbA.maxCorner.x, aabbB.maxCorner.x);
-	this->maxCorner.y = COLL_SYS_MIN(aabbA.maxCorner.y, aabbB.maxCorner.y);
-	this->maxCorner.z = COLL_SYS_MIN(aabbA.maxCorner.z, aabbB.maxCorner.z);
+	this->maxCorner.x = IMZADI_MIN(aabbA.maxCorner.x, aabbB.maxCorner.x);
+	this->maxCorner.y = IMZADI_MIN(aabbA.maxCorner.y, aabbB.maxCorner.y);
+	this->maxCorner.z = IMZADI_MIN(aabbA.maxCorner.z, aabbB.maxCorner.z);
 
 	return this->IsValid();
 }

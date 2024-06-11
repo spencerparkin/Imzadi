@@ -2,7 +2,7 @@
 
 #include "Defines.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class Vector3;
 
@@ -11,7 +11,7 @@ namespace Collision
 	 * a radius and two angles.  Here, the poles of the spheres in question are
 	 * on the positive or negative Y-axes.  All sphere centers are at origin.
 	 */
-	class COLLISION_LIB_API SphericalCoords
+	class IMZADI_API SphericalCoords
 	{
 	public:
 		SphericalCoords();

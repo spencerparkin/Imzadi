@@ -4,7 +4,7 @@
 #include "Camera.h"
 #include "Math/Matrix4x4.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 DebugLines::DebugLines()
 {
@@ -118,7 +118,7 @@ DebugLines::DebugLines()
 	deviceContext->Draw(this->lineArray.size() * 2, 0);
 }
 
-/*virtual*/ void DebugLines::GetWorldBoundingSphere(Collision::Vector3& center, double& radius) const
+/*virtual*/ void DebugLines::GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const
 {
 	// TODO: Write this.
 }

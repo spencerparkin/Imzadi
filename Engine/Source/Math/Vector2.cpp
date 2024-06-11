@@ -1,6 +1,6 @@
 #include "Vector2.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 void Vector2::SetFromPolarCoords(double angle, double radius)
 {

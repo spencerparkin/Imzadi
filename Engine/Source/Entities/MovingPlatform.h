@@ -1,46 +1,49 @@
 #pragma once
 
 #include "Entity.h"
-#include "Shape.h"
+#include "Collision/Shape.h"
 #include "RenderObjects/RenderMeshInstance.h"
 
-class MovingPlatformData;
-class CollisionShapeSet;
-
-/**
- * These are element of the level that make platforming a bit more challenging and fun.
- */
-class MovingPlatform : public Entity
+namespace Imzadi
 {
-public:
-	MovingPlatform();
-	virtual ~MovingPlatform();
+	class MovingPlatformData;
+	class CollisionShapeSet;
 
 	/**
-	 * Figure out how the platform will move.
+	 * These are element of the level that make platforming a bit more challenging and fun.
 	 */
-	virtual bool Setup() override;
+	class MovingPlatform : public Entity
+	{
+	public:
+		MovingPlatform();
+		virtual ~MovingPlatform();
 
-	/**
-	 * Clean-up.
-	 */
-	virtual bool Shutdown(bool gameShuttingDown) override;
+		/**
+		 * Figure out how the platform will move.
+		 */
+		virtual bool Setup() override;
 
-	/**
-	 * Animate the platform's movement.
-	 */
-	virtual bool Tick(TickPass tickPass, double deltaTime) override;
+		/**
+		 * Clean-up.
+		 */
+		virtual bool Shutdown(bool gameShuttingDown) override;
 
-	/**
-	 * Specify where this platform's configuration data is on disk.
-	 */
-	void SetMovingPlatformFile(const std::string& file) { this->movingPlatformFile = file; }
+		/**
+		 * Animate the platform's movement.
+		 */
+		virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
-private:
-	Reference<MovingPlatformData> data;
-	Reference<RenderMeshInstance> renderMesh;
-	std::vector<Collision::ShapeID> collisionShapeArray;
-	std::string movingPlatformFile;
-	int targetDeltaIndex;
-	int bounceDelta;
-};
+		/**
+		 * Specify where this platform's configuration data is on disk.
+		 */
+		void SetMovingPlatformFile(const std::string& file) { this->movingPlatformFile = file; }
+
+	private:
+		Reference<MovingPlatformData> data;
+		Reference<RenderMeshInstance> renderMesh;
+		std::vector<ShapeID> collisionShapeArray;
+		std::string movingPlatformFile;
+		int targetDeltaIndex;
+		int bounceDelta;
+	};
+}

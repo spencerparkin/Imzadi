@@ -2,6 +2,8 @@
 #include "Game.h"
 #include <stdint.h>
 
+using namespace Imzadi;
+
 //-------------------------------------- Buffer --------------------------------------
 
 Buffer::Buffer()

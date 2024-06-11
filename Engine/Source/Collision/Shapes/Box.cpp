@@ -3,10 +3,10 @@
 #include "Math/Transform.h"
 #include "Math/Ray.h"
 #include "Polygon.h"
-#include "Result.h"
+#include "Collision/Result.h"
 #include <vector>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //------------------------------- BoxShape -------------------------------
 
@@ -284,7 +284,7 @@ void BoxShape::GetAxisAlignedBox(AxisAlignedBoundingBox& box) const
 		}
 	}
 
-	COLL_SYS_ASSERT(false);
+	IMZADI_ASSERT(false);
 	return false;
 }
 

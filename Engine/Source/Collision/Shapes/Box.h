@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Shape.h"
+#include "Collision/Shape.h"
 #include "Math/Vector3.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class PolygonShape;
 
@@ -12,7 +12,7 @@ namespace Collision
 	 * In object-space, the box is centered at origin having a width in the x-dimension,
 	 * height in the y-dimension, and depth in the z-dimension.
 	 */
-	class COLLISION_LIB_API BoxShape : public Shape
+	class IMZADI_API BoxShape : public Shape
 	{
 		friend class BoxShapeCache;
 

@@ -2,7 +2,7 @@
 
 #include "Vector3.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class Plane;
 
@@ -13,7 +13,7 @@ namespace Collision
 	 * a few methods that depend on this order.  A degenerate line-segment
 	 * (a point) is considered invalid.
 	 */
-	class COLLISION_LIB_API LineSegment
+	class IMZADI_API LineSegment
 	{
 	public:
 		LineSegment();

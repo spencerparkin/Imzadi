@@ -2,7 +2,7 @@
 #include "Scene.h"
 #include "Math/Matrix4x4.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Camera::Camera()
 {
@@ -28,13 +28,13 @@ bool Camera::IsApproximatelyVisible(const RenderObject* renderObject) const
 	return this->frustum.IntersectedBySphere(center, radius);
 }
 
-void Camera::SetCameraToWorldTransform(const Collision::Transform& cameraToWorld)
+void Camera::SetCameraToWorldTransform(const Imzadi::Transform& cameraToWorld)
 {
 	this->cameraToWorld = cameraToWorld;
 	this->worldToCameraValid = false;
 }
 
-const Collision::Transform& Camera::GetWorldToCameraTransform() const
+const Transform& Camera::GetWorldToCameraTransform() const
 {
 	if (!this->worldToCameraValid)
 	{
@@ -45,7 +45,7 @@ const Collision::Transform& Camera::GetWorldToCameraTransform() const
 	return this->worldToCamera;
 }
 
-bool Camera::LookAt(const Collision::Vector3& eyePoint, const Collision::Vector3& focalPoint, const Collision::Vector3& upVector)
+bool Camera::LookAt(const Vector3& eyePoint, const Vector3& focalPoint, const Vector3& upVector)
 {
 	this->cameraToWorld.translation = eyePoint;
 
@@ -67,7 +67,7 @@ bool Camera::LookAt(const Collision::Vector3& eyePoint, const Collision::Vector3
 	return true;
 }
 
-void Camera::GetProjectionMatrix(Collision::Matrix4x4& matrix) const
+void Camera::GetProjectionMatrix(Matrix4x4& matrix) const
 {
 	switch (this->viewMode)
 	{

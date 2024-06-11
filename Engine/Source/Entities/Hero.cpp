@@ -7,14 +7,14 @@
 #include "Math/Quaternion.h"
 #include "Math/Transform.h"
 #include "Math/Vector2.h"
-#include "Shapes/Capsule.h"
+#include "Collision/Shapes/Capsule.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
-#include "Command.h"
-#include "Query.h"
-#include "Result.h"
-#include "CollisionCache.h"
+#include "Collision/Command.h"
+#include "Collision/Query.h"
+#include "Collision/Result.h"
+#include "Collision/CollisionCache.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Hero::Hero()
 {
@@ -62,7 +62,7 @@ Hero::Hero()
 	return true;
 }
 
-/*virtual*/ void Hero::AccumulateForces(Collision::Vector3& netForce)
+/*virtual*/ void Hero::AccumulateForces(Imzadi::Vector3& netForce)
 {
 	PhysicsEntity::AccumulateForces(netForce);
 
@@ -77,7 +77,7 @@ Hero::Hero()
 	}
 }
 
-/*virtual*/ void Hero::IntegrateVelocity(const Collision::Vector3& acceleration, double deltaTime)
+/*virtual*/ void Hero::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
 	PhysicsEntity::IntegrateVelocity(acceleration, deltaTime);
 
@@ -121,7 +121,7 @@ Hero::Hero()
 	if (!PhysicsEntity::Tick(tickPass, deltaTime))
 		return false;
 
-	System* collisionSystem = Game::Get()->GetCollisionSystem();
+	CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
 
 	switch (tickPass)
 	{

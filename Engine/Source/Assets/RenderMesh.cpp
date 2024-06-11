@@ -7,7 +7,7 @@
 #include "Math/Vector4.h"
 #include "RenderObjects/RenderMeshInstance.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 RenderMeshAsset::RenderMeshAsset()
 {

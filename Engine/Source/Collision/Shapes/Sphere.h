@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Shape.h"
+#include "Collision/Shape.h"
 #include "Math/Vector3.h"
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * This is a collision shape defined as all points within a given radius of a center point.
 	 */
-	class COLLISION_LIB_API SphereShape : public Shape
+	class IMZADI_API SphereShape : public Shape
 	{
 		friend class SphereShapeCache;
 

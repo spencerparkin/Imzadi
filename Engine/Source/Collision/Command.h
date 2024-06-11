@@ -3,7 +3,7 @@
 #include "Task.h"
 #include "Shape.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class Thread;
 	class Shape;
@@ -12,7 +12,7 @@ namespace Collision
 	 * This is the base class for all collision system comands
 	 * that can be issued to manipulate the collision world.
 	 */
-	class COLLISION_LIB_API Command : public Task
+	class IMZADI_API Command : public Task
 	{
 	public:
 		Command();
@@ -24,7 +24,7 @@ namespace Collision
 	 * Users of the collision system never need to use it directly.
 	 * They can simply call the Shutdown function of the System class.
 	 */
-	class COLLISION_LIB_API ExitThreadCommand : public Command
+	class IMZADI_API ExitThreadCommand : public Command
 	{
 	public:
 		ExitThreadCommand();
@@ -46,7 +46,7 @@ namespace Collision
 	 * shape-oriented command.  That is, any command that operates on a
 	 * particular shape.
 	 */
-	class COLLISION_LIB_API ShapeCommand : public Command
+	class IMZADI_API ShapeCommand : public Command
 	{
 	public:
 		ShapeCommand();
@@ -69,7 +69,7 @@ namespace Collision
 	/**
 	 * This command is used to add a collision shape to the system.
 	 */
-	class COLLISION_LIB_API AddShapeCommand : public Command
+	class IMZADI_API AddShapeCommand : public Command
 	{
 	public:
 		AddShapeCommand();
@@ -94,7 +94,7 @@ namespace Collision
 
 		/**
 		 * Set the insertion flags to be used in the add operation.
-		 * These are flags of the form COLL_SYS_ADD_FLAG_*.
+		 * These are flags of the form IMZADI_ADD_FLAG_*.
 		 */
 		void SetFlags(uint32_t flags) { this->flags = flags; }
 
@@ -116,7 +116,7 @@ namespace Collision
 	/**
 	 * This command is used to remove a shape from the system.
 	 */
-	class COLLISION_LIB_API RemoveShapeCommand : public ShapeCommand
+	class IMZADI_API RemoveShapeCommand : public ShapeCommand
 	{
 	public:
 		RemoveShapeCommand();
@@ -136,7 +136,7 @@ namespace Collision
 	/**
 	 * This command is used to remove all shapes from the collision world.
 	 */
-	class COLLISION_LIB_API RemoveAllShapesCommand : public Command
+	class IMZADI_API RemoveAllShapesCommand : public Command
 	{
 	public:
 		RemoveAllShapesCommand();
@@ -157,7 +157,7 @@ namespace Collision
 	 * This command can be used to change the debug render color of a collision shape.
 	 * It is not meant to be used in production; just debug.
 	 */
-	class COLLISION_LIB_API SetDebugRenderColorCommand : public ShapeCommand
+	class IMZADI_API SetDebugRenderColorCommand : public ShapeCommand
 	{
 	public:
 		SetDebugRenderColorCommand();
@@ -190,7 +190,7 @@ namespace Collision
 	/**
 	 * Use this command to change the object-to-world transform of a collision shape.
 	 */
-	class COLLISION_LIB_API ObjectToWorldCommand : public ShapeCommand
+	class IMZADI_API ObjectToWorldCommand : public ShapeCommand
 	{
 	public:
 		ObjectToWorldCommand();
@@ -214,7 +214,7 @@ namespace Collision
 	 * Use this command to dump or restore the collision world to or from disk, respectively.
 	 * It's mainly used for debugging purposes.  It's not meant to be used in a production case.
 	 */
-	class COLLISION_LIB_API FileCommand : public Command
+	class IMZADI_API FileCommand : public Command
 	{
 	public:
 		FileCommand();

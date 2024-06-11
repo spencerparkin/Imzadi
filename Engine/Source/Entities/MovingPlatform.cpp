@@ -1,10 +1,10 @@
 #include "MovingPlatform.h"
 #include "Assets/MovingPlatformData.h"
 #include "Assets/CollisionShapeSet.h"
-#include "Command.h"
+#include "Collision/Command.h"
 #include "Game.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 MovingPlatform::MovingPlatform()
 {

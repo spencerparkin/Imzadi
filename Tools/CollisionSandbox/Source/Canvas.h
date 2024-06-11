@@ -3,7 +3,7 @@
 #include <wx/app.h>
 #include "Camera.h"
 #include "Controller.h"
-#include "Shape.h"
+#include "Collision/Shape.h"
 #include "Math/LineSegment.h"
 #include <wx/glcanvas.h>
 #include <list>
@@ -49,12 +49,12 @@ private:
 	};
 
 	void GetSensativityParams(SensativityParams& sensativityParams);
-	void SetSelectedShape(Collision::ShapeID shapeID);
+	void SetSelectedShape(Imzadi::ShapeID shapeID);
 
 	wxGLContext* renderContext;
 	static int attributeList[];
 	Camera camera;
-	Controller controller;
+	Imzadi::Controller controller;
 	std::list<double> renderTimeArray;
 	unsigned int renderTimeArrayMax;
 	StrafeMode strafeMode;
@@ -62,7 +62,7 @@ private:
 	uint32_t debugDrawFlags;
 	bool targetShapes;
 	bool dragSelectedShape;
-	Collision::LineSegment* targetShapeHitLine;
-	Collision::ShapeID selectedShapeID;
-	Collision::Transform shapeToCamera;
+	Imzadi::LineSegment* targetShapeHitLine;
+	Imzadi::ShapeID selectedShapeID;
+	Imzadi::Transform shapeToCamera;
 };

@@ -3,7 +3,7 @@
 #include "Plane.h"
 #include "Ray.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Quaternion::Quaternion()
 {
@@ -128,7 +128,7 @@ Quaternion& Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
 
 void Quaternion::GetToAxisAngle(Vector3& unitAxis, double& angle) const
 {
-	angle = 2.0 * ::acos(COLL_SYS_CLAMP(this->w, 0.0, 1.0));
+	angle = 2.0 * ::acos(IMZADI_CLAMP(this->w, 0.0, 1.0));
 	unitAxis = this->GetPoint();
 	if (!unitAxis.Normalize())
 		unitAxis.SetComponents(0.0, 0.0, 1.0);
@@ -210,7 +210,7 @@ void Quaternion::Restore(std::istream& stream)
 	stream.read((char*)&this->z, sizeof(this->z));
 }
 
-namespace Collision
+namespace Imzadi
 {
 	Quaternion operator+(const Quaternion& quatA, const Quaternion& quatB)
 	{

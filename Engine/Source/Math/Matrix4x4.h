@@ -4,7 +4,7 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	class Vector3;
 	class Vector4;
@@ -15,7 +15,7 @@ namespace Collision
 	/**
 	 * These are 4x4 matrices geared toward 3D computer graphics applications.
 	 */
-	class COLLISION_LIB_API Matrix4x4
+	class IMZADI_API Matrix4x4
 	{
 	public:
 		Matrix4x4();
@@ -66,9 +66,9 @@ namespace Collision
 		double ele[4][4];
 	};
 
-	COLLISION_LIB_API Matrix4x4 operator*(const Matrix4x4& leftMatrix, const Matrix4x4& rightMatrix);
+	IMZADI_API Matrix4x4 operator*(const Matrix4x4& leftMatrix, const Matrix4x4& rightMatrix);
 
-	COLLISION_LIB_API Vector4 operator*(const Matrix4x4& leftMatrix, const Vector4& rightVector);
+	IMZADI_API Vector4 operator*(const Matrix4x4& leftMatrix, const Vector4& rightVector);
 
-	COLLISION_LIB_API Vector4 operator*(const Vector4& leftVector, const Matrix4x4& rightMatrix);
+	IMZADI_API Vector4 operator*(const Vector4& leftVector, const Matrix4x4& rightMatrix);
 }

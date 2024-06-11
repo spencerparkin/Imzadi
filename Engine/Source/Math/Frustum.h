@@ -3,7 +3,7 @@
 #include "Defines.h"
 #include <vector>
 
-namespace Collision
+namespace Imzadi
 {
 	class AxisAlignedBoundingBox;
 	class Matrix4x4;
@@ -27,7 +27,7 @@ namespace Collision
 	 * world space object intersects a frustum, then you need to transform that
 	 * object into camera space first.
 	 */
-	class COLLISION_LIB_API Frustum
+	class IMZADI_API Frustum
 	{
 	public:
 		Frustum();

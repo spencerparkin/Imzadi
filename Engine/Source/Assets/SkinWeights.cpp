@@ -3,7 +3,7 @@
 #include "Skeleton.h"
 #include "Math/Vector3.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 SkinWeights::SkinWeights()
 {

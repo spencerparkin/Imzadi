@@ -3,9 +3,9 @@
 #include "Math/Quadratic.h"
 #include "Math/Ray.h"
 #include "Sphere.h"
-#include "Result.h"
+#include "Collision/Result.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 //-------------------------------- CapsuleShape --------------------------------
 
@@ -249,7 +249,7 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 
 	if ((tubeRoots.size() == 1 && tubeRoots[0] > 0.0) || (tubeRoots.size() == 2 && tubeRoots[0] > 0.0 && tubeRoots[1] > 0.0))
 	{
-		alpha = (tubeRoots.size() == 1) ? tubeRoots[0] : COLL_SYS_MIN(tubeRoots[0], tubeRoots[1]);
+		alpha = (tubeRoots.size() == 1) ? tubeRoots[0] : IMZADI_MIN(tubeRoots[0], tubeRoots[1]);
 		Vector3 hitPoint = ray.CalculatePoint(alpha);
 		double distance = worldLineSegment.ShortestDistanceTo(hitPoint);
 		if (::fabs(distance - this->radius) < tolerance)

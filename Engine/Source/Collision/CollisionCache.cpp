@@ -5,10 +5,9 @@
 #include "Shapes/Box.h"
 #include "Shapes/Capsule.h"
 #include "Shapes/Polygon.h"
-#include "Error.h"
 #include <format>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //----------------------------- CollisionCache -----------------------------
 
@@ -73,22 +72,12 @@ ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const
 	{
 		uint64_t calculatorKey = this->MakeCalculatorKey(shapeA, shapeB);
 		CollisionCalculatorMap::iterator calculatorIter = this->calculatorMap->find(calculatorKey);
-		if (calculatorIter == this->calculatorMap->end())
-		{
-			GetError()->AddErrorMessage(std::format("No collision calculator exists for shapes of type ID {} and {}.", uint32_t(shapeA->GetShapeTypeID()), uint32_t(shapeB->GetShapeTypeID())));
-		}
-		else
+		if (calculatorIter != this->calculatorMap->end())
 		{
 			CollisionCalculatorInterface* calculator = calculatorIter->second;
 			collisionStatus = calculator->Calculate(shapeA, shapeB);
-			if (!collisionStatus)
-			{
-				GetError()->AddErrorMessage(std::format("Collision calculator failed to calculate collision status for shapes {} and {}", shapeA->GetShapeID(), shapeB->GetShapeID()));
-			}
-			else
-			{
+			if (collisionStatus)
 				this->cacheMap->insert(std::pair<std::string, ShapePairCollisionStatus*>(cacheKey, collisionStatus));
-			}
 		}
 	}
 
@@ -99,8 +88,8 @@ std::string CollisionCache::MakeCacheKey(const Shape* shapeA, const Shape* shape
 {
 	ShapeID shapeIDs[2];
 
-	shapeIDs[0] = COLL_SYS_MIN(shapeA->GetShapeID(), shapeB->GetShapeID());
-	shapeIDs[1] = COLL_SYS_MAX(shapeA->GetShapeID(), shapeB->GetShapeID());
+	shapeIDs[0] = IMZADI_MIN(shapeA->GetShapeID(), shapeB->GetShapeID());
+	shapeIDs[1] = IMZADI_MAX(shapeA->GetShapeID(), shapeB->GetShapeID());
 
 	return std::format("{}-{}", shapeIDs[0], shapeIDs[1]);
 }

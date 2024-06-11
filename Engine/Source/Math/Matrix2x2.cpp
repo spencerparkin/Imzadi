@@ -1,7 +1,7 @@
 #include "Matrix2x2.h"
 #include "Vector2.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Matrix2x2::Matrix2x2()
 {
@@ -164,7 +164,7 @@ void Matrix2x2::Restore(std::istream& stream)
 			stream.read((char*)&this->ele[i][j], sizeof(double));
 }
 
-namespace Collision
+namespace Imzadi
 {
 	Matrix2x2 operator+(const Matrix2x2& matrixA, const Matrix2x2& matrixB)
 	{

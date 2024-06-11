@@ -6,7 +6,7 @@
 #include "Ray.h"
 #include <math.h>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Frustum::Frustum()
 {

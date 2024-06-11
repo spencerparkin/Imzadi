@@ -7,7 +7,7 @@
 #include "Shapes/Polygon.h"
 #include "Math/Vector3.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class ShapePairCollisionStatus;
 	class Shape;
@@ -16,7 +16,7 @@ namespace Collision
 	 * This is the base class for all derivatives that know how to calculate the
 	 * collision status between a given pair of specific shape types.
 	 */
-	class COLLISION_LIB_API CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculatorInterface
 	{
 	public:
 		/**
@@ -40,12 +40,12 @@ namespace Collision
 	 * This class is just a dummy and is meant to be specialized.
 	 */
 	template<typename ShapeTypeA, typename ShapeTypeB>
-	class COLLISION_LIB_API CollisionCalculator : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override
 		{
-			COLL_SYS_ASSERT(false);
+			IMZADI_ASSERT(false);
 			return nullptr;
 		}
 	};
@@ -54,7 +54,7 @@ namespace Collision
 	 * Calculate the collision status between two given sphere shapes.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<SphereShape, SphereShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<SphereShape, SphereShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -64,7 +64,7 @@ namespace Collision
 	 * Calculate the collision status between a sphere and a capsule.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<SphereShape, CapsuleShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<SphereShape, CapsuleShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -74,7 +74,7 @@ namespace Collision
 	 * Calculate the collision status between a capsule and a sphere.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<CapsuleShape, SphereShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<CapsuleShape, SphereShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -84,7 +84,7 @@ namespace Collision
 	 * Calculate the collision status between two capsules.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<CapsuleShape, CapsuleShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<CapsuleShape, CapsuleShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -94,7 +94,7 @@ namespace Collision
 	 * Calculate the collision status between a sphere and a box.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<SphereShape, BoxShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<SphereShape, BoxShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -104,7 +104,7 @@ namespace Collision
 	 * Calculate the collision status between a box and a sphere.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<BoxShape, SphereShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<BoxShape, SphereShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -114,7 +114,7 @@ namespace Collision
 	 * Calculate the collision status between a sphere and a polygon.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<SphereShape, PolygonShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<SphereShape, PolygonShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -124,7 +124,7 @@ namespace Collision
 	 * Calculate the collision status between a polygon and a sphere.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<PolygonShape, SphereShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<PolygonShape, SphereShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -134,7 +134,7 @@ namespace Collision
 	 * Calculate the collision status between a pair of boxes.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<BoxShape, BoxShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<BoxShape, BoxShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -180,7 +180,7 @@ namespace Collision
 	 * Calculate the collision status between a capsule and a polygon.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<CapsuleShape, PolygonShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<CapsuleShape, PolygonShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
@@ -190,7 +190,7 @@ namespace Collision
 	 * Calculate the collision status between a polygon and a capsule.
 	 */
 	template<>
-	class COLLISION_LIB_API CollisionCalculator<PolygonShape, CapsuleShape> : public CollisionCalculatorInterface
+	class IMZADI_API CollisionCalculator<PolygonShape, CapsuleShape> : public CollisionCalculatorInterface
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;

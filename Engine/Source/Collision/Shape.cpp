@@ -4,7 +4,7 @@
 #include "Shapes/Polygon.h"
 #include "Shapes/Sphere.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 std::atomic<ShapeID> Shape::nextShapeID(1);
 

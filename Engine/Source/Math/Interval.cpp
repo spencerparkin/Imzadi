@@ -1,6 +1,6 @@
 #include "Interval.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Interval::Interval()
 {
@@ -69,8 +69,8 @@ bool Interval::OverlapsWith(const Interval& interval) const
 
 bool Interval::Intersect(const Interval& intervalA, const Interval& intervalB)
 {
-	this->A = COLL_SYS_MAX(intervalA.A, intervalB.A);
-	this->B = COLL_SYS_MIN(intervalA.B, intervalB.B);
+	this->A = IMZADI_MAX(intervalA.A, intervalB.A);
+	this->B = IMZADI_MIN(intervalA.B, intervalB.B);
 
 	return this->IsValid();
 }
@@ -103,20 +103,20 @@ void Interval::Subtract(const Interval& interval, std::vector<Interval>& interva
 	}
 	else
 	{
-		COLL_SYS_ASSERT(false);
+		IMZADI_ASSERT(false);
 	}
 }
 
 void Interval::Merge(const Interval& intervalA, const Interval& intervalB)
 {
-	this->A = COLL_SYS_MIN(intervalA.A, intervalB.A);
-	this->B = COLL_SYS_MAX(intervalA.B, intervalB.B);
+	this->A = IMZADI_MIN(intervalA.A, intervalB.A);
+	this->B = IMZADI_MAX(intervalA.B, intervalB.B);
 }
 
 void Interval::Expand(double value)
 {
-	this->A = COLL_SYS_MIN(this->A, value);
-	this->B = COLL_SYS_MAX(this->B, value);
+	this->A = IMZADI_MIN(this->A, value);
+	this->B = IMZADI_MAX(this->B, value);
 }
 
 void Interval::BoundValues(const std::vector<double>& valueArray)

@@ -3,13 +3,13 @@
 #include "Defines.h"
 #include <stdint.h>
 
-namespace Collision
+namespace Imzadi
 {
 	typedef uint32_t TaskID;
 
 	class Thread;
 
-	class COLLISION_LIB_API Task
+	class IMZADI_API Task
 	{
 	public:
 		Task();

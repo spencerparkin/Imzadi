@@ -1,6 +1,6 @@
 #include "Plane.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Plane::Plane()
 {

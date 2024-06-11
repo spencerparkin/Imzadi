@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Shape.h"
+#include "Collision/Shape.h"
 #include "Math/Vector3.h"
 #include "Math/Plane.h"
 #include <vector>
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * This collision shape is a polygon determined by a sequence of object-space points
@@ -23,7 +23,7 @@ namespace Collision
 	 * is often used to index into this sequence.  The polygon in world space
 	 * is found by applying an object-to-world transform to the point-sequence.
 	 */
-	class COLLISION_LIB_API PolygonShape : public Shape
+	class IMZADI_API PolygonShape : public Shape
 	{
 		friend class PolygonShapeCache;
 

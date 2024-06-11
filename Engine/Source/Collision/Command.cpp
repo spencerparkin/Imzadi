@@ -1,12 +1,11 @@
 #include "Command.h"
 #include "Thread.h"
-#include "Error.h"
 #include "BoundingBoxTree.h"
 #include <format>
 #include <filesystem>
 #include <fstream>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //------------------------------- Command -------------------------------
 
@@ -65,10 +64,7 @@ AddShapeCommand::AddShapeCommand()
 /*virtual*/ void AddShapeCommand::Execute(Thread* thread)
 {
 	if (!this->shape)
-	{
-		GetError()->AddErrorMessage("No shape was set on an add-shape command.  There is no shape to add.");
 		return;
-	}
 
 	thread->AddShape(this->shape, this->flags);
 }
@@ -132,9 +128,7 @@ SetDebugRenderColorCommand::SetDebugRenderColorCommand()
 /*virtual*/ void SetDebugRenderColorCommand::Execute(Thread* thread)
 {
 	Shape* shape = thread->FindShape(this->shapeID);
-	if (!shape)
-		GetError()->AddErrorMessage(std::format("Failed to find shape with ID {}.", this->shapeID));
-	else
+	if (shape)
 		shape->SetDebugRenderColor(this->color);
 }
 
@@ -158,18 +152,12 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 {
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
-	{
-		GetError()->AddErrorMessage(std::format("Failed to find shape with ID {}.", this->shapeID));
 		return;
-	}
 
 	shape->SetObjectToWorldTransform(this->objectToWorld);
 
 	BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
-	if (!boxTree.Insert(shape, 0))
-	{
-		GetError()->AddErrorMessage(std::format("Failed to re-insert shape {} into AABB tree.", this->shapeID));
-	}
+	boxTree.Insert(shape, 0);
 }
 
 /*static*/ ObjectToWorldCommand* ObjectToWorldCommand::Create()
@@ -198,34 +186,22 @@ FileCommand::FileCommand()
 /*virtual*/ void FileCommand::Execute(Thread* thread)
 {
 	if (this->filePath->size() == 0)
-	{
-		GetError()->AddErrorMessage("No file path was given.");
 		return;
-	}
 
 	switch (this->action)
 	{
 		case Action::DUMP:
 		{
 			if (std::filesystem::exists(*this->filePath))
-			{
-				GetError()->AddErrorMessage(std::format("The configured file ({}) already exists.  Can't overwrite existing file.", *this->filePath));
 				return;
-			}
 
 			std::ofstream stream;
 			stream.open(*this->filePath, std::ios::binary);
 			if (!stream.is_open())
-			{
-				GetError()->AddErrorMessage(std::format("Failed to open file ({}) for writing binary.", *this->filePath));
 				return;
-			}
 
 			if (!thread->DumpShapes(stream))
-			{
-				GetError()->AddErrorMessage(std::format("Failed to dump shapes to file: {}", *this->filePath));
 				return;
-			}
 
 			stream.close();
 			break;
@@ -233,24 +209,15 @@ FileCommand::FileCommand()
 		case Action::RESTORE:
 		{
 			if (!std::filesystem::exists(*this->filePath))
-			{
-				GetError()->AddErrorMessage(std::format("The configured file ({}) does not exist.  Can't read non-existent file.", *this->filePath));
 				return;
-			}
 
 			std::ifstream stream;
 			stream.open(*this->filePath, std::ios::binary);
 			if (!stream.is_open())
-			{
-				GetError()->AddErrorMessage(std::format("Failed to open file ({}) for reading binary.", *this->filePath));
 				return;
-			}
 
 			if (!thread->RestoreShapes(stream))
-			{
-				GetError()->AddErrorMessage(std::format("Failed to restore shapes from file: {}", *this->filePath));
 				return;
-			}
 
 			stream.close();
 			break;

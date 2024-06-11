@@ -1,14 +1,16 @@
 #include "MovingPlatformData.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 MovingPlatformData::MovingPlatformData()
 {
 	this->moveSpeed = 0.0;
+	this->splineDeltas = new std::vector<Vector3>();
 }
 
 /*virtual*/ MovingPlatformData::~MovingPlatformData()
 {
+	delete this->splineDeltas;
 }
 
 /*virtual*/ bool MovingPlatformData::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
@@ -26,14 +28,14 @@ MovingPlatformData::MovingPlatformData()
 	if (!jsonDoc.HasMember("spline_deltas") || !jsonDoc["spline_deltas"].IsArray())
 		return false;
 
-	this->splineDeltas.clear();
+	this->splineDeltas->clear();
 	for (int i = 0; i < jsonDoc["spline_deltas"].Size(); i++)
 	{
 		Vector3 delta;
 		if (!this->LoadVector(jsonDoc["spline_deltas"][i], delta))
 			return false;
 
-		this->splineDeltas.push_back(delta);
+		this->splineDeltas->push_back(delta);
 	}
 
 	if (!jsonDoc.HasMember("spline_type") || !jsonDoc["spline_type"].IsString())

@@ -9,7 +9,7 @@
 //       He has some good references here on GJK and other collision detection algorithms.
 //       I'm probably doing everything here in a really stupid way.
 
-namespace Collision
+namespace Imzadi
 {
 	class Shape;
 	class Command;
@@ -32,11 +32,11 @@ namespace Collision
 	 * here is to facilitate the complex problem of collision detection.  Physics is a seperate
 	 * problem.
 	 */
-	class COLLISION_LIB_API System
+	class IMZADI_API CollisionSystem
 	{
 	public:
-		System();
-		virtual ~System();
+		CollisionSystem();
+		virtual ~CollisionSystem();
 
 		/**
 		 * Initialize the collision system.  You must call this before using the system.
@@ -59,7 +59,7 @@ namespace Collision
 		 * Shape class derivative.
 		 * 
 		 * @param shape This is a pointer to the Shape object derivative.  Ownership of the memory is taken by the system.
-		 * @param flags This is an OR-ing of the COLL_SYS_ADD_FLAG_* flags.
+		 * @param flags This is an OR-ing of the IMZADI_ADD_FLAG_* flags.
 		 * @return A handle to the collision shape is returned.  Use it to reference the shape in any command or query.
 		 */
 		ShapeID AddShape(Shape* shape, uint32_t flags);

@@ -1,5 +1,4 @@
 #include "Thread.h"
-#include "Error.h"
 #include "Result.h"
 #include "Command.h"
 #include "Query.h"
@@ -8,7 +7,7 @@
 #include <ostream>
 #include <istream>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(collisionWorldExtents)
 {
@@ -35,10 +34,7 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(co
 bool Thread::Startup()
 {
 	if (this->thread)
-	{
-		GetError()->AddErrorMessage("Thread already created!");
 		return false;
-	}
 
 	this->signaledToExit = false;
 	this->thread = new std::thread(&Thread::EntryFunc, this);
@@ -142,24 +138,18 @@ void Thread::AddShape(Shape* shape, uint32_t flags)
 	ShapeID shapeID = shape->GetShapeID();
 
 	if (!this->boxTree.Insert(shape, flags))
-	{
 		Shape::Free(shape);
-		GetError()->AddErrorMessage(std::format("Failed to insert shape with ID {} into the bounding-box tree.", shapeID));
-	}
 }
 
 void Thread::RemoveShape(ShapeID shapeID)
 {
-	if (!this->boxTree.Remove(shapeID))
-	{
-		GetError()->AddErrorMessage(std::format("Failed to remove shape with ID {} from the bounding-box tree.", shapeID));
-	}
+	this->boxTree.Remove(shapeID);
 }
 
 Shape* Thread::FindShape(ShapeID shapeID)
 {
 	Shape* shape = this->boxTree.FindShape(shapeID);
-	COLL_SYS_ASSERT(!shape || shape->GetShapeID() == shapeID);
+	IMZADI_ASSERT(!shape || shape->GetShapeID() == shapeID);
 	return shape;
 }
 
@@ -212,18 +202,18 @@ void Thread::StoreResult(Result* result, TaskID taskID)
 
 void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 {
-	if ((drawFlags & COLL_SYS_DRAW_FLAG_SHAPES) != 0)
+	if ((drawFlags & IMZADI_DRAW_FLAG_SHAPES) != 0)
 	{
 		this->boxTree.ForAllShapes([renderResult, drawFlags](const Shape* shape) -> bool
 		{
 			shape->DebugRender(renderResult);
-			if ((drawFlags & COLL_SYS_DRAW_FLAG_SHAPE_BOXES) != 0)
+			if ((drawFlags & IMZADI_DRAW_FLAG_SHAPE_BOXES) != 0)
 				renderResult->AddLinesForBox(shape->GetBoundingBox(), Vector3(1.0, 1.0, 1.0) - shape->GetDebugRenderColor());
 			return true;
 		});
 	}
 
-	if ((drawFlags & COLL_SYS_DRAW_FLAG_AABB_TREE) != 0)
+	if ((drawFlags & IMZADI_DRAW_FLAG_AABB_TREE) != 0)
 		this->boxTree.DebugRender(renderResult);
 }
 
@@ -243,10 +233,7 @@ bool Thread::DumpShapes(std::ostream& stream) const
 		uint32_t typeID = shape->GetShapeTypeID();
 		stream.write((char*)&typeID, sizeof(typeID));
 		if (!shape->Dump(stream))
-		{
-			GetError()->AddErrorMessage(std::format("Failed to dump shape with ID {}.", shape->GetShapeID()));
 			return false;
-		}
 		return true;
 	});
 }
@@ -264,16 +251,10 @@ bool Thread::RestoreShapes(std::istream& stream)
 		stream.read((char*)&typeID, sizeof(typeID));
 		Shape* shape = Shape::Create((Shape::TypeID)typeID);
 		if (!shape)
-		{
-			GetError()->AddErrorMessage(std::format("Failed to create shape with type ID {}.", typeID));
 			return false;
-		}
 		
 		if (!shape->Restore(stream))
-		{
-			GetError()->AddErrorMessage(std::format("Failed to restore shape with type ID {}.", typeID));
 			return false;
-		}
 
 		this->AddShape(shape, 0);
 	}

@@ -5,7 +5,7 @@
 #include "Shape.h"
 #include <stdint.h>
 
-namespace Collision
+namespace Imzadi
 {
 	class Result;
 
@@ -18,7 +18,7 @@ namespace Collision
 	 * shape of the system.  It is up to the user to tell _us_ what shapes it cares
 	 * about by querying for collision results involving those desired shapes.
 	 */
-	class COLLISION_LIB_API Query : public Task
+	class IMZADI_API Query : public Task
 	{
 	public:
 		Query();
@@ -32,7 +32,7 @@ namespace Collision
 	/**
 	 * This is the base class for all queries about a particular shape.
 	 */
-	class COLLISION_LIB_API ShapeQuery : public Query
+	class IMZADI_API ShapeQuery : public Query
 	{
 	public:
 		ShapeQuery();
@@ -59,7 +59,7 @@ namespace Collision
 	 * This is a useful feature when trying to debug your application.  It is
 	 * not intended to be used in the production-case of your application.
 	 */
-	class COLLISION_LIB_API DebugRenderQuery : public Query
+	class IMZADI_API DebugRenderQuery : public Query
 	{
 	public:
 		DebugRenderQuery();
@@ -70,14 +70,14 @@ namespace Collision
 		/**
 		 * Tell the collision system what parts of it you want to visualize.
 		 * 
-		 * @param[1] drawFlags This is some OR-ing of the COLL_SYS_DRAW_FLAG_* defines.
+		 * @param[1] drawFlags This is some OR-ing of the IMZADI_DRAW_FLAG_* defines.
 		 */
 		void SetDrawFlags(uint32_t drawFlags) { this->drawFlags = drawFlags; }
 
 		/**
 		 * Return this query's configure draw flags.
 		 * 
-		 * @return An OR-ing of some combination of the COLL_SYS_DRAW_FLAG_* defines is returned.
+		 * @return An OR-ing of some combination of the IMZADI_DRAW_FLAG_* defines is returned.
 		 */
 		uint32_t GetDrawFlags() const { return this->drawFlags; }
 
@@ -93,7 +93,7 @@ namespace Collision
 	/**
 	 * Use this class to submit a ray-cast query against the entire physics world.
 	 */
-	class COLLISION_LIB_API RayCastQuery : public Query
+	class IMZADI_API RayCastQuery : public Query
 	{
 	public:
 		RayCastQuery();
@@ -132,7 +132,7 @@ namespace Collision
 	 * 
 	 * A TransformResult class instance is returned by this query.
 	 */
-	class COLLISION_LIB_API ObjectToWorldQuery : public ShapeQuery
+	class IMZADI_API ObjectToWorldQuery : public ShapeQuery
 	{
 	public:
 		ObjectToWorldQuery();
@@ -170,7 +170,7 @@ namespace Collision
 	 * A more sophisticated query may be written later that does try to take time into account,
 	 * and prevent tunneling.
 	 */
-	class COLLISION_LIB_API CollisionQuery : public ShapeQuery
+	class IMZADI_API CollisionQuery : public ShapeQuery
 	{
 	public:
 		CollisionQuery();
@@ -194,7 +194,7 @@ namespace Collision
 	 * not have a place in the bounding-box tree, and so it can't
 	 * collide with anything else in the world.
 	 */
-	class COLLISION_LIB_API ShapeInBoundsQuery : public ShapeQuery
+	class IMZADI_API ShapeInBoundsQuery : public ShapeQuery
 	{
 	public:
 		ShapeInBoundsQuery();

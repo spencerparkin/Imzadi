@@ -4,7 +4,7 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	class Vector3;
 	class Plane;
@@ -15,7 +15,7 @@ namespace Collision
 	 * Unit-quaternions form a group under multiplication and are useful for representing
 	 * rotations or orientations.  
 	 */
-	class COLLISION_LIB_API Quaternion
+	class IMZADI_API Quaternion
 	{
 	public:
 		Quaternion();
@@ -165,11 +165,11 @@ namespace Collision
 		double w, x, y, z;
 	};
 
-	COLLISION_LIB_API Quaternion operator+(const Quaternion& quatA, const Quaternion& quatB);
-	COLLISION_LIB_API Quaternion operator-(const Quaternion& quatA, const Quaternion& quatB);
-	COLLISION_LIB_API Quaternion operator*(const Quaternion& quatA, const Quaternion& quatB);
-	COLLISION_LIB_API Quaternion operator/(const Quaternion& quatA, const Quaternion& quatB);
-	COLLISION_LIB_API Quaternion operator*(const Quaternion& quat, double scalar);
-	COLLISION_LIB_API Quaternion operator*(double scalar, const Quaternion& quat);
-	COLLISION_LIB_API Quaternion operator/(const Quaternion& quat, double scalar);
+	IMZADI_API Quaternion operator+(const Quaternion& quatA, const Quaternion& quatB);
+	IMZADI_API Quaternion operator-(const Quaternion& quatA, const Quaternion& quatB);
+	IMZADI_API Quaternion operator*(const Quaternion& quatA, const Quaternion& quatB);
+	IMZADI_API Quaternion operator/(const Quaternion& quatA, const Quaternion& quatB);
+	IMZADI_API Quaternion operator*(const Quaternion& quat, double scalar);
+	IMZADI_API Quaternion operator*(double scalar, const Quaternion& quat);
+	IMZADI_API Quaternion operator/(const Quaternion& quat, double scalar);
 }

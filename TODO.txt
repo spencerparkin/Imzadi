@@ -4,8 +4,8 @@ TODO:
 [ ] Fix jumping bug where sometimes you jump higher than usual.
 [ ] Fix falling through platform randomly bug.
 [ ] Fix render glitch bugs on character.
-[ ] Get character animation working (even if it's mediocre like everything else.)
-[ ] Refactor entire repository into a game engine and game app.  Rename the repo "GameEngine" or something like that.
+[x] Get character animation working (even if it's mediocre like everything else.)
+[x] Refactor entire repository into a game engine and game app.  Rename the repo "GameEngine" or something like that.
 [ ] Refine the asset tools/pipeline, because it's a bit of a mess.  Can we actually get a rigged/animated character flowing into the engine?  Look at the AssImp library.
 [ ] Port engine to DX12.
-[ ] Add audio support with direct sound?  Can we do spatial-awareness/3D sounds?\
+[ ] Add audio support with direct sound or XAudio2?  Can we do spatial-awareness/3D sounds?

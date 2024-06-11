@@ -1,7 +1,7 @@
 #include "Angle.h"
 #include <math.h>
 
-using namespace Collision;
+using namespace Imzadi;
 
 /*static*/ void Angle::MakeClose(double& angleA, double angleB)
 {
@@ -14,7 +14,7 @@ using namespace Collision;
 		if (distance <= M_PI)
 			break;
 
-		angleA += 2.0 * M_PI * COLL_SYS_SIGN(angleB - angleA);
+		angleA += 2.0 * M_PI * IMZADI_SIGN(angleB - angleA);
 	}
 }
 

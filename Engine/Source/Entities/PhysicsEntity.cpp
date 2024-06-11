@@ -1,7 +1,7 @@
 #include "PhysicsEntity.h"
 #include "Game.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 PhysicsEntity::PhysicsEntity()
 {
@@ -20,14 +20,14 @@ PhysicsEntity::PhysicsEntity()
 	return true;
 }
 
-/*virtual*/ void PhysicsEntity::AccumulateForces(Collision::Vector3& netForce)
+/*virtual*/ void PhysicsEntity::AccumulateForces(Vector3& netForce)
 {
 	Vector3 downVector(0.0, -1.0, 0.0);
 	Vector3 gravityForce = downVector * this->mass * Game::Get()->GetGravity();
 	netForce += gravityForce;
 }
 
-/*virtual*/ void PhysicsEntity::IntegrateVelocity(const Collision::Vector3& acceleration, double deltaTime)
+/*virtual*/ void PhysicsEntity::IntegrateVelocity(const Vector3& acceleration, double deltaTime)
 {
 	this->velocity += acceleration * deltaTime;
 }

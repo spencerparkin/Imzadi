@@ -7,7 +7,7 @@
 #include <vector>
 #include <string>
 
-namespace Collision
+namespace Imzadi
 {
 	class AxisAlignedBoundingBox;
 
@@ -22,7 +22,7 @@ namespace Collision
 	 * Users of the system should perform a dynamic cast on the returned Result class pointer.
 	 * Any query can possibly return an instance of the ErrorResult class.
 	 */
-	class COLLISION_LIB_API Result
+	class IMZADI_API Result
 	{
 	public:
 		Result();
@@ -41,7 +41,7 @@ namespace Collision
 	 * This result can be returned by any query, and indicates that something went wrong
 	 * with the query.
 	 */
-	class COLLISION_LIB_API ErrorResult : public Result
+	class IMZADI_API ErrorResult : public Result
 	{
 	public:
 		ErrorResult();
@@ -71,7 +71,7 @@ namespace Collision
 	/**
 	 * This result is returned by any query that requirse a yes/no answer.
 	 */
-	class COLLISION_LIB_API BoolResult : public Result
+	class IMZADI_API BoolResult : public Result
 	{
 	public:
 		BoolResult();
@@ -101,7 +101,7 @@ namespace Collision
 	 * wire-frame drawing information the user can use to visualize (render)
 	 * the collision system as far as what was requested in the query.
 	 */
-	class COLLISION_LIB_API DebugRenderResult : public Result
+	class IMZADI_API DebugRenderResult : public Result
 	{
 	public:
 		DebugRenderResult();
@@ -193,7 +193,7 @@ namespace Collision
 	/**
 	 * This is the result of any query expected to return a transform.
 	 */
-	class COLLISION_LIB_API TransformResult : public Result
+	class IMZADI_API TransformResult : public Result
 	{
 	public:
 		TransformResult();
@@ -212,7 +212,7 @@ namespace Collision
 	 * of a set of collision pairs.  See the ShapePairCollisionStatus class for
 	 * more information.
 	 */
-	class COLLISION_LIB_API CollisionQueryResult : public Result
+	class IMZADI_API CollisionQueryResult : public Result
 	{
 	public:
 		CollisionQueryResult();

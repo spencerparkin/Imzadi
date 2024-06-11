@@ -4,7 +4,7 @@
 #include "SkinWeights.h"
 #include "Game.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 SkinnedRenderMesh::SkinnedRenderMesh()
 {

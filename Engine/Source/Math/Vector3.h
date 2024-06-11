@@ -6,7 +6,7 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * Instances of this class are members of a 3-dimensional euclidean vector space,
@@ -18,7 +18,7 @@ namespace Collision
 	 * No interpretation is imposed here.  Note that algebrically, vectors can and are often thought
 	 * of as 3x1 or 1x3 matrices.
 	 */
-	class COLLISION_LIB_API Vector3
+	class IMZADI_API Vector3
 	{
 	public:
 		Vector3()

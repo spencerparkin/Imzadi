@@ -2,7 +2,7 @@
 #include "Vector3.h"
 #include "Quaternion.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Matrix3x3::Matrix3x3()
 {
@@ -229,10 +229,10 @@ void Matrix3x3::GetToQuat(Quaternion& unitQuat) const
 	double r23 = this->ele[1][2];
 	double r33 = this->ele[2][2];
 
-	unitQuat.w = 0.25 * ::sqrt(COLL_SYS_SQUARED(r11 + r22 + r33 + 1.0) + COLL_SYS_SQUARED(r32 - r23) + COLL_SYS_SQUARED(r13 - r31) + COLL_SYS_SQUARED(r21 - r12));
-	unitQuat.x = 0.25 * ::sqrt(COLL_SYS_SQUARED(r32 - r23) + COLL_SYS_SQUARED(r11 - r22 - r33 + 1.0) + COLL_SYS_SQUARED(r21 + r12) + COLL_SYS_SQUARED(r31 + r13)) * COLL_SYS_SIGN(r32 - r23);
-	unitQuat.y = 0.25 * ::sqrt(COLL_SYS_SQUARED(r13 - r31) + COLL_SYS_SQUARED(r21 + r12) + COLL_SYS_SQUARED(r22 - r11 - r33 + 1.0) + COLL_SYS_SQUARED(r32 + r23)) * COLL_SYS_SIGN(r13 - r31);
-	unitQuat.z = 0.25 * ::sqrt(COLL_SYS_SQUARED(r21 - r12) + COLL_SYS_SQUARED(r31 + r13) + COLL_SYS_SQUARED(r32 + r23) + COLL_SYS_SQUARED(r33 - r11 - r22 + 1.0)) * COLL_SYS_SIGN(r21 - r12);
+	unitQuat.w = 0.25 * ::sqrt(IMZADI_SQUARED(r11 + r22 + r33 + 1.0) + IMZADI_SQUARED(r32 - r23) + IMZADI_SQUARED(r13 - r31) + IMZADI_SQUARED(r21 - r12));
+	unitQuat.x = 0.25 * ::sqrt(IMZADI_SQUARED(r32 - r23) + IMZADI_SQUARED(r11 - r22 - r33 + 1.0) + IMZADI_SQUARED(r21 + r12) + IMZADI_SQUARED(r31 + r13)) * IMZADI_SIGN(r32 - r23);
+	unitQuat.y = 0.25 * ::sqrt(IMZADI_SQUARED(r13 - r31) + IMZADI_SQUARED(r21 + r12) + IMZADI_SQUARED(r22 - r11 - r33 + 1.0) + IMZADI_SQUARED(r32 + r23)) * IMZADI_SIGN(r13 - r31);
+	unitQuat.z = 0.25 * ::sqrt(IMZADI_SQUARED(r21 - r12) + IMZADI_SQUARED(r31 + r13) + IMZADI_SQUARED(r32 + r23) + IMZADI_SQUARED(r33 - r11 - r22 + 1.0)) * IMZADI_SIGN(r21 - r12);
 }
 
 void Matrix3x3::SetOuterProduct(const Vector3& vectorA, const Vector3& vectorB)
@@ -302,21 +302,21 @@ Matrix3x3 Matrix3x3::Orthonormalized(uint32_t anchorAxis) const
 
 	switch (anchorAxis)
 	{
-		case COLL_SYS_AXIS_FLAG_X:
+		case IMZADI_AXIS_FLAG_X:
 		{
 			xAxis.Normalize();
 			yAxis = yAxis.RejectedFrom(xAxis).Normalized();
 			zAxis = zAxis.RejectedFrom(xAxis).RejectedFrom(yAxis).Normalized();
 			break;
 		}
-		case COLL_SYS_AXIS_FLAG_Y:
+		case IMZADI_AXIS_FLAG_Y:
 		{
 			yAxis.Normalize();
 			zAxis = zAxis.RejectedFrom(yAxis).Normalized();
 			xAxis = xAxis.RejectedFrom(yAxis).RejectedFrom(zAxis).Normalized();
 			break;
 		}
-		case COLL_SYS_AXIS_FLAG_Z:
+		case IMZADI_AXIS_FLAG_Z:
 		{
 			zAxis.Normalize();
 			xAxis = xAxis.RejectedFrom(zAxis).Normalized();
@@ -422,7 +422,7 @@ void Matrix3x3::Restore(std::istream& stream)
 			stream.read((char*)&this->ele[i][j], sizeof(double));
 }
 
-namespace Collision
+namespace Imzadi
 {
 	Matrix3x3 operator+(const Matrix3x3& matrixA, const Matrix3x3& matrixB)
 	{

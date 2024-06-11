@@ -3,6 +3,8 @@
 set(RIXX_SOURCES
     Source/Main.cpp
     Source/Main.h
+    Source/GameApp.cpp
+    Source/GameApp.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${RIXX_SOURCES})
@@ -11,8 +13,6 @@ add_executable(SearchForTheSacredChaliceOfRixx WIN32 ${RIXX_SOURCES})
 
 target_link_libraries(SearchForTheSacredChaliceOfRixx PRIVATE
     ImzadiGameEngine
-    d3d11.lib
-    d3dcompiler.lib
 )
 
 target_compile_definitions(SearchForTheSacredChaliceOfRixx PRIVATE
@@ -23,4 +23,5 @@ target_compile_definitions(SearchForTheSacredChaliceOfRixx PRIVATE
 
 target_include_directories(SearchForTheSacredChaliceOfRixx PRIVATE
     "Source"
+    ${PROJECT_SOURCE_DIR}/Engine/Source
 )

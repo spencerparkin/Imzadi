@@ -3,7 +3,7 @@
 #include "Matrix2x2.h"
 #include "Vector2.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 LineSegment::LineSegment()
 {
@@ -68,7 +68,7 @@ double LineSegment::ShortestDistanceTo(const LineSegment& lineSegment) const
 	// In this case, the two line-segments are parallel, I think.
 	double distanceA = lineSegment.ShortestDistanceTo(this->point[0]);
 	double distanceB = lineSegment.ShortestDistanceTo(this->point[1]);
-	return COLL_SYS_MIN(distanceA, distanceB);
+	return IMZADI_MIN(distanceA, distanceB);
 }
 
 double LineSegment::ShortestDistanceTo(const Plane& plane) const
@@ -76,10 +76,10 @@ double LineSegment::ShortestDistanceTo(const Plane& plane) const
 	double distanceA = plane.SignedDistanceTo(this->point[0]);
 	double distanceB = plane.SignedDistanceTo(this->point[1]);
 
-	if (COLL_SYS_SIGN(distanceA) != COLL_SYS_SIGN(distanceB))
+	if (IMZADI_SIGN(distanceA) != IMZADI_SIGN(distanceB))
 		return 0.0;
 
-	return COLL_SYS_MIN(::fabs(distanceA), ::fabs(distanceB));
+	return IMZADI_MIN(::fabs(distanceA), ::fabs(distanceB));
 }
 
 Vector3 LineSegment::Lerp(double lambda) const
@@ -113,10 +113,10 @@ bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const 
 	double alpha = vector.x;
 	double beta = vector.y;
 
-	alpha = COLL_SYS_MIN(alpha, 1.0);
-	alpha = COLL_SYS_MAX(alpha, 0.0);
-	beta = COLL_SYS_MIN(beta, 1.0);
-	beta = COLL_SYS_MAX(beta, 0.0);
+	alpha = IMZADI_MIN(alpha, 1.0);
+	alpha = IMZADI_MAX(alpha, 0.0);
+	beta = IMZADI_MIN(beta, 1.0);
+	beta = IMZADI_MAX(beta, 0.0);
 
 	this->point[0] = lineSegmentA.Lerp(alpha);
 	this->point[1] = lineSegmentB.Lerp(beta);

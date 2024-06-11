@@ -1,15 +1,15 @@
 #include "Canvas.h"
 #include "App.h"
-#include "System.h"
-#include "Command.h"
-#include "Query.h"
-#include "Result.h"
-#include "CollisionCache.h"
+#include "Collision/System.h"
+#include "Collision/Command.h"
+#include "Collision/Query.h"
+#include "Collision/Result.h"
+#include "Collision/CollisionCache.h"
 #include <gl/GLU.h>
 #include <wx/utils.h>
 #include <time.h>
 
-using namespace Collision;
+using namespace Imzadi;
 
 int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
@@ -17,7 +17,7 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 {
 	this->targetShapes = false;
 	this->targetShapeHitLine = nullptr;
-	this->debugDrawFlags = COLL_SYS_DRAW_FLAG_SHAPES;
+	this->debugDrawFlags = IMZADI_DRAW_FLAG_SHAPES;
 	this->controllerSensativity = ControllerSensativity::MEDIUM;
 	this->strafeMode = StrafeMode::XZ_PLANE;
 	this->renderTimeArrayMax = 32;
@@ -95,7 +95,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 
 	glEnd();
 
-	System* system = wxGetApp().GetCollisionSystem();
+	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 	auto renderQuery = system->Create<DebugRenderQuery>();
 	renderQuery->SetDrawFlags(this->debugDrawFlags);
@@ -240,7 +240,7 @@ void Canvas::OnKeyPressed(wxKeyEvent& event)
 		{
 			if (this->selectedShapeID != 0)
 			{
-				System* system = wxGetApp().GetCollisionSystem();
+				CollisionSystem* system = wxGetApp().GetCollisionSystem();
 				system->RemoveShape(this->selectedShapeID);
 				this->selectedShapeID = 0;
 				this->Refresh();
@@ -335,7 +335,7 @@ void Canvas::Tick()
 		Transform cameraToWorld = this->camera.GetCameraToWorldTransform();
 		ray = cameraToWorld.TransformRay(ray);
 
-		System* system = wxGetApp().GetCollisionSystem();
+		CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 		auto rayCastQuery = system->Create<RayCastQuery>();
 		rayCastQuery->SetRay(ray);
@@ -382,7 +382,7 @@ void Canvas::Tick()
 
 		if (dpadDown || dpadUp || dpadLeft || dpadRight)
 		{
-			System* system = wxGetApp().GetCollisionSystem();
+			CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 			auto query = system->Create<ObjectToWorldQuery>();
 			query->SetShapeID(this->selectedShapeID);
@@ -418,7 +418,7 @@ void Canvas::Tick()
 					yAxisRotation.matrix.SetFromAxisAngle(yAxis, yAngle);
 
 					shapeToWorld = shapeToWorld * xAxisRotation * yAxisRotation;
-					shapeToWorld.matrix.Orthonormalized(COLL_SYS_AXIS_FLAG_X);
+					shapeToWorld.matrix.Orthonormalized(IMZADI_AXIS_FLAG_X);
 
 					auto command = system->Create<ObjectToWorldCommand>();
 					command->objectToWorld = shapeToWorld;
@@ -436,7 +436,7 @@ void Canvas::Tick()
 
 			if (this->dragSelectedShape)
 			{
-				System* system = wxGetApp().GetCollisionSystem();
+				CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 				auto query = system->Create<ObjectToWorldQuery>();
 				query->SetShapeID(this->selectedShapeID);
@@ -464,7 +464,7 @@ void Canvas::Tick()
 
 		if (this->dragSelectedShape)
 		{
-			System* system = wxGetApp().GetCollisionSystem();
+			CollisionSystem* system = wxGetApp().GetCollisionSystem();
 			auto command = system->Create<ObjectToWorldCommand>();
 			command->objectToWorld = this->camera.GetCameraToWorldTransform() * this->shapeToCamera;
 			command->SetShapeID(this->selectedShapeID);
@@ -473,7 +473,7 @@ void Canvas::Tick()
 
 		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_B))
 		{
-			System* system = wxGetApp().GetCollisionSystem();
+			CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 			auto collisionQuery = system->Create<CollisionQuery>();
 			collisionQuery->SetShapeID(this->selectedShapeID);
@@ -506,13 +506,13 @@ void Canvas::Tick()
 	this->Refresh();
 }
 
-void Canvas::SetSelectedShape(Collision::ShapeID shapeID)
+void Canvas::SetSelectedShape(Imzadi::ShapeID shapeID)
 {
 	if (shapeID != this->selectedShapeID)
 	{
 		this->dragSelectedShape = false;
 
-		System* system = wxGetApp().GetCollisionSystem();
+		CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 		if (this->selectedShapeID != 0)
 		{

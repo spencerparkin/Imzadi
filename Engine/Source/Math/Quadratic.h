@@ -5,13 +5,13 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * These are quadratic polynomials with real coeficients and this class revolves
 	 * around the idea of working with them and solving quadratic equations.
 	 */
-	class COLLISION_LIB_API Quadratic
+	class IMZADI_API Quadratic
 	{
 	public:
 		Quadratic();

@@ -10,7 +10,7 @@
 #include <unordered_map>
 #include <functional>
 
-namespace Collision
+namespace Imzadi
 {
 	class BoundingBoxNode;
 
@@ -20,7 +20,7 @@ namespace Collision
 	 * user will never have to interface with it directly.  This class,
 	 * when appropriate, calls directly into the narrow-phase.
 	 */
-	class COLLISION_LIB_API BoundingBoxTree
+	class IMZADI_API BoundingBoxTree
 	{
 	public:
 		BoundingBoxTree(const AxisAlignedBoundingBox& collisionWorldExtents);
@@ -47,7 +47,7 @@ namespace Collision
 		 * You can check to see if a shape landed in the tree by calling the
 		 * Shape::IsBound method on the shape.
 		 * 
-		 * Note that if the COLL_SYS_ADD_FLAG_ALLOW_SPLIT is passed in, then
+		 * Note that if the IMZADI_ADD_FLAG_ALLOW_SPLIT is passed in, then
 		 * we try to split the given shape up as needed to get it as deep into
 		 * the tree as possible, with a reasonable limit on how small a leaf
 		 * node can get.  Also, only on successful insertion is the ownership
@@ -59,7 +59,7 @@ namespace Collision
 		 * make sense to split dynamic collision shapes.
 		 * 
 		 * @param[in] shape This is the shape to insert (or re-insert) into this tree.
-		 * @param[in] flags This is an OR-ing of flags of the form COLL_SYS_ADD_FLAG_*.  In particular, we look at the COLL_SYS_ADD_FLAG_ALLOW_SPLIT flag to see if shape splitting is allowed.
+		 * @param[in] flags This is an OR-ing of flags of the form IMZADI_ADD_FLAG_*.  In particular, we look at the IMZADI_ADD_FLAG_ALLOW_SPLIT flag to see if shape splitting is allowed.
 		 * @return True is returned on success; false, otherwise.
 		 */
 		bool Insert(Shape* shape, uint32_t flags);
@@ -133,7 +133,7 @@ namespace Collision
 	 * having to straddle the boundary between sub-spaces which, admittedly,
 	 * is a problem I'm not yet sure how to easily solve.
 	 */
-	class COLLISION_LIB_API BoundingBoxNode
+	class IMZADI_API BoundingBoxNode
 	{
 		friend class BoundingBoxTree;
 

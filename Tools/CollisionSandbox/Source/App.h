@@ -1,7 +1,7 @@
 #pragma once
 
 #include <wx/app.h>
-#include "System.h"
+#include "Collision/System.h"
 
 class Frame;
 
@@ -14,11 +14,11 @@ public:
 	virtual bool OnInit(void) override;
 	virtual int OnExit(void) override;
 
-	Collision::System* GetCollisionSystem() { return this->collisionSystem; }
+	Imzadi::CollisionSystem* GetCollisionSystem() { return this->collisionSystem; }
 
 private:
 	Frame* frame;
-	Collision::System* collisionSystem;
+	Imzadi::CollisionSystem* collisionSystem;
 };
 
 wxDECLARE_APP(App);

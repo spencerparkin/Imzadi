@@ -1,7 +1,7 @@
 #include "Skeleton.h"
 #include "Game.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 //-------------------------------- Skeleton --------------------------------
 
@@ -90,7 +90,7 @@ const Bone* Skeleton::FindBone(const std::string& name) const
 	return const_cast<Skeleton*>(this)->FindBone(name);
 }
 
-void Skeleton::DebugDraw(BoneTransformType transformType, const Collision::Transform& objectToWorld) const
+void Skeleton::DebugDraw(BoneTransformType transformType, const Transform& objectToWorld) const
 {
 	if (this->rootBone)
 	{
@@ -258,7 +258,7 @@ bool Skeleton::GatherBones(std::vector<Bone*>& boneArray)
 	return true;
 }
 
-bool Skeleton::GatherBones(const Collision::Vector3& position, BoneTransformType boneTransformType, std::vector<Bone*>& boneArray)
+bool Skeleton::GatherBones(const Vector3& position, BoneTransformType boneTransformType, std::vector<Bone*>& boneArray)
 {
 	if (!this->GatherBones(boneArray))
 		return false;
@@ -418,7 +418,7 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 		childBone->UpdateCachedTransforms(transformType);
 }
 
-Collision::Vector3 Bone::CalcObjectSpaceCenter(BoneTransformType transformType) const
+Vector3 Bone::CalcObjectSpaceCenter(BoneTransformType transformType) const
 {
 	const Transforms* transforms = this->GetTransforms(transformType);
 	return transforms->boneToObject.TransformPoint(Vector3(-transforms->boneState.length / 2.0, 0.0, 0.0));
@@ -432,7 +432,7 @@ void Bone::PopulateBoneMap(BoneMap& boneMap) const
 		childBone->PopulateBoneMap(boneMap);
 }
 
-void Bone::DebugDraw(BoneTransformType transformType, const Collision::Transform& objectToWorld) const
+void Bone::DebugDraw(BoneTransformType transformType, const Transform& objectToWorld) const
 {
 	DebugLines* debugLines = Game::Get()->GetDebugLines();
 	if (!debugLines)

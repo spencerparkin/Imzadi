@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Shape.h"
+#include "Collision/Shape.h"
 #include "Math/LineSegment.h"
 
-namespace Collision
+namespace Imzadi
 {
 	/**
 	 * This is a collision shape defined as all points within a given radius of a line-segment.
@@ -11,7 +11,7 @@ namespace Collision
 	 * is stored in object space, and an object-to-world transform is used to realize the
 	 * capsule in world space.
 	 */
-	class COLLISION_LIB_API CapsuleShape : public Shape
+	class IMZADI_API CapsuleShape : public Shape
 	{
 		friend class CapsuleShapeCache;
 

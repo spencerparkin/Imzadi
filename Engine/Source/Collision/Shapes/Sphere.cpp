@@ -2,9 +2,9 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Quadratic.h"
 #include "Math/Ray.h"
-#include "Result.h"
+#include "Collision/Result.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 //------------------------------------- SphereShape -------------------------------------
 
@@ -170,7 +170,7 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 	{
 		// The ray enters and exits the sphere.
 		if (realRoots[0] > 0.0 && realRoots[1] > 0.0)
-			alpha = COLL_SYS_MIN(realRoots[0], realRoots[1]);
+			alpha = IMZADI_MIN(realRoots[0], realRoots[1]);
 		else
 		{
 			// Here, the ray either originates within the sphere (which we

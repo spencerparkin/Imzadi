@@ -1,11 +1,10 @@
 #include "Loader.h"
-#include "Error.h"
 #include "Shapes/Polygon.h"
 #include <fstream>
 #include <format>
 #include <filesystem>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //------------------------------ ShapeLoader ------------------------------
 
@@ -70,10 +69,7 @@ OBJ_ShapeLoader::OBJ_ShapeLoader()
 	std::ifstream stream;
 	stream.open(filePath);
 	if (!stream.is_open())
-	{
-		GetError()->AddErrorMessage(std::format("Failed to open file ({}) for reading.", filePath));
 		return false;
-	}
 
 	std::vector<Vector3> vertexArray;
 	// TODO: Do we need to periodically reset this array as we go down the file?
@@ -104,17 +100,11 @@ OBJ_ShapeLoader::OBJ_ShapeLoader()
 					if (0 <= j && j < (signed)vertexArray.size())
 						polygon->AddVertex(vertexArray[j]);
 					else
-					{
-						GetError()->AddErrorMessage(std::format("Vertex index {} is out of range [0,{}].", j, (signed)vertexArray.size() - 1));
 						return false;
-					}
 				}
 
 				if (!polygon->IsValid())
-				{
-					GetError()->AddErrorMessage("Loaded polygon was not valid!");
 					return false;
-				}
 			}
 		}
 	}

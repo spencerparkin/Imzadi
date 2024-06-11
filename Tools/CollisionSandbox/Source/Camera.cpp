@@ -1,6 +1,6 @@
 #include "Camera.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Camera::Camera()
 {
@@ -21,17 +21,17 @@ void Camera::GetViewingParameters(ViewingParameters& viewingParams) const
 	viewingParams.upVector = yAxis;
 }
 
-const Collision::Vector3& Camera::GetCameraPosition() const
+const Imzadi::Vector3& Camera::GetCameraPosition() const
 {
 	return this->cameraToWorld.translation;
 }
 
-void Camera::SetCameraPosition(const Collision::Vector3& position)
+void Camera::SetCameraPosition(const Imzadi::Vector3& position)
 {
 	this->cameraToWorld.translation = position;
 }
 
-void Camera::SetCameraTarget(const Collision::Vector3& target)
+void Camera::SetCameraTarget(const Imzadi::Vector3& target)
 {
 	Vector3 xAxis, yAxis, zAxis;
 
@@ -42,19 +42,19 @@ void Camera::SetCameraTarget(const Collision::Vector3& target)
 	this->cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
 }
 
-void Camera::GetCameraFrame(Collision::Vector3& xAxis, Collision::Vector3& yAxis, Collision::Vector3& zAxis) const
+void Camera::GetCameraFrame(Imzadi::Vector3& xAxis, Imzadi::Vector3& yAxis, Imzadi::Vector3& zAxis) const
 {
 	this->cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
 }
 
-Collision::Quaternion Camera::GetCameraOrientation() const
+Imzadi::Quaternion Camera::GetCameraOrientation() const
 {
 	Quaternion quat;
 	this->cameraToWorld.matrix.GetToQuat(quat);
 	return quat;
 }
 
-void Camera::SetCameraOrientation(const Collision::Quaternion& quat)
+void Camera::SetCameraOrientation(const Imzadi::Quaternion& quat)
 {
 	this->cameraToWorld.matrix.SetFromQuat(quat);
 }

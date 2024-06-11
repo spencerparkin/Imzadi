@@ -1,6 +1,6 @@
 #include "Quadratic.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 Quadratic::Quadratic()
 {

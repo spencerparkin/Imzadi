@@ -2,7 +2,7 @@
 
 #include "Vector3.h"
 
-namespace Collision
+namespace Imzadi
 {
 	class Plane;
 	class AxisAlignedBoundingBox;
@@ -15,7 +15,7 @@ namespace Collision
 	 * of the ray direction, usually referred to as the alpha value.  If the stored
 	 * ray direction is not of unit-length, then all methods are left undefined.
 	 */
-	class COLLISION_LIB_API Ray
+	class IMZADI_API Ray
 	{
 	public:
 		Ray();

@@ -11,25 +11,25 @@ public:
 
 	struct ViewingParameters
 	{
-		Collision::Vector3 eyePoint;
-		Collision::Vector3 lookAtPoint;
-		Collision::Vector3 upVector;
+		Imzadi::Vector3 eyePoint;
+		Imzadi::Vector3 lookAtPoint;
+		Imzadi::Vector3 upVector;
 	};
 
 	void GetViewingParameters(ViewingParameters& viewingParams) const;
 
-	const Collision::Transform& GetCameraToWorldTransform() const { return this->cameraToWorld; }
+	const Imzadi::Transform& GetCameraToWorldTransform() const { return this->cameraToWorld; }
 
-	const Collision::Vector3& GetCameraPosition() const;
-	void SetCameraPosition(const Collision::Vector3& position);
+	const Imzadi::Vector3& GetCameraPosition() const;
+	void SetCameraPosition(const Imzadi::Vector3& position);
 
-	void GetCameraFrame(Collision::Vector3& xAxis, Collision::Vector3& yAxis, Collision::Vector3& zAxis) const;
+	void GetCameraFrame(Imzadi::Vector3& xAxis, Imzadi::Vector3& yAxis, Imzadi::Vector3& zAxis) const;
 
-	Collision::Quaternion GetCameraOrientation() const;
-	void SetCameraOrientation(const Collision::Quaternion& quat);
+	Imzadi::Quaternion GetCameraOrientation() const;
+	void SetCameraOrientation(const Imzadi::Quaternion& quat);
 
-	void SetCameraTarget(const Collision::Vector3& target);
+	void SetCameraTarget(const Imzadi::Vector3& target);
 
 private:
-	Collision::Transform cameraToWorld;
+	Imzadi::Transform cameraToWorld;
 };

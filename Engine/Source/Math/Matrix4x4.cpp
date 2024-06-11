@@ -5,7 +5,7 @@
 #include "Math/Quaternion.h"
 #include <math.h>
 
-using namespace Collision;
+using namespace Imzadi;
 
 Matrix4x4::Matrix4x4()
 {
@@ -381,7 +381,7 @@ void Matrix4x4::Restore(std::istream& stream)
 			stream.read((char*)&this->ele[i][j], sizeof(double));
 }
 
-namespace Collision
+namespace Imzadi
 {
 	Matrix4x4 operator*(const Matrix4x4& leftMatrix, const Matrix4x4& rightMatrix)
 	{

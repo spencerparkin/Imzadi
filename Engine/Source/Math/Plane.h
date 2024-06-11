@@ -3,7 +3,7 @@
 #include "Vector3.h"
 #include <vector>
 
-namespace Collision
+namespace Imzadi
 {
 	class Vector3;
 
@@ -11,7 +11,7 @@ namespace Collision
 	 * These are planes of infinite extent in 3D space and non necessarily containing the origin.
 	 * If the stored normal is not of unit-length, then all methods are left undefined.
 	 */
-	class COLLISION_LIB_API Plane
+	class IMZADI_API Plane
 	{
 	public:
 		/**

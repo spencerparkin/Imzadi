@@ -1,6 +1,6 @@
 #include "Vector3.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 bool Vector3::Normalize(double* length /*= nullptr*/)
 {

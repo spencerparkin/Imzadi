@@ -4,14 +4,14 @@
 #include <istream>
 #include <ostream>
 
-namespace Collision
+namespace Imzadi
 {
 	class Vector3;
 
 	/*
 	 * These are 4-dimensional vectors geared toward 3D computer graphics applications and homogenous coordinates.
 	 */
-	class COLLISION_LIB_API Vector4
+	class IMZADI_API Vector4
 	{
 	public:
 		Vector4();
@@ -58,9 +58,9 @@ namespace Collision
 		double w;
 	};
 
-	COLLISION_LIB_API Vector4 operator+(const Vector4& leftVector, const Vector4& rightVector);
-	COLLISION_LIB_API Vector4 operator-(const Vector4& leftVector, const Vector4& rightVector);
-	COLLISION_LIB_API Vector4 operator*(const Vector4& vector, double scalar);
-	COLLISION_LIB_API Vector4 operator*(double scalar, const Vector4& vector);
-	COLLISION_LIB_API Vector4 operator/(const Vector4& vector, double scalar);
+	IMZADI_API Vector4 operator+(const Vector4& leftVector, const Vector4& rightVector);
+	IMZADI_API Vector4 operator-(const Vector4& leftVector, const Vector4& rightVector);
+	IMZADI_API Vector4 operator*(const Vector4& vector, double scalar);
+	IMZADI_API Vector4 operator*(double scalar, const Vector4& vector);
+	IMZADI_API Vector4 operator/(const Vector4& vector, double scalar);
 }

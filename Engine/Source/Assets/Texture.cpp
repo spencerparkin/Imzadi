@@ -3,6 +3,8 @@
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
+using namespace Imzadi;
+
 Texture::Texture()
 {
 	this->texture = nullptr;
@@ -20,7 +22,7 @@ Texture::Texture()
 		return false;
 
 	std::string imageFile = jsonDoc["image_file"].GetString();
-	if (!assetCache->ResolveAssetPath(imageFile, true))
+	if (!assetCache->ResolveAssetPath(imageFile))
 		return false;
 
 	int flipVertical = 0;

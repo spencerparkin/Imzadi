@@ -1,5 +1,7 @@
 #include "Reference.h"
 
+using namespace Imzadi;
+
 uint32_t ReferenceCounted::nextHandle = 1;
 ReferenceCounted::ObjectMap ReferenceCounted::objectMap;
 

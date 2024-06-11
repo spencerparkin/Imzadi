@@ -1,12 +1,11 @@
 #include "BoundingBoxTree.h"
-#include "Error.h"
 #include "Result.h"
 #include "Math/Ray.h"
 #include "Math/Plane.h"
 #include <algorithm>
 #include <format>
 
-using namespace Collision;
+using namespace Imzadi;
 
 //--------------------------------- BoundingBoxTree ---------------------------------
 
@@ -27,10 +26,7 @@ BoundingBoxTree::BoundingBoxTree(const AxisAlignedBoundingBox& collisionWorldExt
 bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 {
 	if (!shape)
-	{
-		GetError()->AddErrorMessage("Can't insert null shape into box tree!");
 		return false;
-	}
 
 	// Insertion begins either where the shape is already bound or, if not bound, at the root.
 	BoundingBoxNode* node = shape->node;
@@ -77,12 +73,12 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 		}
 		
 		// The shape is as deep as it can go.  If splitting is not allowed, we're done.
-		if ((flags & COLL_SYS_ADD_FLAG_ALLOW_SPLIT) == 0)
+		if ((flags & IMZADI_ADD_FLAG_ALLOW_SPLIT) == 0)
 			break;
 
 		// Okay, splitting is allowed, but is the node too small for us to want to attempt any further splitting?
 		double nodeVolume = node->box.GetVolume();
-		if (nodeVolume < COLL_SYS_MIN_NODE_VOLUME)
+		if (nodeVolume < IMZADI_MIN_NODE_VOLUME)
 			break;
 
 		// Attempt to split the shape.  If we can't, we're done.
@@ -97,8 +93,8 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 		node->BindToShape(shapeBack);
 		node->BindToShape(shapeFront);
 			
-		COLL_SYS_ASSERT((*node->childNodeArray)[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
-		COLL_SYS_ASSERT((*node->childNodeArray)[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
+		IMZADI_ASSERT((*node->childNodeArray)[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
+		IMZADI_ASSERT((*node->childNodeArray)[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
 
 		if (!this->Insert(shapeBack, flags))
 		{
@@ -130,10 +126,7 @@ bool BoundingBoxTree::Remove(ShapeID shapeID)
 {
 	Shape* shape = this->FindShape(shapeID);
 	if (!shape)
-	{
-		GetError()->AddErrorMessage(std::format("No shape with ID {} found in the box tree.", shapeID));
 		return false;
-	}
 
 	if (shape->node)
 		shape->node->UnbindFromShape(shape);
@@ -206,10 +199,7 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 {
 	const BoundingBoxNode* node = shape->node;
 	if (!node)
-	{
-		GetError()->AddErrorMessage("The given shape is not inserted into an AABB tree.");
 		return false;
-	}
 
 	// We have to start our traversal at the root, not the node of the shape,
 	// because there are some shapes that straddle boundaries at a higher level
@@ -239,7 +229,7 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 			if (intersection.Intersect(otherShape->GetBoundingBox(), shape->GetBoundingBox()))
 			{
 				ShapePairCollisionStatus* collisionStatus = this->collisionCache.DetermineCollisionStatusOfShapes(shape, otherShape);
-				COLL_SYS_ASSERT(collisionStatus != nullptr);
+				IMZADI_ASSERT(collisionStatus != nullptr);
 				if (collisionStatus && collisionStatus->AreInCollision())
 				{
 					collisionResult->AddCollisionStatus(collisionStatus);

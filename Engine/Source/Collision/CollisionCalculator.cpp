@@ -9,9 +9,8 @@
 #include "Math/Plane.h"
 #include "Math/Ray.h"
 #include "Math/Interval.h"
-#include "Error.h"
 
-using namespace Collision;
+using namespace Imzadi;
 
 //------------------------------ CollisionCalculator<SphereShape, SphereShape> ------------------------------
 
@@ -21,10 +20,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	auto sphereB = dynamic_cast<const SphereShape*>(shapeB);
 
 	if (!sphereA || !sphereB)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to spheres.");
 		return nullptr;
-	}
 
 	auto collisionStatus = new ShapePairCollisionStatus(sphereA, sphereB);
 
@@ -53,10 +49,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	auto capsule = dynamic_cast<const CapsuleShape*>(shapeB);
 	
 	if (!sphere || !capsule)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to sphere and capsule.");
 		return nullptr;
-	}
 
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
@@ -99,10 +92,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	auto capsuleB = dynamic_cast<const CapsuleShape*>(shapeB);
 
 	if (!capsuleA || !capsuleB)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to capsules.");
 		return nullptr;
-	}
 
 	LineSegment spineA = capsuleA->GetObjectToWorldTransform().TransformLineSegment(capsuleA->GetSpine());
 	LineSegment spineB = capsuleB->GetObjectToWorldTransform().TransformLineSegment(capsuleB->GetSpine());
@@ -132,10 +122,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	auto box = dynamic_cast<const BoxShape*>(shapeB);
 
 	if (!sphere || !box)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to sphere and box.");
 		return nullptr;
-	}
 
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
@@ -193,10 +180,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	auto polygon = dynamic_cast<const PolygonShape*>(shapeB);
 
 	if (!sphere || !polygon)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to sphere and polygon.");
 		return nullptr;
-	}
 
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
@@ -235,10 +219,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	auto boxB = dynamic_cast<const BoxShape*>(shapeB);
 
 	if (!boxA || !boxB)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to box shapes.");
 		return nullptr;
-	}
 
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
@@ -312,7 +293,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 		else
 		{
 			// This means there's a case we need to consider that we have not yet considered.
-			COLL_SYS_ASSERT(false);
+			IMZADI_ASSERT(false);
 			break;
 		}
 
@@ -427,10 +408,7 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 	auto polygon = dynamic_cast<const PolygonShape*>(shapeB);
 
 	if (!capsule || !polygon)
-	{
-		GetError()->AddErrorMessage("Failed to cast given shapes to capsule and polygon.");
 		return nullptr;
-	}
 
 	LineSegment capsuleSpine = capsule->GetObjectToWorldTransform().TransformLineSegment(capsule->GetSpine());
 	
@@ -470,7 +448,7 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 		}
 	}
 
-	COLL_SYS_ASSERT(shortestConnector != nullptr);
+	IMZADI_ASSERT(shortestConnector != nullptr);
 	
 	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
 
@@ -484,7 +462,7 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 		if (!delta.Normalize(&distance))
 		{
 			// TODO: Handle this case.
-			COLL_SYS_ASSERT(false);
+			IMZADI_ASSERT(false);
 		}
 		else
 		{
