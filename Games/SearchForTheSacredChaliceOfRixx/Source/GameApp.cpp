@@ -1,4 +1,5 @@
 #include "GameApp.h"
+#include "CustomAssetCache.h"
 #include "Entities/Level.h"
 
 GameApp::GameApp(HINSTANCE instance) : Game(instance)
@@ -11,6 +12,8 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 /*virtual*/ bool GameApp::PostInit()
 {
+	this->assetCache.Set(new CustomAssetCache());
+
 	if (!Game::PostInit())
 		return false;
 

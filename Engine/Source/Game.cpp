@@ -101,7 +101,9 @@ Game::Game(HINSTANCE instance) : controller(0)
 
 /*virtual*/ bool Game::PostInit()
 {
-	this->assetCache.Set(new AssetCache());
+	if (!this->assetCache)
+		this->assetCache.Set(new AssetCache());
+
 	this->assetCache->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Engine\Assets)");	// TODO: Need to not hard-code a path here.
 
 	this->scene.Set(new Scene());

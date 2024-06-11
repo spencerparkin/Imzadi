@@ -77,7 +77,7 @@ namespace Imzadi
 		
 		/**
 		 * This must be overridden for custom asset types.  Don't forget to
-		 * call this base-class method.
+		 * call this base-class method in your override.
 		 */
 		virtual Asset* CreateBlankAssetForFileType(const std::string& assetFile);
 
