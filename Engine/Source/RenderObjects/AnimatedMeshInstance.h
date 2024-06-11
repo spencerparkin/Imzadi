@@ -24,7 +24,12 @@ namespace Imzadi
 		void SetSkinnedMesh(SkinnedRenderMesh* skinnedMesh) { this->skinnedMesh.Set(skinnedMesh); }
 		SkinnedRenderMesh* GetSkinnedMesh() { return this->skinnedMesh.Get(); }
 
+		static void SetRenderSkeletons(bool render);
+		static bool GetRenderSkeletons();
+
 	private:
+		static bool renderSkeletons;
+
 		double transitionTime;
 		double currentTransitionTime;
 		KeyFrame transitionalKeyFrame;

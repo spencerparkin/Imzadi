@@ -4,6 +4,18 @@
 
 using namespace Imzadi;
 
+bool AnimatedMeshInstance::renderSkeletons = false;
+
+/*static*/ void AnimatedMeshInstance::SetRenderSkeletons(bool render)
+{
+	renderSkeletons = render;
+}
+
+/*static*/ bool AnimatedMeshInstance::GetRenderSkeletons()
+{
+	return renderSkeletons;
+}
+
 AnimatedMeshInstance::AnimatedMeshInstance()
 {
 	this->transitionTime = 0.2;
@@ -22,10 +34,12 @@ AnimatedMeshInstance::AnimatedMeshInstance()
 
 	if (renderPass == RenderPass::MAIN_PASS)
 	{
-		// TODO: Only do this if a debug flag is set.
-		Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
-		if (skeleton)
-			skeleton->DebugDraw(BoneTransformType::CURRENT_POSE, this->objectToWorld);
+		if (renderSkeletons)
+		{
+			Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
+			if (skeleton)
+				skeleton->DebugDraw(BoneTransformType::CURRENT_POSE, this->objectToWorld);
+		}
 	}
 }
 

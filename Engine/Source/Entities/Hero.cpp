@@ -87,12 +87,10 @@ Hero::Hero()
 		if (!followCam)
 			return;
 
-		Controller* controller = Game::Get()->GetController("Hero");
-		if (!controller)
-			return;
-
 		Vector2 leftStick(0.0, 0.0);
-		controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
+		Controller* controller = Game::Get()->GetController("Hero");
+		if (controller)
+			controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
 
 		Camera* camera = followCam->GetCamera();
 		if (!camera)
@@ -163,19 +161,19 @@ Hero::Hero()
 		}
 		case TickPass::MID_TICK:
 		{
-			Controller* controller = Game::Get()->GetController("Hero");
-			if (controller)
+			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+			if (animatedMesh)
 			{
-				auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
-				if (animatedMesh)
+				Controller* controller = Game::Get()->GetController("Hero");
+				if (controller)
 				{
 					if (controller->ButtonPressed(XINPUT_GAMEPAD_A))
 						animatedMesh->SetAnimation("LeftWave");
 					else if (controller->ButtonPressed(XINPUT_GAMEPAD_B))
 						animatedMesh->SetAnimation("RightWave");
-
-					animatedMesh->AdvanceAnimation(deltaTime);
 				}
+
+				animatedMesh->AdvanceAnimation(deltaTime);
 			}
 
 			break;

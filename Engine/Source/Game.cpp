@@ -2,6 +2,7 @@
 #include "Scene.h"
 #include "Assets/RenderMesh.h"
 #include "RenderObjects/RenderMeshInstance.h"
+#include "RenderObjects/AnimatedMeshInstance.h"
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
@@ -554,6 +555,8 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 				this->collisionSystemDebugDrawFlags ^= IMZADI_DRAW_FLAG_SHAPE_BOXES;
 			else if (wParam == VK_F3)
 				this->collisionSystemDebugDrawFlags ^= IMZADI_DRAW_FLAG_AABB_TREE;
+			else if (wParam == VK_F4)
+				AnimatedMeshInstance::SetRenderSkeletons(!AnimatedMeshInstance::GetRenderSkeletons());
 			break;
 		}
 		case WM_DESTROY:
