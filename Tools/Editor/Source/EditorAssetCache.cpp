@@ -83,6 +83,7 @@ void EditorAssetCache::EndImport()
 			renderMeshAsset = nullptr;
 		}
 		
+		this->importMesh = nullptr;
 		return renderMeshAsset;
 	}
 	else if (assetType == "Texture")
@@ -135,6 +136,18 @@ void EditorAssetCache::EndImport()
 		}
 
 		return buffer;
+	}
+	else if (assetType == "SkinWeights")
+	{
+		//...
+	}
+	else if (assetType == "Skeleton")
+	{
+		//...
+	}
+	else if (assetType == "Animation")
+	{
+		//...
 	}
 
 	return AssetCache::FindAsset(assetFile, error, key);

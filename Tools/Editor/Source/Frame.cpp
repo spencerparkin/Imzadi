@@ -97,6 +97,8 @@ void Frame::OnImport(wxCommandEvent& event)
 
 void Frame::OnExport(wxCommandEvent& event)
 {
+	// TODO: Have user select folder where assets would go, and then enter a base name for the assets, I suppose.
+	//       Then walk through generated assets in our cache, dumping them to disk.
 }
 
 void Frame::OnAbout(wxCommandEvent& event)
