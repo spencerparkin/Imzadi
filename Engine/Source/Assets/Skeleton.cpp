@@ -16,7 +16,7 @@ Skeleton::Skeleton()
 	this->SetRootBone(nullptr);
 }
 
-/*virtual*/ bool Skeleton::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool Skeleton::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
 	if (!jsonDoc.HasMember("root_bone") || !jsonDoc["root_bone"].IsObject())
 		return false;
@@ -38,7 +38,7 @@ Skeleton::Skeleton()
 	return true;
 }
 
-/*virtual*/ bool Skeleton::Save(rapidjson::Document& jsonDoc) const
+/*virtual*/ bool Skeleton::Save(rapidjson::Document& jsonDoc, std::string& error) const
 {
 	if (!this->rootBone)
 		return false;

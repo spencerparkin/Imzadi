@@ -32,6 +32,7 @@ EditorApp::EditorApp()
 		return false;
 	}
 
+	Imzadi::Game::Set(this->gameEditor);
 	return true;
 }
 
@@ -41,6 +42,7 @@ EditorApp::EditorApp()
 	{
 		this->gameEditor->Shutdown();
 		delete this->gameEditor;
+		Imzadi::Game::Set(nullptr);
 	}
 
 	return 0;

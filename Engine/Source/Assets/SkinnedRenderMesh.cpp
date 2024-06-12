@@ -16,9 +16,9 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 {
 }
 
-/*virtual*/ bool SkinnedRenderMesh::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool SkinnedRenderMesh::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
-	if (!RenderMeshAsset::Load(jsonDoc, assetCache))
+	if (!RenderMeshAsset::Load(jsonDoc, error, assetCache))
 		return false;
 
 #if 0
@@ -34,7 +34,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 	std::string skeletonFile = jsonDoc["skeleton"].GetString();
 	Reference<Asset> asset;
-	if (!assetCache->LoadAsset(skeletonFile, asset))
+	if (!assetCache->LoadAsset(skeletonFile, asset, error))
 		return false;
 
 	this->skeleton.SafeSet(asset.Get());
@@ -57,7 +57,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 		return false;
 
 	std::string skinWeightsFile = jsonDoc["skin_weights"].GetString();
-	if (!assetCache->LoadAsset(skinWeightsFile, asset))
+	if (!assetCache->LoadAsset(skinWeightsFile, asset, error))
 		return false;
 
 	this->skinWeights.SafeSet(asset.Get());
@@ -90,7 +90,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 				return false;
 
 			std::string animationFile = animationValue.GetString();
-			if (!assetCache->LoadAsset(animationFile, asset))
+			if (!assetCache->LoadAsset(animationFile, asset, error))
 				return false;
 
 			Reference<Animation> animation;

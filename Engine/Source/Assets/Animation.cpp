@@ -22,7 +22,7 @@ Animation::Animation()
 	delete this->name;
 }
 
-/*virtual*/ bool Animation::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool Animation::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
 	this->Clear();
 
@@ -59,7 +59,7 @@ Animation::Animation()
 	return true;
 }
 
-/*virtual*/ bool Animation::Save(rapidjson::Document& jsonDoc) const
+/*virtual*/ bool Animation::Save(rapidjson::Document& jsonDoc, std::string& error) const
 {
 	jsonDoc.SetObject();
 

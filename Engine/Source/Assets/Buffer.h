@@ -16,7 +16,7 @@ namespace Imzadi
 		Buffer();
 		virtual ~Buffer();
 
-		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
+		virtual bool Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
 		ID3D11Buffer* GetBuffer() { return this->buffer; }

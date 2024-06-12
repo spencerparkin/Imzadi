@@ -311,15 +311,14 @@ HWND Game::GetMainWindowHandle()
 	return true;
 }
 
-Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
-			const std::string& renderMeshFile,
-			const Imzadi::Vector3& position,
-			const Imzadi::Quaternion& orientation)
+Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMeshFile, const Vector3& position, const Quaternion& orientation)
 {
 	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
 
-	if (this->assetCache->LoadAsset(renderMeshFile, renderMeshAsset))
+	std::string error;
+
+	if (this->assetCache->LoadAsset(renderMeshFile, renderMeshAsset, error))
 	{
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 		{
@@ -484,6 +483,16 @@ bool Game::RecreateViews()
 void Game::NotifyWindowResized()
 {
 	this->windowResized = true;
+}
+
+AssetCache* Game::GetAssetCache()
+{
+	return this->assetCache.Get();
+}
+
+void Game::SetAssetCache(AssetCache* assetCache)
+{
+	this->assetCache.Set(assetCache);
 }
 
 void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)

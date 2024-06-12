@@ -25,7 +25,8 @@ Level::Level()
 {
 	std::string levelFile = std::format("Levels/Level{}.level", this->levelNumber);
 	Reference<Asset> asset;
-	if (!Game::Get()->GetAssetCache()->LoadAsset(levelFile, asset))
+	std::string error;
+	if (!Game::Get()->GetAssetCache()->LoadAsset(levelFile, asset, error))
 		return false;
 
 	Reference<LevelData> levelData;
@@ -44,7 +45,7 @@ Level::Level()
 	std::vector<Reference<CollisionShapeSet>> collisionShapeSetArray;
 	for (const std::string& collisionFile : levelData->GetCollisionFilesArray())
 	{
-		if (!Game::Get()->GetAssetCache()->LoadAsset(collisionFile, asset))
+		if (!Game::Get()->GetAssetCache()->LoadAsset(collisionFile, asset, error))
 			return false;
 
 		auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(asset.Get());

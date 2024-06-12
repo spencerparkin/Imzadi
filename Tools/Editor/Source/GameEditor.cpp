@@ -2,6 +2,7 @@
 #include "App.h"
 #include "Frame.h"
 #include "Canvas.h"
+#include "EditorAssetCache.h"
 
 GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 {
@@ -9,6 +10,13 @@ GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 
 /*virtual*/ GameEditor::~GameEditor()
 {
+}
+
+/*virtual*/ bool GameEditor::PostInit()
+{
+	this->SetAssetCache(new EditorAssetCache());
+
+	return Game::PostInit();
 }
 
 /*virtual*/ bool GameEditor::CreateRenderWindow()
@@ -27,5 +35,20 @@ GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 
 bool GameEditor::Import(const aiScene* scene, wxString& error)
 {
-	return true;
+	auto editorAssetCache = dynamic_cast<EditorAssetCache*>(this->GetAssetCache());
+	if (!editorAssetCache)
+		return false;
+
+	editorAssetCache->BeginImport(scene);
+
+	for (int i = 0; i < scene->mNumMeshes; i++)
+	{
+		const aiMesh* mesh = scene->mMeshes[i];
+		if (!this->LoadAndPlaceRenderMesh("Mesh:" + std::string(mesh->mName.C_Str()), Imzadi::Vector3(), Imzadi::Quaternion()))
+			error += wxString::Format("Failed to load mesh asset: %s", mesh->mName.C_Str());
+	}
+
+	editorAssetCache->EndImport();
+
+	return error.Length() == 0;
 }

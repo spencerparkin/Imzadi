@@ -10,7 +10,7 @@ LevelData::LevelData()
 {
 }
 
-/*virtual*/ bool LevelData::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool LevelData::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
 	if (!jsonDoc.IsObject())
 		return false;

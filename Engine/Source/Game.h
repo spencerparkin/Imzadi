@@ -133,7 +133,6 @@ namespace Imzadi
 		virtual bool CreateRenderWindow();
 
 		Scene* GetScene() { return this->scene.Get(); }
-		AssetCache* GetAssetCache() { return this->assetCache.Get(); }
 		Camera* GetCamera() { return this->camera.Get(); }
 		void SetCamera(Reference<Camera> camera) { this->camera = camera; }
 		CollisionSystem* GetCollisionSystem() { return &this->collisionSystem; }
@@ -222,6 +221,9 @@ namespace Imzadi
 		HWND GetMainWindowHandle();
 
 		void NotifyWindowResized();
+
+		AssetCache* GetAssetCache();
+		void SetAssetCache(AssetCache* assetCache);
 
 	protected:
 

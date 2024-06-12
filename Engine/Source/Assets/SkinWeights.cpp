@@ -13,7 +13,7 @@ SkinWeights::SkinWeights()
 {
 }
 
-/*virtual*/ bool SkinWeights::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool SkinWeights::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
 	if (!jsonDoc.IsObject())
 		return false;
@@ -64,7 +64,7 @@ SkinWeights::SkinWeights()
 	return true;
 }
 
-/*virtual*/ bool SkinWeights::Save(rapidjson::Document& jsonDoc) const
+/*virtual*/ bool SkinWeights::Save(rapidjson::Document& jsonDoc, std::string& error) const
 {
 	jsonDoc.SetObject();
 

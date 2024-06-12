@@ -4,6 +4,7 @@
 #include <wx/string.h>
 #include "Game.h"
 #include "assimp/scene.h"
+#include "assimp/mesh.h"
 
 class GameEditor : public Imzadi::Game
 {
@@ -13,6 +14,9 @@ public:
 
 	virtual bool CreateRenderWindow() override;
 	virtual void PumpWindowsMessages() override;
+	virtual bool PostInit() override;
 
 	bool Import(const aiScene* scene, wxString& error);
+
+private:
 };

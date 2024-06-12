@@ -29,7 +29,8 @@ DebugLines::DebugLines()
 	if (!this->shader)
 	{
 		Reference<Asset> asset;
-		if (!Game::Get()->GetAssetCache()->LoadAsset("Shaders/DebugLine.shader", asset))
+		std::string error;
+		if (!Game::Get()->GetAssetCache()->LoadAsset("Shaders/DebugLine.shader", asset, error))
 			return;
 
 		this->shader.SafeSet(asset.Get());

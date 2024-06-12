@@ -9,6 +9,8 @@ set(GAME_EDITOR_SOURCES
     Source/Canvas.h
     Source/GameEditor.cpp
     Source/GameEditor.h
+    Source/EditorAssetCache.cpp
+    Source/EditorAssetCache.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_EDITOR_SOURCES})

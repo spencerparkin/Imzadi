@@ -32,9 +32,10 @@ namespace Imzadi
 		 *
 		 * @param[in] assetFile This is a relative or fully-qualified path to where the asset exists on disk.
 		 * @param[out] asset A reference to the asset is returned here.
+		 * @param[out] error A human-readable error message is returned here if something went wrong.
 		 * @return True is returned if and only if the asset grab succeeded.  On failure, the given reference should be null.
 		 */
-		bool LoadAsset(const std::string& assetFile, Reference<Asset>& asset);
+		bool LoadAsset(const std::string& assetFile, Reference<Asset>& asset, std::string& error);
 
 		/**
 		 * Save the given asset at the given file location.  If the given asset reference
@@ -46,14 +47,15 @@ namespace Imzadi
 		 *
 		 * @param[in] assetFile This is a fully-qualified path to where the asset should exist on disk.
 		 * @param[in] asset A reference to the asset to save.  This can be null to search the cache instead.
+		 * @param[out] error A human-readable error message is returned here if something went wrong.
 		 * @return True is returend if and only if the asset save succeeds.
 		 */
-		bool SaveAsset(const std::string& assetFile, Reference<Asset>& asset);
+		bool SaveAsset(const std::string& assetFile, Reference<Asset>& asset, std::string& error);
 
 		/**
 		 * Remove all assets from this cache.
 		 */
-		void Clear();
+		virtual void Clear();
 
 		/**
 		 * Resolve the given path into a fully qualified path, if it isn't already such a path.
@@ -70,10 +72,26 @@ namespace Imzadi
 		 */
 		void AddAssetFolder(const std::string& assetFolder);
 
+		/**
+		 * Remove a folder from consideration of where an asset can be found.
+		 * 
+		 * @param assetFolder This should be a fully-qualified path to a folder upon which relative paths can be resolved.
+		 */
+		void RemoveAssetFolder(const std::string& assetFolder);
+
 	protected:
 
 		std::string MakeKey(const std::string& assetFile);
-		Asset* FindAsset(const std::string& assetFile, std::string* key = nullptr);
+		
+		/**
+		 * Override this to provide a custom caching mechanism.
+		 * 
+		 * @param[in] assetFile This is typically a relative path to the desired asset.
+		 * @param[out] error This should be set to a non-zero-length, human-readable message if and only if an error occurred.
+		 * @param[out] key This is an optional parameter that, if given, is set to the cache key that was used.
+		 * @return A pointer to a heap-allocated asset should be returned, if found; null, otherwise.  Either case is not an error unless the error parameter is filled out.
+		 */
+		virtual Asset* FindAsset(const std::string& assetFile, std::string& error, std::string* key = nullptr);
 		
 		/**
 		 * This must be overridden for custom asset types.  Don't forget to
@@ -96,9 +114,9 @@ namespace Imzadi
 		Asset();
 		virtual ~Asset();
 
-		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) = 0;
+		virtual bool Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache) = 0;
 		virtual bool Unload() = 0;
-		virtual bool Save(rapidjson::Document& jsonDoc) const;
+		virtual bool Save(rapidjson::Document& jsonDoc, std::string& error) const;
 		virtual bool CanBeCached() const { return true; }
 		virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) { return false; }
 

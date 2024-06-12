@@ -7,6 +7,7 @@
 #include <wx/aboutdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
+#include <wx/filename.h>
 #include "assimp/Importer.hpp"
 
 Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Game Editor", pos, size), timer(this, ID_Timer)
@@ -72,6 +73,10 @@ void Frame::OnImport(wxCommandEvent& event)
 		fileDialog.GetPaths(fileArray);
 		for (const wxString& file : fileArray)
 		{
+			wxFileName fileName(file);
+			std::string fileFolder((const char*)fileName.GetPath().c_str());
+			gameEditor->GetAssetCache()->AddAssetFolder(fileFolder);
+
 			const aiScene* scene = importer.ReadFile(file.c_str(), 0);
 			if (!scene)
 				errorMsg += wxString::Format("%s:\nImport error: %s\n", file.c_str(), importer.GetErrorString());
@@ -81,6 +86,8 @@ void Frame::OnImport(wxCommandEvent& event)
 				if (!gameEditor->Import(scene, importError))
 					errorMsg += importError + "\n";
 			}
+
+			gameEditor->GetAssetCache()->RemoveAssetFolder(fileFolder);
 		}
 
 		if (errorMsg.length() > 0)

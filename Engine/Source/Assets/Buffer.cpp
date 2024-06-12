@@ -18,7 +18,7 @@ Buffer::Buffer()
 {
 }
 
-/*virtual*/ bool Buffer::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool Buffer::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
 	if (!jsonDoc.IsObject())
 		return false;
@@ -177,7 +177,10 @@ Buffer::Buffer()
 	subResourceData.pSysMem = componentBuffer.get();
 	HRESULT result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, &subResourceData, &this->buffer);
 	if (FAILED(result))
+	{
+		error = std::format("CreateBuffer() failed with error code: {}", result);
 		return false;
+	}
 
 	return true;
 }

@@ -16,14 +16,20 @@ Texture::Texture()
 {
 }
 
-/*virtual*/ bool Texture::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool Texture::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
-	if (jsonDoc.HasMember("imag_file") || !jsonDoc["image_file"].IsString())
+	if (!jsonDoc.HasMember("image_file") || !jsonDoc["image_file"].IsString())
+	{
+		error = "No \"image_file\" member in JSON data.";
 		return false;
+	}
 
 	std::string imageFile = jsonDoc["image_file"].GetString();
 	if (!assetCache->ResolveAssetPath(imageFile))
+	{
+		error = "Failed to resolve path: " + imageFile;
 		return false;
+	}
 
 	int flipVertical = 0;
 	if (jsonDoc.HasMember("flip_vertical") && jsonDoc["flip_vertical"].GetBool())
@@ -36,10 +42,16 @@ Texture::Texture()
 	int desiredChannels = 4;
 	unsigned char* textureData = stbi_load(imageFile.c_str(), &textureWidth, &textureHeight, &textureChannels, desiredChannels);
 	if (!textureData)
+	{
+		error = std::format("Failed to load image {} because: {}", imageFile.c_str(), stbi_failure_reason());
 		return false;
+	}
 
 	if (textureChannels != desiredChannels)
+	{
+		error = "Texture channels didn't match desired channels.";
 		return false;
+	}
 
 	D3D11_TEXTURE2D_DESC textureDesc{};
 	textureDesc.Width = textureWidth;
@@ -57,11 +69,17 @@ Texture::Texture()
 
 	HRESULT result = Game::Get()->GetDevice()->CreateTexture2D(&textureDesc, &textureSubresourceData, &this->texture);
 	if (FAILED(result))
+	{
+		error = std::format("CreateTexture2D() failed with error code: {}", result);
 		return false;
+	}
 
 	result = Game::Get()->GetDevice()->CreateShaderResourceView(texture, NULL, &this->textureView);
 	if (FAILED(result))
+	{
+		error = std::format("CreateShaderResourceView() failed with error code: {}", result);
 		return false;
+	}
 
 	::free(textureData);
 
@@ -78,7 +96,10 @@ Texture::Texture()
 
 	result = Game::Get()->GetDevice()->CreateSamplerState(&samplerDesc, &this->samplerState);
 	if (FAILED(result))
+	{
+		error = std::format("CreateSamplerState() failed with error code: {}", result);
 		return false;
+	}
 
 	return true;
 }

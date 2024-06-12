@@ -15,7 +15,7 @@ CollisionShapeSet::CollisionShapeSet()
 	delete this->collisionShapeArray;
 }
 
-/*virtual*/ bool CollisionShapeSet::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ bool CollisionShapeSet::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
 {
 	this->Clear(true);
 
