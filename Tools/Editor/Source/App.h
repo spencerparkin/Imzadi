@@ -5,7 +5,7 @@
 class Frame;
 class GameEditor;
 
-// Admittedly, this isn't much editing going on here in the editor...yet, I suppose.
+// Admittedly, there isn't much editing going on here in the editor...yet, I suppose.
 // The main goal here is to have a tool that can convert assets from an art program
 // into assets that can be consumed by the Imzadi Game Engine.
 class EditorApp : public wxApp
