@@ -24,3 +24,8 @@ GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 	// Do nothing here to prevent the engine from pumping windows messages.
 	// wxWidgets will pump messages in its own way.
 }
+
+bool GameEditor::Import(const aiScene* scene, wxString& error)
+{
+	return true;
+}

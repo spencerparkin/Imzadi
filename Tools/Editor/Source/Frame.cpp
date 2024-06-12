@@ -5,6 +5,9 @@
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
+#include <wx/filedlg.h>
+#include <wx/msgdlg.h>
+#include "assimp/Importer.hpp"
 
 Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Game Editor", pos, size), timer(this, ID_Timer)
 {
@@ -58,6 +61,31 @@ void Frame::OnTimer(wxTimerEvent& event)
 
 void Frame::OnImport(wxCommandEvent& event)
 {
+	wxFileDialog fileDialog(this, "Choose file(s) to import.", wxEmptyString, wxEmptyString, "Any file (*.*)|*.*", wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+	if (fileDialog.ShowModal() == wxID_OK)
+	{
+		GameEditor* gameEditor = wxGetApp().GetGameEditor();
+		Assimp::Importer importer;
+		wxString errorMsg;
+
+		wxArrayString fileArray;
+		fileDialog.GetPaths(fileArray);
+		for (const wxString& file : fileArray)
+		{
+			const aiScene* scene = importer.ReadFile(file.c_str(), 0);
+			if (!scene)
+				errorMsg += wxString::Format("%s:\nImport error: %s\n", file.c_str(), importer.GetErrorString());
+			else
+			{
+				wxString importError;
+				if (!gameEditor->Import(scene, importError))
+					errorMsg += importError + "\n";
+			}
+		}
+
+		if (errorMsg.length() > 0)
+			wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
+	}
 }
 
 void Frame::OnExport(wxCommandEvent& event)
