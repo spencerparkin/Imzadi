@@ -144,7 +144,6 @@ namespace Imzadi
 
 		ID3D11Device* GetDevice() { return this->device; }
 		ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
-		HWND GetMainWindowHandle() { return this->mainWindowHandle; }
 		ID3D11ShaderResourceView* GetShadowBufferResourceViewForShader() { return this->shadowBufferViewForShader; }
 		ID3D11SamplerState* GetShadowBufferSamplerState() { return this->shadowBufferSamplerState; }
 
@@ -219,10 +218,21 @@ namespace Imzadi
 		void SetCollisionSystemDebugDrawFlags(uint32_t flags) { this->collisionSystemDebugDrawFlags = flags; }
 		uint32_t GetCollisionSystemDebugDrawFlags() { return this->collisionSystemDebugDrawFlags; }
 
+		void SetMainWindowHandle(HWND windowHandle);
+		HWND GetMainWindowHandle();
+
+		void NotifyWindowResized();
+
 	protected:
 
 		void AdvanceEntities(TickPass tickPass, double deltaTimeSeconds);
-		
+
+		/**
+		 * This performse the typical Win32 API of grabbing and dispatching windows messages.
+		 * You might override this if your application already pumps messages in its own way.
+		 */
+		virtual void PumpWindowsMessages();
+
 		/**
 		 * This is where we make all draw-calls.  I can't think of a good reason to override
 		 * this method at this time.  For custom drawing, derive from the RenderObject class.

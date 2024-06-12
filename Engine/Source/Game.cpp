@@ -124,6 +124,16 @@ Game::Game(HINSTANCE instance) : controller(0)
 	gameSingleton = game;
 }
 
+void Game::SetMainWindowHandle(HWND windowHandle)
+{
+	this->mainWindowHandle = windowHandle;
+}
+
+HWND Game::GetMainWindowHandle()
+{
+	return this->mainWindowHandle;
+}
+
 /*virtual*/ bool Game::Initialize()
 {
 	if (!this->PreInit())
@@ -392,6 +402,19 @@ bool Game::RecreateViews()
 	return true;
 }
 
+/*virtual*/ void Game::PumpWindowsMessages()
+{
+	MSG message{};
+	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
+	{
+		if (message.message == WM_QUIT)
+			this->keepRunning = false;
+
+		TranslateMessage(&message);
+		DispatchMessage(&message);
+	}
+}
+
 /*virtual*/ bool Game::Run()
 {
 	if (this->lastTickTime == 0)
@@ -411,15 +434,7 @@ bool Game::RecreateViews()
 
 	this->debugLines->Clear();
 
-	MSG message{};
-	while (PeekMessage(&message, 0, 0, 0, PM_REMOVE))
-	{
-		if (message.message == WM_QUIT)
-			this->keepRunning = false;
-
-		TranslateMessage(&message);
-		DispatchMessage(&message);
-	}
+	this->PumpWindowsMessages();
 
 	this->controller.Update();
 
@@ -464,6 +479,11 @@ bool Game::RecreateViews()
 	this->Render();
 
 	return this->keepRunning;
+}
+
+void Game::NotifyWindowResized()
+{
+	this->windowResized = true;
 }
 
 void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
@@ -566,7 +586,7 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 		}
 		case WM_SIZE:
 		{
-			this->windowResized = true;
+			this->NotifyWindowResized();
 			break;
 		}
 	}

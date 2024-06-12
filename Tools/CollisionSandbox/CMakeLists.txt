@@ -13,13 +13,11 @@ set(COLLISION_SANDBOX_SOURCES
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${COLLISION_SANDBOX_SOURCES})
 
-set(WX_WIDGETS_ROOT "E:/wxWidgets")
-
 if(WIN32)
     add_executable(CollisionSandboxApp WIN32 ${COLLISION_SANDBOX_SOURCES})
     target_compile_definitions(CollisionSandboxApp PUBLIC __WXMSW__ _UNICODE)
 else()
-    add_executable(CollisionSandboxApp ${APP_SOURCES})
+    add_executable(CollisionSandboxApp ${COLLISION_SANDBOX_SOURCES})
 endif()
 
 target_link_libraries(CollisionSandboxApp PRIVATE
