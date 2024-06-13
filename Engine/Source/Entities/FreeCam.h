@@ -15,7 +15,7 @@ namespace Imzadi
 		virtual bool Shutdown(bool gameShuttingDown) override;
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
-		void SetCamera(Camera* camera) { this->camera.Set(camera); }
+		void SetCamera(Camera* camera);
 		void SetEnabled(bool enabled);
 
 	private:

@@ -134,6 +134,31 @@ HWND Game::GetMainWindowHandle()
 	return this->mainWindowHandle;
 }
 
+Scene* Game::GetScene()
+{
+	return this->scene.Get();
+}
+
+Camera* Game::GetCamera()
+{
+	return this->camera.Get();
+}
+
+void Game::SetCamera(Reference<Camera> camera)
+{
+	this->camera = camera;
+}
+
+CollisionSystem* Game::GetCollisionSystem()
+{
+	return &this->collisionSystem;
+}
+
+DebugLines* Game::GetDebugLines()
+{
+	return this->debugLines.Get();
+}
+
 /*virtual*/ bool Game::Initialize()
 {
 	if (!this->PreInit())
@@ -493,6 +518,11 @@ AssetCache* Game::GetAssetCache()
 void Game::SetAssetCache(AssetCache* assetCache)
 {
 	this->assetCache.Set(assetCache);
+}
+
+void Game::AddEntity(Entity* entity)
+{
+	this->spawnedEntityQueue.push_back(entity);
 }
 
 void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)

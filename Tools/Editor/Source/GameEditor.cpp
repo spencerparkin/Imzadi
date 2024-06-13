@@ -3,6 +3,7 @@
 #include "Frame.h"
 #include "Canvas.h"
 #include "EditorAssetCache.h"
+#include "Entities/FreeCam.h"
 
 GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 {
@@ -15,6 +16,10 @@ GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 /*virtual*/ bool GameEditor::PostInit()
 {
 	this->SetAssetCache(new EditorAssetCache());
+
+	auto freeCam = this->SpawnEntity<Imzadi::FreeCam>();
+	freeCam->SetEnabled(true);
+	freeCam->SetCamera(Game::Get()->GetCamera());
 
 	return Game::PostInit();
 }
@@ -31,6 +36,34 @@ GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 {
 	// Do nothing here to prevent the engine from pumping windows messages.
 	// wxWidgets will pump messages in its own way.
+}
+
+/*virtual*/ void GameEditor::Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds)
+{
+	Game::Tick(tickPass, deltaTimeSeconds);
+
+	if (tickPass == Imzadi::TickPass::MID_TICK)
+	{
+		Imzadi::DebugLines* debugLines = Game::Get()->GetDebugLines();
+
+		Imzadi::DebugLines::Line xAxis;
+		xAxis.color.SetComponents(1.0, 0.0, 0.0);
+		xAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
+		xAxis.segment.point[1].SetComponents(1.0, 0.0, 0.0);
+		debugLines->AddLine(xAxis);
+
+		Imzadi::DebugLines::Line yAxis;
+		yAxis.color.SetComponents(0.0, 1.0, 0.0);
+		yAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
+		yAxis.segment.point[1].SetComponents(0.0, 1.0, 0.0);
+		debugLines->AddLine(yAxis);
+
+		Imzadi::DebugLines::Line zAxis;
+		zAxis.color.SetComponents(0.0, 0.0, 1.0);
+		zAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
+		zAxis.segment.point[1].SetComponents(0.0, 0.0, 1.0);
+		debugLines->AddLine(zAxis);
+	}
 }
 
 bool GameEditor::Import(const aiScene* scene, wxString& error)

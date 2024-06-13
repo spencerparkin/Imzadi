@@ -24,6 +24,7 @@ EditorApp::EditorApp()
 
 	HINSTANCE instanceHandle = ::GetModuleHandle(NULL);
 	this->gameEditor = new GameEditor(instanceHandle);
+	Imzadi::Game::Set(this->gameEditor);
 	if (!this->gameEditor->Initialize())
 	{
 		this->gameEditor->Shutdown();
@@ -31,8 +32,7 @@ EditorApp::EditorApp()
 		this->gameEditor = nullptr;
 		return false;
 	}
-
-	Imzadi::Game::Set(this->gameEditor);
+	
 	return true;
 }
 

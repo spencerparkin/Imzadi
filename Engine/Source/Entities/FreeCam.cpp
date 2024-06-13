@@ -35,6 +35,11 @@ void FreeCam::SetEnabled(bool enabled)
 		Game::Get()->PopControllerUser();
 }
 
+void FreeCam::SetCamera(Camera* camera)
+{
+	this->camera.Set(camera);
+}
+
 /*virtual*/ bool FreeCam::Tick(TickPass tickPass, double deltaTime)
 {
 	if (tickPass != TickPass::MID_TICK)

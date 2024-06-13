@@ -15,6 +15,7 @@ public:
 	virtual bool CreateRenderWindow() override;
 	virtual void PumpWindowsMessages() override;
 	virtual bool PostInit() override;
+	virtual void Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds) override;
 
 	bool Import(const aiScene* scene, wxString& error);
 

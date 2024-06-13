@@ -132,11 +132,11 @@ namespace Imzadi
 		 */
 		virtual bool CreateRenderWindow();
 
-		Scene* GetScene() { return this->scene.Get(); }
-		Camera* GetCamera() { return this->camera.Get(); }
-		void SetCamera(Reference<Camera> camera) { this->camera = camera; }
-		CollisionSystem* GetCollisionSystem() { return &this->collisionSystem; }
-		DebugLines* GetDebugLines() { return this->debugLines.Get(); }
+		Scene* GetScene();
+		Camera* GetCamera();
+		void SetCamera(Reference<Camera> camera);
+		CollisionSystem* GetCollisionSystem();
+		DebugLines* GetDebugLines();
 
 		static Game* Get();
 		static void Set(Game* game);
@@ -163,7 +163,7 @@ namespace Imzadi
 		T* SpawnEntity()
 		{
 			T* entity = new T();
-			this->spawnedEntityQueue.push_back(entity);
+			this->AddEntity(entity);
 			return entity;
 		}
 
@@ -227,6 +227,7 @@ namespace Imzadi
 
 	protected:
 
+		void AddEntity(Entity* entity);
 		void AdvanceEntities(TickPass tickPass, double deltaTimeSeconds);
 
 		/**
