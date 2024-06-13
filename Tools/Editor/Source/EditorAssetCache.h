@@ -13,7 +13,7 @@ public:
 	EditorAssetCache();
 	virtual ~EditorAssetCache();
 
-	void BeginImport(const aiScene* scene);
+	void BeginImport(const aiScene* scene, bool rigAndAnimate);
 	void EndImport();
 
 	virtual void Clear() override;
@@ -33,6 +33,8 @@ protected:
 
 	const aiScene* importScene;
 	const aiMesh* importMesh;
+
+	bool rigAndAnimate;
 
 	std::vector<Imzadi::Reference<Imzadi::Asset>> generatedAssetArray;
 };

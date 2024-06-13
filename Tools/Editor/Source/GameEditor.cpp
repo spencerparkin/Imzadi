@@ -4,6 +4,7 @@
 #include "Canvas.h"
 #include "EditorAssetCache.h"
 #include "Entities/FreeCam.h"
+#include <wx/msgdlg.h>
 
 GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 {
@@ -75,7 +76,12 @@ bool GameEditor::Import(const aiScene* scene, wxString& error)
 	if (!editorAssetCache)
 		return false;
 
-	editorAssetCache->BeginImport(scene);
+	bool rigAndAnimate = false;
+	int answer = wxMessageBox("Do you plan to rig and animate the model?", "Static vs. Dynamic Mesh", wxICON_QUESTION | wxYES_NO, wxGetApp().GetFrame());
+	if (answer == wxYES)
+		rigAndAnimate = true;
+
+	editorAssetCache->BeginImport(scene, rigAndAnimate);
 
 	for (int i = 0; i < scene->mNumMeshes; i++)
 	{

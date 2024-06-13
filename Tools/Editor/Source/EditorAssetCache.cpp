@@ -1,13 +1,20 @@
+#include "App.h"
+#include "Frame.h"
+#include <wx/msgdlg.h>
 #include "EditorAssetCache.h"
 #include "Assets/RenderMesh.h"
+#include "Assets/SkinnedRenderMesh.h"
 #include "Assets/Buffer.h"
 #include "Assets/Texture.h"
+#include "Assets/SkinWeights.h"
+#include "Assets/Skeleton.h"
 #include "Math/AxisAlignedBoundingBox.h"
 
 EditorAssetCache::EditorAssetCache()
 {
 	this->importScene = nullptr;
 	this->importMesh = nullptr;
+	this->rigAndAnimate = false;
 }
 
 /*virtual*/ EditorAssetCache::~EditorAssetCache()
@@ -24,10 +31,11 @@ EditorAssetCache::EditorAssetCache()
 	this->generatedAssetArray.clear();
 }
 
-void EditorAssetCache::BeginImport(const aiScene* scene)
+void EditorAssetCache::BeginImport(const aiScene* scene, bool rigAndAnimate)
 {
 	this->importScene = scene;
 	this->importMesh = nullptr;
+	this->rigAndAnimate = rigAndAnimate;
 }
 
 void EditorAssetCache::EndImport()
@@ -73,8 +81,12 @@ void EditorAssetCache::EndImport()
 		if (!this->GenerateJsonForMesh(jsonDoc, error))
 			return nullptr;
 
-		// TODO: Make a new skinned mesh asset if the mesh actually calls for that instead.
-		auto renderMeshAsset = new Imzadi::RenderMeshAsset();
+		Imzadi::RenderMeshAsset* renderMeshAsset = nullptr;
+		if (this->rigAndAnimate)
+			renderMeshAsset = new Imzadi::SkinnedRenderMesh();
+		else
+			renderMeshAsset = new Imzadi::RenderMeshAsset();
+
 		if (renderMeshAsset->Load(jsonDoc, error, this))
 			this->generatedAssetArray.push_back(renderMeshAsset);
 		else
@@ -139,11 +151,18 @@ void EditorAssetCache::EndImport()
 	}
 	else if (assetType == "SkinWeights")
 	{
-		//...
+		// TODO: Load existing weights if there already is one?
+		auto skinWeights = new Imzadi::SkinWeights();
+		return skinWeights;
 	}
 	else if (assetType == "Skeleton")
 	{
-		//...
+		// TODO: Load existing skeleton if there already is one?
+		auto skeleton = new Imzadi::Skeleton();
+		skeleton->MakeBasicBiped();
+		skeleton->UpdateCachedTransforms(Imzadi::BoneTransformType::BIND_POSE);
+		skeleton->ResetCurrentPose();
+		return skeleton;
 	}
 	else if (assetType == "Animation")
 	{
@@ -173,6 +192,14 @@ bool EditorAssetCache::GenerateJsonForMesh(rapidjson::Document& jsonDoc, std::st
 	jsonDoc.AddMember("texture", rapidjson::Value().SetString("Texture", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
 	jsonDoc.AddMember("index_buffer", rapidjson::Value().SetString("IndexBuffer", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
 	jsonDoc.AddMember("vertex_buffer", rapidjson::Value().SetString("VertexBuffer", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+	
+	if (this->rigAndAnimate)
+	{
+		jsonDoc.AddMember("skeleton", rapidjson::Value().SetString("Skeleton", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+		jsonDoc.AddMember("skin_weights", rapidjson::Value().SetString("SkinWeights", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+		jsonDoc.AddMember("position_offset", rapidjson::Value().SetInt(0), jsonDoc.GetAllocator());
+		jsonDoc.AddMember("normal_offset", rapidjson::Value().SetInt(20), jsonDoc.GetAllocator());
+	}
 
 	return true;
 }
@@ -238,6 +265,12 @@ bool EditorAssetCache::GenerateJsonForVertexBuffer(rapidjson::Document& jsonDoc,
 	jsonDoc.AddMember("stride", rapidjson::Value().SetInt(8), jsonDoc.GetAllocator());
 	jsonDoc.AddMember("type", rapidjson::Value().SetString("float", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
 	jsonDoc.AddMember("buffer", vertexBufferValue, jsonDoc.GetAllocator());
+
+	if (this->rigAndAnimate)
+	{
+		jsonDoc.AddMember("usage", rapidjson::Value().SetString("dynamic", jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+		jsonDoc.AddMember("bare_buffer", rapidjson::Value().SetBool(true), jsonDoc.GetAllocator());
+	}
 
 	return true;
 }

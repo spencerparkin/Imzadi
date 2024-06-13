@@ -1,6 +1,7 @@
 #include "App.h"
 #include "Frame.h"
 #include "GameEditor.h"
+#include "RenderObjects/AnimatedMeshInstance.h"
 
 wxIMPLEMENT_APP(EditorApp);
 
@@ -33,6 +34,8 @@ EditorApp::EditorApp()
 		return false;
 	}
 	
+	Imzadi::AnimatedMeshInstance::SetRenderSkeletons(true);
+
 	return true;
 }
 
