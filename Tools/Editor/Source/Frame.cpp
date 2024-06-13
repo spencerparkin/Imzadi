@@ -9,6 +9,8 @@
 #include <wx/msgdlg.h>
 #include <wx/filename.h>
 #include "assimp/Importer.hpp"
+#include "assimp/postprocess.h"
+#include "assimp/config.h"
 
 Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Game Editor", pos, size), timer(this, ID_Timer)
 {
@@ -69,6 +71,8 @@ void Frame::OnImport(wxCommandEvent& event)
 		Assimp::Importer importer;
 		wxString errorMsg;
 
+		importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0);
+
 		wxArrayString fileArray;
 		fileDialog.GetPaths(fileArray);
 		for (const wxString& file : fileArray)
@@ -77,7 +81,7 @@ void Frame::OnImport(wxCommandEvent& event)
 			std::string fileFolder((const char*)fileName.GetPath().c_str());
 			gameEditor->GetAssetCache()->AddAssetFolder(fileFolder);
 
-			const aiScene* scene = importer.ReadFile(file.c_str(), 0);
+			const aiScene* scene = importer.ReadFile(file.c_str(), aiProcess_PreTransformVertices | aiProcess_Triangulate | aiProcess_GlobalScale);
 			if (!scene)
 				errorMsg += wxString::Format("%s:\nImport error: %s\n", file.c_str(), importer.GetErrorString());
 			else

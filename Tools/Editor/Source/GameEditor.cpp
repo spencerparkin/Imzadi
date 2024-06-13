@@ -17,9 +17,12 @@ GameEditor::GameEditor(HINSTANCE instance) : Game(instance)
 {
 	this->SetAssetCache(new EditorAssetCache());
 
+	Imzadi::Camera* camera = Game::Get()->GetCamera();
+	camera->LookAt(Imzadi::Vector3(0.0, 0.0, -10.0), Imzadi::Vector3(0.0, 0.0, 0.0), Imzadi::Vector3(0.0, 1.0, 0.0));
+
 	auto freeCam = this->SpawnEntity<Imzadi::FreeCam>();
 	freeCam->SetEnabled(true);
-	freeCam->SetCamera(Game::Get()->GetCamera());
+	freeCam->SetCamera(camera);
 
 	return Game::PostInit();
 }
