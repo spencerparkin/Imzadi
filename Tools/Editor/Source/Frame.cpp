@@ -81,6 +81,11 @@ void Frame::OnImport(wxCommandEvent& event)
 			std::string fileFolder((const char*)fileName.GetPath().c_str());
 			gameEditor->GetAssetCache()->AddAssetFolder(fileFolder);
 
+			// Note that the pre-transform-verts flag will remove the bone hierarchy and
+			// animation data.  I was planning to use that data, but I can't find the bone
+			// weight information anywhere.  This all seems like more trouble than it's worth.
+			// I'm going to try to support basic rigging and animation in THIS tool.  I'm not
+			// terribly happy about that, but I think it's the easiest way forward at the moment.
 			const aiScene* scene = importer.ReadFile(file.c_str(), aiProcess_PreTransformVertices | aiProcess_Triangulate | aiProcess_GlobalScale);
 			if (!scene)
 				errorMsg += wxString::Format("%s:\nImport error: %s\n", file.c_str(), importer.GetErrorString());
