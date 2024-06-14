@@ -6,18 +6,14 @@
 #include "assimp/scene.h"
 #include "assimp/mesh.h"
 
-class GameEditor : public Imzadi::Game
+class GamePreview : public Imzadi::Game
 {
 public:
-	GameEditor(HINSTANCE instance);
-	virtual ~GameEditor();
+	GamePreview(HINSTANCE instance);
+	virtual ~GamePreview();
 
 	virtual bool CreateRenderWindow() override;
 	virtual void PumpWindowsMessages() override;
 	virtual bool PostInit() override;
 	virtual void Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds) override;
-
-	bool Import(const aiScene* scene, wxString& error);
-
-private:
 };

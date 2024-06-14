@@ -1,6 +1,6 @@
 #include "Canvas.h"
 #include "App.h"
-#include "GameEditor.h"
+#include "Game.h"
 
 Canvas::Canvas(wxWindow* parent) : wxWindow(parent, wxID_ANY)
 {
@@ -13,7 +13,7 @@ Canvas::Canvas(wxWindow* parent) : wxWindow(parent, wxID_ANY)
 
 void Canvas::OnSize(wxSizeEvent& event)
 {
-	GameEditor* gameEditor = wxGetApp().GetGameEditor();
-	if (gameEditor)
-		gameEditor->NotifyWindowResized();
+	Imzadi::Game* game = Imzadi::Game::Get();
+	if (game)
+		game->NotifyWindowResized();
 }

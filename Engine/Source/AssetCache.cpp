@@ -50,14 +50,13 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 	if (assetFile.length() == 0)
 		return false;
 
-	std::string fullyQualifiedPath;
+	std::filesystem::path assetPath(assetFile);
+	if (assetPath.is_absolute())
+		return std::filesystem::exists(assetPath);
 
 	for (const std::filesystem::path& assetFolder : *this->assetFolderArray)
-	{
-		std::filesystem::path assetPath(assetFile);
-		if (assetPath.is_relative())
-			fullyQualifiedPath = (assetFolder / assetPath).string();
-
+	{		
+		std::string fullyQualifiedPath = (assetFolder / assetPath).string();
 		if (std::filesystem::exists(fullyQualifiedPath))
 		{
 			assetFile = fullyQualifiedPath;

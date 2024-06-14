@@ -13,8 +13,9 @@ public:
 
 	enum
 	{
-		ID_Import,
-		ID_Export,
+		ID_ConvertAsset,
+		ID_PreviewAsset,
+		ID_ClearScene,
 		ID_About,
 		ID_Exit,
 		ID_Timer
@@ -23,8 +24,9 @@ public:
 	Canvas* GetCanvas() { return this->canvas; }
 
 protected:
-	void OnImport(wxCommandEvent& event);
-	void OnExport(wxCommandEvent& event);
+	void OnConvertAsset(wxCommandEvent& event);
+	void OnPreviewAsset(wxCommandEvent& event);
+	void OnClearScene(wxCommandEvent& event);
 	void OnAbout(wxCommandEvent& event);
 	void OnExit(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);

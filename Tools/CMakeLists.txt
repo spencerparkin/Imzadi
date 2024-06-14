@@ -3,4 +3,4 @@
 set(WX_WIDGETS_ROOT "E:/wxWidgets")
 
 add_subdirectory(CollisionSandbox)
-add_subdirectory(Editor)
+add_subdirectory(AssetConverter)
