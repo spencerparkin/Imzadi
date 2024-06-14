@@ -45,7 +45,11 @@ namespace Imzadi
 			double weight;
 		};
 
-		const std::vector<BoneWeight>& GetBoneWeightsForVertex(uint32_t vertex) const { return this->weightedVertexArray[vertex]; }
+		const std::vector<BoneWeight>& GetBoneWeightsForVertex(uint32_t vertex) const;
+		std::vector<BoneWeight>& GetBonesWeightsForVertex(uint32_t vertex);
+
+		void SetNumVertices(size_t numVertices);
+		size_t GetNumVertices() const;
 
 	private:
 

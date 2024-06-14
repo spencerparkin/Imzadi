@@ -103,6 +103,27 @@ void SkinWeights::Clear()
 	this->weightedVertexArray.clear();
 }
 
+const std::vector<SkinWeights::BoneWeight>& SkinWeights::GetBoneWeightsForVertex(uint32_t vertex) const
+{
+	return this->weightedVertexArray[vertex];
+}
+
+std::vector<SkinWeights::BoneWeight>& SkinWeights::GetBonesWeightsForVertex(uint32_t vertex)
+{
+	return this->weightedVertexArray[vertex];
+}
+
+void SkinWeights::SetNumVertices(size_t numVertices)
+{
+	this->weightedVertexArray.clear();
+	this->weightedVertexArray.resize(numVertices);
+}
+
+size_t SkinWeights::GetNumVertices() const
+{
+	return this->weightedVertexArray.size();
+}
+
 bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseVertexBuffer, uint32_t elementStride, uint32_t vertexOffset, double radius)
 {
 	if (bindPoseVertexBuffer->GetSize() % elementStride != 0)
