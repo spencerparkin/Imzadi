@@ -1,4 +1,5 @@
 #include "Animation.h"
+#include "Skeleton.h"
 #include "Math/Interval.h"
 #include <algorithm>
 
@@ -8,18 +9,12 @@ using namespace Imzadi;
 
 Animation::Animation()
 {
-	this->name = new std::string();
-	*this->name = "Unknown";
-
-	this->keyFrameArray = new KeyFrameArray();
+	this->name = "Unknown";
 }
 
 /*virtual*/ Animation::~Animation()
 {
 	this->Clear();
-
-	delete this->keyFrameArray;
-	delete this->name;
 }
 
 /*virtual*/ bool Animation::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
@@ -32,7 +27,7 @@ Animation::Animation()
 	if (!jsonDoc.HasMember("name") || !jsonDoc["name"].IsString())
 		return false;
 
-	*this->name = jsonDoc["name"].GetString();
+	this->name = jsonDoc["name"].GetString();
 
 	if (!jsonDoc.HasMember("key_frame_array") || !jsonDoc["key_frame_array"].IsArray())
 		return false;
@@ -43,7 +38,7 @@ Animation::Animation()
 	{
 		const rapidjson::Value& keyFrameValue = keyFrameArrayValue[i];
 		auto keyFrame = new KeyFrame();
-		this->keyFrameArray->push_back(keyFrame);
+		this->keyFrameArray.push_back(keyFrame);
 		if (!keyFrame->Load(keyFrameValue))
 			return false;
 	}
@@ -66,7 +61,7 @@ Animation::Animation()
 	rapidjson::Value keyFrameArrayValue;
 	keyFrameArrayValue.SetArray();
 
-	for (const KeyFrame* keyFrame : *this->keyFrameArray)
+	for (const KeyFrame* keyFrame : this->keyFrameArray)
 	{
 		rapidjson::Value keyFrameValue;
 		if (!keyFrame->Save(keyFrameValue, jsonDoc))
@@ -76,25 +71,25 @@ Animation::Animation()
 	}
 
 	jsonDoc.AddMember("key_frame_array", keyFrameArrayValue, jsonDoc.GetAllocator());
-	jsonDoc.AddMember("name", rapidjson::Value().SetString(this->name->c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+	jsonDoc.AddMember("name", rapidjson::Value().SetString(this->name.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
 
 	return true;
 }
 
 void Animation::Clear()
 {
-	for (KeyFrame* keyFrame : *this->keyFrameArray)
+	for (KeyFrame* keyFrame : this->keyFrameArray)
 		delete keyFrame;
 	
-	this->keyFrameArray->clear();
+	this->keyFrameArray.clear();
 }
 
 KeyFrame* Animation::GetKeyFrame(int i)
 {
-	if (i < 0 || i >= this->keyFrameArray->size())
+	if (i < 0 || i >= this->keyFrameArray.size())
 		return nullptr;
 
-	return (*this->keyFrameArray)[i];
+	return this->keyFrameArray[i];
 }
 
 const KeyFrame* Animation::GetKeyFrame(int i) const
@@ -104,28 +99,28 @@ const KeyFrame* Animation::GetKeyFrame(int i) const
 
 void Animation::AddKeyFrame(KeyFrame* keyFrame)
 {
-	this->keyFrameArray->push_back(keyFrame);
+	this->keyFrameArray.push_back(keyFrame);
 }
 
 void Animation::TimeSort()
 {
-	std::sort(this->keyFrameArray->begin(), this->keyFrameArray->end(), [](const KeyFrame* frameA, const KeyFrame* frameB) -> bool {
+	std::sort(this->keyFrameArray.begin(), this->keyFrameArray.end(), [](const KeyFrame* frameA, const KeyFrame* frameB) -> bool {
 		return frameA->GetTime() < frameB->GetTime();
 	});
 }
 
 bool Animation::MakeCursorFromTime(Cursor& cursor, double timeSeconds) const
 {
-	if (this->keyFrameArray->size() < 2)
+	if (this->keyFrameArray.size() < 2)
 		return false;
 
 	int i = 0;
-	int j = this->keyFrameArray->size() - 1;
+	int j = this->keyFrameArray.size() - 1;
 
 	while (i != j - 1)
 	{
-		const KeyFrame* keyFrameA = (*this->keyFrameArray)[i];
-		const KeyFrame* keyFrameB = (*this->keyFrameArray)[j];
+		const KeyFrame* keyFrameA = this->keyFrameArray[i];
+		const KeyFrame* keyFrameB = this->keyFrameArray[j];
 
 		Interval interval(keyFrameA->GetTime(), keyFrameB->GetTime());
 		if (!interval.IsValid())
@@ -140,7 +135,7 @@ bool Animation::MakeCursorFromTime(Cursor& cursor, double timeSeconds) const
 		else if (k == j)
 			k--;
 
-		const KeyFrame* midKeyFrame = (*this->keyFrameArray)[k];
+		const KeyFrame* midKeyFrame = this->keyFrameArray[k];
 		if (!interval.ContainsValue(midKeyFrame->GetTime()))
 			return false;
 
@@ -177,18 +172,18 @@ bool Animation::GetKeyFramesFromCursor(const Cursor& cursor, KeyFramePair& keyFr
 
 double Animation::GetStartTime() const
 {
-	if (this->keyFrameArray->size() == 0)
+	if (this->keyFrameArray.size() == 0)
 		return 0.0;
 
-	return (*this->keyFrameArray)[0]->GetTime();
+	return this->keyFrameArray[0]->GetTime();
 }
 
 double Animation::GetEndTime() const
 {
-	if (this->keyFrameArray->size() == 0)
+	if (this->keyFrameArray.size() == 0)
 		return 0.0;
 
-	return (*this->keyFrameArray)[this->keyFrameArray->size() - 1]->GetTime();
+	return this->keyFrameArray[this->keyFrameArray.size() - 1]->GetTime();
 }
 
 double Animation::GetDuration() const
@@ -201,7 +196,7 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop
 	cursor.timeSeconds += deltaTimeSeconds;
 
 	// Typically we'd do one or two interations at most here.
-	for (int i = 0; i < this->keyFrameArray->size(); i++)
+	for (int i = 0; i < this->keyFrameArray.size(); i++)
 	{
 		KeyFramePair keyFramePair{};
 		if (!this->GetKeyFramesFromCursor(cursor, keyFramePair))
@@ -217,12 +212,12 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop
 		if (cursor.timeSeconds > interval)
 		{
 			cursor.i++;
-			if (cursor.i >= this->keyFrameArray->size() - 1)
+			if (cursor.i >= this->keyFrameArray.size() - 1)
 			{
 				if (!loop)
 				{
 					cursor.i--;
-					cursor.timeSeconds = (*this->keyFrameArray)[this->keyFrameArray->size() - 1]->GetTime();
+					cursor.timeSeconds = this->keyFrameArray[this->keyFrameArray.size() - 1]->GetTime();
 					return false;
 				}
 				
@@ -238,11 +233,11 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop
 				if (!loop)
 				{
 					cursor.i++;
-					cursor.timeSeconds = (*this->keyFrameArray)[0]->GetTime();
+					cursor.timeSeconds = this->keyFrameArray[0]->GetTime();
 					return false;
 				}
 
-				cursor.i = this->keyFrameArray->size() - 2;
+				cursor.i = this->keyFrameArray.size() - 2;
 				cursor.timeSeconds += this->GetDuration();
 			}
 		}
@@ -256,22 +251,20 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop
 KeyFrame::KeyFrame()
 {
 	this->timeSeconds = 0.0;
-	this->poseInfoArray = new PoseInfoArray();
 }
 
 /*virtual*/ KeyFrame::~KeyFrame()
 {
-	delete this->poseInfoArray;
 }
 
 void KeyFrame::Clear()
 {
-	this->poseInfoArray->clear();
+	this->poseInfoArray.clear();
 }
 
 void KeyFrame::Sort()
 {
-	std::sort(this->poseInfoArray->begin(), this->poseInfoArray->end(), [](const PoseInfo& infoA, const PoseInfo& infoB) -> bool {
+	std::sort(this->poseInfoArray.begin(), this->poseInfoArray.end(), [](const PoseInfo& infoA, const PoseInfo& infoB) -> bool {
 		return ::strcmp(infoA.boneName.c_str(), infoB.boneName.c_str()) < 0;
 	});
 }
@@ -280,8 +273,8 @@ void KeyFrame::Copy(const KeyFrame& keyFrame)
 {
 	this->Clear();
 
-	for (const PoseInfo& info : *keyFrame.poseInfoArray)
-		this->poseInfoArray->push_back(info);
+	for (const PoseInfo& info : keyFrame.poseInfoArray)
+		this->poseInfoArray.push_back(info);
 
 	this->timeSeconds = keyFrame.timeSeconds;
 }
@@ -312,19 +305,15 @@ bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 		if (!poseInfoValue.HasMember("bone_name") || !poseInfoValue["bone_name"].IsString())
 			return false;
 
-		if (!poseInfoValue.HasMember("bone_orientation"))
-			return false;
-
-		if (!poseInfoValue.HasMember("bone_length") || !poseInfoValue["bone_length"].IsFloat())
+		if (!poseInfoValue.HasMember("bone_child_to_parent"))
 			return false;
 
 		PoseInfo poseInfo;
 		poseInfo.boneName = poseInfoValue["bone_name"].GetString();
-		poseInfo.boneState.length = poseInfoValue["bone_length"].GetFloat();
-		if (!Asset::LoadMatrix(poseInfoValue["bone_orientation"], poseInfo.boneState.orientation))
+		if (!Asset::LoadTransform(poseInfoValue["bone_child_to_parent"], poseInfo.childToParent))
 			return false;
 
-		this->poseInfoArray->push_back(poseInfo);
+		this->poseInfoArray.push_back(poseInfo);
 	}
 
 	return true;
@@ -338,17 +327,16 @@ bool KeyFrame::Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDo
 	rapidjson::Value poseInfoArrayValue;
 	poseInfoArrayValue.SetArray();
 
-	for (const PoseInfo& poseInfo : *this->poseInfoArray)
+	for (const PoseInfo& poseInfo : this->poseInfoArray)
 	{
 		rapidjson::Value poseInfoValue;
 		poseInfoValue.SetObject();
 
-		rapidjson::Value orientationValue;
-		Asset::SaveMatrix(orientationValue, poseInfo.boneState.orientation, &jsonDoc);
+		rapidjson::Value childToParentValue;;
+		Asset::SaveTransform(childToParentValue, poseInfo.childToParent, &jsonDoc);
 
 		poseInfoValue.AddMember("bone_name", rapidjson::Value().SetString(poseInfo.boneName.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
-		poseInfoValue.AddMember("bone_orientation", orientationValue, jsonDoc.GetAllocator());
-		poseInfoValue.AddMember("bone_length", rapidjson::Value().SetFloat(poseInfo.boneState.length), jsonDoc.GetAllocator());
+		poseInfoValue.AddMember("bone_child_to_parent", childToParentValue, jsonDoc.GetAllocator());
 
 		poseInfoArrayValue.PushBack(poseInfoValue, jsonDoc.GetAllocator());
 	}
@@ -360,7 +348,7 @@ bool KeyFrame::Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDo
 
 bool KeyFrame::Interpolate(const KeyFramePair& keyFramePair, double timeSeconds)
 {
-	if (keyFramePair.lowerBound->poseInfoArray->size() != keyFramePair.upperBound->poseInfoArray->size())
+	if (keyFramePair.lowerBound->poseInfoArray.size() != keyFramePair.upperBound->poseInfoArray.size())
 		return false;
 
 	Interval interval(keyFramePair.lowerBound->GetTime(), keyFramePair.upperBound->GetTime());
@@ -373,19 +361,18 @@ bool KeyFrame::Interpolate(const KeyFramePair& keyFramePair, double timeSeconds)
 
 	this->Clear();
 
-	for (int i = 0; i < keyFramePair.lowerBound->poseInfoArray->size(); i++)
+	for (int i = 0; i < keyFramePair.lowerBound->poseInfoArray.size(); i++)
 	{
-		const PoseInfo& poseInfoA = (*keyFramePair.lowerBound->poseInfoArray)[i];
-		const PoseInfo& poseInfoB = (*keyFramePair.upperBound->poseInfoArray)[i];
+		const PoseInfo& poseInfoA = keyFramePair.lowerBound->poseInfoArray[i];
+		const PoseInfo& poseInfoB = keyFramePair.upperBound->poseInfoArray[i];
 
 		if (poseInfoA.boneName != poseInfoB.boneName)
 			return false;
 
 		PoseInfo poseInfo;
 		poseInfo.boneName = poseInfoA.boneName;
-		poseInfo.boneState.orientation.InterpolateOrientations(poseInfoA.boneState.orientation, poseInfoB.boneState.orientation, alpha);
-		poseInfo.boneState.length = poseInfoA.boneState.length + alpha * (poseInfoB.boneState.length - poseInfoA.boneState.length);
-		this->poseInfoArray->push_back(poseInfo);
+		poseInfo.childToParent.InterapolateBoneTransforms(poseInfoA.childToParent, poseInfoB.childToParent, alpha);
+		this->poseInfoArray.push_back(poseInfo);
 	}
 
 	return true;
@@ -395,12 +382,12 @@ int KeyFrame::PoseSkeleton(Skeleton* skeleton) const
 {
 	int poseCount = 0;
 
-	for (const PoseInfo& poseInfo : *this->poseInfoArray)
+	for (const PoseInfo& poseInfo : this->poseInfoArray)
 	{
 		Bone* bone = skeleton->FindBone(poseInfo.boneName);
 		if (bone)
 		{
-			bone->SetCurrentPoseState(poseInfo.boneState);
+			bone->SetCurrentPoseChildToParent(poseInfo.childToParent);
 			poseCount++;
 		}
 	}
@@ -421,7 +408,7 @@ void KeyFrame::MakePoseFromSkeleton(const Skeleton* skeleton)
 
 		PoseInfo poseInfo;
 		poseInfo.boneName = bone->GetName();
-		poseInfo.boneState = transform->boneState;
-		this->poseInfoArray->push_back(poseInfo);
+		poseInfo.childToParent = transform->childToParent;
+		this->poseInfoArray.push_back(poseInfo);
 	}
 }

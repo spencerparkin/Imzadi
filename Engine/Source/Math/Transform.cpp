@@ -131,6 +131,27 @@ bool Transform::SetFromMatrix(const Matrix4x4& matrix)
 	return true;
 }
 
+void Transform::InterapolateBoneTransforms(const Transform& transformA, const Transform& transformB, double alpha)
+{
+	this->matrix.InterpolateOrientations(transformA.matrix, transformB.matrix, alpha);
+
+	Vector3 vectorA = transformA.translation;
+	Vector3 vectorB = transformB.translation;
+
+	double lengthA = 0.0;
+	vectorA.Normalize(&lengthA);
+
+	double lengthB = 0.0;
+	vectorB.Normalize(&lengthB);
+
+	Vector3 vector;
+	vector.Slerp(vectorA, vectorB, alpha);
+
+	double length = lengthA + alpha * (lengthB - lengthA);
+
+	this->translation = vector * length;
+}
+
 void Transform::Dump(std::ostream& stream) const
 {
 	this->matrix.Dump(stream);

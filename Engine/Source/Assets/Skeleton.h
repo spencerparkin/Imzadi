@@ -18,12 +18,6 @@ namespace Imzadi
 		CURRENT_POSE
 	};
 
-	struct BoneState
-	{
-		Matrix3x3 orientation;
-		double length;
-	};
-
 	/**
 	 * A skeleton is a hierarchy of bones (or spaces).  By itself, that's all
 	 * it is, but when combined with a skinned render mesh, manipulating the bones
@@ -31,7 +25,7 @@ namespace Imzadi
 	 * the mesh.  Each vertex in a skinned mesh can be weighted to one or
 	 * more bones.  Loosely speaking, the location of a vertex is calculated
 	 * as a weighted linear combination of that vertex in each of the associated
-	 * bone spaces.  At least, that's what I think it's supposed to be.
+	 * bone spaces.
 	 */
 	class IMZADI_API Skeleton : public Asset
 	{
@@ -77,8 +71,6 @@ namespace Imzadi
 
 		void DebugDraw(BoneTransformType transformType, const Transform& objectToWorld) const;
 
-		void MakeBasicBiped();
-
 	private:
 		Bone* rootBone;
 
@@ -88,22 +80,11 @@ namespace Imzadi
 
 	/**
 	 * These are the nodes of the skeleton tree.  A bone is realized
-	 * in its parent space as a vector (of some fixed length) seated
-	 * at origin and pointing down the +X-axis prior to being oriented.
-	 * The space of the bone (a child space of the parent) mirrors the
-	 * orientation of the bone, but with origin at the head of the vector.
-	 * The parent space of the root bone is always object space.
-	 *
-	 * Things live in spaces and sub-spaces can be attached to things.
-	 * A bone is a fixed-length vector at origin with a sub-space attached
-	 * to the tip of the vector.  A bone lives in its parent space.  The
-	 * space of the bone is the space at its tip.  Child bones of a bone
-	 * live in the space of the bone.  Note that since the bone vector
-	 * has a sub-space on its tip, this gives the vector orientation beyond
-	 * that of a normal vector.  With a normal vector, rotating the vector
-	 * about an axis parallel to it does not change it.  This is not the
-	 * case, however, with our bone vectors, since the sub-space at its
-	 * tip is a property of the vector.
+	 * as a line-segment connecting the origin of a parent node to the
+	 * origin of a child node.  A bone is also a space, and the skeleton
+	 * tree is a hierarchy of spaces.  A child's transform is relative
+	 * to its parent, so to get the space of a node you must concatinate
+	 * transforms from the roor of the tree to the node in question.
 	 */
 	class IMZADI_API Bone
 	{
@@ -126,23 +107,11 @@ namespace Imzadi
 		void SetWeightable(bool weightable) { this->canBeWeightedAgainst = weightable; }
 		bool GetWeightable() const { return this->canBeWeightedAgainst; }
 
-		void SetBindPoseState(const BoneState& boneState) { this->bindPose.boneState = boneState; }
-		const BoneState& GetBindPoseState() const { return this->bindPose.boneState; }
+		void SetBindPoseChildToParent(const Transform& childToParent) { this->bindPose.childToParent = childToParent; }
+		const Transform& GetBindPoseChildToParent() const { return this->bindPose.childToParent; }
 
-		void SetCurrentPoseState(const BoneState& boneState) { this->currentPose.boneState = boneState; }
-		const BoneState& GetCurrentPoseState() { return this->currentPose.boneState; }
-
-		void SetBindPoseLength(double length) { this->bindPose.boneState.length = length; }
-		double GetBindPoseLength() const { return this->bindPose.boneState.length; }
-
-		void SetCurrentPoseLength(double length) { this->currentPose.boneState.length = length; }
-		double GetCurrentPoseLength() const { return this->currentPose.boneState.length; }
-
-		void SetBindPoseOrientation(const Imzadi::Matrix3x3& orientation) { this->bindPose.boneState.orientation = orientation; }
-		const Imzadi::Matrix3x3& GetBindPoseOrientation() const { return this->bindPose.boneState.orientation; }
-
-		void SetCurrentPoseOrientation(const Imzadi::Matrix3x3& orientation) { this->currentPose.boneState.orientation = orientation; }
-		const Imzadi::Matrix3x3& GetCurrentPoseOrientation() const { return this->currentPose.boneState.orientation; }
+		void SetCurrentPoseChildToParent(const Transform& childToParent) { this->currentPose.childToParent = childToParent; }
+		const Transform& GetCurrentPoseChildToParent() { return this->currentPose.childToParent; }
 
 		void UpdateCachedTransforms(BoneTransformType transformType);
 
@@ -157,7 +126,7 @@ namespace Imzadi
 
 		struct Transforms
 		{
-			BoneState boneState;
+			Transform childToParent;
 			Transform boneToObject;
 			Transform objectToBone;
 		};

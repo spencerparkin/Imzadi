@@ -1,11 +1,11 @@
 #pragma once
 
 #include "AssetCache.h"
-#include "Skeleton.h"
 
 namespace Imzadi
 {
 	class KeyFrame;
+	class Skeleton;
 
 	struct KeyFramePair
 	{
@@ -34,8 +34,8 @@ namespace Imzadi
 		virtual bool Unload() override;
 		virtual bool Save(rapidjson::Document& jsonDoc, std::string& error) const override;
 
-		void SetName(const std::string& name) { *this->name = name; }
-		const std::string& GetName() const { return *this->name; }
+		void SetName(const std::string& name) { this->name = name; }
+		const std::string& GetName() const { return this->name; }
 
 		/**
 		 * Delete all key-frames and empty our list of such.
@@ -61,7 +61,7 @@ namespace Imzadi
 		/**
 		 * Return the number of key-frames in this animation.
 		 */
-		size_t GetNumKeyFrames() const { return this->keyFrameArray->size(); }
+		size_t GetNumKeyFrames() const { return this->keyFrameArray.size(); }
 
 		/**
 		 * Return the i^{th} key-frame; null, if the given index is out of bounds.
@@ -137,10 +137,10 @@ namespace Imzadi
 
 	private:
 
-		std::string* name;
+		std::string name;
 
 		typedef std::vector<KeyFrame*> KeyFrameArray;
-		KeyFrameArray* keyFrameArray;
+		KeyFrameArray keyFrameArray;
 	};
 
 	/**
@@ -196,7 +196,7 @@ namespace Imzadi
 		/**
 		 * Return the number of bones posed by this key-frame.
 		 */
-		size_t GetPoseCount() const { return this->poseInfoArray->size(); }
+		size_t GetPoseCount() const { return this->poseInfoArray.size(); }
 
 	private:
 
@@ -205,10 +205,10 @@ namespace Imzadi
 		struct PoseInfo
 		{
 			std::string boneName;
-			BoneState boneState;
+			Transform childToParent;
 		};
 
 		typedef std::vector<PoseInfo> PoseInfoArray;
-		PoseInfoArray* poseInfoArray;
+		PoseInfoArray poseInfoArray;
 	};
 }

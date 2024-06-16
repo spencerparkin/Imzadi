@@ -154,6 +154,18 @@ namespace Imzadi
 		 */
 		void Restore(std::istream& stream);
 
+		/**
+		 * Here we interpolate between the two given transforms by the given alpha,
+		 * but with the understanding that the given transforms are meant for bones
+		 * in a skeleton.  This means we treat the matrices as orientations, and we
+		 * slerp the translations.
+		 * 
+		 * @param[in] transformA This will be the result when alpha is zero.
+		 * @param[in] transformB This will be the result when alpha is one.
+		 * @param[in] alpha This is the interpolation amount, typically in the range [0,1].
+		 */
+		void InterapolateBoneTransforms(const Transform& transformA, const Transform& transformB, double alpha);
+
 	public:
 		Matrix3x3 matrix;
 		Vector3 translation;

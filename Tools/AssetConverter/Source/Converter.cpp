@@ -319,6 +319,7 @@ bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString
 
 	fileStream << stringBuffer.GetString();
 	fileStream.close();
+	return true;
 }
 
 wxString Converter::MakeAssetFileReference(const wxString& assetFile)

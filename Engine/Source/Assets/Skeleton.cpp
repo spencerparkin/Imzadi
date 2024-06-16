@@ -105,135 +105,12 @@ void Skeleton::UpdateCachedTransforms(BoneTransformType transformType) const
 		const_cast<Bone*>(this->rootBone)->UpdateCachedTransforms(transformType);
 }
 
-void Skeleton::MakeBasicBiped()
-{
-	this->SetRootBone(new Bone());
-
-	// Root.
-	Bone* root = this->GetRootBone();
-	root->SetName("Root");
-	root->SetWeightable(false);
-	root->SetBindPoseLength(2.7);
-	root->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
-
-	// Torso.
-	Bone* torso = new Bone();
-	torso->SetName("Torso");
-	torso->SetBindPoseLength(1.7);
-	torso->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	root->AddChildBone(torso);
-
-	// Neck.
-	Bone* neck = new Bone();
-	neck->SetName("Neck");
-	neck->SetBindPoseLength(0.5);
-	neck->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	torso->AddChildBone(neck);
-
-	// Head.
-	Bone* head = new Bone();
-	head->SetName("Head");
-	head->SetBindPoseLength(1.0);
-	head->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	neck->AddChildBone(head);
-
-	// Left shoulder.
-	Bone* leftShoulder = new Bone();
-	leftShoulder->SetName("LeftShoulder");
-	leftShoulder->SetBindPoseLength(0.8);
-	leftShoulder->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
-	torso->AddChildBone(leftShoulder);
-
-	// Right shoulder.
-	Bone* rightShoulder = new Bone();
-	rightShoulder->SetName("RightShoulder");
-	rightShoulder->SetBindPoseLength(0.8);
-	rightShoulder->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), -M_PI / 2.0));
-	torso->AddChildBone(rightShoulder);
-
-	// Left upper arm.
-	Bone* leftUpperArm = new Bone();
-	leftUpperArm->SetName("LeftUpperArm");
-	leftUpperArm->SetBindPoseLength(1.2);
-	leftUpperArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	leftShoulder->AddChildBone(leftUpperArm);
-
-	// Right upper arm.
-	Bone* rightUpperArm = new Bone();
-	rightUpperArm->SetName("RightUpperArm");
-	rightUpperArm->SetBindPoseLength(1.2);
-	rightUpperArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	rightShoulder->AddChildBone(rightUpperArm);
-
-	// Left lower arm.
-	Bone* leftLowerArm = new Bone();
-	leftLowerArm->SetName("LeftLowerArm");
-	leftLowerArm->SetBindPoseLength(1.2);
-	leftLowerArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	leftUpperArm->AddChildBone(leftLowerArm);
-
-	// Right lower arm.
-	Bone* rightLowerArm = new Bone();
-	rightLowerArm->SetName("RightLowerArm");
-	rightLowerArm->SetBindPoseLength(1.2);
-	rightLowerArm->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	rightUpperArm->AddChildBone(rightLowerArm);
-
-	// Left hip socket.
-	Bone* leftHip = new Bone();
-	leftHip->SetName("LeftHip");
-	leftHip->SetBindPoseLength(0.5);
-	leftHip->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
-	root->AddChildBone(leftHip);
-
-	// Right hip socket.
-	Bone* rightHip = new Bone();
-	rightHip->SetName("RightHip");
-	rightHip->SetBindPoseLength(0.5);
-	rightHip->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), -M_PI / 2.0));
-	root->AddChildBone(rightHip);
-
-	// Left upper leg.
-	Bone* leftUpperLeg = new Bone();
-	leftUpperLeg->SetName("LeftUpperLeg");
-	leftUpperLeg->SetBindPoseLength(1.25);
-	leftUpperLeg->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), M_PI / 2.0));
-	leftHip->AddChildBone(leftUpperLeg);
-
-	// Right upper leg.
-	Bone* rightUpperLeg = new Bone();
-	rightUpperLeg->SetName("RightUpperLeg");
-	rightUpperLeg->SetBindPoseLength(1.25);
-	rightUpperLeg->SetBindPoseOrientation(Matrix3x3(Vector3(0.0, 0.0, 1.0), -M_PI / 2.0));
-	rightHip->AddChildBone(rightUpperLeg);
-
-	// Left lower leg.
-	Bone* leftLowerLeg = new Bone();
-	leftLowerLeg->SetName("LeftLowerLeg");
-	leftLowerLeg->SetBindPoseLength(1.25);
-	leftLowerLeg->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	leftUpperLeg->AddChildBone(leftLowerLeg);
-
-	// Right lower leg.
-	Bone* rightLowerLeg = new Bone();
-	rightLowerLeg->SetName("RightLowerLeg");
-	rightLowerLeg->SetBindPoseLength(1.25);
-	rightLowerLeg->SetBindPoseOrientation(Matrix3x3().SetIdentity());
-	rightUpperLeg->AddChildBone(rightLowerLeg);
-}
-
 void Skeleton::ResetCurrentPose()
 {
 	std::vector<Bone*> boneArray;
-
 	if (this->GatherBones(boneArray))
-	{
 		for (Bone* bone : boneArray)
-		{
-			bone->SetCurrentPoseOrientation(bone->GetBindPoseOrientation());
-			bone->SetCurrentPoseLength(bone->GetBindPoseLength());
-		}
-	}
+			bone->SetCurrentPoseChildToParent(bone->GetBindPoseChildToParent());
 }
 
 bool Skeleton::GatherBones(std::vector<Bone*>& boneArray)
@@ -280,10 +157,8 @@ Bone::Bone()
 {
 	this->canBeWeightedAgainst = true;
 	this->parentBone = nullptr;
-	this->bindPose.boneState.orientation.SetIdentity();
-	this->bindPose.boneState.length = 1.0;
-	this->currentPose.boneState.orientation.SetIdentity();
-	this->currentPose.boneState.length = 1.0;
+	this->bindPose.childToParent.SetIdentity();
+	this->currentPose.childToParent.SetIdentity();
 }
 
 /*virtual*/ Bone::~Bone()
@@ -298,16 +173,11 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 
 	this->name = boneValue["name"].GetString();
 
-	if (!boneValue.HasMember("bind_pose_orientation"))
+	if (!boneValue.HasMember("bind_pose_child_to_parent") || !boneValue["bind_pose_child_to_parent"].IsFloat())
 		return false;
 
-	if (!Asset::LoadMatrix(boneValue["bind_pose_orientation"], this->bindPose.boneState.orientation))
+	if (!Asset::LoadTransform(boneValue["bind_pose_child_to_parent"], this->bindPose.childToParent))
 		return false;
-
-	if (!boneValue.HasMember("bind_pose_length") || !boneValue["bind_pose_length"].IsFloat())
-		return false;
-
-	this->bindPose.boneState.length = boneValue["bind_pose_length"].GetFloat();
 
 	if (!boneValue.HasMember("weightable") || !boneValue["weightable"].IsBool())
 		return false;
@@ -334,13 +204,12 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 
 bool Bone::Save(rapidjson::Value& boneValue, rapidjson::Document* doc) const
 {
-	rapidjson::Value bindPoseOrientationValue;
-	Asset::SaveMatrix(bindPoseOrientationValue, this->bindPose.boneState.orientation, doc);
+	rapidjson::Value bindPoseChildToParentValue;
+	Asset::SaveTransform(bindPoseChildToParentValue, this->bindPose.childToParent, doc);
 
 	boneValue.SetObject();
 	boneValue.AddMember("name", rapidjson::Value().SetString(this->name.c_str(), doc->GetAllocator()), doc->GetAllocator());
-	boneValue.AddMember("bind_pose_orientation", bindPoseOrientationValue, doc->GetAllocator());
-	boneValue.AddMember("bind_pose_length", rapidjson::Value().SetFloat(this->bindPose.boneState.length), doc->GetAllocator());
+	boneValue.AddMember("bind_pose_child_to_parent", bindPoseChildToParentValue, doc->GetAllocator());
 	boneValue.AddMember("weightable", rapidjson::Value().SetBool(this->canBeWeightedAgainst), doc->GetAllocator());
 
 	rapidjson::Value childBoneArrayValue;
@@ -394,22 +263,13 @@ Bone::Transforms* Bone::GetTransforms(BoneTransformType transformType)
 
 void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 {
-	Transforms* parentTransforms = this->parentBone ? this->parentBone->GetTransforms(transformType) : nullptr;
+	const Transforms* parentTransforms = this->parentBone ? this->parentBone->GetTransforms(transformType) : nullptr;
 	Transforms* transforms = this->GetTransforms(transformType);
 
-	Vector3 boneVector(transforms->boneState.length, 0.0, 0.0);
-	boneVector = transforms->boneState.orientation * boneVector;
-
 	if (!parentTransforms)
-	{
-		transforms->boneToObject.matrix = transforms->boneState.orientation;
-		transforms->boneToObject.translation = boneVector;
-	}
+		transforms->boneToObject = transforms->childToParent;
 	else
-	{
-		transforms->boneToObject.matrix = transforms->boneState.orientation * parentTransforms->boneToObject.matrix;
-		transforms->boneToObject.translation = parentTransforms->boneToObject.TransformPoint(boneVector);
-	}
+		transforms->boneToObject = parentTransforms->boneToObject * transforms->childToParent;
 	
 	bool inverted = transforms->objectToBone.Invert(transforms->boneToObject);
 	assert(inverted);
@@ -420,8 +280,13 @@ void Bone::UpdateCachedTransforms(BoneTransformType transformType)
 
 Vector3 Bone::CalcObjectSpaceCenter(BoneTransformType transformType) const
 {
+	const Transforms* parentTransforms = this->parentBone ? this->parentBone->GetTransforms(transformType) : nullptr;
 	const Transforms* transforms = this->GetTransforms(transformType);
-	return transforms->boneToObject.TransformPoint(Vector3(-transforms->boneState.length / 2.0, 0.0, 0.0));
+
+	if(parentTransforms)
+		return parentTransforms->boneToObject.TransformPoint(transforms->childToParent.translation / 2.0);
+
+	return transforms->childToParent.translation / 2.0;
 }
 
 void Bone::PopulateBoneMap(BoneMap& boneMap) const
