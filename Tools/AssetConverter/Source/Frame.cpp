@@ -68,7 +68,8 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 	if (fileDialog.ShowModal() != wxID_OK)
 		return;
 	
-	Converter converter;
+	// TODO: Shouldn't hard-code this path.
+	Converter converter(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
 
 	wxArrayString fileArray;
 	fileDialog.GetPaths(fileArray);

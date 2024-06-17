@@ -85,10 +85,12 @@ public:
 
 	void AddLogMessage(const char* logMessage);
 
+	void OnClearButtonPressed(wxCommandEvent& event);
 	void OnDismissButtonClicked(wxCommandEvent& event);
 
 private:
 	LogWindowRoute* logWindowRoute;
 	wxTextCtrl* logTextCtrl;
+	wxButton* clearButton;
 	wxButton* dismissButton;
 };

@@ -1,0 +1,24 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "texture": "Models\\DeannaTroi\\Troi.texture",
+    "index_buffer": "Models\\DeannaTroi\\Troi_Indices.buffer",
+    "vertex_buffer": "Models\\DeannaTroi\\Troi_Vertices.buffer",
+    "bounding_box": {
+        "min": {
+            "x": -3.537841796875,
+            "y": -0.028599875047802926,
+            "z": -1.2021255493164063
+        },
+        "max": {
+            "x": 3.5322983264923097,
+            "y": 6.523622035980225,
+            "z": 0.6995512843132019
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\DeannaTroi\\Troi.skeleton",
+    "skin_weights": "Models\\DeannaTroi\\Troi.skin_weights"
+}

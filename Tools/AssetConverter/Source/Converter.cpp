@@ -7,9 +7,11 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include "AssetCache.h"
 #include "Assets/SkinWeights.h"
+#include "Assets/Skeleton.h"
 
-Converter::Converter()
+Converter::Converter(const wxString& assetRootFolder)
 {
+	this->assetRootFolder = assetRootFolder;
 }
 
 /*virtual*/ Converter::~Converter()
@@ -21,57 +23,92 @@ bool Converter::Convert(const wxString& assetFile)
 	LOG("Converting file: %s", (const char*)assetFile.c_str());
 
 	wxFileName fileName(assetFile);
-	wxString assetFolder = fileName.GetPath();
+	this->assetFolder = fileName.GetPath();
+	LOG("Assets will be dumped in folder: %s", (const char*)this->assetFolder.c_str());
 
-	LOG("Assets will be dumped in folder: %s", (const char*)assetFolder.c_str());
+	this->importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0);
 
 	LOG("Calling Ass-Imp to load file: %s", (const char*)assetFile.c_str());
-	const aiScene* scene = importer.ReadFile(assetFile.c_str(), 0);
+	const aiScene* scene = importer.ReadFile(assetFile.c_str(), aiProcess_GlobalScale);
 	if (!scene)
 	{
 		LOG("Import error: %s", importer.GetErrorString());
 		return false;
 	}
 
-	//...
+	Imzadi::Transform nodeToWorld;
+	nodeToWorld.SetIdentity();
+
+	LOG("Walking scene graph...");
+	return this->ProcessSceneGraph(scene, scene->mRootNode, nodeToWorld);
+}
+
+bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node, const Imzadi::Transform& parentNodeToWorld)
+{
+	LOG("Procesing node: %s", node->mName.C_Str());
+
+	Imzadi::Transform childToParent;
+	if (!this->MakeTransform(childToParent, node->mTransformation))
+	{
+		LOG("Failed to make child-to-parent transfrom from node matrix.");
+		return false;
+	}
+
+	Imzadi::Transform nodeToWorld = parentNodeToWorld * childToParent;
+
+	if (node->mNumMeshes > 0)
+	{
+		LOG("Found %d meshe(s).", node->mNumMeshes);
+
+		for (int i = 0; i < node->mNumMeshes; i++)
+		{
+			LOG("Processing mesh %d of %d.", i + 1, node->mNumMeshes);
+			const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+			if (!this->ProcessMesh(scene, node, mesh, nodeToWorld))
+			{
+				LOG("Mesh processing failed!");
+				return false;
+			}
+		}
+	}
 	
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		const aiNode* childNode = node->mChildren[i];
+		if (!this->ProcessSceneGraph(scene, childNode, nodeToWorld))
+			return false;
+	}
+
 	return true;
 }
 
-#if 0
-bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxString& assetFolder, wxString& error)
+bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld)
 {
+	LOG("Processing mesh: %s", mesh->mName.C_Str());
+
 	wxFileName meshFileName;
-	meshFileName.SetPath(assetFolder);
+	meshFileName.SetPath(this->assetFolder);
 	meshFileName.SetName(mesh->mName.C_Str());
-	meshFileName.SetExt(mesh->HasBones() ? ".skinned_render_mesh" : ".render_mesh");
+	meshFileName.SetExt(mesh->HasBones() ? "skinned_render_mesh" : "render_mesh");
 
 	wxFileName textureFileName;
-	textureFileName.SetPath(assetFolder);
+	textureFileName.SetPath(this->assetFolder);
 	textureFileName.SetName(mesh->mName.C_Str());
-	textureFileName.SetExt(".texture");
+	textureFileName.SetExt("texture");
 
 	wxFileName vertexBufferFileName;
-	vertexBufferFileName.SetPath(assetFolder);
+	vertexBufferFileName.SetPath(this->assetFolder);
 	vertexBufferFileName.SetName(wxString(mesh->mName.C_Str()) + "_Vertices");
-	vertexBufferFileName.SetExt(".buffer");
+	vertexBufferFileName.SetExt("buffer");
 
 	wxFileName indexBufferFileName;
-	indexBufferFileName.SetPath(assetFolder);
+	indexBufferFileName.SetPath(this->assetFolder);
 	indexBufferFileName.SetName(wxString(mesh->mName.C_Str()) + "_Indices");
-	indexBufferFileName.SetExt(".buffer");
+	indexBufferFileName.SetExt("buffer");
 
 	rapidjson::Document meshDoc;
 	meshDoc.SetObject();
 
-	Imzadi::AxisAlignedBoundingBox aabb;
-	aabb.minCorner = this->ConvertVector(mesh->mAABB.mMin);
-	aabb.maxCorner = this->ConvertVector(mesh->mAABB.mMax);
-
-	rapidjson::Value boundingBoxValue;
-	Imzadi::Asset::SaveBoundingBox(boundingBoxValue, aabb, &meshDoc);
-
-	meshDoc.AddMember("bounding_box", boundingBoxValue, meshDoc.GetAllocator());
 	meshDoc.AddMember("primitive_type", rapidjson::Value().SetString("TRIANGLE_LIST"), meshDoc.GetAllocator());
 	meshDoc.AddMember("shader", rapidjson::Value().SetString("Shaders/Standard.shader", meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("shadow_shader", rapidjson::Value().SetString("Shaders/StandardShadow.shader", meshDoc.GetAllocator()), meshDoc.GetAllocator());
@@ -81,38 +118,41 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 
 	if (scene->mNumMaterials <= mesh->mMaterialIndex)
 	{
-		error = "Bad material index";
+		LOG("Error: Bad material index: %d", mesh->mMaterialIndex);
 		return false;
 	}
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	if (material->GetTextureCount(aiTextureType_DIFFUSE) != 1)
 	{
-		error = "Material does not have exactly one diffuse texture.";
+		LOG("Error: Material does not have exactly one diffuse texture.");
 		return false;
 	}
 
 	aiString texturePath;
 	if (aiReturn_SUCCESS != material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
 	{
-		error = "Failed to acquire texture path from material.";
+		LOG("Failed to acquire texture path from material.");
 		return false;
 	}
+
+	wxString textureFullPath = this->assetFolder + wxString::Format("/%s", texturePath.C_Str());
+	LOG("Found texture: %s", (const char*)textureFullPath.c_str());
 
 	rapidjson::Document textureDoc;
 	textureDoc.SetObject();
 	textureDoc.AddMember("flip_vertical", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
-	textureDoc.AddMember("image_file", rapidjson::Value().SetString(texturePath.C_Str(), textureDoc.GetAllocator()), textureDoc.GetAllocator());
+	textureDoc.AddMember("image_file", rapidjson::Value().SetString(this->MakeAssetFileReference(textureFullPath), textureDoc.GetAllocator()), textureDoc.GetAllocator());
 
 	if (mesh->mNumVertices == 0)
 	{
-		error = "No vertices found.";
+		LOG("Error: No vertices found.");
 		return false;
 	}
 
 	if (mesh->mNumUVComponents[0] != 2)
 	{
-		error = "Expected exactly 2 UV components in first channel.";
+		LOG("Error: Expected exactly 2 UV components in first channel.");
 		return false;
 	}
 
@@ -122,11 +162,24 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 	rapidjson::Value vertexBufferValue;
 	vertexBufferValue.SetArray();
 
+	Imzadi::AxisAlignedBoundingBox* boundingBox = nullptr;
+
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{
-		Imzadi::Vector3 position = this->ConvertVector(mesh->mVertices[i]);
-		Imzadi::Vector2 texCoords = this->ConvertTexCoords(mesh->mTextureCoords[0][i]);
-		Imzadi::Vector3 normal = this->ConvertVector(mesh->mNormals[i]);
+		Imzadi::Vector3 position, normal;
+		Imzadi::Vector2 texCoords;
+
+		if (!this->MakeVector(position, mesh->mVertices[i]))
+			return false;
+
+		if (!this->MakeTexCoords(texCoords, mesh->mTextureCoords[0][i]))
+			return false;
+
+		if (!this->MakeVector(normal, mesh->mNormals[i]))
+			return false;
+
+		position = nodeToWorld.TransformPoint(position);
+		normal = nodeToWorld.TransformNormal(normal);
 
 		if (!normal.Normalize())
 			return false;
@@ -139,6 +192,11 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.x), verticesDoc.GetAllocator());
 		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.y), verticesDoc.GetAllocator());
 		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.z), verticesDoc.GetAllocator());
+
+		if (boundingBox)
+			boundingBox->Expand(position);
+		else
+			boundingBox = new Imzadi::AxisAlignedBoundingBox(position);
 	}
 
 	verticesDoc.AddMember("bind", rapidjson::Value().SetString("vertex", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
@@ -146,15 +204,26 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 	verticesDoc.AddMember("type", rapidjson::Value().SetString("float", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
 	verticesDoc.AddMember("buffer", vertexBufferValue, verticesDoc.GetAllocator());
 
+	if (mesh->HasBones())
+	{
+		verticesDoc.AddMember("usage", rapidjson::Value().SetString("dynamic", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
+		verticesDoc.AddMember("bare_buffer", rapidjson::Value().SetBool(true), verticesDoc.GetAllocator());
+	}
+
+	rapidjson::Value boundingBoxValue;
+	Imzadi::Asset::SaveBoundingBox(boundingBoxValue, *boundingBox, &meshDoc);
+	meshDoc.AddMember("bounding_box", boundingBoxValue, meshDoc.GetAllocator());
+	delete boundingBox;
+
 	if (mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
 	{
-		error = "Only triangle primitive currently supported.";
+		LOG("Error: Only triangle primitive currently supported.");
 		return false;
 	}
 
 	if (mesh->mNumFaces == 0)
 	{
-		error = "No faces found.";
+		LOG("Error: No faces found.");
 		return false;
 	}
 
@@ -169,7 +238,7 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 		const aiFace* face = &mesh->mFaces[i];
 		if (face->mNumIndices != 3)
 		{
-			error = "Expected exactly 3 indices in face.";
+			LOG("Error: Expected exactly 3 indices in face.");
 			return false;
 		}
 
@@ -180,7 +249,7 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 
 			if (index != static_cast<unsigned int>(static_cast<unsigned short>(index)))
 			{
-				error = "Index doesn't fit in an unsigned short.";
+				LOG("Error: Index (%d) doesn't fit in an unsigned short.", index);
 				return false;
 			}
 		}
@@ -194,14 +263,14 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 	if (mesh->HasBones())
 	{
 		wxFileName skeletonFileName;
-		skeletonFileName.SetPath(assetFolder);
+		skeletonFileName.SetPath(this->assetFolder);
 		skeletonFileName.SetName(mesh->mName.C_Str());
-		skeletonFileName.SetExt(".skeleton");
+		skeletonFileName.SetExt("skeleton");
 
 		wxFileName skinWeightsFileName;
-		skinWeightsFileName.SetPath(assetFolder);
+		skinWeightsFileName.SetPath(this->assetFolder);
 		skinWeightsFileName.SetName(mesh->mName.C_Str());
-		skinWeightsFileName.SetExt(".skin_weights");
+		skinWeightsFileName.SetExt("skin_weights");
 
 		meshDoc.AddMember("position_offset", rapidjson::Value().SetInt(0), meshDoc.GetAllocator());
 		meshDoc.AddMember("normal_offset", rapidjson::Value().SetInt(20), meshDoc.GetAllocator());
@@ -211,8 +280,16 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 		rapidjson::Document skeletonDoc;
 		skeletonDoc.SetObject();
 
-		// TODO: Can we get ahold of a file that imports with bones?  My FBX files don't, even if I rig a character.
-		// TODO: Even if I can find such a file, will the bone hierarchy in AssImp format translate to the skeleton structure in my engine?
+		Imzadi::Skeleton skeleton;
+
+		// TODO: Build the skeleton here.  Identify which nodes are bones using the prescribed method in the docs.
+
+		std::string error;
+		/*if (!skeleton.Save(skeletonDoc, error))
+		{
+			LOG("Error: %s", error.c_str());
+			return false;
+		}*/
 
 		rapidjson::Document skinWeightsDoc;
 		skinWeightsDoc.SetObject();
@@ -220,7 +297,6 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 		Imzadi::SkinWeights skinWeights;
 		skinWeights.SetNumVertices(mesh->mNumVertices);
 
-		// TODO: Do we need the armature data?  aiProcess_PopulateArmatureData is the flag we would pass in to the importer.
 		for (int i = 0; i < mesh->mNumBones; i++)
 		{
 			const aiBone* bone = mesh->mBones[i];
@@ -231,7 +307,7 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 
 				if (vertexWeight->mVertexId >= skinWeights.GetNumVertices())
 				{
-					error = "Vertex weight index out of range.";
+					LOG("Error: Vertex weight index (%d) out of range (max: %d).", vertexWeight->mVertexId, skinWeights.GetNumVertices() - 1);
 					return false;
 				}
 
@@ -243,61 +319,79 @@ bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxSt
 			}
 		}
 
-		std::string engineError;
-		if (!skinWeights.Save(skinWeightsDoc, engineError))
+		if (!skinWeights.Save(skinWeightsDoc, error))
 		{
-			error = engineError;
+			LOG("Error: %s", error.c_str());
 			return false;
 		}
 
-		if (!this->WriteJsonFile(skeletonDoc, skeletonFileName.GetFullPath(), error))
+		if (!this->WriteJsonFile(skeletonDoc, skeletonFileName.GetFullPath()))
 			return false;
 
-		if (!this->WriteJsonFile(skinWeightsDoc, skinWeightsFileName.GetFullPath(), error))
+		if (!this->WriteJsonFile(skinWeightsDoc, skinWeightsFileName.GetFullPath()))
 			return false;
 
 		// TODO: What about animations for the mesh?
 	}
 
-	if (!this->WriteJsonFile(meshDoc, meshFileName.GetFullPath(), error))
+	if (!this->WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
 		return false;
 
-	if (!this->WriteJsonFile(textureDoc, textureFileName.GetFullPath(), error))
+	if (!this->WriteJsonFile(textureDoc, textureFileName.GetFullPath()))
 		return false;
 
-	if (!this->WriteJsonFile(verticesDoc, vertexBufferFileName.GetFullPath(), error))
+	if (!this->WriteJsonFile(verticesDoc, vertexBufferFileName.GetFullPath()))
 		return false;
 
-	if (!this->WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath(), error))
+	if (!this->WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath()))
 		return false;
 
 	return true;
 }
 
-Imzadi::Vector3 Converter::ConvertVector(const aiVector3D& vector)
+bool Converter::MakeTransform(Imzadi::Transform& transformOut, const aiMatrix4x4& matrixIn)
 {
-	return Imzadi::Vector3(
-		vector.x,
-		vector.y,
-		vector.z
-	);
+	if (matrixIn.d1 != 0.0 || matrixIn.d2 != 0.0 || matrixIn.d3 != 0.0 || matrixIn.d4 != 1.0)
+		return false;
+
+	transformOut.matrix.ele[0][0] = matrixIn.a1;
+	transformOut.matrix.ele[0][1] = matrixIn.a2;
+	transformOut.matrix.ele[0][2] = matrixIn.a3;
+
+	transformOut.matrix.ele[1][0] = matrixIn.b1;
+	transformOut.matrix.ele[1][1] = matrixIn.b2;
+	transformOut.matrix.ele[1][2] = matrixIn.b3;
+
+	transformOut.matrix.ele[2][0] = matrixIn.c1;
+	transformOut.matrix.ele[2][1] = matrixIn.c2;
+	transformOut.matrix.ele[2][2] = matrixIn.c3;
+
+	transformOut.translation.x = matrixIn.a4;
+	transformOut.translation.y = matrixIn.b4;
+	transformOut.translation.z = matrixIn.c4;
+
+	return true;
 }
 
-Imzadi::Vector2 Converter::ConvertTexCoords(const aiVector3D& texCoords)
+bool Converter::MakeVector(Imzadi::Vector3& vectorOut, const aiVector3D& vectorIn)
 {
-	return Imzadi::Vector2(
-		texCoords.x,
-		texCoords.y
-	);
+	vectorOut.SetComponents(vectorIn.x, vectorIn.y, vectorIn.z);
+	return true;
 }
 
-bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile, wxString& error)
+bool Converter::MakeTexCoords(Imzadi::Vector2& texCoordsOut, const aiVector3D& texCoordsIn)
+{
+	texCoordsOut.SetComponents(texCoordsIn.x, texCoordsIn.y);
+	return true;
+}
+
+bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile)
 {
 	std::ofstream fileStream;
 	fileStream.open((const char*)assetFile.c_str(), std::ios::out);
 	if (!fileStream.is_open())
 	{
-		error = "Failed to open (for writing) the file: " + assetFile;
+		LOG("Failed to open (for writing) the file: %s", (const char*)assetFile.c_str());
 		return false;
 	}
 
@@ -305,23 +399,20 @@ bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
 	if (!jsonDoc.Accept(prettyWriter))
 	{
-		error = "Failed to generate JSON text from JSON data foe file: " + assetFile;
+		LOG("Failed to generate JSON text from JSON data foe file: %s", (const char*)assetFile.c_str());
 		return false;
 	}
 
 	fileStream << stringBuffer.GetString();
 	fileStream.close();
+	LOG("Wrote file: %s", (const char*)assetFile.c_str());
 	return true;
 }
 
 wxString Converter::MakeAssetFileReference(const wxString& assetFile)
 {
-	// TODO: Need to get this from somewhere rather than hard-code it.
-	wxString assetBaseFolder = R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)";
-
 	wxFileName fileName(assetFile);
-	fileName.MakeRelativeTo(assetBaseFolder);
+	fileName.MakeRelativeTo(this->assetRootFolder);
 	wxString relativeAssetPath = fileName.GetFullPath();
 	return relativeAssetPath;
 }
-#endif

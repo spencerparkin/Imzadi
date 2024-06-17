@@ -7,26 +7,30 @@
 #include "assimp/vector3.h"
 #include "Math/Vector3.h"
 #include "Math/Vector2.h"
+#include "Math/Transform.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
+#include <unordered_set>
 
 class Converter
 {
 public:
-	Converter();
+	Converter(const wxString& assetRootFolder);
 	virtual ~Converter();
 
 	bool Convert(const wxString& assetFile);
 
 private:
 
-	/*
-	bool ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxString& assetFolder, wxString& error);
-	Imzadi::Vector3 ConvertVector(const aiVector3D& vector);
-	Imzadi::Vector2 ConvertTexCoords(const aiVector3D& texCoords);
-	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile, wxString& error);
+	bool ProcessSceneGraph(const aiScene* scene, const aiNode* node, const Imzadi::Transform& parentNodeToWorld);
+	bool ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld);
+	bool MakeTransform(Imzadi::Transform& transformOut, const aiMatrix4x4& matrixIn);
+	bool MakeVector(Imzadi::Vector3& vectorOut, const aiVector3D& vectorIn);
+	bool MakeTexCoords(Imzadi::Vector2& texCoordsOut, const aiVector3D& texCoordsIn);
 	wxString MakeAssetFileReference(const wxString& assetFile);
-	*/
+	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile);
 
 	Assimp::Importer importer;
+	wxString assetFolder;
+	wxString assetRootFolder;
 };

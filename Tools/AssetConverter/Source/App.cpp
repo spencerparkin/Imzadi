@@ -30,6 +30,8 @@ ConverterApp::ConverterApp()
 	
 	Log::Get()->AddRoute("log_window", new LogWindowRoute());
 
+	this->frame->SetFocus();
+
 	LOG("Initializing Imzadi Game Engine...");
 
 	HINSTANCE instanceHandle = ::GetModuleHandle(NULL);
@@ -47,7 +49,7 @@ ConverterApp::ConverterApp()
 	
 	LOG("Initialization succeeded!");
 
-	// TODO: Make this something the user can configure.
+	// TODO: Shouldn't hard-code this path.
 	gamePreview->GetAssetCache()->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
 
 	Imzadi::AnimatedMeshInstance::SetRenderSkeletons(true);

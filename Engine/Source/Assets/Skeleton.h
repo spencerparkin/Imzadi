@@ -84,7 +84,7 @@ namespace Imzadi
 	 * origin of a child node.  A bone is also a space, and the skeleton
 	 * tree is a hierarchy of spaces.  A child's transform is relative
 	 * to its parent, so to get the space of a node you must concatinate
-	 * transforms from the roor of the tree to the node in question.
+	 * transforms from the root of the tree to the node in question.
 	 */
 	class IMZADI_API Bone
 	{

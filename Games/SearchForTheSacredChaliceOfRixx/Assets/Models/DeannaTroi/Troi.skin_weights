@@ -1,0 +1,4232 @@
+{
+    "weighted_vertices": [
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9464648365974426
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.05353511497378349
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999998211860657
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999999403953552
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999998211860657
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6229979395866394
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37680506706237795
+            },
+            {
+                "bone_name": "Bip001 Spine",
+                "weight": 0.00019706696912180632
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6229979395866394
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37680506706237795
+            },
+            {
+                "bone_name": "Bip001 Spine",
+                "weight": 0.00019706696912180632
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999998211860657
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6229979395866394
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37680506706237795
+            },
+            {
+                "bone_name": "Bip001 Spine",
+                "weight": 0.00019706696912180632
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9464648365974426
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.05353511497378349
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999999403953552
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999999403953552
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999999403953552
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999998211860657
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999998211860657
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999998211860657
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999999403953552
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.9999999403953552
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8874334692955017
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.1125665232539177
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8874334692955017
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.1125665232539177
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9199669361114502
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.0800330713391304
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.014919495210051537
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9850805401802063
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9199669361114502
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.0800330713391304
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026082975789904596
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8823480606079102
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.09156905859708786
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.014919495210051537
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9850805401802063
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.014919495210051537
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9850805401802063
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8874334692955017
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.1125665232539177
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.6471691727638245
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.35283076763153078
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.014919495210051537
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9850805401802063
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.014919495210051537
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9850805401802063
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.6471691727638245
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.35283076763153078
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9999117255210877
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.6471691727638245
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.35283076763153078
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9999117255210877
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.021448824554681779
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9785512089729309
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9199669361114502
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.0800330713391304
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9650495648384094
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.034950416535139087
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9199669361114502
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.0800330713391304
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8874334692955017
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.1125665232539177
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9199669361114502
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.0800330713391304
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9650495648384094
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.034950416535139087
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9999117255210877
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.014919495210051537
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9850805401802063
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8874334692955017
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.1125665232539177
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.8874334692955017
+            },
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.1125665232539177
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9650495648384094
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.034950416535139087
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.6471691727638245
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.35283076763153078
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.6471691727638245
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.35283076763153078
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.6471691727638245
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.35283076763153078
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9999117255210877
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9650495648384094
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.034950416535139087
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9999117255210877
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9650495648384094
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.034950416535139087
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.9650495648384094
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.034950416535139087
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R UpperArm",
+                "weight": 0.5693700909614563
+            },
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 0.4306299090385437
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9587186574935913
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.041281357407569888
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.04953261837363243
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9504673480987549
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.04953261837363243
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9504673480987549
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.030662985518574716
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.969336986541748
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9587186574935913
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.041281357407569888
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9587186574935913
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.041281357407569888
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.030662985518574716
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.969336986541748
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.04953261837363243
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9504673480987549
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.009737683460116387
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9831066131591797
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.007155751809477806
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6019423007965088
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3980576694011688
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.030662985518574716
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.969336986541748
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.04953261837363243
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9504673480987549
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.030662985518574716
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.969336986541748
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6019423007965088
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3980576694011688
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.0010515162721276284
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9859103560447693
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.013038110919296742
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6019423007965088
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3980576694011688
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.04953261837363243
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9504673480987549
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.0010515162721276284
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9859103560447693
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.013038110919296742
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.04953261837363243
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9504673480987549
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9587186574935913
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.041281357407569888
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9809883832931519
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.01900942251086235
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.0010515162721276284
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9859103560447693
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.013038110919296742
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9838199615478516
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.01618000492453575
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9809883832931519
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.01900942251086235
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.030662985518574716
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.969336986541748
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9587186574935913
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.041281357407569888
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9587186574935913
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.041281357407569888
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9809883832931519
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.01900942251086235
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6019423007965088
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3980576694011688
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.0010515162721276284
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9859103560447693
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.013038110919296742
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.0010515162721276284
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9859103560447693
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.013038110919296742
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6019423007965088
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3980576694011688
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9809883832931519
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.01900942251086235
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.0010515162721276284
+            },
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9859103560447693
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.013038110919296742
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9809883832931519
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.01900942251086235
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.9809883832931519
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.01900942251086235
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L UpperArm",
+                "weight": 0.6354267001152039
+            },
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 0.3645733594894409
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Forearm",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9381415843963623
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.06185836344957352
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6229979395866394
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37680506706237795
+            },
+            {
+                "bone_name": "Bip001 Spine",
+                "weight": 0.00019706696912180632
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9549018144607544
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.04509824886918068
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6229979395866394
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37680506706237795
+            },
+            {
+                "bone_name": "Bip001 Spine",
+                "weight": 0.00019706696912180632
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9381415843963623
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.06185836344957352
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9381415843963623
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.06185836344957352
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9549018144607544
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.04509824886918068
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9464648365974426
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.05353511497378349
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6229979395866394
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37680506706237795
+            },
+            {
+                "bone_name": "Bip001 Spine",
+                "weight": 0.00019706696912180632
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9464648365974426
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.05353511497378349
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.6258248686790466
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.37417513132095339
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9995569586753845
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.0004429820692166686
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9464648365974426
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.05353511497378349
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9464648365974426
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.05353511497378349
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9995569586753845
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.0004429820692166686
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.935345470905304
+            },
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.06465446949005127
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9549018144607544
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.04509824886918068
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9381415843963623
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.06185836344957352
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9549018144607544
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.04509824886918068
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9995569586753845
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.0004429820692166686
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9381415843963623
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.06185836344957352
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.985233724117279
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.014766267500817776
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9381415843963623
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.06185836344957352
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 R Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9549018144607544
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.04509824886918068
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9995569586753845
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.0004429820692166686
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9995569586753845
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.0004429820692166686
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9549018144607544
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.04509824886918068
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Pelvis",
+                "weight": 0.9995569586753845
+            },
+            {
+                "bone_name": "Bip001",
+                "weight": 0.0004429820692166686
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Thigh",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 L Calf",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.026533247902989389
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9633461833000183
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.010120552033185959
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Spine1",
+                "weight": 0.02322518825531006
+            },
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9069998860359192
+            },
+            {
+                "bone_name": "Bip001 Spine2",
+                "weight": 0.06977499276399613
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ]
+    ]
+}

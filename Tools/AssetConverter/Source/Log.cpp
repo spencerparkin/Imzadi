@@ -187,10 +187,12 @@ LogWindow::LogWindow(LogWindowRoute* logWindowRoute, wxWindow* parent, const wxP
 
 	this->logTextCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH | wxHSCROLL);
 
+	this->clearButton = new wxButton(this, wxID_ANY, "Clear", wxDefaultPosition, wxSize(100, -1));
 	this->dismissButton = new wxButton(this, wxID_ANY, "Dismiss", wxDefaultPosition, wxSize(100, -1));
 
 	wxBoxSizer* buttonSizer = new wxBoxSizer(wxHORIZONTAL);
 	buttonSizer->AddStretchSpacer(1);
+	buttonSizer->Add(this->clearButton, 0, wxLEFT | wxDOWN | wxRIGHT, 4);
 	buttonSizer->Add(this->dismissButton, 0, wxLEFT | wxDOWN | wxRIGHT, 4);
 
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
@@ -199,12 +201,18 @@ LogWindow::LogWindow(LogWindowRoute* logWindowRoute, wxWindow* parent, const wxP
 
 	this->SetSizer(mainSizer);
 
+	this->clearButton->Bind(wxEVT_BUTTON, &LogWindow::OnClearButtonPressed, this);
 	this->dismissButton->Bind(wxEVT_BUTTON, &LogWindow::OnDismissButtonClicked, this);
 }
 
 /*virtual*/ LogWindow::~LogWindow()
 {
 	this->logWindowRoute->OnWindowDestroyed();
+}
+
+void LogWindow::OnClearButtonPressed(wxCommandEvent& event)
+{
+	this->logTextCtrl->Clear();
 }
 
 void LogWindow::OnDismissButtonClicked(wxCommandEvent& event)

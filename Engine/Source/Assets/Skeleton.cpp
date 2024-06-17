@@ -41,7 +41,10 @@ Skeleton::Skeleton()
 /*virtual*/ bool Skeleton::Save(rapidjson::Document& jsonDoc, std::string& error) const
 {
 	if (!this->rootBone)
+	{
+		error = "No root bone!";
 		return false;
+	}
 
 	jsonDoc.SetObject();
 
