@@ -1,4 +1,5 @@
 #include "Converter.h"
+#include "Log.h"
 #include <wx/filename.h>
 #include <fstream>
 #include "assimp/postprocess.h"
@@ -15,38 +16,29 @@ Converter::Converter()
 {
 }
 
-bool Converter::Convert(const wxString& assetFile, wxString& error)
+bool Converter::Convert(const wxString& assetFile)
 {
+	LOG("Converting file: %s", (const char*)assetFile.c_str());
+
 	wxFileName fileName(assetFile);
 	wxString assetFolder = fileName.GetPath();
 
-	this->importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0);
+	LOG("Assets will be dumped in folder: %s", (const char*)assetFolder.c_str());
 
-	// TODO: Can we alter the flags here to retain the animation information and then use it in the conversion process?
-	//       The rig information is also not retained.  Even when I retain it, however, I can't find any bone weights.
-	const aiScene* scene = importer.ReadFile(assetFile.c_str(), aiProcess_PreTransformVertices | aiProcess_Triangulate | aiProcess_GlobalScale);
+	LOG("Calling Ass-Imp to load file: %s", (const char*)assetFile.c_str());
+	const aiScene* scene = importer.ReadFile(assetFile.c_str(), 0);
 	if (!scene)
 	{
-		error = wxString::Format("%s:\nImport error: %s\n", assetFile.c_str(), importer.GetErrorString());
+		LOG("Import error: %s", importer.GetErrorString());
 		return false;
 	}
 
-	if (scene->mNumMeshes == 0)
-	{
-		error = "No meshes found in file: " + assetFile;
-		return false;
-	}
-
-	for (unsigned int i = 0; i < scene->mNumMeshes; i++)
-	{
-		const aiMesh* mesh = scene->mMeshes[i];
-		if (!this->ConvertMesh(mesh, scene, assetFolder, error))
-			return false;
-	}
+	//...
 	
 	return true;
 }
 
+#if 0
 bool Converter::ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxString& assetFolder, wxString& error)
 {
 	wxFileName meshFileName;
@@ -332,3 +324,4 @@ wxString Converter::MakeAssetFileReference(const wxString& assetFile)
 	wxString relativeAssetPath = fileName.GetFullPath();
 	return relativeAssetPath;
 }
+#endif

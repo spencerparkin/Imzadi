@@ -16,15 +16,17 @@ public:
 	Converter();
 	virtual ~Converter();
 
-	bool Convert(const wxString& assetFile, wxString& error);
+	bool Convert(const wxString& assetFile);
 
 private:
 
+	/*
 	bool ConvertMesh(const aiMesh* mesh, const aiScene* scene, const wxString& assetFolder, wxString& error);
 	Imzadi::Vector3 ConvertVector(const aiVector3D& vector);
 	Imzadi::Vector2 ConvertTexCoords(const aiVector3D& texCoords);
 	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile, wxString& error);
 	wxString MakeAssetFileReference(const wxString& assetFile);
+	*/
 
 	Assimp::Importer importer;
 };

@@ -1,6 +1,7 @@
 #include "App.h"
 #include "Frame.h"
 #include "GamePreview.h"
+#include "Log.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 
 wxIMPLEMENT_APP(ConverterApp);
@@ -16,23 +17,36 @@ ConverterApp::ConverterApp()
 
 /*virtual*/ bool ConverterApp::OnInit(void)
 {
-	if (!wxApp::OnInit())
-		return false;
+	Log::Get()->AddRoute("default", new LogFileRoute());
 
-	this->frame = new Frame(wxDefaultPosition, wxSize(800, 600));
+	if (!wxApp::OnInit())
+	{
+		LOG("wxApp::OnInit() failed!");
+		return false;
+	}
+
+	this->frame = new Frame(wxPoint(10, 10), wxSize(800, 600));
 	this->frame->Show();
+	
+	Log::Get()->AddRoute("log_window", new LogWindowRoute());
+
+	LOG("Initializing Imzadi Game Engine...");
 
 	HINSTANCE instanceHandle = ::GetModuleHandle(NULL);
 	auto gamePreview = new GamePreview(instanceHandle);
 	Imzadi::Game::Set(gamePreview);
 	if (!gamePreview->Initialize())
 	{
+		LOG("Initializatoin failed!");
+
 		gamePreview->Shutdown();
 		delete gamePreview;
 		Imzadi::Game::Set(nullptr);
 		return false;
 	}
 	
+	LOG("Initialization succeeded!");
+
 	// TODO: Make this something the user can configure.
 	gamePreview->GetAssetCache()->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
 
@@ -43,13 +57,21 @@ ConverterApp::ConverterApp()
 
 /*virtual*/ int ConverterApp::OnExit(void)
 {
+	LOG("Shutting down Imzadi Game Engine...");
+
 	Imzadi::Game* game = Imzadi::Game::Get();
 	if (game)
 	{
-		game->Shutdown();
+		if (!game->Shutdown())
+			LOG("Shutdown failed!");
+		else
+			LOG("Shutdown succeeded!");
+
 		delete game;
 		Imzadi::Game::Set(nullptr);
 	}
+
+	Log::Get()->RemoveAllRoutes();
 
 	return 0;
 }

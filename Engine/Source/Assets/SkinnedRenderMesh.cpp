@@ -21,14 +21,6 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	if (!RenderMeshAsset::Load(jsonDoc, error, assetCache))
 		return false;
 
-#if 0
-	this->skeleton.Set(new Skeleton());
-	this->skeleton->MakeBasicBiped();
-	Reference<Asset> asset;
-	asset.Set(this->skeleton.Get());
-	assetCache->SaveAsset("Models/Hero/Hero.skeleton", asset);
-#endif
-
 	if (!jsonDoc.HasMember("skeleton") || !jsonDoc["skeleton"].IsString())
 		return false;
 
@@ -45,13 +37,6 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 		return false;
 
 	this->currentPoseVertices.Set(this->bindPoseVertices->Clone());
-
-#if 0
-	this->skinWeights.Set(new SkinWeights());
-	this->skinWeights->AutoSkin(this->skeleton, this->bindPoseVertices, this->vertexBuffer->GetStride(), 0, 0.5);
-	asset.Set(this->skinWeights.Get());
-	assetCache->SaveAsset("Models/Hero/Hero.skin_weights", asset);
-#endif
 
 	if (!jsonDoc.HasMember("skin_weights") || !jsonDoc["skin_weights"].IsString())
 		return false;

@@ -68,22 +68,12 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 	if (fileDialog.ShowModal() != wxID_OK)
 		return;
 	
-	wxString errorMsg;
 	Converter converter;
 
 	wxArrayString fileArray;
 	fileDialog.GetPaths(fileArray);
 	for (const wxString& file : fileArray)
-	{
-		wxString convertError;
-		if (!converter.Convert(file, convertError))
-			errorMsg += convertError + "\n";
-	}
-
-	if (errorMsg.length() > 0)
-		wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
-	else
-		wxMessageBox("Conversion complete!", "Success!", wxICON_INFORMATION | wxOK, this);
+		converter.Convert(file);
 }
 
 void Frame::OnPreviewAsset(wxCommandEvent& event)
@@ -112,6 +102,7 @@ void Frame::OnClearScene(wxCommandEvent& event)
 {
 	Imzadi::Game* game = Imzadi::Game::Get();
 	game->GetScene()->Clear();
+	game->GetScene()->AddRenderObject(game->GetDebugLines());
 }
 
 void Frame::OnAbout(wxCommandEvent& event)

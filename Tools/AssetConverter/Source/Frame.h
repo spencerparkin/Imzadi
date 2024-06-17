@@ -13,7 +13,7 @@ public:
 
 	enum
 	{
-		ID_ConvertAsset,
+		ID_ConvertAsset = wxID_HIGHEST,
 		ID_PreviewAsset,
 		ID_ClearScene,
 		ID_About,

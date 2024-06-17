@@ -11,6 +11,8 @@ set(ASSET_CONVERTER_SOURCES
     Source/GamePreview.h
     Source/Converter.cpp
     Source/Converter.h
+    Source/Log.cpp
+    Source/Log.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ASSET_CONVERTER_SOURCES})
