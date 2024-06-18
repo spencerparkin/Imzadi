@@ -6,8 +6,6 @@
 #include "assimp/config.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "AssetCache.h"
-#include "Assets/SkinWeights.h"
-#include "Assets/Skeleton.h"
 
 Converter::Converter(const wxString& assetRootFolder)
 {
@@ -29,7 +27,7 @@ bool Converter::Convert(const wxString& assetFile)
 	this->importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0);
 
 	LOG("Calling Ass-Imp to load file: %s", (const char*)assetFile.c_str());
-	const aiScene* scene = importer.ReadFile(assetFile.c_str(), aiProcess_GlobalScale);
+	const aiScene* scene = importer.ReadFile(assetFile.c_str(), aiProcess_GlobalScale | aiProcess_PopulateArmatureData);
 	if (!scene)
 	{
 		LOG("Import error: %s", importer.GetErrorString());
@@ -277,48 +275,32 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		meshDoc.AddMember("skeleton", rapidjson::Value().SetString(this->MakeAssetFileReference(skeletonFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 		meshDoc.AddMember("skin_weights", rapidjson::Value().SetString(this->MakeAssetFileReference(skinWeightsFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
-		rapidjson::Document skeletonDoc;
-		skeletonDoc.SetObject();
-
 		Imzadi::Skeleton skeleton;
-
-		// TODO: Build the skeleton here.  Identify which nodes are bones using the prescribed method in the docs.
+		if (!this->GenerateSkeleton(skeleton, mesh))
+		{
+			LOG("Failed to generate skeleton.");
+			return false;
+		}
 
 		std::string error;
-		/*if (!skeleton.Save(skeletonDoc, error))
+
+		rapidjson::Document skeletonDoc;
+		skeletonDoc.SetObject();
+		if (!skeleton.Save(skeletonDoc, error))
 		{
 			LOG("Error: %s", error.c_str());
 			return false;
-		}*/
+		}
+
+		Imzadi::SkinWeights skinWeights;
+		if (!this->GenerateSkinWeights(skinWeights, mesh))
+		{
+			LOG("Failed to generate skin weights.");
+			return false;
+		}
 
 		rapidjson::Document skinWeightsDoc;
 		skinWeightsDoc.SetObject();
-
-		Imzadi::SkinWeights skinWeights;
-		skinWeights.SetNumVertices(mesh->mNumVertices);
-
-		for (int i = 0; i < mesh->mNumBones; i++)
-		{
-			const aiBone* bone = mesh->mBones[i];
-
-			for (int j = 0; j < bone->mNumWeights; j++)
-			{
-				const aiVertexWeight* vertexWeight = &bone->mWeights[j];
-
-				if (vertexWeight->mVertexId >= skinWeights.GetNumVertices())
-				{
-					LOG("Error: Vertex weight index (%d) out of range (max: %d).", vertexWeight->mVertexId, skinWeights.GetNumVertices() - 1);
-					return false;
-				}
-
-				std::vector<Imzadi::SkinWeights::BoneWeight>& boneWeightArray = skinWeights.GetBonesWeightsForVertex(vertexWeight->mVertexId);
-				Imzadi::SkinWeights::BoneWeight boneWeight;
-				boneWeight.boneName = bone->mName.C_Str();
-				boneWeight.weight = vertexWeight->mWeight;
-				boneWeightArray.push_back(boneWeight);
-			}
-		}
-
 		if (!skinWeights.Save(skinWeightsDoc, error))
 		{
 			LOG("Error: %s", error.c_str());
@@ -345,6 +327,117 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	if (!this->WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath()))
 		return false;
+
+	return true;
+}
+
+bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
+{
+	if (mesh->mNumBones == 0)
+	{
+		LOG("No bones found!");
+		return false;
+	}
+
+	std::unordered_set<const aiNode*> boneSet;
+	for (int i = 0; i < mesh->mNumBones; i++)
+	{
+		const aiBone* bone = mesh->mBones[i];
+		boneSet.insert(bone->mNode);
+	}
+
+	const aiNode* rootBoneNode = nullptr;
+	for (int i = 0; i < mesh->mNumBones; i++)
+	{
+		const aiBone* bone = mesh->mBones[i];
+		if (!this->FindParentBones(bone->mNode, boneSet))
+		{
+			if (!rootBoneNode)
+				rootBoneNode = bone->mNode;
+			else
+			{
+				LOG("Error: There can be only one root bone node, but found another!");
+				return false;
+			}
+		}
+	}
+
+	skeleton.SetRootBone(new Imzadi::Bone());
+	if (!this->GenerateSkeleton(skeleton.GetRootBone(), rootBoneNode, boneSet))
+		return false;
+
+	return true;
+}
+
+bool Converter::FindParentBones(const aiNode* boneNode, std::unordered_set<const aiNode*>& boneSet)
+{
+	const aiNode* parentNode = boneNode->mParent;
+	if (!parentNode)
+		return false;
+
+	if (boneSet.find(parentNode) != boneSet.end())
+		return true;
+
+	if (!this->FindParentBones(parentNode, boneSet))
+		return false;
+
+	boneSet.insert(parentNode);
+	return true;
+}
+
+bool Converter::GenerateSkeleton(Imzadi::Bone* bone, const aiNode* boneNode, const std::unordered_set<const aiNode*>& boneSet)
+{
+	if (boneSet.find(boneNode) == boneSet.end())
+		return false;
+
+	bone->SetName(boneNode->mName.C_Str());
+	
+	Imzadi::Transform childToParent;
+	if (!this->MakeTransform(childToParent, boneNode->mTransformation))
+		return false;
+
+	bone->SetBindPoseChildToParent(childToParent);
+
+	for (int i = 0; i < boneNode->mNumChildren; i++)
+	{
+		const aiNode* childNode = boneNode->mChildren[i];
+		if (boneSet.find(childNode) != boneSet.end())
+		{
+			auto childBone = new Imzadi::Bone();
+			bone->AddChildBone(childBone);
+			if (!this->GenerateSkeleton(childBone, childNode, boneSet))
+				return false;
+		}
+	}
+
+	return true;
+}
+
+bool Converter::GenerateSkinWeights(Imzadi::SkinWeights& skinWeights, const aiMesh* mesh)
+{
+	skinWeights.SetNumVertices(mesh->mNumVertices);
+
+	for (int i = 0; i < mesh->mNumBones; i++)
+	{
+		const aiBone* bone = mesh->mBones[i];
+
+		for (int j = 0; j < bone->mNumWeights; j++)
+		{
+			const aiVertexWeight* vertexWeight = &bone->mWeights[j];
+
+			if (vertexWeight->mVertexId >= skinWeights.GetNumVertices())
+			{
+				LOG("Error: Vertex weight index (%d) out of range (max: %d).", vertexWeight->mVertexId, skinWeights.GetNumVertices() - 1);
+				return false;
+			}
+
+			std::vector<Imzadi::SkinWeights::BoneWeight>& boneWeightArray = skinWeights.GetBonesWeightsForVertex(vertexWeight->mVertexId);
+			Imzadi::SkinWeights::BoneWeight boneWeight;
+			boneWeight.boneName = bone->mName.C_Str();
+			boneWeight.weight = vertexWeight->mWeight;
+			boneWeightArray.push_back(boneWeight);
+		}
+	}
 
 	return true;
 }
