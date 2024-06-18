@@ -22,6 +22,7 @@ public:
 	bool AddRoute(const std::string& logRouteKey, LogRoute* logRoute);
 	bool RemoveRoute(const std::string& logRouteKey);
 	void RemoveAllRoutes();
+	LogRoute* FindRoute(const std::string& logRouteKey);
 
 	static Log* Get();
 
@@ -80,9 +81,10 @@ private:
 class LogWindow : public wxFrame
 {
 public:
-	LogWindow(LogWindowRoute* logWindowRoute, wxWindow* parent, const wxPoint& pos, const wxSize& size);
+	LogWindow(wxWindow* parent, const wxPoint& pos, const wxSize& size);
 	virtual ~LogWindow();
 
+	void SetRoute(LogWindowRoute* logWindowRoute);
 	void AddLogMessage(const char* logMessage);
 
 	void OnClearButtonPressed(wxCommandEvent& event);

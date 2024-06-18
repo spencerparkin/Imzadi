@@ -18,7 +18,8 @@ public:
 		ID_ClearScene,
 		ID_About,
 		ID_Exit,
-		ID_Timer
+		ID_Timer,
+		ID_ShowLogWindow
 	};
 
 	Canvas* GetCanvas() { return this->canvas; }
@@ -30,6 +31,8 @@ protected:
 	void OnAbout(wxCommandEvent& event);
 	void OnExit(wxCommandEvent& event);
 	void OnTimer(wxTimerEvent& event);
+	void OnShowLogWindow(wxCommandEvent& event);
+	void OnUpdateUI(wxUpdateUIEvent& event);
 
 	Canvas* canvas;
 	wxTimer timer;

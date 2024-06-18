@@ -86,6 +86,15 @@ void Log::RemoveAllRoutes()
 	}
 }
 
+LogRoute* Log::FindRoute(const std::string& logRouteKey)
+{
+	std::map<std::string, LogRoute*>::iterator iter = this->logRouteMap.find(logRouteKey);
+	if (iter == this->logRouteMap.end())
+		return nullptr;
+
+	return iter->second;
+}
+
 /*static*/ Log* Log::Get()
 {
 	static Log log;
@@ -157,7 +166,8 @@ LogWindowRoute::LogWindowRoute()
 	Frame* frame = wxGetApp().GetFrame();
 	wxPoint pos = frame->GetPosition();
 	pos.x += frame->GetSize().GetWidth();
-	this->logWindow = new LogWindow(this, frame, pos, wxSize(600, 400));
+	this->logWindow = new LogWindow(frame, pos, wxSize(600, 400));
+	this->logWindow->SetRoute(this);
 	this->logWindow->Show();
 	return true;
 }
@@ -166,6 +176,7 @@ LogWindowRoute::LogWindowRoute()
 {
 	if (this->logWindow)
 	{
+		this->logWindow->SetRoute(nullptr);
 		this->logWindow->Close();
 		this->logWindow = nullptr;	// Note that wxWidgets will delete the window pointer itself.
 	}
@@ -181,9 +192,9 @@ void LogWindowRoute::OnWindowDestroyed()
 
 //---------------------------------- LogWindow ----------------------------------
 
-LogWindow::LogWindow(LogWindowRoute* logWindowRoute, wxWindow* parent, const wxPoint& pos, const wxSize& size) : wxFrame(parent, wxID_ANY, "Log", pos, size, wxCAPTION | wxCLIP_CHILDREN)
+LogWindow::LogWindow(wxWindow* parent, const wxPoint& pos, const wxSize& size) : wxFrame(parent, wxID_ANY, "Log", pos, size, wxCAPTION | wxCLIP_CHILDREN)
 {
-	this->logWindowRoute = logWindowRoute;
+	this->logWindowRoute = nullptr;
 
 	this->logTextCtrl = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_MULTILINE | wxTE_READONLY | wxTE_RICH | wxHSCROLL);
 
@@ -207,7 +218,13 @@ LogWindow::LogWindow(LogWindowRoute* logWindowRoute, wxWindow* parent, const wxP
 
 /*virtual*/ LogWindow::~LogWindow()
 {
-	this->logWindowRoute->OnWindowDestroyed();
+	if (this->logWindowRoute)
+		this->logWindowRoute->OnWindowDestroyed();
+}
+
+void LogWindow::SetRoute(LogWindowRoute* logWindowRoute)
+{
+	this->logWindowRoute = logWindowRoute;
 }
 
 void LogWindow::OnClearButtonPressed(wxCommandEvent& event)
