@@ -34,25 +34,73 @@ bool Converter::Convert(const wxString& assetFile)
 		return false;
 	}
 
-	Imzadi::Transform nodeToWorld;
-	nodeToWorld.SetIdentity();
-
-	LOG("Walking scene graph...");
-	return this->ProcessSceneGraph(scene, scene->mRootNode, nodeToWorld);
-}
-
-bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node, const Imzadi::Transform& parentNodeToWorld)
-{
-	LOG("Procesing node: %s", node->mName.C_Str());
-
-	Imzadi::Transform childToParent;
-	if (!this->MakeTransform(childToParent, node->mTransformation))
+	LOG("Generating node-to-world transformation map...");
+	this->nodeToWorldMap.clear();
+	if (!this->GenerateNodeToWorldMap(scene->mRootNode))
 	{
-		LOG("Failed to make child-to-parent transfrom from node matrix.");
+		LOG("Failed to generate transformation map.");
 		return false;
 	}
 
-	Imzadi::Transform nodeToWorld = parentNodeToWorld * childToParent;
+	LOG("Processing scene graph...");
+	if (!this->ProcessSceneGraph(scene, scene->mRootNode))
+	{
+		LOG("Failed to process scene graph.");
+		return false;
+	}
+
+	return true;
+}
+
+bool Converter::GenerateNodeToWorldMap(const aiNode* node)
+{
+	Imzadi::Transform nodeToWorld;
+
+	if (!node->mParent)
+		nodeToWorld.SetIdentity();
+	else
+	{
+		Imzadi::Transform parentNodeToWorld;
+		if (!this->GetNodeToWorldTransform(node->mParent, parentNodeToWorld))
+		{
+			LOG("Failed to find parent node's transform in the map.");
+			return false;
+		}
+
+		Imzadi::Transform childToParent;
+		if (!this->MakeTransform(childToParent, node->mTransformation))
+		{
+			LOG("Failed to make child-to-parent transform from node matrix.");
+			return false;
+		}
+
+		nodeToWorld = parentNodeToWorld * childToParent;
+	}
+
+	this->nodeToWorldMap.insert(std::pair<const aiNode*, Imzadi::Transform>(node, nodeToWorld));
+
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		const aiNode* childNode = node->mChildren[i];
+		this->GenerateNodeToWorldMap(childNode);
+	}
+
+	return true;
+}
+
+bool Converter::GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& nodeToWorld)
+{
+	std::unordered_map<const aiNode*, Imzadi::Transform>::iterator iter = this->nodeToWorldMap.find(node);
+	if (iter == this->nodeToWorldMap.end())
+		return false;
+
+	nodeToWorld = iter->second;
+	return true;
+}
+
+bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
+{
+	LOG("Procesing node: %s", node->mName.C_Str());
 
 	if (node->mNumMeshes > 0)
 	{
@@ -62,7 +110,7 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node, cons
 		{
 			LOG("Processing mesh %d of %d.", i + 1, node->mNumMeshes);
 			const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			if (!this->ProcessMesh(scene, node, mesh, nodeToWorld))
+			if (!this->ProcessMesh(scene, node, mesh))
 			{
 				LOG("Mesh processing failed!");
 				return false;
@@ -73,14 +121,14 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node, cons
 	for (int i = 0; i < node->mNumChildren; i++)
 	{
 		const aiNode* childNode = node->mChildren[i];
-		if (!this->ProcessSceneGraph(scene, childNode, nodeToWorld))
+		if (!this->ProcessSceneGraph(scene, childNode))
 			return false;
 	}
 
 	return true;
 }
 
-bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld)
+bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh)
 {
 	LOG("Processing mesh: %s", mesh->mName.C_Str());
 
@@ -161,6 +209,13 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	vertexBufferValue.SetArray();
 
 	Imzadi::AxisAlignedBoundingBox* boundingBox = nullptr;
+
+	Imzadi::Transform nodeToWorld;
+	if (!this->GetNodeToWorldTransform(node, nodeToWorld))
+	{
+		LOG("Error: Failed to get node-to-world transform for mesh node.");
+		return false;
+	}
 
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{
@@ -339,6 +394,8 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 		return false;
 	}
 
+	// It is not obvious at all what subset of the node hierarchy actually constitutes the skeleton.
+	// I get the impression that all this data is just a ridiculous mess.
 	std::unordered_set<const aiNode*> boneSet;
 	for (int i = 0; i < mesh->mNumBones; i++)
 	{
@@ -360,6 +417,21 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 				return false;
 			}
 		}
+
+		for (int j = 0; j < bone->mNode->mNumChildren; j++)
+			boneSet.insert(bone->mNode->mChildren[j]);
+	}
+
+	if (!rootBoneNode)
+	{
+		LOG("Error: Did not find root bone of skeleton.");
+		return false;
+	}
+
+	while (rootBoneNode->mParent)
+	{
+		rootBoneNode = rootBoneNode->mParent;
+		boneSet.insert(rootBoneNode);
 	}
 
 	skeleton.SetRootBone(new Imzadi::Bone());

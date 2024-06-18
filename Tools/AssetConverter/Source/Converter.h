@@ -13,6 +13,7 @@
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include <unordered_set>
+#include <unordered_map>
 
 class Converter
 {
@@ -24,8 +25,9 @@ public:
 
 private:
 
-	bool ProcessSceneGraph(const aiScene* scene, const aiNode* node, const Imzadi::Transform& parentNodeToWorld);
-	bool ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld);
+	bool GenerateNodeToWorldMap(const aiNode* node);
+	bool ProcessSceneGraph(const aiScene* scene, const aiNode* node);
+	bool ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh);
 	bool GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh);
 	bool GenerateSkeleton(Imzadi::Bone* bone, const aiNode* boneNode, const std::unordered_set<const aiNode*>& boneSet);
 	bool GenerateSkinWeights(Imzadi::SkinWeights& skinWeights, const aiMesh* mesh);
@@ -35,8 +37,10 @@ private:
 	wxString MakeAssetFileReference(const wxString& assetFile);
 	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile);
 	bool FindParentBones(const aiNode* boneNode, std::unordered_set<const aiNode*>& boneSet);
+	bool GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& nodeToWorld);
 
 	Assimp::Importer importer;
 	wxString assetFolder;
 	wxString assetRootFolder;
+	std::unordered_map<const aiNode*, Imzadi::Transform> nodeToWorldMap;
 };

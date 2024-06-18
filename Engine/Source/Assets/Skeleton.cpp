@@ -345,7 +345,8 @@ void Bone::DebugDraw(BoneTransformType transformType, const Transform& objectToW
 	Vector3 zAxis = transforms->boneToObject.TransformNormal(Vector3(0.0, 0.0, 0.1));
 
 	DebugLines::Line line;
-
+	
+#if 0		// Can't really draw these anymore, because 3Ds Max, for reasons that are beyond me, introduces a crap-load of scale into the matrices.
 	line.color.SetComponents(1.0, 0.0, 0.0);
 	line.segment.point[0] = origin;
 	line.segment.point[1] = origin + xAxis;
@@ -363,6 +364,7 @@ void Bone::DebugDraw(BoneTransformType transformType, const Transform& objectToW
 	line.segment.point[1] = origin + zAxis;
 	line.segment = objectToWorld.TransformLineSegment(line.segment);
 	debugLines->AddLine(line);
+#endif
 
 	const Transforms* parentTransforms = this->parentBone ? this->parentBone->GetTransforms(transformType) : nullptr;
 
