@@ -6,6 +6,7 @@
 #include "Math/Matrix4x4.h"
 #include "Math/Vector4.h"
 #include "RenderObjects/RenderMeshInstance.h"
+#include "Error.h"
 
 using namespace Imzadi;
 
@@ -18,42 +19,63 @@ RenderMeshAsset::RenderMeshAsset()
 {
 }
 
-/*virtual*/ bool RenderMeshAsset::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
+/*virtual*/ bool RenderMeshAsset::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	Reference<Asset> asset;
 
 	if (!jsonDoc.IsObject())
+	{
+		IMZADI_ERROR("Given JSON doc was not an object.");
 		return false;
+	}
 
 	if (jsonDoc.HasMember("bounding_box"))
 	{
 		if (!this->LoadBoundingBox(jsonDoc["bounding_box"], this->objectSpaceBoundingBox))
+		{
+			IMZADI_ERROR("Failed to load \"bounding_box\" member.");
 			return false;
+		}
 	}
 
 	if (!jsonDoc.HasMember("vertex_buffer"))
+	{
+		IMZADI_ERROR("No \"vertex_buffer\" member given.");
 		return false;
+	}
 
 	std::string vertexBufferFile = jsonDoc["vertex_buffer"].GetString();
-	if (!assetCache->LoadAsset(vertexBufferFile, asset, error))
+	if (!assetCache->LoadAsset(vertexBufferFile, asset))
+	{
+		IMZADI_ERROR("Failed to load vertex buffer: " + vertexBufferFile);
 		return false;
+	}
 
 	this->vertexBuffer.SafeSet(asset.Get());
 
 	if (!jsonDoc.HasMember("shader"))
+	{
+		IMZADI_ERROR("No \"shader\" member given.");
 		return false;
+	}
 
 	std::string shaderFile = jsonDoc["shader"].GetString();
-	if (!assetCache->LoadAsset(shaderFile, asset, error))
+	if (!assetCache->LoadAsset(shaderFile, asset))
+	{
+		IMZADI_ERROR("Failed to load shader: " + shaderFile);
 		return false;
+	}
 
 	this->mainPassShader.SafeSet(asset.Get());
 
 	if (jsonDoc.HasMember("shadow_shader"))
 	{
 		std::string shadowShaderFile = jsonDoc["shadow_shader"].GetString();
-		if (!assetCache->LoadAsset(shadowShaderFile, asset, error))
+		if (!assetCache->LoadAsset(shadowShaderFile, asset))
+		{
+			IMZADI_ERROR("Failed to loaod shadow shader: " + shadowShaderFile);
 			return false;
+		}
 
 		this->shadowPassShader.SafeSet(asset.Get());
 	}
@@ -62,8 +84,11 @@ RenderMeshAsset::RenderMeshAsset()
 	{
 		std::string indexBufferFile = jsonDoc["index_buffer"].GetString();
 		
-		if (!assetCache->LoadAsset(indexBufferFile, asset, error))
+		if (!assetCache->LoadAsset(indexBufferFile, asset))
+		{
+			IMZADI_ERROR("Failed to load index buffer: " + indexBufferFile);
 			return false;
+		}
 
 		this->indexBuffer.SafeSet(asset.Get());
 	}
@@ -72,21 +97,30 @@ RenderMeshAsset::RenderMeshAsset()
 	{
 		std::string textureFile = jsonDoc["texture"].GetString();
 
-		if (!assetCache->LoadAsset(textureFile, asset, error))
+		if (!assetCache->LoadAsset(textureFile, asset))
+		{
+			IMZADI_ERROR("Failed to load texture: " + textureFile);
 			return false;
+		}
 
 		this->texture.SafeSet(asset.Get());
 	}
 
 	if (!jsonDoc.HasMember("primitive_type"))
+	{
+		IMZADI_ERROR("No \"primitive_type\" given.");
 		return false;
+	}
 	
 	std::string primTypeStr = jsonDoc["primitive_type"].GetString();
 	if (primTypeStr == "TRIANGLE_LIST")
 		this->primType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 
 	if (this->primType == D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
+	{
+		IMZADI_ERROR(std::format("Primitive type \"{}\" not yet supported or is unrecognized.", primTypeStr.c_str()));
 		return false;
+	}
 
 	return true;
 }

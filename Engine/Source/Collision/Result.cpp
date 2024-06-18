@@ -19,23 +19,6 @@ Result::Result()
 	delete result;
 }
 
-//-------------------------------- ErrorResult --------------------------------
-
-ErrorResult::ErrorResult()
-{
-	this->errorMessage = new std::string();
-}
-
-/*virtual*/ ErrorResult::~ErrorResult()
-{
-	delete this->errorMessage;
-}
-
-/*static*/ ErrorResult* ErrorResult::Create()
-{
-	return new ErrorResult();
-}
-
 //-------------------------------- BoolResult --------------------------------
 
 BoolResult::BoolResult()

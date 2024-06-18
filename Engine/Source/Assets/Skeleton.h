@@ -33,9 +33,9 @@ namespace Imzadi
 		Skeleton();
 		virtual ~Skeleton();
 
-		virtual bool Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache) override;
+		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
-		virtual bool Save(rapidjson::Document& jsonDoc, std::string& error) const override;
+		virtual bool Save(rapidjson::Document& jsonDoc) const override;
 
 		void SetRootBone(Bone* bone);
 		Bone* GetRootBone() { return this->rootBone; }

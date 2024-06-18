@@ -30,9 +30,9 @@ namespace Imzadi
 			double timeSeconds;
 		};
 
-		virtual bool Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache) override;
+		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
-		virtual bool Save(rapidjson::Document& jsonDoc, std::string& error) const override;
+		virtual bool Save(rapidjson::Document& jsonDoc) const override;
 
 		void SetName(const std::string& name) { this->name = name; }
 		const std::string& GetName() const { return this->name; }

@@ -18,6 +18,12 @@ Log::Log()
 	this->RemoveAllRoutes();
 }
 
+/*virtual*/ void Log::Error(const std::string& errorMessage)
+{
+	std::string errorLogLine = "Error: " + errorMessage;
+	this->Print(errorLogLine.c_str());
+}
+
 void Log::Print(const char* format, ...)
 {
 	va_list args;
@@ -33,10 +39,14 @@ void Log::Print(const char* format, ...)
 	char logLineBuffer[1024];
 	sprintf_s(logLineBuffer, sizeof(logLineBuffer), "%s: %s\n", timeBuffer, messageBuffer);
 
-	for (auto pair : this->logRouteMap)
+	// Enter mutex scope lock.
 	{
-		LogRoute* logRoute = pair.second;
-		logRoute->Print(logLineBuffer);
+		std::lock_guard guard(this->mutex);
+		for (auto pair : this->logRouteMap)
+		{
+			LogRoute* logRoute = pair.second;
+			logRoute->Print(logLineBuffer);
+		}
 	}
 
 	va_end(args);
@@ -44,6 +54,8 @@ void Log::Print(const char* format, ...)
 
 bool Log::AddRoute(const std::string& logRouteKey, LogRoute* logRoute)
 {
+	std::lock_guard guard(this->mutex);
+
 	if (this->logRouteMap.find(logRouteKey) != this->logRouteMap.end())
 	{
 		delete logRoute;
@@ -63,6 +75,8 @@ bool Log::AddRoute(const std::string& logRouteKey, LogRoute* logRoute)
 
 bool Log::RemoveRoute(const std::string& logRouteKey)
 {
+	std::lock_guard guard(this->mutex);
+
 	std::map<std::string, LogRoute*>::iterator iter = this->logRouteMap.find(logRouteKey);
 	if (iter == this->logRouteMap.end())
 		return false;
@@ -76,6 +90,8 @@ bool Log::RemoveRoute(const std::string& logRouteKey)
 
 void Log::RemoveAllRoutes()
 {
+	std::lock_guard guard(this->mutex);
+
 	while (this->logRouteMap.size() > 0)
 	{
 		std::map<std::string, LogRoute*>::iterator iter = this->logRouteMap.begin();
@@ -86,13 +102,11 @@ void Log::RemoveAllRoutes()
 	}
 }
 
-LogRoute* Log::FindRoute(const std::string& logRouteKey)
+bool Log::RouteExists(const std::string& logRouteKey)
 {
+	std::lock_guard guard(this->mutex);
 	std::map<std::string, LogRoute*>::iterator iter = this->logRouteMap.find(logRouteKey);
-	if (iter == this->logRouteMap.end())
-		return nullptr;
-
-	return iter->second;
+	return iter != this->logRouteMap.end();
 }
 
 /*static*/ Log* Log::Get()
@@ -239,6 +253,12 @@ void LogWindow::OnDismissButtonClicked(wxCommandEvent& event)
 
 void LogWindow::AddLogMessage(const char* logMessage)
 {
+	// I'm not sure if it's safe to call this from just any thread, but...
+	// I know that no call here will overlap with any other call here on
+	// a different thread.  A safer thing to do would be to add the message
+	// to a list, and then dump that list into the text control whenever
+	// we get a chance.  Clearly, a mutex would safe-guard access to the list.
+
 	wxString logMessageStr(logMessage);
 
 	wxString logMessageLower = logMessageStr.Lower();

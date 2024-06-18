@@ -286,9 +286,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 		rapidjson::Document skeletonDoc;
 		skeletonDoc.SetObject();
-		if (!skeleton.Save(skeletonDoc, error))
+		if (!skeleton.Save(skeletonDoc))
 		{
-			LOG("Error: %s", error.c_str());
+			LOG("Failed to save skeleton.");
 			return false;
 		}
 
@@ -301,9 +301,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 		rapidjson::Document skinWeightsDoc;
 		skinWeightsDoc.SetObject();
-		if (!skinWeights.Save(skinWeightsDoc, error))
+		if (!skinWeights.Save(skinWeightsDoc))
 		{
-			LOG("Error: %s", error.c_str());
+			LOG("Failed to save skin-weights.");
 			return false;
 		}
 

@@ -21,7 +21,7 @@ namespace Imzadi
 		LevelData();
 		virtual ~LevelData();
 
-		virtual bool Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache) override;
+		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
 		const std::vector<std::string>& GetModelFilesArray() { return this->modelFilesArray; }

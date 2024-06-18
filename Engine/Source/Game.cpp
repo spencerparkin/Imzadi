@@ -341,9 +341,7 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMe
 	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
 
-	std::string error;
-
-	if (this->assetCache->LoadAsset(renderMeshFile, renderMeshAsset, error))
+	if (this->assetCache->LoadAsset(renderMeshFile, renderMeshAsset))
 	{
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 		{

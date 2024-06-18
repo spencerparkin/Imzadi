@@ -22,8 +22,7 @@ MovingPlatform::MovingPlatform()
 		return false;
 
 	Reference<Asset> asset;
-	std::string error;
-	if (!Game::Get()->GetAssetCache()->LoadAsset(this->movingPlatformFile, asset, error))
+	if (!Game::Get()->GetAssetCache()->LoadAsset(this->movingPlatformFile, asset))
 		return false;
 
 	this->data.SafeSet(asset.Get());
@@ -43,7 +42,7 @@ MovingPlatform::MovingPlatform()
 		return false;
 
 	std::string collisionFile = this->data->GetCollisionFile();
-	if (!Game::Get()->GetAssetCache()->LoadAsset(collisionFile, asset, error))
+	if (!Game::Get()->GetAssetCache()->LoadAsset(collisionFile, asset))
 		return false;
 
 	auto collisionShapeSet = dynamic_cast<CollisionShapeSet*>(asset.Get());

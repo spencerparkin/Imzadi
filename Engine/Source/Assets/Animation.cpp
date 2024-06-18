@@ -1,5 +1,6 @@
 #include "Animation.h"
 #include "Skeleton.h"
+#include "Error.h"
 #include "Math/Interval.h"
 #include <algorithm>
 
@@ -17,20 +18,29 @@ Animation::Animation()
 	this->Clear();
 }
 
-/*virtual*/ bool Animation::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
+/*virtual*/ bool Animation::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	this->Clear();
 
 	if (!jsonDoc.IsObject())
+	{
+		IMZADI_ERROR("Given JSON doc was not an object.");
 		return false;
+	}
 
 	if (!jsonDoc.HasMember("name") || !jsonDoc["name"].IsString())
+	{
+		IMZADI_ERROR("Animation has no name.");
 		return false;
+	}
 
 	this->name = jsonDoc["name"].GetString();
 
 	if (!jsonDoc.HasMember("key_frame_array") || !jsonDoc["key_frame_array"].IsArray())
+	{
+		IMZADI_ERROR("No \"key_frame_array\" found in JSON.");
 		return false;
+	}
 
 	const rapidjson::Value& keyFrameArrayValue = jsonDoc["key_frame_array"];
 
@@ -40,7 +50,10 @@ Animation::Animation()
 		auto keyFrame = new KeyFrame();
 		this->keyFrameArray.push_back(keyFrame);
 		if (!keyFrame->Load(keyFrameValue))
+		{
+			IMZADI_ERROR(std::format("Failed to load key-frame {}.", i));
 			return false;
+		}
 	}
 
 	this->TimeSort();
@@ -54,7 +67,7 @@ Animation::Animation()
 	return true;
 }
 
-/*virtual*/ bool Animation::Save(rapidjson::Document& jsonDoc, std::string& error) const
+/*virtual*/ bool Animation::Save(rapidjson::Document& jsonDoc) const
 {
 	jsonDoc.SetObject();
 
@@ -65,7 +78,10 @@ Animation::Animation()
 	{
 		rapidjson::Value keyFrameValue;
 		if (!keyFrame->Save(keyFrameValue, jsonDoc))
+		{
+			IMZADI_ERROR("Failed to save key-frame.");
 			return false;
+		}
 
 		keyFrameArrayValue.PushBack(keyFrameValue, jsonDoc.GetAllocator());
 	}
@@ -284,15 +300,24 @@ bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 	this->Clear();
 
 	if (!keyFrameValue.IsObject())
+	{
+		IMZADI_ERROR("Key-frame JSON is not an object.");
 		return false;
+	}
 
 	if (!keyFrameValue.HasMember("time") || !keyFrameValue["time"].IsFloat())
+	{
+		IMZADI_ERROR("Key-frame has no \"time\" member.");
 		return false;
+	}
 
 	this->timeSeconds = keyFrameValue["time"].GetFloat();
 
 	if (!keyFrameValue.HasMember("pose_info_array") || !keyFrameValue["pose_info_array"].IsArray())
+	{
+		IMZADI_ERROR("Key-frame has no \"pose_info_array\" member.");
 		return false;
+	}
 
 	const rapidjson::Value& poseInfoArrayValue = keyFrameValue["pose_info_array"];
 

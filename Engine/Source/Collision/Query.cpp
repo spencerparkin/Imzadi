@@ -2,6 +2,7 @@
 #include "Result.h"
 #include "Thread.h"
 #include "BoundingBoxTree.h"
+#include "Error.h"
 #include <format>
 
 using namespace Imzadi;
@@ -19,8 +20,8 @@ Query::Query()
 /*virtual*/ void Query::Execute(Thread* thread)
 {
 	Result* result = this->ExecuteQuery(thread);
-	IMZADI_ASSERT(result != nullptr);
-	thread->StoreResult(result, this->GetTaskID());
+	if (result)
+		thread->StoreResult(result, this->GetTaskID());
 }
 
 //--------------------------------- ShapeQuery ---------------------------------
@@ -95,9 +96,8 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 	{
-		auto errorResult = ErrorResult::Create();
-		errorResult->SetErrorMessage(std::format("Failed to find a shape with ID {}.", this->shapeID));
-		return errorResult;
+		IMZADI_ERROR(std::format("Failed to find a shape with ID {}.", this->shapeID));
+		return nullptr;
 	}
 
 	auto result = TransformResult::Create();
@@ -125,9 +125,8 @@ CollisionQuery::CollisionQuery()
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 	{
-		auto errorResult = ErrorResult::Create();
-		errorResult->SetErrorMessage(std::format("Failed to find a shape with ID {}.", this->shapeID));
-		return errorResult;
+		IMZADI_ERROR(std::format("Failed to find a shape with ID {}.", this->shapeID));
+		return nullptr;
 	}
 	
 	auto collisionResult = CollisionQueryResult::Create();
@@ -139,9 +138,8 @@ CollisionQuery::CollisionQuery()
 	{
 		CollisionQueryResult::Free(collisionResult);
 
-		auto errorResult = ErrorResult::Create();
-		errorResult->SetErrorMessage(std::format("Failed to calculate collision result for shape with ID {}.", this->shapeID));
-		return errorResult;
+		IMZADI_ERROR(std::format("Failed to calculate collision result for shape with ID {}.", this->shapeID));
+		return nullptr;
 	}
 
 	return collisionResult;

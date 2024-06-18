@@ -1,6 +1,7 @@
 #include "SkinWeights.h"
 #include "Buffer.h"
 #include "Skeleton.h"
+#include "Error.h"
 #include "Math/Vector3.h"
 
 using namespace Imzadi;
@@ -13,17 +14,26 @@ SkinWeights::SkinWeights()
 {
 }
 
-/*virtual*/ bool SkinWeights::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
+/*virtual*/ bool SkinWeights::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	if (!jsonDoc.IsObject())
+	{
+		IMZADI_ERROR("Given JSON doc was not an object.");
 		return false;
+	}
 
 	if (!jsonDoc.HasMember("weighted_vertices"))
+	{
+		IMZADI_ERROR("No \"weighted_vertices\" member found.");
 		return false;
+	}
 
 	const rapidjson::Value& weightedVerticesArrayValue = jsonDoc["weighted_vertices"];
 	if (!weightedVerticesArrayValue.IsArray())
+	{
+		IMZADI_ERROR("The \"weighted_vertices\" member was not an array.");
 		return false;
+	}
 
 	this->weightedVertexArray.clear();
 
@@ -31,7 +41,10 @@ SkinWeights::SkinWeights()
 	{
 		const rapidjson::Value& weightedVertexValue = weightedVerticesArrayValue[i];
 		if (!weightedVertexValue.IsArray())
+		{
+			IMZADI_ERROR(std::format("Array element {} is not an array.", i));
 			return false;
+		}
 
 		std::vector<BoneWeight> boneWeightArray;
 
@@ -39,13 +52,22 @@ SkinWeights::SkinWeights()
 		{
 			const rapidjson::Value& boneWeightValue = weightedVertexValue[j];
 			if (!boneWeightValue.IsObject())
+			{
+				IMZADI_ERROR("Bone weight entry is not an object.");
 				return false;
+			}
 
 			if (!boneWeightValue.HasMember("bone_name") || !boneWeightValue["bone_name"].IsString())
+			{
+				IMZADI_ERROR("No \"bone_name\" member found or it's not a string.");
 				return false;
+			}
 
 			if (!boneWeightValue.HasMember("weight") || !boneWeightValue["weight"].IsFloat())
+			{
+				IMZADI_ERROR("No \"weight\" member found or it's not a float.");
 				return false;
+			}
 
 			BoneWeight boneWeight;
 			boneWeight.boneName = boneWeightValue["bone_name"].GetString();
@@ -64,7 +86,7 @@ SkinWeights::SkinWeights()
 	return true;
 }
 
-/*virtual*/ bool SkinWeights::Save(rapidjson::Document& jsonDoc, std::string& error) const
+/*virtual*/ bool SkinWeights::Save(rapidjson::Document& jsonDoc) const
 {
 	jsonDoc.SetObject();
 

@@ -10,6 +10,7 @@
 #include "Assets/SkinnedRenderMesh.h"
 #include "Assets/SkinWeights.h"
 #include "Assets/Skeleton.h"
+#include "Error.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
@@ -100,7 +101,7 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 	return key;
 }
 
-/*virtual*/ Asset* AssetCache::FindAsset(const std::string& assetFile, std::string& error, std::string* key /*= nullptr*/)
+/*virtual*/ Asset* AssetCache::FindAsset(const std::string& assetFile, std::string* key /*= nullptr*/)
 {
 	std::string keyStorage;
 	if (!key)
@@ -143,27 +144,24 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 	return nullptr;
 }
 
-bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset, std::string& error)
+bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset)
 {
 	std::string key;
-	asset.Set(this->FindAsset(assetFile, error, &key));
+	asset.Set(this->FindAsset(assetFile, &key));
 	if (asset)
 		return true;
-
-	if (error.length() > 0)
-		return false;
 
 	std::string resolvedAssetFile(assetFile);
 	if (!ResolveAssetPath(resolvedAssetFile))
 	{
-		error = "Failed to resolve path: " + assetFile;
+		IMZADI_ERROR("Failed to resolve path: " + assetFile);
 		return false;
 	}
 
 	asset.Set(this->CreateBlankAssetForFileType(assetFile));
 	if (!asset)
 	{
-		error = "Failed to create blank asset type for file: " + assetFile;
+		IMZADI_ERROR("Failed to create blank asset type for file: " + assetFile);
 		return false;
 	}
 
@@ -171,7 +169,7 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 	fileStream.open(resolvedAssetFile, std::ios::in);
 	if (!fileStream.is_open())
 	{
-		error = "Failed to open (for reading) the file: " + assetFile;
+		IMZADI_ERROR("Failed to open (for reading) the file: " + assetFile);
 		return false;
 	}
 
@@ -184,16 +182,13 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 		// TODO: It would be nice if we could get line and column numbers in the error message here.
 		asset.Reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
-		error = rapidjson::GetParseError_En(errorCode);
-		MessageBoxA(Game::Get()->GetMainWindowHandle(), error.c_str(), "JSON parse error!", MB_ICONERROR | MB_OK);
+		IMZADI_ERROR(rapidjson::GetParseError_En(errorCode));
 		return false;
 	}
 
-	if (!asset->Load(jsonDoc, error, this))
+	if (!asset->Load(jsonDoc, this))
 	{
 		asset.Reset();
-		if (error.length() == 0)
-			error = std::format("Failed to load asset {} from JSON data for unknown reason.", assetFile.c_str());
 		return false;
 	}
 
@@ -206,28 +201,21 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 	return true;
 }
 
-bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset, std::string& error)
+bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset)
 {
 	if (!asset)
 	{
-		asset.Set(this->FindAsset(assetFile, error));
-		if (error.length() > 0)
-			return false;
-
+		asset.Set(this->FindAsset(assetFile));
 		if (!asset)
 		{
-			error = "No asset to save.";
+			IMZADI_ERROR("No asset to save.");
 			return false;
 		}
 	}
 
 	rapidjson::Document doc;
-	if (!asset->Save(doc, error))
-	{
-		if (error.length() == 0)
-			error = "Failed to save asset to JSON data for uknown reason.";
+	if (!asset->Save(doc))
 		return false;
-	}
 
 	if (std::filesystem::exists(assetFile))
 		std::remove(assetFile.c_str());
@@ -236,7 +224,7 @@ bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset
 	fileStream.open(assetFile, std::ios::out);
 	if (!fileStream.is_open())
 	{
-		error = "Failed to open (for writing) the file: " + assetFile;
+		IMZADI_ERROR("Failed to open (for writing) the file: " + assetFile);
 		return false;
 	}
 
@@ -244,7 +232,7 @@ bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
 	if (!doc.Accept(prettyWriter))
 	{
-		error = "Failed to generate JSON text from JSON data.";
+		IMZADI_ERROR("Failed to generate JSON text from JSON data.");
 		return false;
 	}
 
@@ -263,9 +251,9 @@ Asset::Asset()
 {
 }
 
-/*virtual*/ bool Asset::Save(rapidjson::Document& jsonDoc, std::string& error) const
+/*virtual*/ bool Asset::Save(rapidjson::Document& jsonDoc) const
 {
-	error = "Save no implimented.";
+	IMZADI_ERROR("Save no implimented.");
 	return false;
 }
 

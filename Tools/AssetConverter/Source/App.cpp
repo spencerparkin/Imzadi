@@ -30,6 +30,8 @@ ConverterApp::ConverterApp()
 	
 	Log::Get()->AddRoute("log_window", new LogWindowRoute());
 
+	Imzadi::Error::Get()->RegisterErrorCapture("log", Log::Get());
+
 	this->frame->SetFocus();
 
 	LOG("Initializing Imzadi Game Engine...");

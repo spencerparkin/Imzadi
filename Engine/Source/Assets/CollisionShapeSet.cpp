@@ -1,5 +1,6 @@
 #include "CollisionShapeSet.h"
 #include "Collision/Shapes/Polygon.h"
+#include "Error.h"
 
 using namespace Imzadi;
 
@@ -15,23 +16,32 @@ CollisionShapeSet::CollisionShapeSet()
 	delete this->collisionShapeArray;
 }
 
-/*virtual*/ bool CollisionShapeSet::Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache)
+/*virtual*/ bool CollisionShapeSet::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	this->Clear(true);
 
 	if (!jsonDoc.IsObject() || !jsonDoc.HasMember("shape_set"))
+	{
+		IMZADI_ERROR("JSON data has no \"shape_set\" member");
 		return false;
+	}
 
 	const rapidjson::Value& shapeSetValue = jsonDoc["shape_set"];
 	if (!shapeSetValue.IsArray())
+	{
+		IMZADI_ERROR("The \"shape_set\" member is not an array.");
 		return false;
+	}
 
 	for (int i = 0; i < shapeSetValue.Size(); i++)
 	{
 		const rapidjson::Value& shapeValue = shapeSetValue[i];
 
 		if (!shapeValue.IsObject() || !shapeValue.HasMember("type") || !shapeValue["type"].IsString())
+		{
+			IMZADI_ERROR("No \"type\" field found in shape set entry.");
 			return false;
+		}
 
 		std::string shapeType = shapeValue["type"].GetString();
 
@@ -41,14 +51,20 @@ CollisionShapeSet::CollisionShapeSet()
 			this->collisionShapeArray->push_back(polygon);
 
 			if (!shapeValue.HasMember("vertex_array") || !shapeValue["vertex_array"].IsArray())
+			{
+				IMZADI_ERROR("No \"vertex_array\" member found or it is not an array.");
 				return false;
+			}
 
 			const rapidjson::Value& vertexArrayValue = shapeValue["vertex_array"];
 			for (int j = 0; j < vertexArrayValue.Size(); j++)
 			{
 				const rapidjson::Value& vertexValue = vertexArrayValue[j];
 				if (!vertexValue.IsArray() || vertexValue.Size() != 3)
+				{
+					IMZADI_ERROR("Expected vertex to be an array of 3.");
 					return false;
+				}
 
 				Vector3 vertex;
 				vertex.x = vertexValue[0].GetFloat();
@@ -59,7 +75,7 @@ CollisionShapeSet::CollisionShapeSet()
 		}
 		else
 		{
-			// TODO: Add support for other shape types.
+			IMZADI_ERROR(std::format("The shape type \"{}\" is not yet supported.", shapeType.c_str()));
 			return false;
 		}
 	}

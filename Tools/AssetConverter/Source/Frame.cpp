@@ -71,8 +71,7 @@ void Frame::OnTimer(wxTimerEvent& event)
 
 void Frame::OnShowLogWindow(wxCommandEvent& event)
 {
-	LogRoute* logRoute = Log::Get()->FindRoute("log_window");
-	if (!logRoute)
+	if (!Log::Get()->RouteExists("log_window"))
 		Log::Get()->AddRoute("log_window", new LogWindowRoute());
 	else
 		Log::Get()->RemoveRoute("log_window");
@@ -84,7 +83,7 @@ void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 	{
 		case ID_ShowLogWindow:
 		{
-			event.Check(Log::Get()->FindRoute("log_window") != nullptr);
+			event.Check(Log::Get()->RouteExists("log_window"));
 			break;
 		}
 	}

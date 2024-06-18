@@ -35,7 +35,7 @@ namespace Imzadi
 		 * @param[out] error A human-readable error message is returned here if something went wrong.
 		 * @return True is returned if and only if the asset grab succeeded.  On failure, the given reference should be null.
 		 */
-		bool LoadAsset(const std::string& assetFile, Reference<Asset>& asset, std::string& error);
+		bool LoadAsset(const std::string& assetFile, Reference<Asset>& asset);
 
 		/**
 		 * Save the given asset at the given file location.  If the given asset reference
@@ -50,7 +50,7 @@ namespace Imzadi
 		 * @param[out] error A human-readable error message is returned here if something went wrong.
 		 * @return True is returend if and only if the asset save succeeds.
 		 */
-		bool SaveAsset(const std::string& assetFile, Reference<Asset>& asset, std::string& error);
+		bool SaveAsset(const std::string& assetFile, Reference<Asset>& asset);
 
 		/**
 		 * Remove all assets from this cache.
@@ -87,11 +87,10 @@ namespace Imzadi
 		 * Override this to provide a custom caching mechanism.
 		 * 
 		 * @param[in] assetFile This is typically a relative path to the desired asset.
-		 * @param[out] error This should be set to a non-zero-length, human-readable message if and only if an error occurred.
 		 * @param[out] key This is an optional parameter that, if given, is set to the cache key that was used.
 		 * @return A pointer to a heap-allocated asset should be returned, if found; null, otherwise.  Either case is not an error unless the error parameter is filled out.
 		 */
-		virtual Asset* FindAsset(const std::string& assetFile, std::string& error, std::string* key = nullptr);
+		virtual Asset* FindAsset(const std::string& assetFile, std::string* key = nullptr);
 		
 		/**
 		 * This must be overridden for custom asset types.  Don't forget to
@@ -114,10 +113,49 @@ namespace Imzadi
 		Asset();
 		virtual ~Asset();
 
-		virtual bool Load(const rapidjson::Document& jsonDoc, std::string& error, AssetCache* assetCache) = 0;
+		/**
+		 * Provide an asset loading implimentation here.
+		 * 
+		 * @param[in] jsonDoc This is JSON data from which the asset can be loaded.
+		 * @param[in] assetCache For convenience, the asset cache is added to the loader, possibly for loading other assets recursively.
+		 * @return True should be returned on success; false, otherwise.
+		 */
+		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) = 0;
+
+		/**
+		 * This is where any resources directly owned by the asset should be reclaimed.
+		 * If the asset indirectly owns resources, those need not be cleaned up here.
+		 * 
+		 * @return True should be returned on success; false, otherwise.
+		 */
 		virtual bool Unload() = 0;
-		virtual bool Save(rapidjson::Document& jsonDoc, std::string& error) const;
+
+		/**
+		 * Provide an asset saving implimentation here.  This method needs not be
+		 * supported by all asset type.  The engine is primarily concerned with
+		 * loading assets for run-time purposes, not saving them out.  However, in
+		 * some cases, it is useful to provide the riciprical support of saving the
+		 * asset to disk.  Since some assets load into GPU read-only memory, this is
+		 * not always practical or possible.
+		 * 
+		 * @return True should be returned on success; false, otherwise.
+		 */
+		virtual bool Save(rapidjson::Document& jsonDoc) const;
+
+		/**
+		 * If the asset can be shared across owners, then true should be returned here.
+		 * Some assets, though, may need to be instanced every time they're loaded, and
+		 * so in such cases, false should be returned here.
+		 */
 		virtual bool CanBeCached() const { return true; }
+
+		/**
+		 * For asset types that are meant to be instanced into renderable objects,
+		 * this method can be overridden to produce such an instance.
+		 * 
+		 * @param[out] renderObject On success, this should be set to a valid render objects; undefined, otherwise.
+		 * @return Return true if a render object is successfully created; false, otherwise.
+		 */
 		virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) { return false; }
 
 		static bool LoadVector(const rapidjson::Value& vectorValue, Imzadi::Vector3& vector);

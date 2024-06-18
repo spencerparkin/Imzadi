@@ -38,37 +38,6 @@ namespace Imzadi
 	};
 
 	/**
-	 * This result can be returned by any query, and indicates that something went wrong
-	 * with the query.
-	 */
-	class IMZADI_API ErrorResult : public Result
-	{
-	public:
-		ErrorResult();
-		virtual ~ErrorResult();
-
-		/**
-		 * Return the error message associated with this result.  Hopefully this is
-		 * a message that is useful enough to help trouble-shoot what went wrong with
-		 * the query.
-		 */
-		const std::string& GetErrorMessage() const { return *this->errorMessage; }
-
-		/**
-		 * This is used internally to set the error message associated with the faulty query.
-		 */
-		void SetErrorMessage(const std::string& errorMessage) { *this->errorMessage = errorMessage; }
-
-		/**
-		 * Allocate and return a new ErrorResult instance.
-		 */
-		static ErrorResult* Create();
-
-	private:
-		std::string* errorMessage;
-	};
-
-	/**
 	 * This result is returned by any query that requirse a yes/no answer.
 	 */
 	class IMZADI_API BoolResult : public Result

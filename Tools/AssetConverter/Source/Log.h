@@ -1,8 +1,10 @@
 #pragma once
 
+#include "Error.h"
 #include <map>
 #include <string>
 #include <fstream>
+#include <mutex>
 #include <wx/frame.h>
 #include <wx/textctrl.h>
 #include <wx/button.h>
@@ -11,22 +13,25 @@
 
 class LogRoute;
 
-class Log
+class Log : public Imzadi::ErrorCapture
 {
 public:
 	Log();
 	virtual ~Log();
+
+	virtual void Error(const std::string& errorMessage) override;
 
 	void Print(const char* format, ...);
 
 	bool AddRoute(const std::string& logRouteKey, LogRoute* logRoute);
 	bool RemoveRoute(const std::string& logRouteKey);
 	void RemoveAllRoutes();
-	LogRoute* FindRoute(const std::string& logRouteKey);
+	bool RouteExists(const std::string& logRouteKey);
 
 	static Log* Get();
 
 private:
+	std::mutex mutex;
 	std::map<std::string, LogRoute*> logRouteMap;
 };
 
