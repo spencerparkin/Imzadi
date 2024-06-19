@@ -390,10 +390,45 @@ double Matrix3x3::Determinant() const
 		+ this->ele[0][2] * (this->ele[1][0] * this->ele[2][1] - this->ele[2][0] * this->ele[1][1]);
 }
 
-bool Matrix3x3::Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) const
+bool Matrix3x3::Factor(Matrix3x3& shear, Matrix3x3& scale, Matrix3x3& rotate) const
 {
-	// TODO: Write this.  The shear matrix performs the Gram-Schmit orthogonalization process.
-	return false;
+	double det = this->Determinant();
+	if (det == 0.0)
+		return false;
+
+	Vector3 xAxis, yAxis, zAxis;
+	this->GetColumnVectors(xAxis, yAxis, zAxis);
+
+	double shearA = -yAxis.Dot(xAxis) / xAxis.Dot(xAxis);
+	yAxis += shearA * xAxis;
+	double shearB = -zAxis.Dot(xAxis) / xAxis.Dot(xAxis);
+	double shearC = -zAxis.Dot(yAxis) / yAxis.Dot(yAxis);
+	zAxis += shearB * xAxis + shearC * yAxis;
+
+	double scaleX, scaleY, scaleZ;
+	xAxis.Normalize(&scaleX);
+	yAxis.Normalize(&scaleY);
+	zAxis.Normalize(&scaleZ);
+
+	if (det < 0.0)
+	{
+		zAxis = -zAxis;
+		scaleZ = -scaleZ;
+	}
+
+	rotate.SetRowVectors(xAxis, yAxis, zAxis);
+
+	scale.SetIdentity();
+	scale.ele[0][0] = scaleX;
+	scale.ele[1][1] = scaleY;
+	scale.ele[2][2] = scaleZ;
+
+	shear.SetIdentity();
+	shear.ele[1][0] = -shearA;
+	shear.ele[2][0] = -shearB;
+	shear.ele[2][1] = -shearC;
+
+	return true;
 }
 
 void Matrix3x3::InterpolateOrientations(const Matrix3x3& orientationA, const Matrix3x3& orientationB, double alpha)

@@ -256,15 +256,14 @@ namespace Imzadi
 		double Determinant() const;
 
 		/**
-		 * Factor this matrix into a rotation, scale and shear matrix,
-		 * multiplied in that order.
-		 * 
-		 * @param[out] rotation This will be the rotation matrix factor.  It is orthonormal with determinant +1.
-		 * @param[out] scale This will be the scale matrix factor, not necessarily uniform.
+		 * Factor this matrix into....
+		 *
 		 * @param[out] shear This will be the shear matrix factor.
+		 * @param[out] scale This will be the scale matrix factor, not necessarily uniform.
+		 * @param[out] rotate This will be the rotation matrix factor.  It is orthonormal with determinant +1.
 		 * @return True is returned on success; false, otherwise.  Failure occurs if and only if the matrix is singular.
 		 */
-		bool Factor(Matrix3x3& rotation, Matrix3x3& scale, Matrix3x3& shear) const;
+		bool Factor(Matrix3x3& shear, Matrix3x3& scale, Matrix3x3& rotate) const;
 
 		/**
 		 * Calculate this matrix and an interpolation between the two given orientation matrices.
