@@ -45,10 +45,13 @@ private:
 	bool MakeQuat(Imzadi::Quaternion& quaternionOut, const aiQuaternion& quaternionIn);
 	wxString MakeAssetFileReference(const wxString& assetFile);
 	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile);
+	bool ReadJsonFile(rapidjson::Document& jsonDoc, const wxString& assetFile);
 	bool FindParentBones(const aiNode* boneNode, std::unordered_set<const aiNode*>& boneSet);
 	bool GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& nodeToWorld);
 	bool ProcessAnimation(const aiScene* scene, const aiAnimation* animation);
 	bool FindNextKeyFrame(const aiAnimation* animation, double& currentTick, Imzadi::KeyFrame*& keyFrame);
+	void GatherApplicableAnimations(rapidjson::Value& animationsArrayValue, const Imzadi::Skeleton* skeleton, rapidjson::Document* doc);
+	bool IsAnimationApplicable(const wxString& animationFile, const Imzadi::Skeleton* skeleton);
 
 	Assimp::Importer importer;
 	wxString assetFolder;

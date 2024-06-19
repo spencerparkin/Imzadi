@@ -43,6 +43,7 @@ Hero::Hero()
 
 	this->cameraHandle = followCam->GetHandle();
 
+	// TODO: Really should get capsule size from somewhere on disk.
 	auto capsule = CapsuleShape::Create();
 	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
@@ -164,13 +165,14 @@ Hero::Hero()
 			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 			if (animatedMesh)
 			{
+				// TODO: This is just debug code.  Replace it when we're ready.
 				Controller* controller = Game::Get()->GetController("Hero");
 				if (controller)
 				{
 					if (controller->ButtonPressed(XINPUT_GAMEPAD_A))
-						animatedMesh->SetAnimation("LeftWave");
+						animatedMesh->SetAnimation("Run");
 					else if (controller->ButtonPressed(XINPUT_GAMEPAD_B))
-						animatedMesh->SetAnimation("RightWave");
+						animatedMesh->SetAnimation("Walk");
 				}
 
 				animatedMesh->AdvanceAnimation(deltaTime);

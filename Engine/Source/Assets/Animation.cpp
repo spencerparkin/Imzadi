@@ -3,6 +3,7 @@
 #include "Error.h"
 #include "Math/Interval.h"
 #include <algorithm>
+#include <unordered_set>
 
 using namespace Imzadi;
 
@@ -260,6 +261,29 @@ bool Animation::AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop
 	}
 	
 	return false;
+}
+
+bool Animation::CanAnimateSkeleton(const Skeleton* skeleton, double threshold) const
+{
+	std::unordered_set<std::string> boneSet;
+	int matchCount = 0;
+
+	for (const KeyFrame* keyFrame : this->keyFrameArray)
+	{
+		for (int i = 0; i < keyFrame->GetPoseCount(); i++)
+		{
+			const KeyFrame::PoseInfo& poseInfo = keyFrame->GetPoseInfo(i);
+			if (boneSet.find(poseInfo.boneName) == boneSet.end())
+			{
+				boneSet.insert(poseInfo.boneName);
+				if (skeleton->FindBone(poseInfo.boneName))
+					matchCount++;
+			}
+		}
+	}
+
+	double matchRatio = double(matchCount) / double(boneSet.size());
+	return matchRatio > threshold;
 }
 
 //------------------------------- KeyFrame -------------------------------

@@ -7,18 +7,21 @@
     "vertex_buffer": "Models\\DeannaTroi\\Troi_Vertices.buffer",
     "bounding_box": {
         "min": {
-            "x": -3.537841796875,
-            "y": -0.028599875047802926,
-            "z": -1.2021255493164063
+            "x": -3.537841558456421,
+            "y": -0.028600135818123819,
+            "z": -1.202126145362854
         },
         "max": {
-            "x": 3.5322983264923097,
-            "y": 6.523622035980225,
-            "z": 0.6995512843132019
+            "x": 3.5322985649108888,
+            "y": 6.523622512817383,
+            "z": 0.6995506286621094
         }
     },
     "position_offset": 0,
     "normal_offset": 20,
     "skeleton": "Models\\DeannaTroi\\Troi.skeleton",
-    "skin_weights": "Models\\DeannaTroi\\Troi.skin_weights"
+    "skin_weights": "Models\\DeannaTroi\\Troi.skin_weights",
+    "animations": [
+        "Animations\\Run.animation"
+    ]
 }

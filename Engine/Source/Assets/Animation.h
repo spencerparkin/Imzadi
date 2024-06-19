@@ -135,6 +135,13 @@ namespace Imzadi
 		 */
 		bool AdvanceCursor(Cursor& cursor, double deltaTimeSeconds, bool loop) const;
 
+		/**
+		 * Count the number of bones in this animation that are found in the given skeleton,
+		 * count the number of bones driven by this animation, and then return true if the
+		 * ratio of these counts is above the given threshold.
+		 */
+		bool CanAnimateSkeleton(const Skeleton* skeleton, double threshold) const;
+
 	private:
 
 		std::string name;
@@ -199,12 +206,20 @@ namespace Imzadi
 		 * Return the number of bones posed by this key-frame.
 		 */
 		size_t GetPoseCount() const { return this->poseInfoArray.size(); }
-
+		
+		/**
+		 * This structure embeds information about how to pose a bone by name.
+		 */
 		struct PoseInfo
 		{
 			std::string boneName;
 			AnimTransform childToParent;
 		};
+
+		/**
+		 * Return the ith pose-info structure of this key-frame.  No bounds check is performed!
+		 */
+		const PoseInfo& GetPoseInfo(int i) const { return this->poseInfoArray[i]; }
 
 		/**
 		 * Add information about how to pose a bone in a skeleton.

@@ -9,6 +9,9 @@
 #include "App.h"
 #include "Frame.h"
 #include <wx/textdlg.h>
+#include "rapidjson/reader.h"
+#include "rapidjson/error/en.h"
+#include "rapidjson/istreamwrapper.h"
 
 Converter::Converter(const wxString& assetRootFolder)
 {
@@ -532,9 +535,10 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		if (!this->WriteJsonFile(skinWeightsDoc, skinWeightsFileName.GetFullPath()))
 			return false;
 
-		// TODO: An idea here is to crack open any animations we find in the animations folder and
-		//       then just see if the animation is applicable to this character's rig.  If it is,
-		//       then we can add it to this character's list of animations.
+		rapidjson::Value animationsArrayValue;
+		animationsArrayValue.SetArray();
+		this->GatherApplicableAnimations(animationsArrayValue, &skeleton, &meshDoc);
+		meshDoc.AddMember("animations", animationsArrayValue, meshDoc.GetAllocator());
 	}
 
 	if (!this->WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
@@ -550,6 +554,57 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		return false;
 
 	return true;
+}
+
+void Converter::GatherApplicableAnimations(rapidjson::Value& animationsArrayValue, const Imzadi::Skeleton* skeleton, rapidjson::Document* doc)
+{
+	wxString animationsFolder = this->assetRootFolder + "/Animations";
+	std::filesystem::path animationsFolderPath((const char*)animationsFolder.c_str());
+
+	try
+	{
+		for (const auto dirEntry : std::filesystem::recursive_directory_iterator(animationsFolderPath))
+		{
+			if (dirEntry.is_regular_file())
+			{
+				std::string ext = dirEntry.path().extension().string();
+				if (ext == ".animation")
+				{
+					wxString animationPath(dirEntry.path().c_str());
+					if (this->IsAnimationApplicable(animationPath, skeleton))
+					{
+						wxString animationRef = this->MakeAssetFileReference(animationPath);
+						rapidjson::Value animationRefValue;
+						animationRefValue.SetString(animationRef, doc->GetAllocator());
+						animationsArrayValue.PushBack(animationRefValue, doc->GetAllocator());
+					}
+				}
+			}
+		}
+	}
+	catch (std::filesystem::filesystem_error error)
+	{
+		LOG("Error: %s", error.what());
+	}
+}
+
+bool Converter::IsAnimationApplicable(const wxString& animationFile, const Imzadi::Skeleton* skeleton)
+{
+	rapidjson::Document animDoc;
+	if (!this->ReadJsonFile(animDoc, animationFile))
+	{
+		LOG("Warning: Could not open file: %s", (const char*)animationFile.c_str());
+		return false;
+	}
+
+	Imzadi::Animation animation;
+	if (!animation.Load(animDoc, nullptr))
+	{
+		LOG("Warning: Could not load animation file: %s", (const char*)animationFile.c_str());
+		return false;
+	}
+
+	return animation.CanAnimateSkeleton(skeleton, 0.5);
 }
 
 bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
@@ -753,6 +808,30 @@ bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString
 	fileStream << stringBuffer.GetString();
 	fileStream.close();
 	LOG("Wrote file: %s", (const char*)assetFile.c_str());
+	return true;
+}
+
+bool Converter::ReadJsonFile(rapidjson::Document& jsonDoc, const wxString& assetFile)
+{
+	std::ifstream fileStream;
+	fileStream.open((const char*)assetFile.c_str(), std::ios::in);
+	if (!fileStream.is_open())
+	{
+		LOG("Failed to open (for reading) the file: %s", (const char*)assetFile.c_str());
+		return false;
+	}
+
+	rapidjson::IStreamWrapper streamWrapper(fileStream);
+	jsonDoc.ParseStream(streamWrapper);
+	if (jsonDoc.HasParseError())
+	{
+		LOG("Failed to parse file: %s", (const char*)assetFile.c_str());
+		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
+		LOG("Parser error: %s", rapidjson::GetParseError_En(errorCode));
+		return false;
+	}
+
+	fileStream.close();
 	return true;
 }
 
