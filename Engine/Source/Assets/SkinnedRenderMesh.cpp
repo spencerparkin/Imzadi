@@ -195,8 +195,8 @@ void SkinnedRenderMesh::DeformMesh()
 			Vector3 skinPoint = bindPoseTransforms->objectToBone.TransformPoint(bindPosePosition);
 			skinPoint = currentPoseTransforms->boneToObject.TransformPoint(skinPoint);
 
-			Vector3 skinNormal = bindPoseTransforms->objectToBone.TransformNormal(bindPoseNormal);
-			skinNormal = currentPoseTransforms->boneToObject.TransformNormal(skinNormal);
+			Vector3 skinNormal = bindPoseTransforms->objectToBone.TransformVector(bindPoseNormal);
+			skinNormal = currentPoseTransforms->boneToObject.TransformVector(skinNormal);
 			
 			currentPosePosition += skinPoint * boneWeight.weight;
 			currentPoseNormal += skinNormal * boneWeight.weight;

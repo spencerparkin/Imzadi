@@ -257,7 +257,7 @@ Asset::Asset()
 	return false;
 }
 
-/*static*/ bool Asset::LoadVector(const rapidjson::Value& vectorValue, Imzadi::Vector3& vector)
+/*static*/ bool Asset::LoadVector(const rapidjson::Value& vectorValue, Vector3& vector)
 {
 	if (!vectorValue.IsObject())
 		return false;
@@ -274,7 +274,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Imzadi::Quaternion& quat)
+/*static*/ bool Asset::LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Quaternion& quat)
 {
 	if (!eulerAnglesValue.IsObject())
 		return false;
@@ -301,7 +301,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadQuaternion(const rapidjson::Value& quaternionValue, Imzadi::Quaternion& quat)
+/*static*/ bool Asset::LoadQuaternion(const rapidjson::Value& quaternionValue, Quaternion& quat)
 {
 	if (!quaternionValue.IsObject())
 		return false;
@@ -338,7 +338,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, Imzadi::AxisAlignedBoundingBox& aabb)
+/*static*/ bool Asset::LoadBoundingBox(const rapidjson::Value& aabbValue, AxisAlignedBoundingBox& aabb)
 {
 	if (!aabbValue.IsObject())
 		return false;
@@ -355,7 +355,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadTransform(const rapidjson::Value& transformValue, Imzadi::Transform& transform)
+/*static*/ bool Asset::LoadTransform(const rapidjson::Value& transformValue, Transform& transform)
 {
 	if (!transformValue.IsObject())
 		return false;
@@ -372,7 +372,7 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ bool Asset::LoadMatrix(const rapidjson::Value& matrixValue, Imzadi::Matrix3x3& matrix)
+/*static*/ bool Asset::LoadMatrix(const rapidjson::Value& matrixValue, Matrix3x3& matrix)
 {
 	if (!matrixValue.IsArray() || matrixValue.Size() != 9)
 		return false;
@@ -391,7 +391,27 @@ Asset::Asset()
 	return true;
 }
 
-/*static*/ void Asset::SaveVector(rapidjson::Value& vectorValue, const Imzadi::Vector3& vector, rapidjson::Document* doc)
+/*static*/ bool Asset::LoadAnimTransform(const rapidjson::Value& transformValue, AnimTransform& transform)
+{
+	if (!transformValue.IsObject())
+		return false;
+
+	if (!transformValue.HasMember("scale") || !transformValue.HasMember("rotation") || !transformValue.HasMember("translation"))
+		return false;
+
+	if (!LoadVector(transformValue["scale"], transform.scale))
+		return false;
+
+	if (!LoadQuaternion(transformValue["rotation"], transform.rotation))
+		return false;
+
+	if (!LoadVector(transformValue["translation"], transform.translation))
+		return false;
+
+	return true;
+}
+
+/*static*/ void Asset::SaveVector(rapidjson::Value& vectorValue, const Vector3& vector, rapidjson::Document* doc)
 {
 	vectorValue.SetObject();
 	vectorValue.AddMember("x", rapidjson::Value().SetFloat(vector.x), doc->GetAllocator());
@@ -399,7 +419,7 @@ Asset::Asset()
 	vectorValue.AddMember("z", rapidjson::Value().SetFloat(vector.z), doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Imzadi::Quaternion& quat, rapidjson::Document* doc)
+/*static*/ void Asset::SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Quaternion& quat, rapidjson::Document* doc)
 {
 	eulerAnglesValue.SetObject();
 
@@ -407,7 +427,7 @@ Asset::Asset()
 	assert(false);
 }
 
-/*static*/ void Asset::SaveQuaternion(rapidjson::Value& quaternionValue, const Imzadi::Quaternion& quat, rapidjson::Document* doc)
+/*static*/ void Asset::SaveQuaternion(rapidjson::Value& quaternionValue, const Quaternion& quat, rapidjson::Document* doc)
 {
 	quaternionValue.SetObject();
 	quaternionValue.AddMember("x", rapidjson::Value().SetFloat(quat.x), doc->GetAllocator());
@@ -424,7 +444,7 @@ Asset::Asset()
 		stringArrayValue.PushBack(rapidjson::Value().SetString(str.c_str(), doc->GetAllocator()), doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveBoundingBox(rapidjson::Value& aabbValue, const Imzadi::AxisAlignedBoundingBox& aabb, rapidjson::Document* doc)
+/*static*/ void Asset::SaveBoundingBox(rapidjson::Value& aabbValue, const AxisAlignedBoundingBox& aabb, rapidjson::Document* doc)
 {
 	rapidjson::Value minValue, maxValue;
 
@@ -436,7 +456,7 @@ Asset::Asset()
 	aabbValue.AddMember("max", maxValue, doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveTransform(rapidjson::Value& transformValue, const Imzadi::Transform& transform, rapidjson::Document* doc)
+/*static*/ void Asset::SaveTransform(rapidjson::Value& transformValue, const Transform& transform, rapidjson::Document* doc)
 {
 	rapidjson::Value matrixValue, translationValue;
 
@@ -448,7 +468,7 @@ Asset::Asset()
 	transformValue.AddMember("translation", translationValue, doc->GetAllocator());
 }
 
-/*static*/ void Asset::SaveMatrix(rapidjson::Value& matrixValue, const Imzadi::Matrix3x3& matrix, rapidjson::Document* doc)
+/*static*/ void Asset::SaveMatrix(rapidjson::Value& matrixValue, const Matrix3x3& matrix, rapidjson::Document* doc)
 {
 	matrixValue.SetArray();
 
@@ -459,4 +479,18 @@ Asset::Asset()
 
 		matrixValue.PushBack(rapidjson::Value().SetFloat(matrix.ele[row][col]), doc->GetAllocator());
 	}
+}
+
+/*static*/ void Asset::SaveAnimTransform(rapidjson::Value& transformValue, const AnimTransform& transform, rapidjson::Document* doc)
+{
+	rapidjson::Value scaleValue, rotationValue, translationValue;
+
+	SaveVector(scaleValue, transform.scale, doc);
+	SaveQuaternion(rotationValue, transform.rotation, doc);
+	SaveVector(translationValue, transform.translation, doc);
+
+	transformValue.SetObject();
+	transformValue.AddMember("scale", scaleValue, doc->GetAllocator());
+	transformValue.AddMember("rotation", rotationValue, doc->GetAllocator());
+	transformValue.AddMember("translation", translationValue, doc->GetAllocator());
 }

@@ -403,8 +403,8 @@ void Canvas::Tick()
 
 					Vector3 xAxis, yAxis, zAxis;
 					cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
-					xAxis = worldToShape.TransformNormal(xAxis);
-					yAxis = worldToShape.TransformNormal(yAxis);
+					xAxis = worldToShape.TransformVector(xAxis);
+					yAxis = worldToShape.TransformVector(yAxis);
 
 					double xScale = (dpadDown ? 1.0 : (dpadUp ? -1.0 : 0.0));
 					double yScale = (dpadRight ? 1.0 : (dpadLeft ? -1.0 : 0.0));

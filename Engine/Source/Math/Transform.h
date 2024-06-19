@@ -78,14 +78,15 @@ namespace Imzadi
 		Vector3 TransformPoint(const Vector3& point) const;
 
 		/**
-		 * Apply our matrix to the given normal, but not the translation, and then return the result.
+		 * Apply our matrix to the given vector, but not the translation, and then return the result.
 		 * Note that if there is any shear or non-uniform scale in the matrix, then it's the
-		 * inverse-transpose that really needs to be applied to a normal.  We don't do that here.
+		 * inverse-transpose that really needs to be applied to a vector if it is acting as a
+		 * normal to a surface.  We don't do that here.
 		 * 
-		 * @param[in] normal This is the normal to be transformed.
-		 * @return The transformed normal is returned.
+		 * @param[in] vector This is the vector to be transformed.
+		 * @return The transformed vector is returned.
 		 */
-		Vector3 TransformNormal(const Vector3& normal) const;
+		Vector3 TransformVector(const Vector3& vector) const;
 
 		/**
 		 * Transform the two points of the given line-segment and return them as a new line-segment.
@@ -96,7 +97,8 @@ namespace Imzadi
 		LineSegment TransformLineSegment(const LineSegment& lineSegment) const;
 
 		/**
-		 * Transform the center and normal of the given plane using TransformPoint and TransformNormal, respectively.
+		 * Transform the center and normal of the given plane using TransformPoint and TransformVector, respectively.
+		 * We're assuming no shear or non-uniform scale here.
 		 * 
 		 * @param[in] plane This is the plane to be transformed.
 		 * @return The transformed plane is returned.
@@ -104,7 +106,8 @@ namespace Imzadi
 		Plane TransformPlane(const Plane& plane) const;
 
 		/**
-		 * Transform the origin and direction of the given ray using TransformPoint and TransformNormal, respectively.
+		 * Transform the origin and direction of the given ray using TransformPoint and TransformVector, respectively.
+		 * We're assuming no shear or non-uniform scale here.
 		 * 
 		 * @param[in] ray This is the ray to be transformed.
 		 * @return The transformed ray is returend.

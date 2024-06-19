@@ -232,7 +232,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 			return false;
 
 		position = nodeToWorld.TransformPoint(position);
-		normal = nodeToWorld.TransformNormal(normal);
+		normal = nodeToWorld.TransformVector(normal);
 
 		if (!normal.Normalize())
 			return false;

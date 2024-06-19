@@ -279,7 +279,7 @@ void BoxShape::GetAxisAlignedBox(AxisAlignedBoundingBox& box) const
 		const Vector3& normal = normalArray[i];
 		if ((hitPoint * mask).IsPoint(normal, tolerance))
 		{
-			unitSurfaceNormal = this->objectToWorld.TransformNormal(normal).Normalized();
+			unitSurfaceNormal = this->objectToWorld.TransformVector(normal).Normalized();
 			return true;
 		}
 	}

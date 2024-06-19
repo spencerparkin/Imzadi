@@ -194,6 +194,17 @@ Ray Quaternion::Rotate(const Ray& ray) const
 	return rotatedRay;
 }
 
+void Quaternion::Interpolate(const Quaternion& unitQuatA, const Quaternion& unitQuatB, double alpha)
+{
+	Quaternion unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
+	Vector3 unitAxis;
+	double angle = 0.0;
+	unitDeltaQuat.GetToAxisAngle(unitAxis, angle);
+	angle *= alpha;
+	unitDeltaQuat.SetFromAxisAngle(unitAxis, angle);
+	*this = unitDeltaQuat * unitQuatA;
+}
+
 void Quaternion::Dump(std::ostream& stream) const
 {
 	stream.write((char*)&this->w, sizeof(this->w));

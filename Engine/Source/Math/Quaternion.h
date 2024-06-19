@@ -152,6 +152,15 @@ namespace Imzadi
 		Ray Rotate(const Ray& ray) const;
 
 		/**
+		 * Set this quaternion as the interpolation of the two given quatenrions by the given amount.
+		 * 
+		 * @param[in] unitQuatA This is the result when alpha is zero.
+		 * @param[in] unitQuatB This is the result when alpha is one.
+		 * @param[in] alpha This is the interpolation amount, typically in [0,1].
+		 */
+		void Interpolate(const Quaternion& unitQuatA, const Quaternion& unitQuatB, double alpha);
+
+		/**
 		 * Write this quaternion to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;

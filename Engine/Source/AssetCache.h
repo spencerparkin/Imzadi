@@ -6,6 +6,7 @@
 #include "Math/Quaternion.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Transform.h"
+#include "Math/AnimTransform.h"
 #include <string>
 #include <unordered_map>
 #include <filesystem>
@@ -158,20 +159,22 @@ namespace Imzadi
 		 */
 		virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) { return false; }
 
-		static bool LoadVector(const rapidjson::Value& vectorValue, Imzadi::Vector3& vector);
-		static bool LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Imzadi::Quaternion& quat);
-		static bool LoadQuaternion(const rapidjson::Value& quaternionValue, Imzadi::Quaternion& quat);
+		static bool LoadVector(const rapidjson::Value& vectorValue, Vector3& vector);
+		static bool LoadEulerAngles(const rapidjson::Value& eulerAnglesValue, Quaternion& quat);
+		static bool LoadQuaternion(const rapidjson::Value& quaternionValue, Quaternion& quat);
 		static bool LoadStringArray(const rapidjson::Value& stringArrayValue, std::vector<std::string>& stringArray);
-		static bool LoadBoundingBox(const rapidjson::Value& aabbValue, Imzadi::AxisAlignedBoundingBox& aabb);
-		static bool LoadTransform(const rapidjson::Value& transformValue, Imzadi::Transform& transform);
-		static bool LoadMatrix(const rapidjson::Value& matrixValue, Imzadi::Matrix3x3& matrix);
+		static bool LoadBoundingBox(const rapidjson::Value& aabbValue, AxisAlignedBoundingBox& aabb);
+		static bool LoadTransform(const rapidjson::Value& transformValue, Transform& transform);
+		static bool LoadMatrix(const rapidjson::Value& matrixValue, Matrix3x3& matrix);
+		static bool LoadAnimTransform(const rapidjson::Value& transformValue, AnimTransform& transform);
 
-		static void SaveVector(rapidjson::Value& vectorValue, const Imzadi::Vector3& vector, rapidjson::Document* doc);
-		static void SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Imzadi::Quaternion& quat, rapidjson::Document* doc);
-		static void SaveQuaternion(rapidjson::Value& quaternionValue, const Imzadi::Quaternion& quat, rapidjson::Document* doc);
+		static void SaveVector(rapidjson::Value& vectorValue, const Vector3& vector, rapidjson::Document* doc);
+		static void SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Quaternion& quat, rapidjson::Document* doc);
+		static void SaveQuaternion(rapidjson::Value& quaternionValue, const Quaternion& quat, rapidjson::Document* doc);
 		static void SaveStringArray(rapidjson::Value& stringArrayValue, const std::vector<std::string>& stringArray, rapidjson::Document* doc);
-		static void SaveBoundingBox(rapidjson::Value& aabbValue, const Imzadi::AxisAlignedBoundingBox& aabb, rapidjson::Document* doc);
-		static void SaveTransform(rapidjson::Value& transformValue, const Imzadi::Transform& transform, rapidjson::Document* doc);
-		static void SaveMatrix(rapidjson::Value& matrixValue, const Imzadi::Matrix3x3& matrix, rapidjson::Document* doc);
+		static void SaveBoundingBox(rapidjson::Value& aabbValue, const AxisAlignedBoundingBox& aabb, rapidjson::Document* doc);
+		static void SaveTransform(rapidjson::Value& transformValue, const Transform& transform, rapidjson::Document* doc);
+		static void SaveMatrix(rapidjson::Value& matrixValue, const Matrix3x3& matrix, rapidjson::Document* doc);
+		static void SaveAnimTransform(rapidjson::Value& transformValue, const AnimTransform& transform, rapidjson::Document* doc);
 	};
 }

@@ -56,9 +56,9 @@ Vector3 Transform::TransformPoint(const Vector3& point) const
 }
 
 
-Vector3 Transform::TransformNormal(const Vector3& normal) const
+Vector3 Transform::TransformVector(const Vector3& vector) const
 {
-	return this->matrix * normal;
+	return this->matrix * vector;
 }
 
 LineSegment Transform::TransformLineSegment(const LineSegment& lineSegment) const
@@ -73,7 +73,7 @@ Plane Transform::TransformPlane(const Plane& plane) const
 {
 	Plane transformedPlane;
 	transformedPlane.center = this->TransformPoint(plane.center);
-	transformedPlane.unitNormal = this->TransformNormal(plane.unitNormal).Normalized();
+	transformedPlane.unitNormal = this->TransformVector(plane.unitNormal).Normalized();
 	return transformedPlane;
 }
 
@@ -81,7 +81,7 @@ Ray Transform::TransformRay(const Ray& ray) const
 {
 	Ray transformedRay;
 	transformedRay.origin = this->TransformPoint(ray.origin);
-	transformedRay.unitDirection = this->TransformNormal(ray.unitDirection).Normalized();
+	transformedRay.unitDirection = this->TransformVector(ray.unitDirection).Normalized();
 	return transformedRay;
 }
 

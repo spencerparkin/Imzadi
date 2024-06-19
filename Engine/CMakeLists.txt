@@ -62,6 +62,8 @@ set(GAME_ENGINE_SOURCES
     Source/Collision/Shapes/Polygon.h
     Source/Collision/Shapes/Sphere.cpp
     Source/Collision/Shapes/Sphere.h
+    Source/Math/AnimTransform.cpp
+    Source/Math/AnimTransform.h
     Source/Math/AxisAlignedBoundingBox.cpp
     Source/Math/AxisAlignedBoundingBox.h
     Source/Math/Frustum.cpp

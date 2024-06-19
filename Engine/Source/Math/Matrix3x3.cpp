@@ -405,10 +405,13 @@ bool Matrix3x3::FactorRHS(Matrix3x3& rotate, Matrix3x3& shear, Matrix3x3& scale)
 	double shearC = -zAxis.Dot(yAxis) / yAxis.Dot(yAxis);
 	zAxis += shearB * xAxis + shearC * yAxis;
 
-	double scaleX, scaleY, scaleZ;
-	xAxis.Normalize(&scaleX);
-	yAxis.Normalize(&scaleY);
-	zAxis.Normalize(&scaleZ);
+	double scaleX = 0.0, scaleY = 0.0, scaleZ = 0.0;
+	if (!xAxis.Normalize(&scaleX))
+		return false;
+	if (!yAxis.Normalize(&scaleY))
+		return false;
+	if (!zAxis.Normalize(&scaleZ))
+		return false;
 
 	if (det < 0.0)
 	{

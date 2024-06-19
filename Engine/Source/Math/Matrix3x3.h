@@ -257,7 +257,11 @@ namespace Imzadi
 
 		/**
 		 * Factor this matrix into the product of a rotation, shear and scale matrix,
-		 * in that order.
+		 * in that order.  Thus, the order of transformations is to scale, shear, then
+		 * rotate.  The Graham-Schmidt orthonormalization process is the basis for this
+		 * factorization, using the X-axis as anchor, then the Y-axis.  Since the order
+		 * of anchor axes here is arbitrary and could be different, the factorization
+		 * is not unique.  It can be shown to exist if and only if the matrix is non-singular.
 		 *
 		 * @param[out] rotate This will be the rotation matrix factor.  It is orthonormal with determinant +1.
 		 * @param[out] shear This will be the shear matrix factor.

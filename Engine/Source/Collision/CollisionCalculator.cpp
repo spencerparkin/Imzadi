@@ -156,7 +156,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 			collisionStatus->separationDelta = delta.Normalized() * (sphere->GetRadius() - distance);
 		}
 
-		collisionStatus->separationDelta = box->GetObjectToWorldTransform().TransformNormal(collisionStatus->separationDelta);
+		collisionStatus->separationDelta = box->GetObjectToWorldTransform().TransformVector(collisionStatus->separationDelta);
 	}
 
 	return collisionStatus;

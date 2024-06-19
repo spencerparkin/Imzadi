@@ -340,9 +340,9 @@ void Bone::DebugDraw(BoneTransformType transformType, const Transform& objectToW
 	const Transforms* transforms = this->GetTransforms(transformType);
 
 	Vector3 origin = transforms->boneToObject.TransformPoint(Vector3(0.0, 0.0, 0.0));
-	Vector3 xAxis = transforms->boneToObject.TransformNormal(Vector3(0.1, 0.0, 0.0));
-	Vector3 yAxis = transforms->boneToObject.TransformNormal(Vector3(0.0, 0.1, 0.0));
-	Vector3 zAxis = transforms->boneToObject.TransformNormal(Vector3(0.0, 0.0, 0.1));
+	Vector3 xAxis = transforms->boneToObject.TransformVector(Vector3(0.1, 0.0, 0.0));
+	Vector3 yAxis = transforms->boneToObject.TransformVector(Vector3(0.0, 0.1, 0.0));
+	Vector3 zAxis = transforms->boneToObject.TransformVector(Vector3(0.0, 0.0, 0.1));
 
 	DebugLines::Line line;
 	
