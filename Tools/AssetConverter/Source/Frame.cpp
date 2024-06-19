@@ -9,8 +9,9 @@
 #include <wx/aboutdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
+#include <wx/choicdlg.h>
 
-Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Game Editor", pos, size), timer(this, ID_Timer)
+Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Asset Converter", pos, size), timer(this, ID_Timer)
 {
 	wxMenu* fileMenu = new wxMenu();
 	fileMenu->Append(new wxMenuItem(fileMenu, ID_ConvertAsset, "Convert Asset...", "Convert the output of some artsy-fartsy 3D modeling program into assets consumable as input to the Imzadi Game Engine."));
@@ -95,13 +96,31 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 	if (fileDialog.ShowModal() != wxID_OK)
 		return;
 	
+	wxArrayString choiceArray;
+	choiceArray.Add("Meshes");
+	choiceArray.Add("Animations");
+	wxMultiChoiceDialog choiceDialog(this, "Export what?", "What to Export", choiceArray);
+	if (choiceDialog.ShowModal() != wxID_OK)
+		return;
+
+	uint32_t flags = 0;
+	wxArrayInt selectionArray = choiceDialog.GetSelections();
+	for (int i = 0; i < selectionArray.size(); i++)
+	{
+		const wxString& selection = choiceArray[selectionArray[i]];
+		if (selection == "Meshes")
+			flags |= Converter::Flag::CONVERT_MESHES;
+		else if (selection == "Animations")
+			flags |= Converter::Flag::CONVERT_ANIMATIONS;
+	}
+
 	// TODO: Shouldn't hard-code this path.
 	Converter converter(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
 
 	wxArrayString fileArray;
 	fileDialog.GetPaths(fileArray);
 	for (const wxString& file : fileArray)
-		converter.Convert(file);
+		converter.Convert(file, flags);
 }
 
 void Frame::OnPreviewAsset(wxCommandEvent& event)
@@ -109,7 +128,7 @@ void Frame::OnPreviewAsset(wxCommandEvent& event)
 	wxFileDialog fileDialog(this, "Choose file(s) to preview.", wxEmptyString, wxEmptyString, "Any file (*.*)|*.*", wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 	if (fileDialog.ShowModal() != wxID_OK)
 		return;
-	
+
 	Imzadi::Game* game = Imzadi::Game::Get();
 	wxString errorMsg;
 
@@ -137,7 +156,7 @@ void Frame::OnAbout(wxCommandEvent& event)
 {
 	wxAboutDialogInfo aboutDialogInfo;
 
-	aboutDialogInfo.SetName("Imzadi Game Editor");
+	aboutDialogInfo.SetName("Imzadi Asset Converter");
 	aboutDialogInfo.SetDescription("This program is designed to convert art program files into assets consumable by the Imzadi Game Engine.  It also provides a preview of the converted assets.");
 
 	wxAboutBox(aboutDialogInfo);

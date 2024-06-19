@@ -8,8 +8,10 @@
 #include "Math/Vector3.h"
 #include "Math/Vector2.h"
 #include "Math/Transform.h"
+#include "Math/AnimTransform.h"
 #include "Assets/Skeleton.h"
 #include "Assets/SkinWeights.h"
+#include "Assets/Animation.h"
 #include "rapidjson/document.h"
 #include "rapidjson/prettywriter.h"
 #include <unordered_set>
@@ -20,8 +22,14 @@ class Converter
 public:
 	Converter(const wxString& assetRootFolder);
 	virtual ~Converter();
+	
+	enum Flag
+	{
+		CONVERT_MESHES		= 0x00000001,
+		CONVERT_ANIMATIONS	= 0x00000002
+	};
 
-	bool Convert(const wxString& assetFile);
+	bool Convert(const wxString& assetFile, uint32_t flags);
 
 private:
 
@@ -34,10 +42,13 @@ private:
 	bool MakeTransform(Imzadi::Transform& transformOut, const aiMatrix4x4& matrixIn);
 	bool MakeVector(Imzadi::Vector3& vectorOut, const aiVector3D& vectorIn);
 	bool MakeTexCoords(Imzadi::Vector2& texCoordsOut, const aiVector3D& texCoordsIn);
+	bool MakeQuat(Imzadi::Quaternion& quaternionOut, const aiQuaternion& quaternionIn);
 	wxString MakeAssetFileReference(const wxString& assetFile);
 	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile);
 	bool FindParentBones(const aiNode* boneNode, std::unordered_set<const aiNode*>& boneSet);
 	bool GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& nodeToWorld);
+	bool ProcessAnimation(const aiScene* scene, const aiAnimation* animation);
+	bool FindNextKeyFrame(const aiAnimation* animation, double& currentTick, Imzadi::KeyFrame*& keyFrame);
 
 	Assimp::Importer importer;
 	wxString assetFolder;

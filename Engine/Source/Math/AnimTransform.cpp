@@ -33,6 +33,11 @@ void AnimTransform::operator=(const AnimTransform& transform)
 	this->translation = transform.translation;
 }
 
+bool AnimTransform::IsValid() const
+{
+	return this->scale.IsValid() && this->rotation.IsValid() && this->translation.IsValid();
+}
+
 void AnimTransform::SetIdentity()
 {
 	this->scale.SetComponents(1.0, 1.0, 1.0);
@@ -86,11 +91,16 @@ Vector3 AnimTransform::TransformVector(const Vector3& vector) const
 	return this->rotation.Rotate(vector * this->scale);
 }
 
-void AnimTransform::SetAsInterpolationOf(const AnimTransform& transformA, const AnimTransform& transformB, double alpha)
+void AnimTransform::Interpolate(const AnimTransform& transformA, const AnimTransform& transformB, double alpha)
 {
 	this->scale.Lerp(transformA.scale, transformB.scale, alpha);
 	this->rotation.Interpolate(transformA.rotation, transformB.rotation, alpha);
 	this->translation.Lerp(transformA.translation, transformB.translation, alpha);
+}
+
+bool AnimTransform::Concatinate(const AnimTransform& transformA, const AnimTransform& transformB)
+{
+	return this->SetFromTransform(transformB * transformA);
 }
 
 void AnimTransform::Dump(std::ostream& stream) const
@@ -109,14 +119,11 @@ void AnimTransform::Restore(std::istream& stream)
 
 namespace Imzadi
 {
-	AnimTransform operator*(const AnimTransform& transformA, const AnimTransform& transformB)
+	Transform operator*(const AnimTransform& transformA, const AnimTransform& transformB)
 	{
 		Transform regularTransformA, regularTransformB;
 		transformA.GetToTransform(regularTransformA);
 		transformB.GetToTransform(regularTransformB);
-		Transform product = regularTransformA * regularTransformB;
-		AnimTransform result;
-		result.SetFromTransform(product);
-		return result;
+		return regularTransformA * regularTransformB;
 	}
 }

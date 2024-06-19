@@ -295,6 +295,16 @@ void KeyFrame::Copy(const KeyFrame& keyFrame)
 	this->timeSeconds = keyFrame.timeSeconds;
 }
 
+bool KeyFrame::AddPoseInfo(const PoseInfo& poseInfo)
+{
+	for (int i = 0; i < this->poseInfoArray.size(); i++)
+		if (this->poseInfoArray[i].boneName == poseInfo.boneName)
+			return false;
+
+	this->poseInfoArray.push_back(poseInfo);
+	return true;
+}
+
 bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 {
 	this->Clear();
@@ -335,10 +345,14 @@ bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 
 		PoseInfo poseInfo;
 		poseInfo.boneName = poseInfoValue["bone_name"].GetString();
-		if (!Asset::LoadTransform(poseInfoValue["bone_child_to_parent"], poseInfo.childToParent))
+		if (!Asset::LoadAnimTransform(poseInfoValue["bone_child_to_parent"], poseInfo.childToParent))
 			return false;
 
-		this->poseInfoArray.push_back(poseInfo);
+		if (!this->AddPoseInfo(poseInfo))
+		{
+			IMZADI_ERROR(std::format("Failed to add pose info for bone \"{}\".", poseInfo.boneName.c_str()));
+			return false;
+		}
 	}
 
 	return true;
@@ -357,8 +371,8 @@ bool KeyFrame::Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDo
 		rapidjson::Value poseInfoValue;
 		poseInfoValue.SetObject();
 
-		rapidjson::Value childToParentValue;;
-		Asset::SaveTransform(childToParentValue, poseInfo.childToParent, &jsonDoc);
+		rapidjson::Value childToParentValue;
+		Asset::SaveAnimTransform(childToParentValue, poseInfo.childToParent, &jsonDoc);
 
 		poseInfoValue.AddMember("bone_name", rapidjson::Value().SetString(poseInfo.boneName.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
 		poseInfoValue.AddMember("bone_child_to_parent", childToParentValue, jsonDoc.GetAllocator());
@@ -396,7 +410,7 @@ bool KeyFrame::Interpolate(const KeyFramePair& keyFramePair, double timeSeconds)
 
 		PoseInfo poseInfo;
 		poseInfo.boneName = poseInfoA.boneName;
-		poseInfo.childToParent.InterapolateBoneTransforms(poseInfoA.childToParent, poseInfoB.childToParent, alpha);
+		poseInfo.childToParent.Interpolate(poseInfoA.childToParent, poseInfoB.childToParent, alpha);
 		this->poseInfoArray.push_back(poseInfo);
 	}
 
@@ -412,7 +426,9 @@ int KeyFrame::PoseSkeleton(Skeleton* skeleton) const
 		Bone* bone = skeleton->FindBone(poseInfo.boneName);
 		if (bone)
 		{
-			bone->SetCurrentPoseChildToParent(poseInfo.childToParent);
+			Transform childToParent;
+			poseInfo.childToParent.GetToTransform(childToParent);
+			bone->SetCurrentPoseChildToParent(childToParent);
 			poseCount++;
 		}
 	}
@@ -420,7 +436,7 @@ int KeyFrame::PoseSkeleton(Skeleton* skeleton) const
 	return poseCount;
 }
 
-void KeyFrame::MakePoseFromSkeleton(const Skeleton* skeleton)
+bool KeyFrame::MakePoseFromSkeleton(const Skeleton* skeleton)
 {
 	this->Clear();
 
@@ -433,7 +449,13 @@ void KeyFrame::MakePoseFromSkeleton(const Skeleton* skeleton)
 
 		PoseInfo poseInfo;
 		poseInfo.boneName = bone->GetName();
-		poseInfo.childToParent = transform->childToParent;
-		this->poseInfoArray.push_back(poseInfo);
+
+		if (!poseInfo.childToParent.SetFromTransform(transform->childToParent))
+			return false;
+
+		if (!this->AddPoseInfo(poseInfo))
+			return false;
 	}
+
+	return true;
 }

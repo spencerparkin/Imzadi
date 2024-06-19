@@ -190,23 +190,31 @@ namespace Imzadi
 
 		/**
 		 * Take the current pose of the given skeleton and make a key-frame from it.
+		 * 
+		 * @return True is returned on success; false, otherwise.
 		 */
-		void MakePoseFromSkeleton(const Skeleton* skeleton);
+		bool MakePoseFromSkeleton(const Skeleton* skeleton);
 
 		/**
 		 * Return the number of bones posed by this key-frame.
 		 */
 		size_t GetPoseCount() const { return this->poseInfoArray.size(); }
 
-	private:
-
-		double timeSeconds;
-
 		struct PoseInfo
 		{
 			std::string boneName;
-			Transform childToParent;
+			AnimTransform childToParent;
 		};
+
+		/**
+		 * Add information about how to pose a bone in a skeleton.
+		 * We fail here if such info already exists in this key-frame.
+		 */
+		bool AddPoseInfo(const PoseInfo& poseInfo);
+
+	private:
+
+		double timeSeconds;
 
 		typedef std::vector<PoseInfo> PoseInfoArray;
 		PoseInfoArray poseInfoArray;

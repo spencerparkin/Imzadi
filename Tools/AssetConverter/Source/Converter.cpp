@@ -6,6 +6,9 @@
 #include "assimp/config.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "AssetCache.h"
+#include "App.h"
+#include "Frame.h"
+#include <wx/textdlg.h>
 
 Converter::Converter(const wxString& assetRootFolder)
 {
@@ -16,7 +19,7 @@ Converter::Converter(const wxString& assetRootFolder)
 {
 }
 
-bool Converter::Convert(const wxString& assetFile)
+bool Converter::Convert(const wxString& assetFile, uint32_t flags)
 {
 	LOG("Converting file: %s", (const char*)assetFile.c_str());
 
@@ -34,21 +37,179 @@ bool Converter::Convert(const wxString& assetFile)
 		return false;
 	}
 
-	LOG("Generating node-to-world transformation map...");
-	this->nodeToWorldMap.clear();
-	if (!this->GenerateNodeToWorldMap(scene->mRootNode))
+	if ((flags & Flag::CONVERT_MESHES) != 0)
 	{
-		LOG("Failed to generate transformation map.");
-		return false;
+		LOG("Generating node-to-world transformation map...");
+		this->nodeToWorldMap.clear();
+		if (!this->GenerateNodeToWorldMap(scene->mRootNode))
+		{
+			LOG("Failed to generate transformation map.");
+			return false;
+		}
+
+		LOG("Processing scene graph...");
+		if (!this->ProcessSceneGraph(scene, scene->mRootNode))
+		{
+			LOG("Failed to process scene graph.");
+			return false;
+		}
 	}
 
-	LOG("Processing scene graph...");
-	if (!this->ProcessSceneGraph(scene, scene->mRootNode))
+	if ((flags & Flag::CONVERT_ANIMATIONS) != 0)
 	{
-		LOG("Failed to process scene graph.");
-		return false;
+		LOG("Found %d animations.", scene->mNumAnimations);
+		for (int i = 0; i < scene->mNumAnimations; i++)
+		{
+			LOG("Processing animation %d of %d.", i + 1, scene->mNumAnimations);
+			const aiAnimation* animation = scene->mAnimations[i];
+			if (!this->ProcessAnimation(scene, animation))
+			{
+				LOG("Failed to process animation.");
+				return false;
+			}
+		}
 	}
 
+	return true;
+}
+
+bool Converter::ProcessAnimation(const aiScene* scene, const aiAnimation* animation)
+{
+	wxString animName(animation->mName.C_Str());
+	animName.Replace(" ", "_");
+
+	wxTextEntryDialog nameDialog(wxGetApp().GetFrame(), wxString::Format("The current animation will be saved as \"%s\".  Rename it?", animation->mName.C_Str()), "Rename?", animName);
+	if (nameDialog.ShowModal() == wxID_OK)
+		animName = nameDialog.GetValue();
+
+	wxFileName animFile;
+	animFile.SetPath(this->assetRootFolder + "/Animations");
+	animFile.SetName(animName);
+	animFile.SetExt("animation");
+
+	Imzadi::Animation generatedAnimation;
+	generatedAnimation.SetName((const char*)animName.c_str());
+	double currentTick = -std::numeric_limits<double>::max();
+	Imzadi::KeyFrame* keyFrame = nullptr;
+	while (this->FindNextKeyFrame(animation, currentTick, keyFrame))
+		generatedAnimation.AddKeyFrame(keyFrame);
+
+	rapidjson::Document animDoc;
+	generatedAnimation.Save(animDoc);
+	if (!this->WriteJsonFile(animDoc, animFile.GetFullPath()))
+		return false;
+
+	return true;
+}
+
+bool Converter::FindNextKeyFrame(const aiAnimation* animation, double& currentTick, Imzadi::KeyFrame*& keyFrame)
+{
+	double soonestTick = std::numeric_limits<double>::max();
+
+	for (int i = 0; i < animation->mNumChannels; i++)
+	{
+		const aiNodeAnim* nodeAnim = animation->mChannels[i];
+		
+		for (int j = 0; j < nodeAnim->mNumPositionKeys; j++)
+		{
+			const aiVectorKey* positionKey = &nodeAnim->mPositionKeys[j];
+			if (positionKey->mTime > currentTick && positionKey->mTime < soonestTick)
+				soonestTick = positionKey->mTime;
+		}
+
+		for (int j = 0; j < nodeAnim->mNumRotationKeys; j++)
+		{
+			const aiQuatKey* rotationKey = &nodeAnim->mRotationKeys[j];
+			if (rotationKey->mTime > currentTick && rotationKey->mTime < soonestTick)
+				soonestTick = rotationKey->mTime;
+		}
+
+		for (int j = 0; j < nodeAnim->mNumScalingKeys; j++)
+		{
+			const aiVectorKey* scalingKey = &nodeAnim->mScalingKeys[j];
+			if (scalingKey->mTime > currentTick && scalingKey->mTime < soonestTick)
+				soonestTick = scalingKey->mTime;
+		}
+	}
+
+	if (soonestTick == std::numeric_limits<double>::max())
+		return false;
+
+	currentTick = soonestTick;
+
+	keyFrame = new Imzadi::KeyFrame();
+	keyFrame->SetTime(soonestTick / animation->mTicksPerSecond);
+
+	// We pose all the nodes in a single key-frame.
+	for (int i = 0; i < animation->mNumChannels; i++)
+	{
+		const aiNodeAnim* nodeAnim = animation->mChannels[i];
+
+		Imzadi::KeyFrame::PoseInfo poseInfo;
+		poseInfo.boneName = nodeAnim->mNodeName.C_Str();
+
+		int findCount = 0;
+
+		for (int j = 0; j < nodeAnim->mNumPositionKeys - 1; j++)
+		{
+			const aiVectorKey* positionKeyA = &nodeAnim->mPositionKeys[j];
+			const aiVectorKey* positionKeyB = &nodeAnim->mPositionKeys[j + 1];
+
+			if (positionKeyA->mTime <= currentTick && currentTick <= positionKeyB->mTime)
+			{
+				Imzadi::Vector3 translationA, translationB;
+				this->MakeVector(translationA, positionKeyA->mValue);
+				this->MakeVector(translationB, positionKeyB->mValue);
+				double alpha = (currentTick - positionKeyA->mTime) / (positionKeyB->mTime - positionKeyA->mTime);
+				poseInfo.childToParent.translation.Lerp(translationA, translationB, alpha);
+				findCount++;
+				break;
+			}
+		}
+
+		for (int j = 0; j < nodeAnim->mNumRotationKeys - 1; j++)
+		{
+			const aiQuatKey* rotationKeyA = &nodeAnim->mRotationKeys[j];
+			const aiQuatKey* rotationKeyB = &nodeAnim->mRotationKeys[j + 1];
+
+			if (rotationKeyA->mTime <= currentTick && currentTick <= rotationKeyB->mTime)
+			{
+				Imzadi::Quaternion rotationA, rotationB;
+				this->MakeQuat(rotationA, rotationKeyA->mValue);
+				this->MakeQuat(rotationB, rotationKeyB->mValue);
+				double alpha = (currentTick - rotationKeyA->mTime) / (rotationKeyB->mTime - rotationKeyA->mTime);
+				poseInfo.childToParent.rotation.Interpolate(rotationA, rotationB, alpha);
+				findCount++;
+				break;
+			}
+		}
+
+		for (int j = 0; j < nodeAnim->mNumScalingKeys - 1; j++)
+		{
+			const aiVectorKey* scalingKeyA = &nodeAnim->mScalingKeys[j];
+			const aiVectorKey* scalingKeyB = &nodeAnim->mScalingKeys[j + 1];
+
+			if (scalingKeyA->mTime <= currentTick && currentTick <= scalingKeyB->mTime)
+			{
+				Imzadi::Vector3 scaleA, scaleB;
+				this->MakeVector(scaleA, scalingKeyA->mValue);
+				this->MakeVector(scaleB, scalingKeyB->mValue);
+				double alpha = (currentTick - scalingKeyA->mTime) / (scalingKeyB->mTime - scalingKeyA->mTime);
+				poseInfo.childToParent.scale.Lerp(scaleA, scaleB, alpha);
+				findCount++;
+				break;
+			}
+		}
+
+		if (!poseInfo.childToParent.IsValid())
+			LOG("Warning: Encountered invalid child-to-parent transform!");
+
+		if (findCount == 3)
+			keyFrame->AddPoseInfo(poseInfo);
+		else
+			LOG("Failed to find scale, position and translation at tick %f!", currentTick);
+	}
+	
 	return true;
 }
 
@@ -330,6 +491,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		meshDoc.AddMember("skeleton", rapidjson::Value().SetString(this->MakeAssetFileReference(skeletonFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 		meshDoc.AddMember("skin_weights", rapidjson::Value().SetString(this->MakeAssetFileReference(skinWeightsFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
+		// Note that for this to work with 3Ds Max, the scene should have been exported
+		// with the model in bind-pose.  Even if posed, I don't know why it doesn't already
+		// do that, but whatever.
 		Imzadi::Skeleton skeleton;
 		if (!this->GenerateSkeleton(skeleton, mesh))
 		{
@@ -368,7 +532,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		if (!this->WriteJsonFile(skinWeightsDoc, skinWeightsFileName.GetFullPath()))
 			return false;
 
-		// TODO: What about animations for the mesh?
+		// TODO: An idea here is to crack open any animations we find in the animations folder and
+		//       then just see if the animation is applicable to this character's rig.  If it is,
+		//       then we can add it to this character's list of animations.
 	}
 
 	if (!this->WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
@@ -550,8 +716,24 @@ bool Converter::MakeTexCoords(Imzadi::Vector2& texCoordsOut, const aiVector3D& t
 	return true;
 }
 
+bool Converter::MakeQuat(Imzadi::Quaternion& quaternionOut, const aiQuaternion& quaternionIn)
+{
+	quaternionOut.w = quaternionIn.w;
+	quaternionOut.x = quaternionIn.x;
+	quaternionOut.y = quaternionIn.y;
+	quaternionOut.z = quaternionIn.z;
+	return true;
+}
+
 bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile)
 {
+	std::filesystem::path assetPath((const char*)assetFile.c_str());
+	if (std::filesystem::exists(assetPath))
+	{
+		std::filesystem::remove(assetPath);
+		LOG("Deleted file: %s", (const char*)assetFile.c_str());
+	}
+
 	std::ofstream fileStream;
 	fileStream.open((const char*)assetFile.c_str(), std::ios::out);
 	if (!fileStream.is_open())
@@ -564,7 +746,7 @@ bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
 	if (!jsonDoc.Accept(prettyWriter))
 	{
-		LOG("Failed to generate JSON text from JSON data foe file: %s", (const char*)assetFile.c_str());
+		LOG("Failed to generate JSON text from JSON data for file: %s", (const char*)assetFile.c_str());
 		return false;
 	}
 

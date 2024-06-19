@@ -264,6 +264,8 @@ void LogWindow::AddLogMessage(const char* logMessage)
 	wxString logMessageLower = logMessageStr.Lower();
 	if (logMessageLower.find("error") != std::string::npos || logMessageLower.find("failed") != std::string::npos)
 		this->logTextCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
+	else if (logMessageLower.find("warning") != std::string::npos)
+		this->logTextCtrl->SetDefaultStyle(wxTextAttr(*wxBLUE));
 	else
 		this->logTextCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
 
