@@ -390,7 +390,7 @@ double Matrix3x3::Determinant() const
 		+ this->ele[0][2] * (this->ele[1][0] * this->ele[2][1] - this->ele[2][0] * this->ele[1][1]);
 }
 
-bool Matrix3x3::Factor(Matrix3x3& shear, Matrix3x3& scale, Matrix3x3& rotate) const
+bool Matrix3x3::FactorRHS(Matrix3x3& rotate, Matrix3x3& shear, Matrix3x3& scale) const
 {
 	double det = this->Determinant();
 	if (det == 0.0)
@@ -416,7 +416,7 @@ bool Matrix3x3::Factor(Matrix3x3& shear, Matrix3x3& scale, Matrix3x3& rotate) co
 		scaleZ = -scaleZ;
 	}
 
-	rotate.SetRowVectors(xAxis, yAxis, zAxis);
+	rotate.SetColumnVectors(xAxis, yAxis, zAxis);
 
 	scale.SetIdentity();
 	scale.ele[0][0] = scaleX;
@@ -424,9 +424,9 @@ bool Matrix3x3::Factor(Matrix3x3& shear, Matrix3x3& scale, Matrix3x3& rotate) co
 	scale.ele[2][2] = scaleZ;
 
 	shear.SetIdentity();
-	shear.ele[1][0] = -shearA;
-	shear.ele[2][0] = -shearB;
-	shear.ele[2][1] = -shearC;
+	shear.ele[0][1] = -shearA * scaleX / scaleY;
+	shear.ele[0][2] = -shearB * scaleX / scaleZ;
+	shear.ele[1][2] = -shearC * scaleY / scaleZ;
 
 	return true;
 }
