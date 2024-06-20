@@ -496,7 +496,8 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 		// Note that for this to work with 3Ds Max, the scene should have been exported
 		// with the model in bind-pose.  Even if posed, I don't know why it doesn't already
-		// do that, but whatever.
+		// do that, but whatever.  Similarly, exporting an animation won't work unless the
+		// animation is applied at time of export.
 		Imzadi::Skeleton skeleton;
 		if (!this->GenerateSkeleton(skeleton, mesh))
 		{
