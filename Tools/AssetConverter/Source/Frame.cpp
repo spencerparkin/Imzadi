@@ -4,12 +4,16 @@
 #include "GamePreview.h"
 #include "Converter.h"
 #include "Log.h"
+#include "RenderObjectList.h"
+#include "RenderObjectProperties.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/choicdlg.h>
+#include <wx/splitter.h>
+#include <wx/panel.h>
 
 Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Asset Converter", pos, size), timer(this, ID_Timer)
 {
@@ -43,12 +47,29 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->Bind(wxEVT_MENU, &Frame::OnShowLogWindow, this, ID_ShowLogWindow);
 	this->Bind(wxEVT_TIMER, &Frame::OnTimer, this, ID_Timer);
 	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_ShowLogWindow);
+	this->Bind(wxEVT_CLOSE_WINDOW, &Frame::OnCloseWindow, this);
 
-	this->canvas = new Canvas(this);
+	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY);
+	splitter->SetMinimumPaneSize(100);
 
-	wxBoxSizer* boxSizer = new wxBoxSizer(wxHORIZONTAL);
-	boxSizer->Add(this->canvas, 1, wxALL | wxEXPAND, 0);
-	this->SetSizer(boxSizer);
+	this->canvas = new Canvas(splitter);
+
+	wxPanel* panel = new wxPanel(splitter, wxID_ANY);
+
+	this->renderObjectList = new RenderObjectList(panel);
+	this->renderObjectProperties = new RenderObjectProperties(panel);
+
+	wxBoxSizer* panelSizer = new wxBoxSizer(wxVERTICAL);
+	panelSizer->Add(this->renderObjectList, 1, wxALL | wxEXPAND, 0);
+	panelSizer->Add(this->renderObjectProperties, 1, wxALL | wxEXPAND, 0);
+	panel->SetSizer(panelSizer);
+
+	wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
+	mainSizer->Add(splitter, 1, wxALL | wxEXPAND, 0);
+	this->SetSizer(mainSizer);
+
+	splitter->SplitVertically(this->canvas, panel);
+	splitter->SetSashPosition(800);
 
 	this->inTimer = false;
 	this->timer.Start(0);
@@ -139,14 +160,22 @@ void Frame::OnPreviewAsset(wxCommandEvent& event)
 		Imzadi::Reference<Imzadi::RenderObject> renderObject = game->LoadAndPlaceRenderMesh((const char*)file.c_str(), Imzadi::Vector3(0.0, 0.0, 0.0), Imzadi::Quaternion());
 		if (!renderObject)
 			errorMsg += wxString::Format("Failed to load asset: %s\n", file.c_str());
+		else
+			this->renderObjectList->AddRenderObject(renderObject.Get());
 	}
 
 	if (errorMsg.length() > 0)
 		wxMessageBox(errorMsg, "Error!", wxICON_ERROR | wxOK, this);
+
+	this->renderObjectList->UpdateListView();
 }
 
 void Frame::OnClearScene(wxCommandEvent& event)
 {
+	this->renderObjectList->Clear();
+	this->renderObjectList->UpdateListView();
+	this->renderObjectProperties->Clear();
+
 	Imzadi::Game* game = Imzadi::Game::Get();
 	game->GetScene()->Clear();
 	game->GetScene()->AddRenderObject(game->GetDebugLines());
@@ -160,6 +189,13 @@ void Frame::OnAbout(wxCommandEvent& event)
 	aboutDialogInfo.SetDescription("This program is designed to convert art program files into assets consumable by the Imzadi Game Engine.  It also provides a preview of the converted assets.");
 
 	wxAboutBox(aboutDialogInfo);
+}
+
+void Frame::OnCloseWindow(wxCloseEvent& event)
+{
+	this->renderObjectList->Clear();
+
+	wxFrame::OnCloseWindow(event);
 }
 
 void Frame::OnExit(wxCommandEvent& event)

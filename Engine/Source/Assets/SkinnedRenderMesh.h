@@ -3,6 +3,7 @@
 #include "RenderMesh.h"
 #include "Animation.h"
 #include <unordered_map>
+#include <unordered_set>
 
 namespace Imzadi
 {
@@ -35,6 +36,8 @@ namespace Imzadi
 		void DeformMesh();
 
 		Animation* GetAnimation(const std::string& animationName);
+
+		void GetAnimationNames(std::unordered_set<std::string>& animationNameSet);
 
 	private:
 		Reference<BareBuffer> bindPoseVertices;

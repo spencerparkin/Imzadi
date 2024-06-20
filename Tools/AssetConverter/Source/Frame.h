@@ -4,6 +4,8 @@
 #include <wx/timer.h>
 
 class Canvas;
+class RenderObjectList;
+class RenderObjectProperties;
 
 class Frame : public wxFrame
 {
@@ -23,6 +25,7 @@ public:
 	};
 
 	Canvas* GetCanvas() { return this->canvas; }
+	RenderObjectProperties* GetRenderObjectPropertiesControl() { return this->renderObjectProperties; }
 
 protected:
 	void OnConvertAsset(wxCommandEvent& event);
@@ -33,8 +36,11 @@ protected:
 	void OnTimer(wxTimerEvent& event);
 	void OnShowLogWindow(wxCommandEvent& event);
 	void OnUpdateUI(wxUpdateUIEvent& event);
+	void OnCloseWindow(wxCloseEvent& event);
 
 	Canvas* canvas;
+	RenderObjectList* renderObjectList;
+	RenderObjectProperties* renderObjectProperties;
 	wxTimer timer;
 	bool inTimer;
 };

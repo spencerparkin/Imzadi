@@ -153,6 +153,13 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	return true;
 }
 
+void SkinnedRenderMesh::GetAnimationNames(std::unordered_set<std::string>& animationNameSet)
+{
+	animationNameSet.clear();
+	for (auto pair : this->animationMap)
+		animationNameSet.insert(pair.first);
+}
+
 void SkinnedRenderMesh::DeformMesh()
 {
 	uint32_t numVertices = this->vertexBuffer->GetNumElements();

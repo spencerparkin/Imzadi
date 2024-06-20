@@ -25,7 +25,7 @@ ConverterApp::ConverterApp()
 		return false;
 	}
 
-	this->frame = new Frame(wxPoint(10, 10), wxSize(800, 600));
+	this->frame = new Frame(wxPoint(10, 10), wxSize(1200, 800));
 	this->frame->Show();
 	
 	Log::Get()->AddRoute("log_window", new LogWindowRoute());

@@ -13,6 +13,10 @@ set(ASSET_CONVERTER_SOURCES
     Source/Converter.h
     Source/Log.cpp
     Source/Log.h
+    Source/RenderObjectList.cpp
+    Source/RenderObjectList.h
+    Source/RenderObjectProperties.cpp
+    Source/RenderObjectProperties.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${ASSET_CONVERTER_SOURCES})
