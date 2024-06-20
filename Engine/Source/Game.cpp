@@ -275,16 +275,16 @@ DebugLines* Game::GetDebugLines()
 	this->lightSourceCamera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
 	this->lightSourceCamera->SetOrthographicParams(orthoParams);
 
-	this->shadowPassViewport.Width = 2048.0f;
-	this->shadowPassViewport.Height = 2048.0f;
+	this->shadowPassViewport.Width = 4096.0f;
+	this->shadowPassViewport.Height = 4096.0f;
 	this->shadowPassViewport.TopLeftX = 0.0f;
 	this->shadowPassViewport.TopLeftY = 0.0f;
 	this->shadowPassViewport.MinDepth = 0.0f;
 	this->shadowPassViewport.MaxDepth = 1.0f;
 
 	D3D11_TEXTURE2D_DESC shadowBufferDesc{};
-	shadowBufferDesc.Width = 2048;
-	shadowBufferDesc.Height = 2048;
+	shadowBufferDesc.Width = 4096;
+	shadowBufferDesc.Height = 4096;
 	shadowBufferDesc.MipLevels = 1;
 	shadowBufferDesc.ArraySize = 1;
 	shadowBufferDesc.Format = DXGI_FORMAT_R32_TYPELESS;
