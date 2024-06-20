@@ -2,7 +2,6 @@
 #include "Frame.h"
 #include "GamePreview.h"
 #include "Log.h"
-#include "RenderObjects/AnimatedMeshInstance.h"
 
 wxIMPLEMENT_APP(ConverterApp);
 
@@ -53,8 +52,6 @@ ConverterApp::ConverterApp()
 
 	// TODO: Shouldn't hard-code this path.
 	gamePreview->GetAssetCache()->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
-
-	Imzadi::AnimatedMeshInstance::SetRenderSkeletons(true);
 
 	return true;
 }

@@ -27,6 +27,7 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 
 	wxMenu* optionsMenu = new wxMenu();
 	optionsMenu->Append(new wxMenuItem(optionsMenu, ID_ShowLogWindow, "Show Log Window", "Remove or bring back a window showing logging output.", wxITEM_CHECK));
+	optionsMenu->Append(new wxMenuItem(optionsMenu, ID_ShowSkeleton, "Show Skeleton", "Render line-segments to illustrate the skeleton of skinned meshes being previews.", wxITEM_CHECK));
 
 	wxMenu* helpMenu = new wxMenu();
 	helpMenu->Append(new wxMenuItem(helpMenu, ID_About, "About", "Show the about-box."));
@@ -45,8 +46,10 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->Bind(wxEVT_MENU, &Frame::OnExit, this, ID_Exit);
 	this->Bind(wxEVT_MENU, &Frame::OnAbout, this, ID_About);
 	this->Bind(wxEVT_MENU, &Frame::OnShowLogWindow, this, ID_ShowLogWindow);
+	this->Bind(wxEVT_MENU, &Frame::OnShowSkeleton, this, ID_ShowSkeleton);
 	this->Bind(wxEVT_TIMER, &Frame::OnTimer, this, ID_Timer);
 	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_ShowLogWindow);
+	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_ShowSkeleton);
 	this->Bind(wxEVT_CLOSE_WINDOW, &Frame::OnCloseWindow, this);
 
 	wxSplitterWindow* mainSplitter = new wxSplitterWindow(this, wxID_ANY);
@@ -102,6 +105,11 @@ void Frame::OnShowLogWindow(wxCommandEvent& event)
 		Log::Get()->RemoveRoute("log_window");
 }
 
+void Frame::OnShowSkeleton(wxCommandEvent& event)
+{
+	Imzadi::AnimatedMeshInstance::SetRenderSkeletons(!Imzadi::AnimatedMeshInstance::GetRenderSkeletons());
+}
+
 void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 {
 	switch (event.GetId())
@@ -109,6 +117,11 @@ void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 		case ID_ShowLogWindow:
 		{
 			event.Check(Log::Get()->RouteExists("log_window"));
+			break;
+		}
+		case ID_ShowSkeleton:
+		{
+			event.Check(Imzadi::AnimatedMeshInstance::GetRenderSkeletons());
 			break;
 		}
 	}
