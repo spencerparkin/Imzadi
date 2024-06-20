@@ -4,6 +4,7 @@
 
 GameApp::GameApp(HINSTANCE instance) : Game(instance)
 {
+	lstrcpy(this->windowTitle, "Search for the Sacred Chalice of Rixx");
 }
 
 /*virtual*/ GameApp::~GameApp()
