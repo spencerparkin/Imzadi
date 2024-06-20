@@ -80,6 +80,23 @@ void Skeleton::SetRootBone(Bone* bone)
 	this->boneMapValid = false;
 }
 
+bool Skeleton::ChopRoot()
+{
+	if (!this->rootBone)
+		return false;
+
+	if (this->rootBone->GetNumChildBones() != 1)
+		return false;
+
+	Bone* childBone = this->rootBone->GetChildBone(0);
+	childBone->SetBindPoseChildToParent(this->rootBone->GetBindPoseChildToParent() * childBone->GetBindPoseChildToParent());
+	childBone->SetParentBone(nullptr);
+	this->rootBone->ClearChildBonesWithoutDelete();
+	delete this->rootBone;
+	this->rootBone = childBone;
+	return true;
+}
+
 void Skeleton::InvalidateBoneMap() const
 {
 	this->boneMapValid = false;
@@ -274,6 +291,11 @@ void Bone::DeleteAllChildBones()
 	for (Bone* bone : this->childBoneArray)
 		delete bone;
 
+	this->childBoneArray.clear();
+}
+
+void Bone::ClearChildBonesWithoutDelete()
+{
 	this->childBoneArray.clear();
 }
 

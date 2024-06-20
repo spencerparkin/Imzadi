@@ -71,6 +71,8 @@ namespace Imzadi
 
 		void DebugDraw(BoneTransformType transformType, const Transform& objectToWorld) const;
 
+		bool ChopRoot();
+
 	private:
 		Bone* rootBone;
 
@@ -100,6 +102,7 @@ namespace Imzadi
 
 		void AddChildBone(Bone* bone);
 		void DeleteAllChildBones();
+		void ClearChildBonesWithoutDelete();
 		Bone* GetChildBone(int i) { return this->childBoneArray[i]; }
 		const Bone* GetChildBone(int i) const { return this->childBoneArray[i]; }
 		size_t GetNumChildBones() const { return this->childBoneArray.size(); }

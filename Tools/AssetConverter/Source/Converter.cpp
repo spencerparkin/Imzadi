@@ -504,8 +504,6 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 			return false;
 		}
 
-		std::string error;
-
 		rapidjson::Document skeletonDoc;
 		skeletonDoc.SetObject();
 		if (!skeleton.Save(skeletonDoc))
@@ -649,6 +647,8 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 		return false;
 	}
 
+	std::string desiredRootName(rootBoneNode->mName.C_Str());
+
 	while (rootBoneNode->mParent)
 	{
 		rootBoneNode = rootBoneNode->mParent;
@@ -658,6 +658,19 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 	skeleton.SetRootBone(new Imzadi::Bone());
 	if (!this->GenerateSkeleton(skeleton.GetRootBone(), rootBoneNode, boneSet))
 		return false;
+
+	while (true)
+	{
+		Imzadi::Bone* rootBone = skeleton.GetRootBone();
+		if (rootBone->GetName() == desiredRootName)
+			break;
+
+		if (!skeleton.ChopRoot())
+		{
+			LOG("Error: Failed to chop root of skeleton tree.");
+			return false;
+		}
+	}
 
 	return true;
 }
