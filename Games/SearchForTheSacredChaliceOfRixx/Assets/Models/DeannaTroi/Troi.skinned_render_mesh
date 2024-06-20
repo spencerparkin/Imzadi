@@ -22,6 +22,8 @@
     "skeleton": "Models\\DeannaTroi\\Troi.skeleton",
     "skin_weights": "Models\\DeannaTroi\\Troi.skin_weights",
     "animations": [
+        "Animations\\Idle.animation",
+        "Animations\\Jumping.animation",
         "Animations\\Run.animation"
     ]
 }
