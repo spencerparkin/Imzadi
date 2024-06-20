@@ -162,25 +162,29 @@ Hero::Hero()
 			collisionQuery->SetShapeID(this->shapeID);
 			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
 
+			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+			if (animatedMesh)
+			{
+				Animation* animation = animatedMesh->GetAnimation();
+				if (!this->inContactWithGround)
+					animatedMesh->SetAnimation("Jumping");
+				else
+				{
+					double threshold = 1.0;
+					if (this->velocity.Length() < threshold)
+						animatedMesh->SetAnimation("Idle");
+					else
+						animatedMesh->SetAnimation("Run");
+				}
+			}
+
 			break;
 		}
 		case TickPass::MID_TICK:
 		{
 			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 			if (animatedMesh)
-			{
-				// TODO: This is just debug code.  Replace it when we're ready.
-				Controller* controller = Game::Get()->GetController("Hero");
-				if (controller)
-				{
-					if (controller->ButtonPressed(XINPUT_GAMEPAD_A))
-						animatedMesh->SetAnimation("Run");
-					else if (controller->ButtonPressed(XINPUT_GAMEPAD_B))
-						animatedMesh->SetAnimation("Walk");
-				}
-
 				animatedMesh->AdvanceAnimation(deltaTime);
-			}
 
 			break;
 		}

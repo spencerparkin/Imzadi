@@ -45,6 +45,9 @@ AnimatedMeshInstance::AnimatedMeshInstance()
 
 bool AnimatedMeshInstance::SetAnimation(const std::string& animationName)
 {
+	if (this->animation.Get() && this->animation->GetName() == animationName)
+		return true;
+
 	this->transitionalKeyFrame.Copy(this->currentKeyFrame);
 
 	this->animation.Set(this->skinnedMesh->GetAnimation(animationName));
