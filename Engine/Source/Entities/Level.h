@@ -4,6 +4,8 @@
 
 namespace Imzadi
 {
+	class Hero;
+
 	/**
 	 * An instance of this class represents the level being played in the game.
 	 */
@@ -31,6 +33,11 @@ namespace Imzadi
 		 * for what might tick in the level.
 		 */
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
+
+		/**
+		 * Override this to spawn the character being played in the level.
+		 */
+		virtual Hero* SpawnHero();
 
 		void SetLevelNumber(int levelNumber) { this->levelNumber = levelNumber; }
 		int GetLevelNumber() { return this->levelNumber; }

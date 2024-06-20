@@ -5,8 +5,12 @@ set(RIXX_SOURCES
     Source/Main.h
     Source/GameApp.cpp
     Source/GameApp.h
+    Source/GameLevel.cpp
+    Source/GameLevel.h
     Source/CustomAssetCache.cpp
     Source/CustomAssetCache.h
+    Source/Characters/DeannaTroi.cpp
+    Source/Characters/DeannaTroi.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${RIXX_SOURCES})

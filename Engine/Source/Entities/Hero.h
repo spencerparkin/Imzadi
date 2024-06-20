@@ -29,7 +29,7 @@ namespace Imzadi
 		void SetRestartLocation(const Vector3& restartLocation) { this->restartLocation = restartLocation; }
 		void SetRestartOrientation(const Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }
 
-	private:
+	protected:
 		Vector3 restartLocation;
 		Quaternion restartOrientation;
 		ShapeID shapeID;

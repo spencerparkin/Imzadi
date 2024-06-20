@@ -13,6 +13,7 @@
 #include "Collision/Query.h"
 #include "Collision/Result.h"
 #include "Collision/CollisionCache.h"
+#include "Error.h"
 
 using namespace Imzadi;
 
@@ -32,10 +33,13 @@ Hero::Hero()
 
 /*virtual*/ bool Hero::Setup()
 {
-	Game::Get()->PushControllerUser("Hero");
+	if (!this->renderMesh.Get())
+	{
+		IMZADI_ERROR("Derivatives of the Hero class need to initialize the render mesh.");
+		return false;
+	}
 
-	std::string heroModelFile = "Models/Hero/Hero_Hero.skinned_render_mesh";
-	this->renderMesh.SafeSet(Game::Get()->LoadAndPlaceRenderMesh(heroModelFile, this->restartLocation, this->restartOrientation));
+	Game::Get()->PushControllerUser("Hero");
 
 	FollowCam* followCam = Game::Get()->SpawnEntity<FollowCam>();
 	followCam->SetSubject(this);

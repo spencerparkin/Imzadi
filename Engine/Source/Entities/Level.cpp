@@ -21,6 +21,11 @@ Level::Level()
 {
 }
 
+/*virtual*/ Hero* Level::SpawnHero()
+{
+	return nullptr;
+}
+
 /*virtual*/ bool Level::Setup()
 {
 	std::string levelFile = std::format("Levels/Level{}.level", this->levelNumber);
@@ -36,7 +41,7 @@ Level::Level()
 	for (const std::string& modelFile : levelData->GetModelFilesArray())
 		Game::Get()->LoadAndPlaceRenderMesh(modelFile, Vector3(), Quaternion());
 
-	Hero* hero = Game::Get()->SpawnEntity<Hero>();
+	Hero* hero = this->SpawnHero();
 	hero->SetRestartLocation(levelData->GetPlayerStartPosition());
 	hero->SetRestartOrientation(levelData->GetPlayerStartOrientation());
 
