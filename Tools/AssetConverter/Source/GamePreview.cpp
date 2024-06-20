@@ -39,6 +39,13 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 	// The wxWidgets windowing framework will pump messages in its own way.
 }
 
+/*virtual*/ bool GamePreview::PreShutdown()
+{
+	this->animatedMesh.Reset();
+
+	return Game::PreShutdown();
+}
+
 /*virtual*/ void GamePreview::Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds)
 {
 	Game::Tick(tickPass, deltaTimeSeconds);
@@ -64,5 +71,13 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 		zAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
 		zAxis.segment.point[1].SetComponents(0.0, 0.0, 1.0);
 		debugLines->AddLine(zAxis);
+
+		if (this->animatedMesh)
+			this->animatedMesh->AdvanceAnimation(deltaTimeSeconds);
 	}
+}
+
+void GamePreview::SetAnimatingMesh(Imzadi::AnimatedMeshInstance* instance)
+{
+	this->animatedMesh.Set(instance);
 }

@@ -14,11 +14,19 @@ public:
 	void Clear();
 	void UpdateListView();
 
+	enum
+	{
+		ID_ContextMenu_PlayAnimation
+	};
+
 protected:
 	virtual wxString OnGetItemText(long item, long column) const override;
 
 	void OnItemSelected(wxListEvent& event);
+	void OnItemRightClicked(wxListEvent& event);
+	void OnPlayAnimation(wxCommandEvent& event);
 
 private:
 	std::vector<Imzadi::Reference<Imzadi::RenderObject>> renderObjectArray;
+	long contextMenuItem;
 };

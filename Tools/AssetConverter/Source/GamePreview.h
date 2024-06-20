@@ -5,6 +5,7 @@
 #include "Game.h"
 #include "assimp/scene.h"
 #include "assimp/mesh.h"
+#include "RenderObjects/AnimatedMeshInstance.h"
 
 class GamePreview : public Imzadi::Game
 {
@@ -16,4 +17,10 @@ public:
 	virtual void PumpWindowsMessages() override;
 	virtual bool PostInit() override;
 	virtual void Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds) override;
+	virtual bool PreShutdown() override;
+
+	void SetAnimatingMesh(Imzadi::AnimatedMeshInstance* instance);
+
+private:
+	Imzadi::Reference<Imzadi::AnimatedMeshInstance> animatedMesh;
 };

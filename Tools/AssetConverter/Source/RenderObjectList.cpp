@@ -3,15 +3,23 @@
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "App.h"
 #include "Frame.h"
+#include "GamePreview.h"
 #include "RenderObjectProperties.h"
 #include <format>
+#include <wx/menu.h>
+#include <wx/textdlg.h>
+#include <wx/msgdlg.h>
 
 RenderObjectList::RenderObjectList(wxWindow* parent) : wxListCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxLC_VIRTUAL | wxLC_REPORT)
 {
+	this->contextMenuItem = -1;
+
 	this->AppendColumn("Render Object", wxLIST_FORMAT_LEFT, 120);
 	this->AppendColumn("Type", wxLIST_FORMAT_LEFT, 120);
 
 	this->Bind(wxEVT_LIST_ITEM_SELECTED, &RenderObjectList::OnItemSelected, this);
+	this->Bind(wxEVT_LIST_ITEM_RIGHT_CLICK, &RenderObjectList::OnItemRightClicked, this);
+	this->Bind(wxEVT_MENU, &RenderObjectList::OnPlayAnimation, this);
 }
 
 /*virtual*/ RenderObjectList::~RenderObjectList()
@@ -27,6 +35,37 @@ void RenderObjectList::OnItemSelected(wxListEvent& event)
 		Imzadi::RenderObject* renderObject = this->renderObjectArray[item];
 		RenderObjectProperties* propertiesControl = wxGetApp().GetFrame()->GetRenderObjectPropertiesControl();
 		propertiesControl->PrintPropertiesOf(renderObject);
+	}
+}
+
+void RenderObjectList::OnItemRightClicked(wxListEvent& event)
+{
+	this->contextMenuItem = event.GetIndex();
+
+	wxMenu contextMenu;
+	contextMenu.Append(new wxMenuItem(&contextMenu, ID_ContextMenu_PlayAnimation, "Play Animation", "Play an animation on this render object."));
+
+	wxPoint pos = event.GetPoint();
+	this->PopupMenu(&contextMenu, pos);
+}
+
+void RenderObjectList::OnPlayAnimation(wxCommandEvent& event)
+{
+	Imzadi::RenderObject* renderObject = this->renderObjectArray[this->contextMenuItem];
+	auto animatedMesh = dynamic_cast<Imzadi::AnimatedMeshInstance*>(renderObject);
+	if (animatedMesh)
+	{
+		wxTextEntryDialog animationDialog(wxGetApp().GetFrame(), "Play which animation?", "Choose Animation to Play");
+		if (animationDialog.ShowModal() == wxID_OK)
+		{
+			std::string animName((const char*)animationDialog.GetValue().c_str());
+			if (!animatedMesh->SetAnimation(animName))
+				wxMessageBox(wxString::Format("No animation with name \"%s\" found.", animName.c_str()), "Error", wxICON_ERROR | wxOK, wxGetApp().GetFrame());
+			else
+			{
+				((GamePreview*)Imzadi::Game::Get())->SetAnimatingMesh(animatedMesh);
+			}
+		}
 	}
 }
 
