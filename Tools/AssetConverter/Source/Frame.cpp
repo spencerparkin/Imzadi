@@ -49,27 +49,30 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_ShowLogWindow);
 	this->Bind(wxEVT_CLOSE_WINDOW, &Frame::OnCloseWindow, this);
 
-	wxSplitterWindow* splitter = new wxSplitterWindow(this, wxID_ANY);
-	splitter->SetMinimumPaneSize(100);
+	wxSplitterWindow* mainSplitter = new wxSplitterWindow(this, wxID_ANY);
+	mainSplitter->SetMinimumPaneSize(100);
 
-	this->canvas = new Canvas(splitter);
+	this->canvas = new Canvas(mainSplitter);
 
-	wxPanel* panel = new wxPanel(splitter, wxID_ANY);
+	wxPanel* sidePanel = new wxPanel(mainSplitter);
+	wxSplitterWindow* sideSplitter = new wxSplitterWindow(sidePanel, wxID_ANY);
 
-	this->renderObjectList = new RenderObjectList(panel);
-	this->renderObjectProperties = new RenderObjectProperties(panel);
+	this->renderObjectList = new RenderObjectList(sideSplitter);
+	this->renderObjectProperties = new RenderObjectProperties(sideSplitter);
 
-	wxBoxSizer* panelSizer = new wxBoxSizer(wxVERTICAL);
-	panelSizer->Add(this->renderObjectList, 1, wxALL | wxEXPAND, 0);
-	panelSizer->Add(this->renderObjectProperties, 1, wxALL | wxEXPAND, 0);
-	panel->SetSizer(panelSizer);
+	wxBoxSizer* sideSizer = new wxBoxSizer(wxVERTICAL);
+	sideSizer->Add(sideSplitter, 1, wxALL | wxEXPAND, 0);
+	sidePanel->SetSizer(sideSizer);
 
 	wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
-	mainSizer->Add(splitter, 1, wxALL | wxEXPAND, 0);
+	mainSizer->Add(mainSplitter, 1, wxALL | wxEXPAND, 0);
 	this->SetSizer(mainSizer);
 
-	splitter->SplitVertically(this->canvas, panel);
-	splitter->SetSashPosition(800);
+	mainSplitter->SplitVertically(this->canvas, sidePanel);
+	mainSplitter->SetSashPosition(800);
+
+	sideSplitter->SplitHorizontally(this->renderObjectList, this->renderObjectProperties);
+	sideSplitter->SetSashPosition(200);
 
 	this->inTimer = false;
 	this->timer.Start(0);
