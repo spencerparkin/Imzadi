@@ -58,20 +58,15 @@ void HandleManager::Unregister(ReferenceCounted* refCounted)
 
 bool HandleManager::GetObjectFromHandle(uint32_t handle, Reference<ReferenceCounted>& ref)
 {
-	bool dereferenced = false;
 	std::lock_guard guard(this->mutex);
 	ObjectMap::iterator iter = this->objectMap.find(handle);
-	if (iter != this->objectMap.end())
+	if (iter != this->objectMap.end() && iter->second->GetRefCount() > 0)
 	{
-		ReferenceCounted* refCount = iter->second;
-		if (refCount->GetRefCount() > 0)
-		{
-			ref.Set(iter->second);
-			dereferenced = true;
-		}
+		ref.Set(iter->second);
+		return true;
 	}
 
-	return dereferenced;
+	return false;
 }
 
 /*static*/ HandleManager* HandleManager::Get()

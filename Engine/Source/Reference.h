@@ -17,13 +17,17 @@ namespace Imzadi
 	 * This class works in conjunction with the Reference class.
 	 *
 	 * Note that it is possible to create a memory leak by creating a direct or indirect
-	 * circular reference.  No attempt is made to catch or detect circular references.
+	 * circular reference.  No attempt is made here to catch or detect circular references.
 	 * You can use handles instead of references to deal with the problem of circular references.
 	 * Compare this mechanism to that of std::weak_ptr<>.
 	 *
 	 * Note that this class and the Reference class *should* be thread-safe.  I added
 	 * thread-safety as an after-thought and now only time will tell if it really is safe.
-	 * Only the very wise can see all ends, as Gandolf would say.  Sign...I have my doubts.
+	 * Only the very wise can see all ends, as Gandolf would say.  Sigh...I have my doubts.
+	 * 
+	 * I don't recommend creating and destroying reference-counted objects every frame,
+	 * if you can help it.  There is some overhead in the construction and destruction
+	 * of these objects that could add up to a significant performance hit.
 	 */
 	class IMZADI_API ReferenceCounted
 	{
@@ -166,7 +170,7 @@ namespace Imzadi
 		void SafeSet(ReferenceCounted* refCounted)
 		{
 			T* refCountedCast = dynamic_cast<T*>(refCounted);
-			assert(refCountedCast);
+			IMZADI_ASSERT(refCountedCast != nullptr);
 			if (refCountedCast)
 				this->Set(refCounted);
 		}
