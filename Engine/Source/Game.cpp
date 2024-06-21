@@ -447,12 +447,12 @@ bool Game::RecreateViews()
 	double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
 	this->lastTickTime = currentTickTime;
 
-#if defined _DEBUG
-	// This is to prevent large deltas produced as a result of
-	// being broken in the debugger.
-	if (deltaTimeSeconds >= 1.0)
+	// This can be useful while debugging, but I'm also doing this because
+	// I'm seeing the first frame's delta-time be way too big and this can
+	// cause the character to move too far in the first frame and then tunnel
+	// through the ground.
+	if (deltaTimeSeconds >= 0.1)
 		return true;
-#endif //_DEBUG
 
 	this->debugLines->Clear();
 
