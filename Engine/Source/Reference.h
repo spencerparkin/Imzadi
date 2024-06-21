@@ -23,7 +23,7 @@ namespace Imzadi
 	 *
 	 * Note that this class and the Reference class *should* be thread-safe.  I added
 	 * thread-safety as an after-thought and now only time will tell if it really is safe.
-	 * Only the very wise can see all ends, and Gandolf would say.  Sign...I have my doubts.
+	 * Only the very wise can see all ends, as Gandolf would say.  Sign...I have my doubts.
 	 */
 	class IMZADI_API ReferenceCounted
 	{
