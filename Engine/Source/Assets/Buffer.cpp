@@ -1,6 +1,6 @@
 #include "Buffer.h"
 #include "Game.h"
-#include "Error.h"
+#include "Log.h"
 #include <stdint.h>
 
 using namespace Imzadi;
@@ -23,13 +23,13 @@ Buffer::Buffer()
 {
 	if (!jsonDoc.IsObject())
 	{
-		IMZADI_ERROR("JSON data for buffer is not an object.");
+		IMZADI_LOG_ERROR("JSON data for buffer is not an object.");
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("type") || !jsonDoc["type"].IsString())
 	{
-		IMZADI_ERROR("No \"type\" field in JSON data for buffer.");
+		IMZADI_LOG_ERROR("No \"type\" field in JSON data for buffer.");
 		return false;
 	}
 
@@ -62,13 +62,13 @@ Buffer::Buffer()
 	}
 	else
 	{
-		IMZADI_ERROR("Could not decypher component type: " + componentType);
+		IMZADI_LOG_ERROR("Could not decypher component type: " + componentType);
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("stride") || !jsonDoc["stride"].IsInt())
 	{
-		IMZADI_ERROR("No \"stride\" member in JSON data.");
+		IMZADI_LOG_ERROR("No \"stride\" member in JSON data.");
 		return false;
 	}
 
@@ -77,7 +77,7 @@ Buffer::Buffer()
 
 	if (!jsonDoc.HasMember("bind") || !jsonDoc["bind"].IsString())
 	{
-		IMZADI_ERROR("No \"bind\" member in JSON data.");
+		IMZADI_LOG_ERROR("No \"bind\" member in JSON data.");
 		return false;
 	}
 
@@ -85,20 +85,20 @@ Buffer::Buffer()
 
 	if (!jsonDoc.HasMember("buffer"))
 	{
-		IMZADI_ERROR("No \"buffer\" member in JSON data.");
+		IMZADI_LOG_ERROR("No \"buffer\" member in JSON data.");
 		return false;
 	}
 
 	const rapidjson::Value& bufferValue = jsonDoc["buffer"];
 	if (!bufferValue.IsArray())
 	{
-		IMZADI_ERROR("The \"buffer\" member is not an array.");
+		IMZADI_LOG_ERROR("The \"buffer\" member is not an array.");
 		return false;
 	}
 
 	if (bufferValue.Size() == 0 || bufferValue.Size() % strideComponents != 0)
 	{
-		IMZADI_ERROR(std::format("The buffer size ({}) is zero or not divisible by the stride ({}).", bufferValue.Size(), strideComponents));
+		IMZADI_LOG_ERROR(std::format("The buffer size ({}) is zero or not divisible by the stride ({}).", bufferValue.Size(), strideComponents));
 		return false;
 	}
 
@@ -126,7 +126,7 @@ Buffer::Buffer()
 		bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
 	else
 	{
-		IMZADI_ERROR(std::format("The bind ({}) is not recognized.", bind.c_str()));
+		IMZADI_LOG_ERROR(std::format("The bind ({}) is not recognized.", bind.c_str()));
 		return false;
 	}
 
@@ -158,7 +158,7 @@ Buffer::Buffer()
 		{
 			if (!bufferComponentValue.IsFloat())
 			{
-				IMZADI_ERROR("Expected buffer component to be a float.");
+				IMZADI_LOG_ERROR("Expected buffer component to be a float.");
 				return false;
 			}
 
@@ -168,7 +168,7 @@ Buffer::Buffer()
 		{
 			if (!bufferComponentValue.IsInt())
 			{
-				IMZADI_ERROR("Expected buffer component to be a int.");
+				IMZADI_LOG_ERROR("Expected buffer component to be a int.");
 				return false;
 			}
 
@@ -178,7 +178,7 @@ Buffer::Buffer()
 		{
 			if (!bufferComponentValue.IsInt())
 			{
-				IMZADI_ERROR("Expected buffer component to be a short.");
+				IMZADI_LOG_ERROR("Expected buffer component to be a short.");
 				return false;
 			}
 
@@ -188,7 +188,7 @@ Buffer::Buffer()
 		{
 			if (!bufferComponentValue.IsInt())
 			{
-				IMZADI_ERROR("Expected buffer component to be an unsigned int.");
+				IMZADI_LOG_ERROR("Expected buffer component to be an unsigned int.");
 				return false;
 			}
 
@@ -198,7 +198,7 @@ Buffer::Buffer()
 		{
 			if (!bufferComponentValue.IsInt())
 			{
-				IMZADI_ERROR("Expected buffer component to be an unsigned short.");
+				IMZADI_LOG_ERROR("Expected buffer component to be an unsigned short.");
 				return false;
 			}
 
@@ -206,7 +206,7 @@ Buffer::Buffer()
 		}
 		else
 		{
-			IMZADI_ERROR(std::format("Component type \"{}\" unrecognized or not yet supported.", componentType.c_str()));
+			IMZADI_LOG_ERROR(std::format("Component type \"{}\" unrecognized or not yet supported.", componentType.c_str()));
 			IMZADI_ASSERT(false);
 		}
 
@@ -222,7 +222,7 @@ Buffer::Buffer()
 	HRESULT result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, &subResourceData, &this->buffer);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("CreateBuffer() failed with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("CreateBuffer() failed with error code: {}", result));
 		return false;
 	}
 
@@ -246,7 +246,7 @@ bool Buffer::GetBareBuffer(Reference<BareBuffer>& givenBareBuffer)
 		ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 		if (!deviceContext)
 		{
-			IMZADI_ERROR("Failed to get DX device context.");
+			IMZADI_LOG_ERROR("Failed to get DX device context.");
 			return false;
 		}
 
@@ -254,7 +254,7 @@ bool Buffer::GetBareBuffer(Reference<BareBuffer>& givenBareBuffer)
 		HRESULT result = deviceContext->Map(this->buffer, 0, D3D11_MAP_READ, 0, &mappedSubresource);
 		if (FAILED(result))
 		{
-			IMZADI_ERROR("Failed to map DX buffer.");
+			IMZADI_LOG_ERROR("Failed to map DX buffer.");
 			return false;
 		}
 

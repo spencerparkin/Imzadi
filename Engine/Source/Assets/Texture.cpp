@@ -1,6 +1,6 @@
 #include "Texture.h"
 #include "Game.h"
-#include "Error.h"
+#include "Log.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb/stb_image.h"
 
@@ -21,20 +21,20 @@ Texture::Texture()
 {
 	if (!jsonDoc.IsObject())
 	{
-		IMZADI_ERROR("Expected JSON doc to be an object.");
+		IMZADI_LOG_ERROR("Expected JSON doc to be an object.");
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("image_file") || !jsonDoc["image_file"].IsString())
 	{
-		IMZADI_ERROR("No \"image_file\" member in JSON data or it's not a string.");
+		IMZADI_LOG_ERROR("No \"image_file\" member in JSON data or it's not a string.");
 		return false;
 	}
 
 	std::string imageFile = jsonDoc["image_file"].GetString();
 	if (!assetCache->ResolveAssetPath(imageFile))
 	{
-		IMZADI_ERROR("Failed to resolve image path: " + imageFile);
+		IMZADI_LOG_ERROR("Failed to resolve image path: " + imageFile);
 		return false;
 	}
 
@@ -50,13 +50,13 @@ Texture::Texture()
 	unsigned char* textureData = stbi_load(imageFile.c_str(), &textureWidth, &textureHeight, &textureChannels, desiredChannels);
 	if (!textureData)
 	{
-		IMZADI_ERROR(std::format("Failed to load image {} because: {}", imageFile.c_str(), stbi_failure_reason()));
+		IMZADI_LOG_ERROR(std::format("Failed to load image {} because: {}", imageFile.c_str(), stbi_failure_reason()));
 		return false;
 	}
 
 	if (textureChannels != desiredChannels)
 	{
-		IMZADI_ERROR("Texture channels didn't match desired channels.");
+		IMZADI_LOG_ERROR("Texture channels didn't match desired channels.");
 		return false;
 	}
 
@@ -77,14 +77,14 @@ Texture::Texture()
 	HRESULT result = Game::Get()->GetDevice()->CreateTexture2D(&textureDesc, &textureSubresourceData, &this->texture);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("CreateTexture2D() failed with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("CreateTexture2D() failed with error code: {}", result));
 		return false;
 	}
 
 	result = Game::Get()->GetDevice()->CreateShaderResourceView(texture, NULL, &this->textureView);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("CreateShaderResourceView() failed with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("CreateShaderResourceView() failed with error code: {}", result));
 		return false;
 	}
 
@@ -104,7 +104,7 @@ Texture::Texture()
 	result = Game::Get()->GetDevice()->CreateSamplerState(&samplerDesc, &this->samplerState);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("CreateSamplerState() failed with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("CreateSamplerState() failed with error code: {}", result));
 		return false;
 	}
 

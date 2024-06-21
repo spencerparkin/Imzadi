@@ -1,6 +1,6 @@
 #include "CollisionShapeSet.h"
 #include "Collision/Shapes/Polygon.h"
-#include "Error.h"
+#include "Log.h"
 
 using namespace Imzadi;
 
@@ -22,14 +22,14 @@ CollisionShapeSet::CollisionShapeSet()
 
 	if (!jsonDoc.IsObject() || !jsonDoc.HasMember("shape_set"))
 	{
-		IMZADI_ERROR("JSON data has no \"shape_set\" member");
+		IMZADI_LOG_ERROR("JSON data has no \"shape_set\" member");
 		return false;
 	}
 
 	const rapidjson::Value& shapeSetValue = jsonDoc["shape_set"];
 	if (!shapeSetValue.IsArray())
 	{
-		IMZADI_ERROR("The \"shape_set\" member is not an array.");
+		IMZADI_LOG_ERROR("The \"shape_set\" member is not an array.");
 		return false;
 	}
 
@@ -39,7 +39,7 @@ CollisionShapeSet::CollisionShapeSet()
 
 		if (!shapeValue.IsObject() || !shapeValue.HasMember("type") || !shapeValue["type"].IsString())
 		{
-			IMZADI_ERROR("No \"type\" field found in shape set entry.");
+			IMZADI_LOG_ERROR("No \"type\" field found in shape set entry.");
 			return false;
 		}
 
@@ -52,7 +52,7 @@ CollisionShapeSet::CollisionShapeSet()
 
 			if (!shapeValue.HasMember("vertex_array") || !shapeValue["vertex_array"].IsArray())
 			{
-				IMZADI_ERROR("No \"vertex_array\" member found or it is not an array.");
+				IMZADI_LOG_ERROR("No \"vertex_array\" member found or it is not an array.");
 				return false;
 			}
 
@@ -62,7 +62,7 @@ CollisionShapeSet::CollisionShapeSet()
 				const rapidjson::Value& vertexValue = vertexArrayValue[j];
 				if (!vertexValue.IsArray() || vertexValue.Size() != 3)
 				{
-					IMZADI_ERROR("Expected vertex to be an array of 3.");
+					IMZADI_LOG_ERROR("Expected vertex to be an array of 3.");
 					return false;
 				}
 
@@ -75,7 +75,7 @@ CollisionShapeSet::CollisionShapeSet()
 		}
 		else
 		{
-			IMZADI_ERROR(std::format("The shape type \"{}\" is not yet supported.", shapeType.c_str()));
+			IMZADI_LOG_ERROR(std::format("The shape type \"{}\" is not yet supported.", shapeType.c_str()));
 			return false;
 		}
 	}

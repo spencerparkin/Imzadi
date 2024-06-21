@@ -4,6 +4,7 @@
 #include "GamePreview.h"
 #include "Converter.h"
 #include "Log.h"
+#include "LogWindow.h"
 #include "RenderObjectList.h"
 #include "RenderObjectProperties.h"
 #include <wx/menu.h>
@@ -99,10 +100,10 @@ void Frame::OnTimer(wxTimerEvent& event)
 
 void Frame::OnShowLogWindow(wxCommandEvent& event)
 {
-	if (!Log::Get()->RouteExists("log_window"))
-		Log::Get()->AddRoute("log_window", new LogWindowRoute());
+	if (!Imzadi::LoggingSystem::Get()->RouteExists("log_window"))
+		Imzadi::LoggingSystem::Get()->AddRoute(new LogWindowRoute());
 	else
-		Log::Get()->RemoveRoute("log_window");
+		Imzadi::LoggingSystem::Get()->RemoveRoute("log_window");
 }
 
 void Frame::OnShowSkeleton(wxCommandEvent& event)
@@ -116,7 +117,7 @@ void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 	{
 		case ID_ShowLogWindow:
 		{
-			event.Check(Log::Get()->RouteExists("log_window"));
+			event.Check(Imzadi::LoggingSystem::Get()->RouteExists("log_window"));
 			break;
 		}
 		case ID_ShowSkeleton:

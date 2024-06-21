@@ -1,6 +1,6 @@
 #include "Animation.h"
 #include "Skeleton.h"
-#include "Error.h"
+#include "Log.h"
 #include "Math/Interval.h"
 #include <algorithm>
 #include <unordered_set>
@@ -25,13 +25,13 @@ Animation::Animation()
 
 	if (!jsonDoc.IsObject())
 	{
-		IMZADI_ERROR("Given JSON doc was not an object.");
+		IMZADI_LOG_ERROR("Given JSON doc was not an object.");
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("name") || !jsonDoc["name"].IsString())
 	{
-		IMZADI_ERROR("Animation has no name.");
+		IMZADI_LOG_ERROR("Animation has no name.");
 		return false;
 	}
 
@@ -39,7 +39,7 @@ Animation::Animation()
 
 	if (!jsonDoc.HasMember("key_frame_array") || !jsonDoc["key_frame_array"].IsArray())
 	{
-		IMZADI_ERROR("No \"key_frame_array\" found in JSON.");
+		IMZADI_LOG_ERROR("No \"key_frame_array\" found in JSON.");
 		return false;
 	}
 
@@ -52,7 +52,7 @@ Animation::Animation()
 		this->keyFrameArray.push_back(keyFrame);
 		if (!keyFrame->Load(keyFrameValue))
 		{
-			IMZADI_ERROR(std::format("Failed to load key-frame {}.", i));
+			IMZADI_LOG_ERROR(std::format("Failed to load key-frame {}.", i));
 			return false;
 		}
 	}
@@ -80,7 +80,7 @@ Animation::Animation()
 		rapidjson::Value keyFrameValue;
 		if (!keyFrame->Save(keyFrameValue, jsonDoc))
 		{
-			IMZADI_ERROR("Failed to save key-frame.");
+			IMZADI_LOG_ERROR("Failed to save key-frame.");
 			return false;
 		}
 
@@ -335,13 +335,13 @@ bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 
 	if (!keyFrameValue.IsObject())
 	{
-		IMZADI_ERROR("Key-frame JSON is not an object.");
+		IMZADI_LOG_ERROR("Key-frame JSON is not an object.");
 		return false;
 	}
 
 	if (!keyFrameValue.HasMember("time") || !keyFrameValue["time"].IsFloat())
 	{
-		IMZADI_ERROR("Key-frame has no \"time\" member.");
+		IMZADI_LOG_ERROR("Key-frame has no \"time\" member.");
 		return false;
 	}
 
@@ -349,7 +349,7 @@ bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 
 	if (!keyFrameValue.HasMember("pose_info_array") || !keyFrameValue["pose_info_array"].IsArray())
 	{
-		IMZADI_ERROR("Key-frame has no \"pose_info_array\" member.");
+		IMZADI_LOG_ERROR("Key-frame has no \"pose_info_array\" member.");
 		return false;
 	}
 
@@ -374,7 +374,7 @@ bool KeyFrame::Load(const rapidjson::Value& keyFrameValue)
 
 		if (!this->AddPoseInfo(poseInfo))
 		{
-			IMZADI_ERROR(std::format("Failed to add pose info for bone \"{}\".", poseInfo.boneName.c_str()));
+			IMZADI_LOG_ERROR(std::format("Failed to add pose info for bone \"{}\".", poseInfo.boneName.c_str()));
 			return false;
 		}
 	}

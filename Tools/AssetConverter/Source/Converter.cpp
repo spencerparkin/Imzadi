@@ -24,50 +24,50 @@ Converter::Converter(const wxString& assetRootFolder)
 
 bool Converter::Convert(const wxString& assetFile, uint32_t flags)
 {
-	LOG("Converting file: %s", (const char*)assetFile.c_str());
+	IMZADI_LOG_INFO("Converting file: %s", (const char*)assetFile.c_str());
 
 	wxFileName fileName(assetFile);
 	this->assetFolder = fileName.GetPath();
-	LOG("Assets will be dumped in folder: %s", (const char*)this->assetFolder.c_str());
+	IMZADI_LOG_INFO("Assets will be dumped in folder: %s", (const char*)this->assetFolder.c_str());
 
 	this->importer.SetPropertyFloat(AI_CONFIG_GLOBAL_SCALE_FACTOR_KEY, 1.0);
 
-	LOG("Calling Ass-Imp to load file: %s", (const char*)assetFile.c_str());
+	IMZADI_LOG_INFO("Calling Ass-Imp to load file: %s", (const char*)assetFile.c_str());
 	const aiScene* scene = importer.ReadFile(assetFile.c_str(), aiProcess_GlobalScale | aiProcess_PopulateArmatureData);
 	if (!scene)
 	{
-		LOG("Import error: %s", importer.GetErrorString());
+		IMZADI_LOG_ERROR("Import error: %s", importer.GetErrorString());
 		return false;
 	}
 
 	if ((flags & Flag::CONVERT_MESHES) != 0)
 	{
-		LOG("Generating node-to-world transformation map...");
+		IMZADI_LOG_INFO("Generating node-to-world transformation map...");
 		this->nodeToWorldMap.clear();
 		if (!this->GenerateNodeToWorldMap(scene->mRootNode))
 		{
-			LOG("Failed to generate transformation map.");
+			IMZADI_LOG_ERROR("Failed to generate transformation map.");
 			return false;
 		}
 
-		LOG("Processing scene graph...");
+		IMZADI_LOG_INFO("Processing scene graph...");
 		if (!this->ProcessSceneGraph(scene, scene->mRootNode))
 		{
-			LOG("Failed to process scene graph.");
+			IMZADI_LOG_ERROR("Failed to process scene graph.");
 			return false;
 		}
 	}
 
 	if ((flags & Flag::CONVERT_ANIMATIONS) != 0)
 	{
-		LOG("Found %d animations.", scene->mNumAnimations);
+		IMZADI_LOG_INFO("Found %d animations.", scene->mNumAnimations);
 		for (int i = 0; i < scene->mNumAnimations; i++)
 		{
-			LOG("Processing animation %d of %d.", i + 1, scene->mNumAnimations);
+			IMZADI_LOG_INFO("Processing animation %d of %d.", i + 1, scene->mNumAnimations);
 			const aiAnimation* animation = scene->mAnimations[i];
 			if (!this->ProcessAnimation(scene, animation))
 			{
-				LOG("Failed to process animation.");
+				IMZADI_LOG_ERROR("Failed to process animation.");
 				return false;
 			}
 		}
@@ -205,12 +205,12 @@ bool Converter::FindNextKeyFrame(const aiAnimation* animation, double& currentTi
 		}
 
 		if (!poseInfo.childToParent.IsValid())
-			LOG("Warning: Encountered invalid child-to-parent transform!");
+			IMZADI_LOG_WARNING("Warning: Encountered invalid child-to-parent transform!");
 
 		if (findCount == 3)
 			keyFrame->AddPoseInfo(poseInfo);
 		else
-			LOG("Failed to find scale, position and translation at tick %f!", currentTick);
+			IMZADI_LOG_ERROR("Failed to find scale, position and translation at tick %f!", currentTick);
 	}
 	
 	return true;
@@ -227,14 +227,14 @@ bool Converter::GenerateNodeToWorldMap(const aiNode* node)
 		Imzadi::Transform parentNodeToWorld;
 		if (!this->GetNodeToWorldTransform(node->mParent, parentNodeToWorld))
 		{
-			LOG("Failed to find parent node's transform in the map.");
+			IMZADI_LOG_ERROR("Failed to find parent node's transform in the map.");
 			return false;
 		}
 
 		Imzadi::Transform childToParent;
 		if (!this->MakeTransform(childToParent, node->mTransformation))
 		{
-			LOG("Failed to make child-to-parent transform from node matrix.");
+			IMZADI_LOG_ERROR("Failed to make child-to-parent transform from node matrix.");
 			return false;
 		}
 
@@ -264,19 +264,19 @@ bool Converter::GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& n
 
 bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 {
-	LOG("Procesing node: %s", node->mName.C_Str());
+	IMZADI_LOG_INFO("Procesing node: %s", node->mName.C_Str());
 
 	if (node->mNumMeshes > 0)
 	{
-		LOG("Found %d meshe(s).", node->mNumMeshes);
+		IMZADI_LOG_INFO("Found %d meshe(s).", node->mNumMeshes);
 
 		for (int i = 0; i < node->mNumMeshes; i++)
 		{
-			LOG("Processing mesh %d of %d.", i + 1, node->mNumMeshes);
+			IMZADI_LOG_INFO("Processing mesh %d of %d.", i + 1, node->mNumMeshes);
 			const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 			if (!this->ProcessMesh(scene, node, mesh))
 			{
-				LOG("Mesh processing failed!");
+				IMZADI_LOG_ERROR("Mesh processing failed!");
 				return false;
 			}
 		}
@@ -294,7 +294,7 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 
 bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh)
 {
-	LOG("Processing mesh: %s", mesh->mName.C_Str());
+	IMZADI_LOG_INFO("Processing mesh: %s", mesh->mName.C_Str());
 
 	wxFileName meshFileName;
 	meshFileName.SetPath(this->assetFolder);
@@ -328,26 +328,26 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	if (scene->mNumMaterials <= mesh->mMaterialIndex)
 	{
-		LOG("Error: Bad material index: %d", mesh->mMaterialIndex);
+		IMZADI_LOG_ERROR("Error: Bad material index: %d", mesh->mMaterialIndex);
 		return false;
 	}
 
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	if (material->GetTextureCount(aiTextureType_DIFFUSE) != 1)
 	{
-		LOG("Error: Material does not have exactly one diffuse texture.");
+		IMZADI_LOG_ERROR("Error: Material does not have exactly one diffuse texture.");
 		return false;
 	}
 
 	aiString texturePath;
 	if (aiReturn_SUCCESS != material->GetTexture(aiTextureType_DIFFUSE, 0, &texturePath))
 	{
-		LOG("Failed to acquire texture path from material.");
+		IMZADI_LOG_ERROR("Failed to acquire texture path from material.");
 		return false;
 	}
 
 	wxString textureFullPath = this->assetFolder + wxString::Format("/%s", texturePath.C_Str());
-	LOG("Found texture: %s", (const char*)textureFullPath.c_str());
+	IMZADI_LOG_INFO("Found texture: %s", (const char*)textureFullPath.c_str());
 
 	rapidjson::Document textureDoc;
 	textureDoc.SetObject();
@@ -356,13 +356,13 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	if (mesh->mNumVertices == 0)
 	{
-		LOG("Error: No vertices found.");
+		IMZADI_LOG_ERROR("Error: No vertices found.");
 		return false;
 	}
 
 	if (mesh->mNumUVComponents[0] != 2)
 	{
-		LOG("Error: Expected exactly 2 UV components in first channel.");
+		IMZADI_LOG_ERROR("Error: Expected exactly 2 UV components in first channel.");
 		return false;
 	}
 
@@ -377,7 +377,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	Imzadi::Transform nodeToWorld;
 	if (!this->GetNodeToWorldTransform(node, nodeToWorld))
 	{
-		LOG("Error: Failed to get node-to-world transform for mesh node.");
+		IMZADI_LOG_ERROR("Error: Failed to get node-to-world transform for mesh node.");
 		return false;
 	}
 
@@ -434,13 +434,13 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	if (mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
 	{
-		LOG("Error: Only triangle primitive currently supported.");
+		IMZADI_LOG_ERROR("Error: Only triangle primitive currently supported.");
 		return false;
 	}
 
 	if (mesh->mNumFaces == 0)
 	{
-		LOG("Error: No faces found.");
+		IMZADI_LOG_ERROR("Error: No faces found.");
 		return false;
 	}
 
@@ -455,7 +455,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		const aiFace* face = &mesh->mFaces[i];
 		if (face->mNumIndices != 3)
 		{
-			LOG("Error: Expected exactly 3 indices in face.");
+			IMZADI_LOG_ERROR("Error: Expected exactly 3 indices in face.");
 			return false;
 		}
 
@@ -466,7 +466,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 			if (index != static_cast<unsigned int>(static_cast<unsigned short>(index)))
 			{
-				LOG("Error: Index (%d) doesn't fit in an unsigned short.", index);
+				IMZADI_LOG_ERROR("Error: Index (%d) doesn't fit in an unsigned short.", index);
 				return false;
 			}
 		}
@@ -501,7 +501,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		Imzadi::Skeleton skeleton;
 		if (!this->GenerateSkeleton(skeleton, mesh))
 		{
-			LOG("Failed to generate skeleton.");
+			IMZADI_LOG_ERROR("Failed to generate skeleton.");
 			return false;
 		}
 
@@ -509,14 +509,14 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		skeletonDoc.SetObject();
 		if (!skeleton.Save(skeletonDoc))
 		{
-			LOG("Failed to save skeleton.");
+			IMZADI_LOG_ERROR("Failed to save skeleton.");
 			return false;
 		}
 
 		Imzadi::SkinWeights skinWeights;
 		if (!this->GenerateSkinWeights(skinWeights, mesh))
 		{
-			LOG("Failed to generate skin weights.");
+			IMZADI_LOG_ERROR("Failed to generate skin weights.");
 			return false;
 		}
 
@@ -524,7 +524,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		skinWeightsDoc.SetObject();
 		if (!skinWeights.Save(skinWeightsDoc))
 		{
-			LOG("Failed to save skin-weights.");
+			IMZADI_LOG_ERROR("Failed to save skin-weights.");
 			return false;
 		}
 
@@ -583,7 +583,7 @@ void Converter::GatherApplicableAnimations(rapidjson::Value& animationsArrayValu
 	}
 	catch (std::filesystem::filesystem_error error)
 	{
-		LOG("Error: %s", error.what());
+		IMZADI_LOG_ERROR("Error: %s", error.what());
 	}
 }
 
@@ -592,14 +592,14 @@ bool Converter::IsAnimationApplicable(const wxString& animationFile, const Imzad
 	rapidjson::Document animDoc;
 	if (!this->ReadJsonFile(animDoc, animationFile))
 	{
-		LOG("Warning: Could not open file: %s", (const char*)animationFile.c_str());
+		IMZADI_LOG_WARNING("Warning: Could not open file: %s", (const char*)animationFile.c_str());
 		return false;
 	}
 
 	Imzadi::Animation animation;
 	if (!animation.Load(animDoc, nullptr))
 	{
-		LOG("Warning: Could not load animation file: %s", (const char*)animationFile.c_str());
+		IMZADI_LOG_WARNING("Warning: Could not load animation file: %s", (const char*)animationFile.c_str());
 		return false;
 	}
 
@@ -610,7 +610,7 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 {
 	if (mesh->mNumBones == 0)
 	{
-		LOG("No bones found!");
+		IMZADI_LOG_ERROR("No bones found!");
 		return false;
 	}
 
@@ -633,7 +633,7 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 				rootBoneNode = bone->mNode;
 			else
 			{
-				LOG("Error: There can be only one root bone node, but found another!");
+				IMZADI_LOG_ERROR("Error: There can be only one root bone node, but found another!");
 				return false;
 			}
 		}
@@ -644,7 +644,7 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 
 	if (!rootBoneNode)
 	{
-		LOG("Error: Did not find root bone of skeleton.");
+		IMZADI_LOG_ERROR("Error: Did not find root bone of skeleton.");
 		return false;
 	}
 
@@ -668,7 +668,7 @@ bool Converter::GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh)
 
 		if (!skeleton.ChopRoot())
 		{
-			LOG("Error: Failed to chop root of skeleton tree.");
+			IMZADI_LOG_ERROR("Error: Failed to chop root of skeleton tree.");
 			return false;
 		}
 	}
@@ -734,7 +734,7 @@ bool Converter::GenerateSkinWeights(Imzadi::SkinWeights& skinWeights, const aiMe
 
 			if (vertexWeight->mVertexId >= skinWeights.GetNumVertices())
 			{
-				LOG("Error: Vertex weight index (%d) out of range (max: %d).", vertexWeight->mVertexId, skinWeights.GetNumVertices() - 1);
+				IMZADI_LOG_ERROR("Error: Vertex weight index (%d) out of range (max: %d).", vertexWeight->mVertexId, skinWeights.GetNumVertices() - 1);
 				return false;
 			}
 
@@ -800,14 +800,14 @@ bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString
 	if (std::filesystem::exists(assetPath))
 	{
 		std::filesystem::remove(assetPath);
-		LOG("Deleted file: %s", (const char*)assetFile.c_str());
+		IMZADI_LOG_INFO("Deleted file: %s", (const char*)assetFile.c_str());
 	}
 
 	std::ofstream fileStream;
 	fileStream.open((const char*)assetFile.c_str(), std::ios::out);
 	if (!fileStream.is_open())
 	{
-		LOG("Failed to open (for writing) the file: %s", (const char*)assetFile.c_str());
+		IMZADI_LOG_ERROR("Failed to open (for writing) the file: %s", (const char*)assetFile.c_str());
 		return false;
 	}
 
@@ -815,13 +815,13 @@ bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
 	if (!jsonDoc.Accept(prettyWriter))
 	{
-		LOG("Failed to generate JSON text from JSON data for file: %s", (const char*)assetFile.c_str());
+		IMZADI_LOG_ERROR("Failed to generate JSON text from JSON data for file: %s", (const char*)assetFile.c_str());
 		return false;
 	}
 
 	fileStream << stringBuffer.GetString();
 	fileStream.close();
-	LOG("Wrote file: %s", (const char*)assetFile.c_str());
+	IMZADI_LOG_INFO("Wrote file: %s", (const char*)assetFile.c_str());
 	return true;
 }
 
@@ -831,7 +831,7 @@ bool Converter::ReadJsonFile(rapidjson::Document& jsonDoc, const wxString& asset
 	fileStream.open((const char*)assetFile.c_str(), std::ios::in);
 	if (!fileStream.is_open())
 	{
-		LOG("Failed to open (for reading) the file: %s", (const char*)assetFile.c_str());
+		IMZADI_LOG_ERROR("Failed to open (for reading) the file: %s", (const char*)assetFile.c_str());
 		return false;
 	}
 
@@ -839,9 +839,9 @@ bool Converter::ReadJsonFile(rapidjson::Document& jsonDoc, const wxString& asset
 	jsonDoc.ParseStream(streamWrapper);
 	if (jsonDoc.HasParseError())
 	{
-		LOG("Failed to parse file: %s", (const char*)assetFile.c_str());
+		IMZADI_LOG_ERROR("Failed to parse file: %s", (const char*)assetFile.c_str());
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
-		LOG("Parser error: %s", rapidjson::GetParseError_En(errorCode));
+		IMZADI_LOG_ERROR("Parser error: %s", rapidjson::GetParseError_En(errorCode));
 		return false;
 	}
 

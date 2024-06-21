@@ -1,6 +1,6 @@
 #include "Skeleton.h"
 #include "Game.h"
-#include "Error.h"
+#include "Log.h"
 
 using namespace Imzadi;
 
@@ -21,13 +21,13 @@ Skeleton::Skeleton()
 {
 	if (!jsonDoc.IsObject())
 	{
-		IMZADI_ERROR("Expected JSON doc to be an object.");
+		IMZADI_LOG_ERROR("Expected JSON doc to be an object.");
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("root_bone") || !jsonDoc["root_bone"].IsObject())
 	{
-		IMZADI_ERROR("No \"root_bone\" member found or it's not an object.");
+		IMZADI_LOG_ERROR("No \"root_bone\" member found or it's not an object.");
 		return false;
 	}
 
@@ -35,7 +35,7 @@ Skeleton::Skeleton()
 	this->SetRootBone(new Bone());
 	if (!this->rootBone->Load(rootBoneValue))
 	{
-		IMZADI_ERROR("Failed to load bone tree.");
+		IMZADI_LOG_ERROR("Failed to load bone tree.");
 		return false;
 	}
 	
@@ -55,7 +55,7 @@ Skeleton::Skeleton()
 {
 	if (!this->rootBone)
 	{
-		IMZADI_ERROR("No root bone!");
+		IMZADI_LOG_ERROR("No root bone!");
 		return false;
 	}
 
@@ -64,7 +64,7 @@ Skeleton::Skeleton()
 	rapidjson::Value rootBoneValue;
 	if (!this->rootBone->Save(rootBoneValue, &jsonDoc))
 	{
-		IMZADI_ERROR("Failed to save bone tree.");
+		IMZADI_LOG_ERROR("Failed to save bone tree.");
 		return false;
 	}
 
@@ -206,7 +206,7 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 {
 	if (!boneValue.HasMember("name") || !boneValue["name"].IsString())
 	{
-		IMZADI_ERROR("No \"name\" member found or it's not a string.");
+		IMZADI_LOG_ERROR("No \"name\" member found or it's not a string.");
 		return false;
 	}
 
@@ -214,19 +214,19 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 
 	if (!boneValue.HasMember("bind_pose_child_to_parent"))
 	{
-		IMZADI_ERROR("No \"bind_pose_child_to_parent\" member found.");
+		IMZADI_LOG_ERROR("No \"bind_pose_child_to_parent\" member found.");
 		return false;
 	}
 
 	if (!Asset::LoadTransform(boneValue["bind_pose_child_to_parent"], this->bindPose.childToParent))
 	{
-		IMZADI_ERROR("Failed to load transform from member \"bind_pose_child_to_parent\".");
+		IMZADI_LOG_ERROR("Failed to load transform from member \"bind_pose_child_to_parent\".");
 		return false;
 	}
 
 	if (!boneValue.HasMember("weightable") || !boneValue["weightable"].IsBool())
 	{
-		IMZADI_ERROR("No \"weightable\" member found or it's not a bool.");
+		IMZADI_LOG_ERROR("No \"weightable\" member found or it's not a bool.");
 		return false;
 	}
 
@@ -234,7 +234,7 @@ bool Bone::Load(const rapidjson::Value& boneValue)
 
 	if (!boneValue.HasMember("child_bone_array") || !boneValue["child_bone_array"].IsArray())
 	{
-		IMZADI_ERROR("No \"child_bone_array\" member found or it's not an array.");
+		IMZADI_LOG_ERROR("No \"child_bone_array\" member found or it's not an array.");
 		return false;
 	}
 

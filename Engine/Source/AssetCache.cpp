@@ -10,7 +10,7 @@
 #include "Assets/SkinnedRenderMesh.h"
 #include "Assets/SkinWeights.h"
 #include "Assets/Skeleton.h"
-#include "Error.h"
+#include "Log.h"
 #include "Game.h"
 #include <algorithm>
 #include <fstream>
@@ -154,14 +154,14 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 	std::string resolvedAssetFile(assetFile);
 	if (!ResolveAssetPath(resolvedAssetFile))
 	{
-		IMZADI_ERROR("Failed to resolve path: " + assetFile);
+		IMZADI_LOG_ERROR("Failed to resolve path: " + assetFile);
 		return false;
 	}
 
 	asset.Set(this->CreateBlankAssetForFileType(assetFile));
 	if (!asset)
 	{
-		IMZADI_ERROR("Failed to create blank asset type for file: " + assetFile);
+		IMZADI_LOG_ERROR("Failed to create blank asset type for file: " + assetFile);
 		return false;
 	}
 
@@ -169,7 +169,7 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 	fileStream.open(resolvedAssetFile, std::ios::in);
 	if (!fileStream.is_open())
 	{
-		IMZADI_ERROR("Failed to open (for reading) the file: " + assetFile);
+		IMZADI_LOG_ERROR("Failed to open (for reading) the file: " + assetFile);
 		return false;
 	}
 
@@ -182,7 +182,7 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 		// TODO: It would be nice if we could get line and column numbers in the error message here.
 		asset.Reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
-		IMZADI_ERROR(rapidjson::GetParseError_En(errorCode));
+		IMZADI_LOG_ERROR(rapidjson::GetParseError_En(errorCode));
 		return false;
 	}
 
@@ -208,7 +208,7 @@ bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset
 		asset.Set(this->FindAsset(assetFile));
 		if (!asset)
 		{
-			IMZADI_ERROR("No asset to save.");
+			IMZADI_LOG_ERROR("No asset to save.");
 			return false;
 		}
 	}
@@ -224,7 +224,7 @@ bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset
 	fileStream.open(assetFile, std::ios::out);
 	if (!fileStream.is_open())
 	{
-		IMZADI_ERROR("Failed to open (for writing) the file: " + assetFile);
+		IMZADI_LOG_ERROR("Failed to open (for writing) the file: " + assetFile);
 		return false;
 	}
 
@@ -232,7 +232,7 @@ bool AssetCache::SaveAsset(const std::string& assetFile, Reference<Asset>& asset
 	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
 	if (!doc.Accept(prettyWriter))
 	{
-		IMZADI_ERROR("Failed to generate JSON text from JSON data.");
+		IMZADI_LOG_ERROR("Failed to generate JSON text from JSON data.");
 		return false;
 	}
 
@@ -253,7 +253,7 @@ Asset::Asset()
 
 /*virtual*/ bool Asset::Save(rapidjson::Document& jsonDoc) const
 {
-	IMZADI_ERROR("Save no implimented.");
+	IMZADI_LOG_ERROR("Save no implimented.");
 	return false;
 }
 

@@ -2,6 +2,7 @@
 #include "Frame.h"
 #include "GamePreview.h"
 #include "Log.h"
+#include "LogWindow.h"
 
 wxIMPLEMENT_APP(ConverterApp);
 
@@ -16,31 +17,24 @@ ConverterApp::ConverterApp()
 
 /*virtual*/ bool ConverterApp::OnInit(void)
 {
-	Log::Get()->AddRoute("default", new LogFileRoute());
-
 	if (!wxApp::OnInit())
-	{
-		LOG("wxApp::OnInit() failed!");
 		return false;
-	}
 
 	this->frame = new Frame(wxPoint(10, 10), wxSize(1200, 800));
 	this->frame->Show();
-	
-	Log::Get()->AddRoute("log_window", new LogWindowRoute());
 
-	Imzadi::Error::Get()->RegisterErrorCapture("log", Log::Get());
+	Imzadi::LoggingSystem::Get()->AddRoute(new LogWindowRoute());
 
 	this->frame->SetFocus();
 
-	LOG("Initializing Imzadi Game Engine...");
+	IMZADI_LOG_INFO("Initializing Imzadi Game Engine...");
 
 	HINSTANCE instanceHandle = ::GetModuleHandle(NULL);
 	auto gamePreview = new GamePreview(instanceHandle);
 	Imzadi::Game::Set(gamePreview);
 	if (!gamePreview->Initialize())
 	{
-		LOG("Initializatoin failed!");
+		IMZADI_LOG_ERROR("Initializatoin failed!");
 
 		gamePreview->Shutdown();
 		delete gamePreview;
@@ -48,7 +42,7 @@ ConverterApp::ConverterApp()
 		return false;
 	}
 	
-	LOG("Initialization succeeded!");
+	IMZADI_LOG_INFO("Initialization succeeded!");
 
 	// TODO: Shouldn't hard-code this path.
 	gamePreview->GetAssetCache()->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
@@ -58,21 +52,21 @@ ConverterApp::ConverterApp()
 
 /*virtual*/ int ConverterApp::OnExit(void)
 {
-	LOG("Shutting down Imzadi Game Engine...");
+	IMZADI_LOG_INFO("Shutting down Imzadi Game Engine...");
 
 	Imzadi::Game* game = Imzadi::Game::Get();
 	if (game)
 	{
 		if (!game->Shutdown())
-			LOG("Shutdown failed!");
+			IMZADI_LOG_ERROR("Shutdown failed!");
 		else
-			LOG("Shutdown succeeded!");
+			IMZADI_LOG_INFO("Shutdown succeeded!");
 
 		delete game;
 		Imzadi::Game::Set(nullptr);
 	}
 
-	Log::Get()->RemoveAllRoutes();
+	Imzadi::LoggingSystem::Get()->ClearAllRoutes();
 
 	return 0;
 }

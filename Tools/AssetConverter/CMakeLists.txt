@@ -11,8 +11,8 @@ set(ASSET_CONVERTER_SOURCES
     Source/GamePreview.h
     Source/Converter.cpp
     Source/Converter.h
-    Source/Log.cpp
-    Source/Log.h
+    Source/LogWindow.cpp
+    Source/LogWindow.h
     Source/RenderObjectList.cpp
     Source/RenderObjectList.h
     Source/RenderObjectProperties.cpp

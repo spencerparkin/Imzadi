@@ -1,6 +1,6 @@
 #include "Shader.h"
 #include "Game.h"
-#include "Error.h"
+#include "Log.h"
 #include <d3dcompiler.h>
 #include <codecvt>
 #include <locale>
@@ -26,7 +26,7 @@ Shader::Shader()
 {
 	if (!jsonDoc.IsObject())
 	{
-		IMZADI_ERROR("Given JSON doc was not an object.");
+		IMZADI_LOG_ERROR("Given JSON doc was not an object.");
 		return false;
 	}
 
@@ -36,7 +36,7 @@ Shader::Shader()
 	{
 		if (!jsonDoc["vs_shader_object"].IsString() || !jsonDoc["ps_shader_object"].IsString())
 		{
-			IMZADI_ERROR("A \"vs_shader_object\" and \"ps_shader_object\" member are not both present.");
+			IMZADI_LOG_ERROR("A \"vs_shader_object\" and \"ps_shader_object\" member are not both present.");
 			return false;
 		}
 
@@ -45,13 +45,13 @@ Shader::Shader()
 
 		if (!assetCache->ResolveAssetPath(vsShaderObjFile))
 		{
-			IMZADI_ERROR("Failed to resolve path: " + vsShaderObjFile);
+			IMZADI_LOG_ERROR("Failed to resolve path: " + vsShaderObjFile);
 			return false;
 		}
 
 		if (!assetCache->ResolveAssetPath(psShaderObjFile))
 		{
-			IMZADI_ERROR("Failed to resolve path: " + psShaderObjFile);
+			IMZADI_LOG_ERROR("Failed to resolve path: " + psShaderObjFile);
 			return false;
 		}
 
@@ -61,14 +61,14 @@ Shader::Shader()
 		result = D3DReadFileToBlob(vsShaderObjFileW.c_str(), &this->vsBlob);
 		if (FAILED(result))
 		{
-			IMZADI_ERROR(std::format("Failed to read VS file blob ({}) with error code: {}", vsShaderObjFile.c_str(), result));
+			IMZADI_LOG_ERROR(std::format("Failed to read VS file blob ({}) with error code: {}", vsShaderObjFile.c_str(), result));
 			return false;
 		}
 
 		result = D3DReadFileToBlob(psShaderObjFileW.c_str(), &this->psBlob);
 		if (FAILED(result))
 		{
-			IMZADI_ERROR(std::format("Failed to read PS file blob ({}) with error code: {}", psShaderObjFile.c_str(), result));
+			IMZADI_LOG_ERROR(std::format("Failed to read PS file blob ({}) with error code: {}", psShaderObjFile.c_str(), result));
 			return false;
 		}
 	}
@@ -76,14 +76,14 @@ Shader::Shader()
 	{
 		if (!jsonDoc["shader_code"].IsString())
 		{
-			IMZADI_ERROR("No \"shader_code\" member found.");
+			IMZADI_LOG_ERROR("No \"shader_code\" member found.");
 			return false;
 		}
 
 		std::string shaderCodeFile = jsonDoc["shader_code"].GetString();
 		if (!assetCache->ResolveAssetPath(shaderCodeFile))
 		{
-			IMZADI_ERROR("Failed to resolve path: " + shaderCodeFile);
+			IMZADI_LOG_ERROR("Failed to resolve path: " + shaderCodeFile);
 			return false;
 		}
 
@@ -105,47 +105,47 @@ Shader::Shader()
 
 		if (!this->CompileShader(shaderCodeFile, vsEntryPoint, vsModel, this->vsBlob))
 		{
-			IMZADI_ERROR("VS compilation failed.");
+			IMZADI_LOG_ERROR("VS compilation failed.");
 			return false;
 		}
 
 		if (!this->CompileShader(shaderCodeFile, psEntryPoint, psModel, this->psBlob))
 		{
-			IMZADI_ERROR("PS compilation failed.");
+			IMZADI_LOG_ERROR("PS compilation failed.");
 			return false;
 		}
 	}
 
 	if (!this->vsBlob || !this->psBlob)
 	{
-		IMZADI_ERROR("Did not acquire both a VS and PS shader blob.");
+		IMZADI_LOG_ERROR("Did not acquire both a VS and PS shader blob.");
 		return false;
 	}
 
 	result = Game::Get()->GetDevice()->CreateVertexShader(this->vsBlob->GetBufferPointer(), this->vsBlob->GetBufferSize(), nullptr, &this->vertexShader);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("Failed to create VS with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("Failed to create VS with error code: {}", result));
 		return false;
 	}
 
 	result = Game::Get()->GetDevice()->CreatePixelShader(this->psBlob->GetBufferPointer(), this->psBlob->GetBufferSize(), nullptr, &this->pixelShader);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("Failed to create PS with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("Failed to create PS with error code: {}", result));
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("vs_input_layout"))
 	{
-		IMZADI_ERROR("No \"vs_input_layout\" member found.");
+		IMZADI_LOG_ERROR("No \"vs_input_layout\" member found.");
 		return false;
 	}
 
 	const rapidjson::Value& inputLayoutValue = jsonDoc["vs_input_layout"];
 	if (!inputLayoutValue.IsArray() || inputLayoutValue.Size() == 0)
 	{
-		IMZADI_ERROR("The \"vs_input_layout\" member is not an array or it is empty.");
+		IMZADI_LOG_ERROR("The \"vs_input_layout\" member is not an array or it is empty.");
 		return false;
 	}
 
@@ -154,14 +154,14 @@ Shader::Shader()
 	semanticArray.reserve(inputLayoutValue.Size());
 	if (!this->PopulateInputLayout(inputElementDescArray.get(), inputLayoutValue, semanticArray))
 	{
-		IMZADI_ERROR("Failed to populate VS input layout info.");
+		IMZADI_LOG_ERROR("Failed to populate VS input layout info.");
 		return false;
 	}
 
 	result = Game::Get()->GetDevice()->CreateInputLayout(inputElementDescArray.get(), inputLayoutValue.Size(), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &this->inputLayout);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("CreateInputLayout() call failed with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("CreateInputLayout() call failed with error code: {}", result));
 		return false;
 	}
 
@@ -183,19 +183,19 @@ Shader::Shader()
 
 			if (!constantsEntryValue.HasMember("offset") || !constantsEntryValue["offset"].IsInt())
 			{
-				IMZADI_ERROR("No \"offset\" member found or it's not an int.");
+				IMZADI_LOG_ERROR("No \"offset\" member found or it's not an int.");
 				return false;
 			}
 
 			if (!constantsEntryValue.HasMember("size") || !constantsEntryValue["size"].IsInt())
 			{
-				IMZADI_ERROR("No \"size\" member found or it's not an int.");
+				IMZADI_LOG_ERROR("No \"size\" member found or it's not an int.");
 				return false;
 			}
 
 			if (!constantsEntryValue.HasMember("type") || !constantsEntryValue["type"].IsString())
 			{
-				IMZADI_ERROR("No \"type\" member found or it's not an int.");
+				IMZADI_LOG_ERROR("No \"type\" member found or it's not an int.");
 				return false;
 			}
 
@@ -207,7 +207,7 @@ Shader::Shader()
 				constant.format = DXGI_FORMAT_R32_FLOAT;
 			else
 			{
-				IMZADI_ERROR(std::format("Did not recognize type \"{}\" or it is not yet supported.", type.c_str()));
+				IMZADI_LOG_ERROR(std::format("Did not recognize type \"{}\" or it is not yet supported.", type.c_str()));
 				return false;
 			}
 
@@ -228,19 +228,19 @@ Shader::Shader()
 			const Constant& constant = pair.second;
 			if (constant.size == 0)
 			{
-				IMZADI_ERROR("Shader constant was of size zero.");
+				IMZADI_LOG_ERROR("Shader constant was of size zero.");
 				return false;
 			}
 
 			if (constant.offset >= this->constantsBufferSize)
 			{
-				IMZADI_ERROR(std::format("Shader constant offset ({}) is out of range ([0,{}]).", constant.offset, this->constantsBufferSize - 1));
+				IMZADI_LOG_ERROR(std::format("Shader constant offset ({}) is out of range ([0,{}]).", constant.offset, this->constantsBufferSize - 1));
 				return false;
 			}
 
 			if (constant.offset + constant.size > this->constantsBufferSize)
 			{
-				IMZADI_ERROR(std::format("Shader constant at offset {} with size {} overflows the constant buffer size {}.", constant.offset, constant.size, this->constantsBufferSize));
+				IMZADI_LOG_ERROR(std::format("Shader constant at offset {} with size {} overflows the constant buffer size {}.", constant.offset, constant.size, this->constantsBufferSize));
 				return false;
 			}
 			
@@ -249,7 +249,7 @@ Shader::Shader()
 			UINT boundaryB = Align16(constant.offset + constant.size);
 			if (boundaryA != boundaryB && boundaryB < constant.offset + constant.size)
 			{
-				IMZADI_ERROR(std::format("Shader constant at offset {} with size {} straddles a 16-byte boundary.", constant.offset, constant.size));
+				IMZADI_LOG_ERROR(std::format("Shader constant at offset {} with size {} straddles a 16-byte boundary.", constant.offset, constant.size));
 				return false;
 			}
 		}
@@ -265,7 +265,7 @@ Shader::Shader()
 			result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, NULL, &this->constantsBuffer);
 			if (FAILED(result))
 			{
-				IMZADI_ERROR(std::format("CreateBuffer() call failed with error code: {}", result));
+				IMZADI_LOG_ERROR(std::format("CreateBuffer() call failed with error code: {}", result));
 				return false;
 			}
 		}
@@ -294,13 +294,13 @@ bool Shader::PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, con
 		const rapidjson::Value& inputLayoutElementValue = inputLayoutArrayValue[i];
 		if (!inputLayoutElementValue.IsObject())
 		{
-			IMZADI_ERROR(std::format("Element {} was not an object.", i));
+			IMZADI_LOG_ERROR(std::format("Element {} was not an object.", i));
 			return false;
 		}
 
 		if (!inputLayoutElementValue.HasMember("semantic") || !inputLayoutElementValue["semantic"].IsString())
 		{
-			IMZADI_ERROR("No \"semantic\" member found or it's not a string.");
+			IMZADI_LOG_ERROR("No \"semantic\" member found or it's not a string.");
 			return false;
 		}
 
@@ -313,7 +313,7 @@ bool Shader::PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, con
 
 		if (!inputLayoutElementValue.HasMember("element_format") || !inputLayoutElementValue["element_format"].IsString())
 		{
-			IMZADI_ERROR("No \"element_format\" member found or it's not a string.");
+			IMZADI_LOG_ERROR("No \"element_format\" member found or it's not a string.");
 			return false;
 		}
 
@@ -326,7 +326,7 @@ bool Shader::PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, con
 			inputElementDesc->Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
 		else
 		{
-			IMZADI_ERROR(std::format("The format \"{}\" is not recognize or not yet supported.", format.c_str()));
+			IMZADI_LOG_ERROR(std::format("The format \"{}\" is not recognize or not yet supported.", format.c_str()));
 			return false;
 		}
 
@@ -359,7 +359,7 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 		else if (result == HRESULT_FROM_WIN32(ERROR_FILE_NOT_FOUND))
 			errorMsg = "File not found!";
 
-		IMZADI_ERROR(std::format("Shader compilation of file {} failed with error code {}, because: {}", shaderFile.c_str(), result, errorMsg));
+		IMZADI_LOG_ERROR(std::format("Shader compilation of file {} failed with error code {}, because: {}", shaderFile.c_str(), result, errorMsg));
 		
 		if (errorsBlob)
 			errorsBlob->Release();

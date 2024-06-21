@@ -4,6 +4,7 @@
 #include <stdint.h>
 #include <assert.h>
 #include <unordered_map>
+#include <mutex>
 
 namespace Imzadi
 {
@@ -20,7 +21,9 @@ namespace Imzadi
 	 * You can use handles instead of references to deal with the problem of circular references.
 	 * Compare this mechanism to that of std::weak_ptr<>.
 	 *
-	 * Note that this class and the Reference class are not thread-safe.
+	 * Note that this class and the Reference class *should* be thread-safe.  I added
+	 * thread-safety as an after-thought and now only time will tell if it really is safe.
+	 * Only the very wise can see all ends, and Gandolf would say.  Sign...I have my doubts.
 	 */
 	class IMZADI_API ReferenceCounted
 	{
@@ -55,22 +58,14 @@ namespace Imzadi
 		uint32_t GetHandle() const { return this->handle; }
 
 		/**
-		 * Try to dereference the given handle into a reference-counted object.
-		 * Null is returned if the handle is invalid or if the reference-counted
-		 * object to which it once referred has already been destroyed.
-		 *
-		 * @param[in] handle This is the handle returned by GetHandle on the desired object instance.
-		 * @return A pointer to the desired reference-counted object is returned, or null if it has gone out of scope.
+		 * Return the number of referencers referencing this object.
 		 */
-		static ReferenceCounted* GetObjectFromHandle(uint32_t handle);
+		uint32_t GetRefCount() const { return this->refCount; }
 
 	private:
-		mutable uint32_t refCount;		///< This is used to keep track of how many Reference class instances are pointing to this object.
-		uint32_t handle;				///< This is used to track this object without holding onto a reference to the object.
-		static uint32_t nextHandle;		///< A new object is assigned this handle.
-
-		typedef std::unordered_map<uint32_t, ReferenceCounted*> ObjectMap;
-		static ObjectMap objectMap;		///< The set of all referenced objects is maintained here for the purpose of handle dereferencing.
+		mutable std::atomic<uint32_t> refCount;		///< This is used to keep track of how many Reference class instances are pointing to this object.
+		uint32_t handle;							///< This is used to track this object without holding onto a reference to the object.
+		static std::atomic<uint32_t> nextHandle;	///< A new object is assigned this handle.
 	};
 
 	/**
@@ -178,5 +173,36 @@ namespace Imzadi
 
 	private:
 		ReferenceCounted* refCounted;
+	};
+
+	/**
+	 * 
+	 */
+	class IMZADI_API HandleManager
+	{
+	public:
+		HandleManager();
+		virtual ~HandleManager();
+
+		void Register(ReferenceCounted* refCounted);
+		void Unregister(ReferenceCounted* refCounted);
+
+		/**
+		 * Try to dereference the given handle into a reference-counted object.
+		 * A null reference is returned if the handle is invalid, which will
+		 * happen if the reference-counted object to which it once referred has
+		 * already been destroyed.
+		 *
+		 * @param[in] handle This is the handle returned by GetHandle on the desired object instance.
+		 * @return A pointer to the desired reference-counted object is returned, or null if it has gone out of scope.
+		 */
+		bool GetObjectFromHandle(uint32_t handle, Reference<ReferenceCounted>& ref);
+
+		static HandleManager* Get();
+
+	private:
+		typedef std::unordered_map<uint32_t, ReferenceCounted*> ObjectMap;
+		ObjectMap objectMap;
+		std::mutex mutex;
 	};
 }

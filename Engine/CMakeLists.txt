@@ -16,8 +16,8 @@ set(GAME_ENGINE_SOURCES
     Source/Scene.h
     Source/Controller.cpp
     Source/Controller.h
-    Source/Error.cpp
-    Source/Error.h
+    Source/Log.cpp
+    Source/Log.h
     Source/Entities/Enemy.cpp
     Source/Entities/Enemy.h
     Source/Entities/FollowCam.cpp

@@ -2,7 +2,7 @@
 #include "Result.h"
 #include "Thread.h"
 #include "BoundingBoxTree.h"
-#include "Error.h"
+#include "Log.h"
 #include <format>
 
 using namespace Imzadi;
@@ -96,7 +96,7 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 	{
-		IMZADI_ERROR(std::format("Failed to find a shape with ID {}.", this->shapeID));
+		IMZADI_LOG_ERROR(std::format("Failed to find a shape with ID {}.", this->shapeID));
 		return nullptr;
 	}
 
@@ -125,7 +125,7 @@ CollisionQuery::CollisionQuery()
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 	{
-		IMZADI_ERROR(std::format("Failed to find a shape with ID {}.", this->shapeID));
+		IMZADI_LOG_ERROR(std::format("Failed to find a shape with ID {}.", this->shapeID));
 		return nullptr;
 	}
 	
@@ -138,7 +138,7 @@ CollisionQuery::CollisionQuery()
 	{
 		CollisionQueryResult::Free(collisionResult);
 
-		IMZADI_ERROR(std::format("Failed to calculate collision result for shape with ID {}.", this->shapeID));
+		IMZADI_LOG_ERROR(std::format("Failed to calculate collision result for shape with ID {}.", this->shapeID));
 		return nullptr;
 	}
 

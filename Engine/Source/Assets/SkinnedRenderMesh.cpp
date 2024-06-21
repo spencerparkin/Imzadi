@@ -3,7 +3,7 @@
 #include "Skeleton.h"
 #include "SkinWeights.h"
 #include "Game.h"
-#include "Error.h"
+#include "Log.h"
 
 using namespace Imzadi;
 
@@ -21,13 +21,13 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 {
 	if (!RenderMeshAsset::Load(jsonDoc, assetCache))
 	{
-		IMZADI_ERROR("Failed to load underlying render mesh of skinned mesh.");
+		IMZADI_LOG_ERROR("Failed to load underlying render mesh of skinned mesh.");
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("skeleton") || !jsonDoc["skeleton"].IsString())
 	{
-		IMZADI_ERROR("No \"skeleton\" member or it's not a string.");
+		IMZADI_LOG_ERROR("No \"skeleton\" member or it's not a string.");
 		return false;
 	}
 
@@ -35,20 +35,20 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	Reference<Asset> asset;
 	if (!assetCache->LoadAsset(skeletonFile, asset))
 	{
-		IMZADI_ERROR("Failed to load skeleton file: " + skeletonFile);
+		IMZADI_LOG_ERROR("Failed to load skeleton file: " + skeletonFile);
 		return false;
 	}
 
 	this->skeleton.SafeSet(asset.Get());
 	if (!this->skeleton)
 	{
-		IMZADI_ERROR(std::format("Whatever loaded from file {} was not a skeleton.", skeletonFile.c_str()));
+		IMZADI_LOG_ERROR(std::format("Whatever loaded from file {} was not a skeleton.", skeletonFile.c_str()));
 		return false;
 	}
 
 	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
 	{
-		IMZADI_ERROR("Failed to get bare-buffer for bind pose vertices.");
+		IMZADI_LOG_ERROR("Failed to get bare-buffer for bind pose vertices.");
 		return false;
 	}
 
@@ -56,27 +56,27 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 	if (!jsonDoc.HasMember("skin_weights") || !jsonDoc["skin_weights"].IsString())
 	{
-		IMZADI_ERROR("No \"skin_weights\" member of it's not a string.");
+		IMZADI_LOG_ERROR("No \"skin_weights\" member of it's not a string.");
 		return false;
 	}
 
 	std::string skinWeightsFile = jsonDoc["skin_weights"].GetString();
 	if (!assetCache->LoadAsset(skinWeightsFile, asset))
 	{
-		IMZADI_ERROR("Failed to load skin-weights file: " + skinWeightsFile);
+		IMZADI_LOG_ERROR("Failed to load skin-weights file: " + skinWeightsFile);
 		return false;
 	}
 
 	this->skinWeights.SafeSet(asset.Get());
 	if (!skinWeights)
 	{
-		IMZADI_ERROR(std::format("Whatever loaded from file {} was not skin-weights.", skinWeightsFile.c_str()));
+		IMZADI_LOG_ERROR(std::format("Whatever loaded from file {} was not skin-weights.", skinWeightsFile.c_str()));
 		return false;
 	}
 
 	if (!jsonDoc.HasMember("position_offset") || !jsonDoc["position_offset"].IsInt())
 	{
-		IMZADI_ERROR("No \"position_offset\" member or it's not an int.");
+		IMZADI_LOG_ERROR("No \"position_offset\" member or it's not an int.");
 		return false;
 	}
 
@@ -84,7 +84,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 	if (!jsonDoc.HasMember("normal_offset") || !jsonDoc["normal_offset"].IsInt())
 	{
-		IMZADI_ERROR("No \"normal_offset\" member or it's not an int.");
+		IMZADI_LOG_ERROR("No \"normal_offset\" member or it's not an int.");
 		return false;
 	}
 
@@ -94,13 +94,13 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 	if (this->positionOffset + 3 * sizeof(float) > strideBytes)
 	{
-		IMZADI_ERROR(std::format("The position offset {} plus size {} overflows the stride size {}.", this->positionOffset, 3 * sizeof(float), strideBytes));
+		IMZADI_LOG_ERROR(std::format("The position offset {} plus size {} overflows the stride size {}.", this->positionOffset, 3 * sizeof(float), strideBytes));
 		return false;
 	}
 
 	if (this->normalOffset + 3 * sizeof(float) > strideBytes)
 	{
-		IMZADI_ERROR(std::format("The normal offset {} plus size {} overflows the stride size {}.", this->normalOffset, 3 * sizeof(float), strideBytes));
+		IMZADI_LOG_ERROR(std::format("The normal offset {} plus size {} overflows the stride size {}.", this->normalOffset, 3 * sizeof(float), strideBytes));
 		return false;
 	}
 
@@ -114,14 +114,14 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 			const rapidjson::Value& animationValue = animationsArrayValue[i];
 			if (!animationValue.IsString())
 			{
-				IMZADI_ERROR("Expected animation entry to be a string.");
+				IMZADI_LOG_ERROR("Expected animation entry to be a string.");
 				return false;
 			}
 
 			std::string animationFile = animationValue.GetString();
 			if (!assetCache->LoadAsset(animationFile, asset))
 			{
-				IMZADI_ERROR("Failed to load animation file: " + animationFile);
+				IMZADI_LOG_ERROR("Failed to load animation file: " + animationFile);
 				return false;
 			}
 
@@ -129,13 +129,13 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 			animation.SafeSet(asset.Get());
 			if (!animation)
 			{
-				IMZADI_ERROR(std::format("Whatever loaded from file {} was not an animation.", animationFile.c_str()));
+				IMZADI_LOG_ERROR(std::format("Whatever loaded from file {} was not an animation.", animationFile.c_str()));
 				return false;
 			}
 
 			if (this->animationMap.find(animation->GetName()) != this->animationMap.end())
 			{
-				IMZADI_ERROR(std::format("The animation name \"{}\" is already used.", animation->GetName().c_str()));
+				IMZADI_LOG_ERROR(std::format("The animation name \"{}\" is already used.", animation->GetName().c_str()));
 				return false;
 			}
 
@@ -229,7 +229,7 @@ void SkinnedRenderMesh::DeformMesh()
 	HRESULT result = deviceContext->Map(this->vertexBuffer->GetBuffer(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 	if (FAILED(result))
 	{
-		IMZADI_ERROR(std::format("Skin mapping call failed with error code: {}", result));
+		IMZADI_LOG_ERROR(std::format("Skin mapping call failed with error code: {}", result));
 		return;
 	}
 

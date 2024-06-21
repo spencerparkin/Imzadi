@@ -2,19 +2,20 @@
 
 using namespace Imzadi;
 
-uint32_t ReferenceCounted::nextHandle = 1;
-ReferenceCounted::ObjectMap ReferenceCounted::objectMap;
+std::atomic<uint32_t> ReferenceCounted::nextHandle(1);
+
+//---------------------------- ReferenceCounted ----------------------------
 
 ReferenceCounted::ReferenceCounted()
 {
 	this->refCount = 0;
 	this->handle = nextHandle++;
-	this->objectMap.insert(std::pair<uint32_t, ReferenceCounted*>(this->handle, this));
+	HandleManager::Get()->Register(this);	// TODO: May need to optimize this to be O(1).
 }
 
 /*virtual*/ ReferenceCounted::~ReferenceCounted()
 {
-	this->objectMap.erase(this->handle);
+	HandleManager::Get()->Unregister(this);	// TODO: May need to optimize this to be O(1).
 }
 
 void ReferenceCounted::IncRef() const
@@ -33,11 +34,48 @@ void ReferenceCounted::DecRef() const
 	}
 }
 
-/*static*/ ReferenceCounted* ReferenceCounted::GetObjectFromHandle(uint32_t handle)
-{
-	ObjectMap::iterator iter = objectMap.find(handle);
-	if (iter == objectMap.end())
-		return nullptr;
+//---------------------------- HandleManager ----------------------------
 
-	return iter->second;
+HandleManager::HandleManager()
+{
+}
+
+/*virtual*/ HandleManager::~HandleManager()
+{
+}
+
+void HandleManager::Register(ReferenceCounted* refCounted)
+{
+	std::lock_guard guard(this->mutex);
+	this->objectMap.insert(std::pair<uint32_t, ReferenceCounted*>(refCounted->GetHandle(), refCounted));
+}
+
+void HandleManager::Unregister(ReferenceCounted* refCounted)
+{
+	std::lock_guard guard(this->mutex);
+	this->objectMap.erase(refCounted->GetHandle());
+}
+
+bool HandleManager::GetObjectFromHandle(uint32_t handle, Reference<ReferenceCounted>& ref)
+{
+	bool dereferenced = false;
+	std::lock_guard guard(this->mutex);
+	ObjectMap::iterator iter = this->objectMap.find(handle);
+	if (iter != this->objectMap.end())
+	{
+		ReferenceCounted* refCount = iter->second;
+		if (refCount->GetRefCount() > 0)
+		{
+			ref.Set(iter->second);
+			dereferenced = true;
+		}
+	}
+
+	return dereferenced;
+}
+
+/*static*/ HandleManager* HandleManager::Get()
+{
+	static HandleManager manager;
+	return &manager;
 }

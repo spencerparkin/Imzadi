@@ -13,7 +13,7 @@
 #include "Collision/Query.h"
 #include "Collision/Result.h"
 #include "Collision/CollisionCache.h"
-#include "Error.h"
+#include "Log.h"
 
 using namespace Imzadi;
 
@@ -35,7 +35,7 @@ Hero::Hero()
 {
 	if (!this->renderMesh.Get())
 	{
-		IMZADI_ERROR("Derivatives of the Hero class need to initialize the render mesh.");
+		IMZADI_LOG_ERROR("Derivatives of the Hero class need to initialize the render mesh.");
 		return false;
 	}
 
@@ -88,7 +88,9 @@ Hero::Hero()
 
 	if (this->inContactWithGround)
 	{
-		auto followCam = dynamic_cast<FollowCam*>(ReferenceCounted::GetObjectFromHandle(this->cameraHandle));
+		Reference<ReferenceCounted> followCamRef;
+		HandleManager::Get()->GetObjectFromHandle(this->cameraHandle, followCamRef);
+		auto followCam = dynamic_cast<FollowCam*>(followCamRef.Get());
 		if (!followCam)
 			return;
 
