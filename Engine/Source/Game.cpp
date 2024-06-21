@@ -8,6 +8,7 @@
 #include "Math/Transform.h"
 #include "Collision/Query.h"
 #include "Collision/Result.h"
+#include "Log.h"
 #include <format>
 #include <math.h>
 
@@ -62,9 +63,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 
 	if (!RegisterClassEx(&winClass))
 	{
-		DWORD errorCode = GetLastError();
-		std::string errorMsg = std::format("Failed to register window class!  Error code: {}", errorCode);
-		MessageBox(NULL, errorMsg.c_str(), TEXT("Error!"), MB_OK);
+		IMZADI_LOG_ERROR("Failed to register window class!  Error code: %d", GetLastError());
 		return false;
 	}
 
@@ -84,9 +83,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 
 	if (this->mainWindowHandle == NULL)
 	{
-		DWORD errorCode = GetLastError();
-		std::string errorMsg = std::format("Failed to create main window!  Error code: {}", errorCode);
-		MessageBox(NULL, errorMsg.c_str(), TEXT("Error!"), MB_OK);
+		IMZADI_LOG_ERROR("Failed to create main window!  Error code: %d", GetLastError());
 		return false;
 	}
 
@@ -161,11 +158,19 @@ DebugLines* Game::GetDebugLines()
 
 /*virtual*/ bool Game::Initialize()
 {
+	IMZADI_LOG_INFO("Initializing game...");
+
 	if (!this->PreInit())
+	{
+		IMZADI_LOG_ERROR("Pre-initialization failed.");
 		return false;
+	}
 
 	if (!this->CreateRenderWindow())
+	{
+		IMZADI_LOG_ERROR("Failed to create (or acquire) render window.");
 		return false;
+	}
 
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1 };
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
@@ -193,9 +198,7 @@ DebugLines* Game::GetDebugLines()
 
 	if (FAILED(result))
 	{
-		DWORD errorCode = GetLastError();
-		std::string errorMsg = std::format("Failed to create D3D11 device, context and swap-chain!  Error code: {}", errorCode);
-		MessageBox(NULL, errorMsg.c_str(), TEXT("Error!"), MB_OK);
+		IMZADI_LOG_ERROR("Failed to create D3D11 device, context and swap-chain!  Error code: %d", GetLastError());
 		return false;
 	}
 
@@ -223,7 +226,10 @@ DebugLines* Game::GetDebugLines()
 
 	this->windowResized = false;
 	if (!this->RecreateViews())
+	{
+		IMZADI_LOG_ERROR("Initial view creation failed.");
 		return false;
+	}
 
 	D3D11_RASTERIZER_DESC mainPassRasterizerDesc{};
 	mainPassRasterizerDesc.FillMode = D3D11_FILL_SOLID;
@@ -237,7 +243,10 @@ DebugLines* Game::GetDebugLines()
 
 	result = this->device->CreateRasterizerState(&mainPassRasterizerDesc, &this->mainPassRasterizerState);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create rasterizer state.  Error code: %d", result);
 		return false;
+	}
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
 	depthStencilDesc.DepthEnable = TRUE;
@@ -249,7 +258,10 @@ DebugLines* Game::GetDebugLines()
 
 	result = this->device->CreateDepthStencilState(&depthStencilDesc, &this->depthStencilState);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create depth stencil state.  Error code: %d", result);
 		return false;
+	}
 
 	D3D11_RASTERIZER_DESC shadowPassRasterizerDesc{};
 	shadowPassRasterizerDesc.FillMode = D3D11_FILL_SOLID;
@@ -263,7 +275,10 @@ DebugLines* Game::GetDebugLines()
 
 	result = this->device->CreateRasterizerState(&shadowPassRasterizerDesc, &this->shadowPassRasterizerState);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create rasterizer state for the shadow pass.  Error code: %d", result);
 		return false;
+	}
 
 	Camera::OrthographicParams orthoParams{};
 	orthoParams.nearClip = 0.0;
@@ -295,7 +310,10 @@ DebugLines* Game::GetDebugLines()
 	ID3D11Texture2D* shadowBuffer = nullptr;
 	result = this->device->CreateTexture2D(&shadowBufferDesc, NULL, &shadowBuffer);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create shadow buffer.  Error code: %d", result);
 		return false;
+	}
 
 	D3D11_DEPTH_STENCIL_VIEW_DESC shadowViewDesc{};
 	shadowViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -304,7 +322,10 @@ DebugLines* Game::GetDebugLines()
 
 	result = this->device->CreateDepthStencilView(shadowBuffer, &shadowViewDesc, &this->shadowBufferView);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create depth stencil view for shadow buffer.  Error code: %d", result);
 		return false;
+	}
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shadowShaderViewDesc{};
 	shadowShaderViewDesc.Format = DXGI_FORMAT_R32_FLOAT;
@@ -312,8 +333,11 @@ DebugLines* Game::GetDebugLines()
 	shadowShaderViewDesc.Texture2D.MipLevels = 1;
 
 	result = this->device->CreateShaderResourceView(shadowBuffer, &shadowShaderViewDesc, &this->shadowBufferViewForShader);
-	if(FAILED(result))
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create shader resource view for shadow buffer.  Error code: %d", result);
 		return false;
+	}
 
 	shadowBuffer->Release();
 	shadowBuffer = nullptr;
@@ -327,10 +351,16 @@ DebugLines* Game::GetDebugLines()
 
 	result = this->device->CreateSamplerState(&shadowSamplerDesc, &this->shadowBufferSamplerState);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create sampler state for shadow buffer.  Error code: %d", result);
 		return false;
+	}
 
 	if (!this->PostInit())
+	{
+		IMZADI_LOG_ERROR("Post initialization failed.");
 		return false;
+	}
 
 	this->keepRunning = true;
 	return true;
@@ -369,17 +399,26 @@ bool Game::RecreateViews()
 	{
 		result = this->swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
 		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to resize swap-chain according to new window size.  Error code: %d", result);
 			return false;
+		}
 	}
 
 	ID3D11Texture2D* backBufferTexture = nullptr;
 	result = this->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTexture);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to get back-buffer from swap-chain.  Error code: %d", result);
 		return false;
+	}
 
 	result = this->device->CreateRenderTargetView(backBufferTexture, NULL, &this->frameBufferView);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create render target view of back buffer.  Error code: %d", result);
 		return false;
+	}
 
 	D3D11_TEXTURE2D_DESC depthBufferDesc;
 	backBufferTexture->GetDesc(&depthBufferDesc);
@@ -393,11 +432,17 @@ bool Game::RecreateViews()
 	ID3D11Texture2D* depthBuffer = nullptr;
 	result = this->device->CreateTexture2D(&depthBufferDesc, NULL, &depthBuffer);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create depth buffer.  Error code: %d", result);
 		return false;
+	}
 
 	result = this->device->CreateDepthStencilView(depthBuffer, NULL, &this->depthStencilView);
 	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to depth stencil view of depth buffer.  Error code: %d", result);
 		return false;
+	}
 
 	depthBuffer->Release();
 	depthBuffer = nullptr;
@@ -411,6 +456,8 @@ bool Game::RecreateViews()
 	this->mainPassViewport.Height = FLOAT(clientRect.bottom - clientRect.top);
 	this->mainPassViewport.MinDepth = 0.0f;
 	this->mainPassViewport.MaxDepth = 1.0f;
+
+	IMZADI_LOG_INFO("Viewport dimensions: %d x %d", int(this->mainPassViewport.Width), int(this->mainPassViewport.Height));
 
 	double aspectRatio = double(mainPassViewport.Width) / double(mainPassViewport.Height);
 
