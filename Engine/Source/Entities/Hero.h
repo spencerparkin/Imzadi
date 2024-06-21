@@ -32,12 +32,14 @@ namespace Imzadi
 	protected:
 		Vector3 restartLocation;
 		Quaternion restartOrientation;
-		ShapeID shapeID;
+		ShapeID collisionShapeID;
+		ShapeID groundShapeID;
 		Reference<RenderMeshInstance> renderMesh;
 		uint32_t cameraHandle;
 		double maxMoveSpeed;
 		bool inContactWithGround;
 		TaskID boundsQueryTaskID;
 		TaskID collisionQueryTaskID;
+		TaskID groundQueryTaskID;
 	};
 }

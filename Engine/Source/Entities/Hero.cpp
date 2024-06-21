@@ -19,11 +19,13 @@ using namespace Imzadi;
 
 Hero::Hero()
 {
-	this->shapeID = 0;
+	this->collisionShapeID = 0;
+	this->groundShapeID = 0;
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
 	this->boundsQueryTaskID = 0;
 	this->collisionQueryTaskID = 0;
+	this->groundQueryTaskID = 0;
 	this->inContactWithGround = false;
 }
 
@@ -52,8 +54,8 @@ Hero::Hero()
 	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(1.0);
-	this->shapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
-	if (this->shapeID == 0)
+	this->collisionShapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
+	if (this->collisionShapeID == 0)
 		return false;
 
 	this->inContactWithGround = true;
@@ -152,17 +154,24 @@ Hero::Hero()
 			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 
 			auto command = ObjectToWorldCommand::Create();
-			command->SetShapeID(this->shapeID);
+			command->SetShapeID(this->collisionShapeID);
 			command->objectToWorld = objectToWorld;
 			collisionSystem->IssueCommand(command);
 
 			auto boundsQuery = ShapeInBoundsQuery::Create();
-			boundsQuery->SetShapeID(this->shapeID);
+			boundsQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
 
 			auto collisionQuery = CollisionQuery::Create();
-			collisionQuery->SetShapeID(this->shapeID);
+			collisionQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
+
+			if (this->groundShapeID != 0)
+			{
+				auto objectToWorldQuery = ObjectToWorldQuery::Create();
+				objectToWorldQuery->SetShapeID(this->groundShapeID);
+				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
+			}
 
 			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 			if (animatedMesh)
@@ -219,18 +228,44 @@ Hero::Hero()
 					if (collisionResult)
 					{
 						const ShapePairCollisionStatus* status = collisionResult->GetMostEgregiousCollision();
-						if (status)
+						if (!status)
 						{
-							// TODO: If the ground is moving (e.g., we're on a moving platform), then this should move us too.
-							Vector3 separationDelta = status->GetSeparationDelta(this->shapeID);
+							this->inContactWithGround = false;
+							this->groundShapeID = 0;
+						}
+						else
+						{
+							Vector3 separationDelta = status->GetSeparationDelta(this->collisionShapeID);
 							Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 							objectToWorld.translation += separationDelta;
 							this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 							this->velocity = this->velocity.RejectedFrom(separationDelta.Normalized());
-							this->inContactWithGround = true;		// TODO: How do we know it's the ground we're colliding with?  What if it's something else?
+
+							// TODO: How do we know it's the ground we're colliding with?  What if it's something else?
+							//       For now, we're going to assume it's the ground.  I'll find a way when that assumption starts to fail.
+							//       We probably need to narrow the query to only certain kinds of collisions shapes, such as those marked as the ground somehow.
+							//       This would be a useful feature of the collision system, because we may want to support attack collisions, for example.
+							this->inContactWithGround = true;
+							this->groundShapeID = status->GetOtherShape(this->collisionShapeID);
 						}
-						else
-							this->inContactWithGround = false;
+					}
+
+					collisionSystem->Free<Result>(result);
+				}
+			}
+
+			if (this->groundQueryTaskID)
+			{
+				Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
+				if (result)
+				{
+					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+					if (objectToWorldResult)
+					{
+						Vector3 groundMovementVector = objectToWorldResult->prevWorldToCurrentWorld.translation;
+						Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+						objectToWorld.translation += groundMovementVector;
+						this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 					}
 
 					collisionSystem->Free<Result>(result);

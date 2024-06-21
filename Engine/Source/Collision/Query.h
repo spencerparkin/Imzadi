@@ -126,11 +126,10 @@ namespace Imzadi
 	};
 
 	/**
-	 * Query for a collision shape's object-to-world transform.  This query is added
-	 * for completeness and perhaps debugging, but I don't see it really being needed in
-	 * practice.
+	 * Query for a collision shape's object-to-world transform, as well as
+	 * its previous object-to-world transform.
 	 * 
-	 * A TransformResult class instance is returned by this query.
+	 * An ObjectToWorldResult class instance is returned by this query.
 	 */
 	class IMZADI_API ObjectToWorldQuery : public ShapeQuery
 	{

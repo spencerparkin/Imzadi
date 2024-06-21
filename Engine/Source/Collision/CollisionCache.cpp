@@ -163,6 +163,15 @@ ShapeID ShapePairCollisionStatus::GetShapeID(int i) const
 		return this->shapeB->GetShapeID();
 }
 
+ShapeID ShapePairCollisionStatus::GetOtherShape(ShapeID shapeID) const
+{
+	if (shapeID == this->shapeA->GetShapeID())
+		return this->shapeB->GetShapeID();
+	else if (shapeID == this->shapeB->GetShapeID())
+		return this->shapeA->GetShapeID();
+	return 0;
+}
+
 Vector3 ShapePairCollisionStatus::GetSeparationDelta(ShapeID shapeID) const
 {
 	if (shapeID == this->shapeA->GetShapeID())

@@ -392,10 +392,10 @@ void Canvas::Tick()
 				system->FlushAllTasks();
 
 				Result* result = system->ObtainQueryResult(taskID);
-				auto transformResult = dynamic_cast<TransformResult*>(result);
-				if (transformResult)
+				auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+				if (objectToWorldResult)
 				{
-					Transform shapeToWorld = transformResult->transform;
+					Transform shapeToWorld = objectToWorldResult->objectToWorld;
 					Transform worldToShape;
 					worldToShape.Invert(shapeToWorld);
 
@@ -446,10 +446,10 @@ void Canvas::Tick()
 					system->FlushAllTasks();
 
 					Result* result = system->ObtainQueryResult(taskID);
-					auto transformResult = dynamic_cast<TransformResult*>(result);
-					if (transformResult)
+					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+					if (objectToWorldResult)
 					{
-						const Transform& shapeToWorld = transformResult->transform;
+						const Transform& shapeToWorld = objectToWorldResult->objectToWorld;
 						const Transform& cameraToWorld = this->camera.GetCameraToWorldTransform();
 
 						Transform worldToCamera;

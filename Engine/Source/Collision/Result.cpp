@@ -129,17 +129,24 @@ RayCastResult::RayCastResult()
 
 //-------------------------------- TransformResult --------------------------------
 
-TransformResult::TransformResult()
+ObjectToWorldResult::ObjectToWorldResult()
 {
 }
 
-/*virtual*/ TransformResult::~TransformResult()
+/*virtual*/ ObjectToWorldResult::~ObjectToWorldResult()
 {
 }
 
-/*static*/ TransformResult* TransformResult::Create()
+/*static*/ ObjectToWorldResult* ObjectToWorldResult::Create()
 {
-	return new TransformResult();
+	return new ObjectToWorldResult();
+}
+
+void ObjectToWorldResult::SetTransforms(const Transform& objectToWorld, const Transform& previousObjectToWorld)
+{
+	this->objectToWorld = objectToWorld;
+	this->previousObjectToWorld = previousObjectToWorld;
+	this->prevWorldToCurrentWorld = objectToWorld * previousObjectToWorld.Inverted();
 }
 
 //-------------------------------- CollisionQueryResult --------------------------------

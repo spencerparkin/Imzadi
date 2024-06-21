@@ -160,18 +160,22 @@ namespace Imzadi
 	};
 
 	/**
-	 * This is the result of any query expected to return a transform.
+	 * Instances of this class are results of the ObjectToWorldQuery.
 	 */
-	class IMZADI_API TransformResult : public Result
+	class IMZADI_API ObjectToWorldResult : public Result
 	{
 	public:
-		TransformResult();
-		virtual ~TransformResult();
+		ObjectToWorldResult();
+		virtual ~ObjectToWorldResult();
 
-		static TransformResult* Create();
+		static ObjectToWorldResult* Create();
+
+		void SetTransforms(const Transform& objectToWorld, const Transform& previousObjectToWorld);
 
 	public:
-		Transform transform;		///< This is the returned transform.
+		Transform objectToWorld;				///< This is the returned transform.
+		Transform previousObjectToWorld;		///< This is some additional information that can be useful.
+		Transform prevWorldToCurrentWorld;		///< This is the transform that takes the shape from it's previous world location to its current world location.
 	};
 
 	class ShapePairCollisionStatus;

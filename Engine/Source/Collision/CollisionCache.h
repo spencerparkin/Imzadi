@@ -122,6 +122,11 @@ namespace Imzadi
 		 */
 		bool AreInCollision() const { return this->inCollision; }
 
+		/**
+		 * Given one shape involved in the collision, return the other shape.
+		 */
+		ShapeID GetOtherShape(ShapeID shapeID) const;
+
 	public:
 		/**
 		 * This is used internally so that we can re-use code comparing A against B in the case of B against A.

@@ -91,6 +91,7 @@ ShapeID Shape::GetShapeID() const
 
 void Shape::SetObjectToWorldTransform(const Transform& objectToWorld)
 {
+	this->previousObjectToWorld = this->objectToWorld;
 	this->objectToWorld = objectToWorld;
 	this->GetCache()->isValid = false;
 	this->BumpRevisionNumber();
@@ -104,6 +105,11 @@ const Transform& Shape::GetObjectToWorldTransform() const
 const Transform& Shape::GetWorldToObjectTransform() const
 {
 	return this->GetCache()->worldToObject;
+}
+
+const Transform& Shape::GetPreviousObjectToWorldTransform() const
+{
+	return this->previousObjectToWorld;
 }
 
 const AxisAlignedBoundingBox& Shape::GetBoundingBox() const
