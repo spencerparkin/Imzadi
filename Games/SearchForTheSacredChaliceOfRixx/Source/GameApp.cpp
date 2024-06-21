@@ -1,6 +1,7 @@
 #include "GameApp.h"
 #include "GameLevel.h"
 #include "CustomAssetCache.h"
+#include "Log.h"
 
 GameApp::GameApp(HINSTANCE instance) : Game(instance)
 {
@@ -9,6 +10,18 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 /*virtual*/ GameApp::~GameApp()
 {
+}
+
+/*virtual*/ bool GameApp::PreInit()
+{
+	if (!Game::PreInit())
+		return false;
+
+#if defined _DEBUG
+	Imzadi::LoggingSystem::Get()->AddRoute(new Imzadi::LogConsoleRoute());
+#endif
+
+	return true;
 }
 
 /*virtual*/ bool GameApp::PostInit()
@@ -22,6 +35,15 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 	auto level = this->SpawnEntity<GameLevel>();
 	level->SetLevelNumber(1);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
+
+	return true;
+}
+
+/*virtual*/ bool GameApp::PostShutdown()
+{
+	Game::PostShutdown();
+
+	Imzadi::LoggingSystem::Get()->ClearAllRoutes();
 
 	return true;
 }
