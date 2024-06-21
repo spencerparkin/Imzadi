@@ -1,6 +1,7 @@
 #include "Log.h"
 #include <ctime>
 #include <stdarg.h>
+#include <windows.h>
 
 using namespace Imzadi;
 
@@ -162,6 +163,8 @@ LogRoute::LogRoute()
 
 LogFileRoute::LogFileRoute()
 {
+	this->SetName("log_file");
+	this->SetFilterFlags(IMZADI_LOG_ALL_FLAGS);
 }
 
 /*virtual*/ LogFileRoute::~LogFileRoute()
@@ -194,6 +197,8 @@ LogFileRoute::LogFileRoute()
 
 LogConsoleRoute::LogConsoleRoute()
 {
+	this->SetName("log_console");
+	this->SetFilterFlags(IMZADI_LOG_ALL_FLAGS);
 }
 
 /*virtual*/ LogConsoleRoute::~LogConsoleRoute()
@@ -202,8 +207,5 @@ LogConsoleRoute::LogConsoleRoute()
 
 /*virtual*/ void LogConsoleRoute::PrintLogMessage(uint32_t messageFlags, const std::string& logMessage)
 {
-	if ((messageFlags & (IMZADI_LOG_FATAL_ERROR_FLAG | IMZADI_LOG_ERROR_FLAG | IMZADI_LOG_WARNING_FLAG)) != 0)
-		fprintf(stderr, logMessage.c_str());
-	else
-		fprintf(stdout, logMessage.c_str());
+	OutputDebugStringA(logMessage.c_str());
 }
