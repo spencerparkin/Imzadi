@@ -145,6 +145,7 @@ target_link_libraries(ImzadiGameEngine PRIVATE
     d3d11.lib
     d3dcompiler.lib    
     Xinput9_1_0.lib
+    cabinet.lib
 )
 
 target_include_directories(ImzadiGameEngine PUBLIC

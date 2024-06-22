@@ -2,6 +2,7 @@
 #include "Log.h"
 #include "JsonUtils.h"
 #include "App.h"
+#include "TextureMaker.h"
 #include <wx/image.h>
 #include <wx/filename.h>
 
@@ -27,11 +28,6 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 	atlasFileName.SetName(fontName);
 	atlasFileName.SetExt("png");
 
-	wxFileName textureFileName;
-	textureFileName.SetPath(fontFolder);
-	textureFileName.SetName(fontName);
-	textureFileName.SetExt("texture");
-
 	wxFileName fontFileName;
 	fontFileName.SetPath(fontFolder);
 	fontFileName.SetName(fontName);
@@ -54,15 +50,8 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 	bool success = false;
 	while (true)
 	{
-		rapidjson::Document textureDoc;
-		textureDoc.SetObject();
-		textureDoc.AddMember("flip_vertical", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
-		textureDoc.AddMember("image_file", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(atlasFileName.GetFullPath()), textureDoc.GetAllocator()), textureDoc.GetAllocator());
-		textureDoc.AddMember("alpha_map", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
-
 		rapidjson::Document fontDoc;
 		fontDoc.SetObject();
-		fontDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureFileName.GetFullPath()), fontDoc.GetAllocator()), fontDoc.GetAllocator());
 
 		rapidjson::Value characterArrayValue;
 		characterArrayValue.SetArray();
@@ -227,10 +216,13 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 
 		fontDoc.AddMember("character_array", characterArrayValue, fontDoc.GetAllocator());
 
-		if (!JsonUtils::WriteJsonFile(fontDoc, fontFileName.GetFullPath()))
+		TextureMaker textureMaker;
+		if (!textureMaker.MakeTexture(atlasFileName.GetFullPath(), TextureMaker::Flag::ALPHA | TextureMaker::Flag::COMPRESS))
 			break;
 
-		if (!JsonUtils::WriteJsonFile(textureDoc, textureFileName.GetFullPath()))
+		fontDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureMaker.GetTextureFilePath()), fontDoc.GetAllocator()), fontDoc.GetAllocator());
+
+		if (!JsonUtils::WriteJsonFile(fontDoc, fontFileName.GetFullPath()))
 			break;
 
 		success = true;

@@ -1,5 +1,4 @@
 {
-    "texture": "..\\..\\..\\Engine\\Assets\\Fonts\\Roboto_Regular.texture",
     "character_array": [
         {
             "no_glyph": true
@@ -1522,5 +1521,6 @@
             "max_u": 0.9521484375,
             "max_v": 0.966796875
         }
-    ]
+    ],
+    "texture": "Fonts\\Roboto_Regular.texture"
 }

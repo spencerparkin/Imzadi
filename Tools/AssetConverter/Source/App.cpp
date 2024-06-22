@@ -81,12 +81,19 @@ wxString ConverterApp::GetAssetsRootFolder()
 
 wxString ConverterApp::MakeAssetFileReference(const wxString& assetFile)
 {
-	// TODO: We may actually want it to be relative to the engine folder.
-	//       We should probably iterate the asset cache paths here and
-	//       choose the one that is best.  Discard any with ".." in the front.
+	wxString relativeAssetPath = "?";
 
-	wxFileName fileName(assetFile);
-	fileName.MakeRelativeTo(this->GetAssetsRootFolder());
-	wxString relativeAssetPath = fileName.GetFullPath();
+	const std::vector<std::filesystem::path>& assetFolderArray = Imzadi::Game::Get()->GetAssetCache()->GetAssetFolderArray();
+	for (auto assetFolder : assetFolderArray)
+	{
+		wxFileName fileName(assetFile);
+		if (!fileName.MakeRelativeTo(wxString(assetFolder.c_str())))
+			continue;
+
+		relativeAssetPath = fileName.GetFullPath();
+		if (relativeAssetPath.Length() > 0 && ((const char*)relativeAssetPath.c_str())[0] != '.')
+			break;
+	}
+	
 	return relativeAssetPath;
 }

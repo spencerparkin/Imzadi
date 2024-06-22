@@ -80,6 +80,11 @@ namespace Imzadi
 		 */
 		void RemoveAssetFolder(const std::string& assetFolder);
 
+		/**
+		 * Get read-only access to the list of asset folder from which we search to find assets.
+		 */
+		const std::vector<std::filesystem::path>& GetAssetFolderArray() const { return this->assetFolderArray; }
+
 	protected:
 
 		std::string MakeKey(const std::string& assetFile);
@@ -99,7 +104,7 @@ namespace Imzadi
 		 */
 		virtual Asset* CreateBlankAssetForFileType(const std::string& assetFile);
 
-		std::vector<std::filesystem::path>* assetFolderArray;
+		std::vector<std::filesystem::path> assetFolderArray;
 
 		typedef std::unordered_map<std::string, Reference<Asset>> AssetMap;
 		AssetMap assetMap;

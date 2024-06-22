@@ -8,6 +8,7 @@
 #include "AssetCache.h"
 #include "App.h"
 #include "Frame.h"
+#include "TextureMaker.h"
 #include <wx/textdlg.h>
 
 Converter::Converter()
@@ -297,11 +298,6 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	meshFileName.SetName(mesh->mName.C_Str());
 	meshFileName.SetExt(mesh->HasBones() ? "skinned_render_mesh" : "render_mesh");
 
-	wxFileName textureFileName;
-	textureFileName.SetPath(this->assetFolder);
-	textureFileName.SetName(mesh->mName.C_Str());
-	textureFileName.SetExt("texture");
-
 	wxFileName vertexBufferFileName;
 	vertexBufferFileName.SetPath(this->assetFolder);
 	vertexBufferFileName.SetName(wxString(mesh->mName.C_Str()) + "_Vertices");
@@ -318,7 +314,6 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	meshDoc.AddMember("primitive_type", rapidjson::Value().SetString("TRIANGLE_LIST"), meshDoc.GetAllocator());
 	meshDoc.AddMember("shader", rapidjson::Value().SetString("Shaders/Standard.shader", meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("shadow_shader", rapidjson::Value().SetString("Shaders/StandardShadow.shader", meshDoc.GetAllocator()), meshDoc.GetAllocator());
-	meshDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("index_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(indexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("vertex_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(vertexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
@@ -344,11 +339,19 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	wxString textureFullPath = this->assetFolder + wxString::Format("/%s", texturePath.C_Str());
 	IMZADI_LOG_INFO("Found texture: %s", (const char*)textureFullPath.c_str());
+	TextureMaker textureMaker;
+	if (!textureMaker.MakeTexture(textureFullPath,
+					TextureMaker::Flag::COLOR |
+					TextureMaker::Flag::ALPHA |
+					TextureMaker::Flag::COMPRESS |
+					TextureMaker::Flag::MAKE_ALPHA |
+					TextureMaker::Flag::FLIP_VERTICAL))
+	{
+		IMZADI_LOG_ERROR("Failed to make texture!");
+		return false;
+	}
 
-	rapidjson::Document textureDoc;
-	textureDoc.SetObject();
-	textureDoc.AddMember("flip_vertical", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
-	textureDoc.AddMember("image_file", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureFullPath), textureDoc.GetAllocator()), textureDoc.GetAllocator());
+	meshDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureMaker.GetTextureFilePath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
 	if (mesh->mNumVertices == 0)
 	{
@@ -537,9 +540,6 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	}
 
 	if (!JsonUtils::WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
-		return false;
-
-	if (!JsonUtils::WriteJsonFile(textureDoc, textureFileName.GetFullPath()))
 		return false;
 
 	if (!JsonUtils::WriteJsonFile(verticesDoc, vertexBufferFileName.GetFullPath()))

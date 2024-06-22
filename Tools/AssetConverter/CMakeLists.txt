@@ -15,6 +15,8 @@ set(ASSET_CONVERTER_SOURCES
     Source/LogWindow.h
     Source/FontMaker.cpp
     Source/FontMaker.h
+    Source/TextureMaker.cpp
+    Source/TextureMaker.h
     Source/JsonUtils.cpp
     Source/JsonUtils.h
     Source/RenderObjectList.cpp
@@ -34,6 +36,7 @@ target_link_libraries(ImzadiAssetConverter PRIVATE
     ImzadiGameEngine
     assimp-vc143-mt.lib
     freetype.lib
+    cabinet.dll
 )
 
 target_compile_definitions(ImzadiAssetConverter PRIVATE

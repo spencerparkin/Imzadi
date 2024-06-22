@@ -27,12 +27,10 @@ using namespace Imzadi;
 
 AssetCache::AssetCache()
 {
-	this->assetFolderArray = new std::vector<std::filesystem::path>();
 }
 
 /*virtual*/ AssetCache::~AssetCache()
 {
-	delete this->assetFolderArray;
 }
 
 /*virtual*/ void AssetCache::Clear()
@@ -55,7 +53,7 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 	if (assetPath.is_absolute())
 		return std::filesystem::exists(assetPath);
 
-	for (const std::filesystem::path& assetFolder : *this->assetFolderArray)
+	for (const std::filesystem::path& assetFolder : this->assetFolderArray)
 	{		
 		std::string fullyQualifiedPath = (assetFolder / assetPath).string();
 		if (std::filesystem::exists(fullyQualifiedPath))
@@ -70,23 +68,23 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 
 void AssetCache::AddAssetFolder(const std::string& assetFolder)
 {
-	this->assetFolderArray->push_back(std::filesystem::path(assetFolder));
+	this->assetFolderArray.push_back(std::filesystem::path(assetFolder));
 }
 
 void AssetCache::RemoveAssetFolder(const std::string& assetFolder)
 {
 	std::filesystem::path givenFolder(assetFolder);
 
-	for (int i = 0; i < (signed)this->assetFolderArray->size(); i++)
+	for (int i = 0; i < (signed)this->assetFolderArray.size(); i++)
 	{
-		std::filesystem::path& existingFolder = (*this->assetFolderArray)[i];
+		std::filesystem::path& existingFolder = this->assetFolderArray[i];
 
 		if (existingFolder == assetFolder)
 		{
-			if (i < (signed)this->assetFolderArray->size() - 1)
-				(*this->assetFolderArray)[i] = (*this->assetFolderArray)[this->assetFolderArray->size() - 1];
+			if (i < (signed)this->assetFolderArray.size() - 1)
+				this->assetFolderArray[i] = this->assetFolderArray[this->assetFolderArray.size() - 1];
 			
-			this->assetFolderArray->pop_back();
+			this->assetFolderArray.pop_back();
 			return;
 		}
 	}

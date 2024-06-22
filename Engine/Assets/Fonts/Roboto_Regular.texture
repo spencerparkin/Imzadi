@@ -1,5 +1,8 @@
 {
-    "flip_vertical": true,
-    "image_file": "..\\..\\..\\Engine\\Assets\\Fonts\\Roboto_Regular.png",
-    "alpha_map": true
+    "width": 1024,
+    "height": 1024,
+    "data": "Fonts\\Roboto_Regular.texture_data",
+    "format": "A",
+    "compressed": true,
+    "compressed_size": 41906
 }

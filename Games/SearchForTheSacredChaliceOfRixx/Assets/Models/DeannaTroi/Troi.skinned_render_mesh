@@ -2,9 +2,9 @@
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
     "shadow_shader": "Shaders/StandardShadow.shader",
-    "texture": "Models\\DeannaTroi\\Troi.texture",
     "index_buffer": "Models\\DeannaTroi\\Troi_Indices.buffer",
     "vertex_buffer": "Models\\DeannaTroi\\Troi_Vertices.buffer",
+    "texture": "Models\\DeannaTroi\\DeannaTroi.texture",
     "bounding_box": {
         "min": {
             "x": -3.537841558456421,
