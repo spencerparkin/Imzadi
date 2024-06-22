@@ -1,0 +1,7 @@
+{
+    "width": 256,
+    "height": 256,
+    "data": "Textures\\AstroTurf.texture_data",
+    "format": "RGBA",
+    "compressed": true
+}

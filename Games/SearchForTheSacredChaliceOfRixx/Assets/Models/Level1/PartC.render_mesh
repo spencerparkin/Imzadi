@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level1\\PartC_Indices.buffer",
+    "vertex_buffer": "Models\\Level1\\PartC_Vertices.buffer",
+    "texture": "Textures\\Funky.texture",
+    "bounding_box": {
+        "min": {
+            "x": 2.5079689025878908,
+            "y": 27.7612361907959,
+            "z": -22.545644760131837
+        },
+        "max": {
+            "x": 22.82640838623047,
+            "y": 29.08318519592285,
+            "z": -2.8473293781280519
+        }
+    }
+}

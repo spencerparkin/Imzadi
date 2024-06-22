@@ -1,13 +1,13 @@
 {
     "static_meshes": [
-        "Models/Level1/Level1_PartA.render_mesh",
-        "Models/Level1/Level1_PartB.render_mesh",
-        "Models/Level1/Level1_PartD.render_mesh"
+        "Models/Level1/PartA.render_mesh",
+        "Models/Level1/PartB.render_mesh",
+        "Models/Level1/PartD.render_mesh"
     ],
     "static_collision": [
-        "Models/Level1/Level1_PartA.collision",
-        "Models/Level1/Level1_PartB.collision",
-        "Models/Level1/Level1_PartD.collision"
+        "Models/Level1/PartA.collision",
+        "Models/Level1/PartB.collision",
+        "Models/Level1/PartD.collision"
     ],
     "player_start_location": {
         "x": 0.0,

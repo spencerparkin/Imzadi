@@ -60,16 +60,14 @@ CollisionShapeSet::CollisionShapeSet()
 			for (int j = 0; j < vertexArrayValue.Size(); j++)
 			{
 				const rapidjson::Value& vertexValue = vertexArrayValue[j];
-				if (!vertexValue.IsArray() || vertexValue.Size() != 3)
+				
+				Vector3 vertex;
+				if (!LoadVector(vertexValue, vertex))
 				{
-					IMZADI_LOG_ERROR("Expected vertex to be an array of 3.");
+					IMZADI_LOG_ERROR("Failed to load vertex for collision shape.");
 					return false;
 				}
 
-				Vector3 vertex;
-				vertex.x = vertexValue[0].GetFloat();
-				vertex.y = vertexValue[1].GetFloat();
-				vertex.z = vertexValue[2].GetFloat();
 				polygon->AddVertex(vertex);
 			}
 		}

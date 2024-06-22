@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level1\\PartD_Indices.buffer",
+    "vertex_buffer": "Models\\Level1\\PartD_Vertices.buffer",
+    "texture": "Textures\\AstroTurf.texture",
+    "bounding_box": {
+        "min": {
+            "x": -57.27082061767578,
+            "y": 27.47344207763672,
+            "z": -195.7513427734375
+        },
+        "max": {
+            "x": 80.45147705078125,
+            "y": 63.25336456298828,
+            "z": 70.8614501953125
+        }
+    }
+}

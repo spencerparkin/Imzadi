@@ -13,13 +13,14 @@
 
 Converter::Converter()
 {
+	this->flags = 0;
 }
 
 /*virtual*/ Converter::~Converter()
 {
 }
 
-bool Converter::Convert(const wxString& assetFile, uint32_t flags)
+bool Converter::Convert(const wxString& assetFile)
 {
 	IMZADI_LOG_INFO("Converting file: %s", (const char*)assetFile.c_str());
 
@@ -37,7 +38,7 @@ bool Converter::Convert(const wxString& assetFile, uint32_t flags)
 		return false;
 	}
 
-	if ((flags & Flag::CONVERT_MESHES) != 0)
+	if ((this->flags & Flag::CONVERT_MESHES) != 0)
 	{
 		IMZADI_LOG_INFO("Generating node-to-world transformation map...");
 		this->nodeToWorldMap.clear();
@@ -55,7 +56,7 @@ bool Converter::Convert(const wxString& assetFile, uint32_t flags)
 		}
 	}
 
-	if ((flags & Flag::CONVERT_ANIMATIONS) != 0)
+	if ((this->flags & Flag::CONVERT_ANIMATIONS) != 0)
 	{
 		IMZADI_LOG_INFO("Found %d animations.", scene->mNumAnimations);
 		for (int i = 0; i < scene->mNumAnimations; i++)
@@ -339,8 +340,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	wxString textureFullPath = this->assetFolder + wxString::Format("/%s", texturePath.C_Str());
 	IMZADI_LOG_INFO("Found texture: %s", (const char*)textureFullPath.c_str());
-	TextureMaker textureMaker;
-	if (!textureMaker.MakeTexture(textureFullPath,
+	if (!this->textureMaker.MakeTexture(textureFullPath,
 					TextureMaker::Flag::COLOR |
 					TextureMaker::Flag::ALPHA |
 					TextureMaker::Flag::COMPRESS |
@@ -351,7 +351,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		return false;
 	}
 
-	meshDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureMaker.GetTextureFilePath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+	meshDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(this->textureMaker.GetTextureFilePath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
 	if (mesh->mNumVertices == 0)
 	{
@@ -475,6 +475,61 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	indicesDoc.AddMember("stride", rapidjson::Value().SetInt(1), indicesDoc.GetAllocator());
 	indicesDoc.AddMember("type", rapidjson::Value().SetString("ushort", indicesDoc.GetAllocator()), indicesDoc.GetAllocator());
 	indicesDoc.AddMember("buffer", indexBufferValue, indicesDoc.GetAllocator());
+
+	if ((this->flags & Flag::MAKE_COLLISION) != 0)
+	{
+		wxFileName collisionFileName;
+		collisionFileName.SetPath(this->assetFolder);
+		collisionFileName.SetName(mesh->mName.C_Str());
+		collisionFileName.SetExt("collision");
+
+		rapidjson::Document collisionDoc;
+		collisionDoc.SetObject();
+
+		rapidjson::Value shapeSetValue;
+		shapeSetValue.SetArray();
+
+		for (int i = 0; i < mesh->mNumFaces; i++)
+		{
+			const aiFace* face = &mesh->mFaces[i];
+
+			rapidjson::Value collisionPolygonValue;
+			collisionPolygonValue.SetObject();
+			collisionPolygonValue.AddMember("type", rapidjson::Value().SetString("polygon", collisionDoc.GetAllocator()), collisionDoc.GetAllocator());
+
+			rapidjson::Value vertexArrayValue;
+			vertexArrayValue.SetArray();
+
+			for (int j = 0; j < face->mNumIndices; j++)
+			{
+				Imzadi::Vector3 vertex;
+
+				unsigned int k = face->mIndices[j];
+				if (k >= mesh->mNumVertices)
+				{
+					IMZADI_LOG_ERROR("Index out of range!");
+					return false;
+				}
+
+				this->MakeVector(vertex, mesh->mVertices[k]);
+				vertex = nodeToWorld.TransformPoint(vertex);
+
+				rapidjson::Value vertexValue;
+				Imzadi::Asset::SaveVector(vertexValue, vertex, &collisionDoc);
+
+				vertexArrayValue.PushBack(vertexValue, collisionDoc.GetAllocator());
+			}
+
+			collisionPolygonValue.AddMember("vertex_array", vertexArrayValue, collisionDoc.GetAllocator());
+
+			shapeSetValue.PushBack(collisionPolygonValue, collisionDoc.GetAllocator());
+		}
+
+		collisionDoc.AddMember("shape_set", shapeSetValue, collisionDoc.GetAllocator());
+
+		if (!JsonUtils::WriteJsonFile(collisionDoc, collisionFileName.GetFullPath()))
+			return false;
+	}
 
 	if (mesh->HasBones())
 	{

@@ -16,12 +16,28 @@ TextureMaker::TextureMaker()
 bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 {
 	wxFileName fileName(imageFilePath);
+
+	if (!fileName.Normalize())
+	{
+		IMZADI_LOG_ERROR("Failed to normalized image file path: %s", (const char*)imageFilePath.c_str());
+		return false;
+	}
+
 	wxString imageFolder = fileName.GetPath();
 	wxString imageName = fileName.GetName();
 
 	this->textureFileName.SetPath(imageFolder);
 	this->textureFileName.SetName(imageName);
 	this->textureFileName.SetExt("texture");
+
+	// If we already made the texture, then there is no need to make it again.
+	// A texture can be referenced multiple times across assets, of course.
+	std::string key((const char*)textureFileName.GetFullPath().MakeLower().c_str());
+	if ((flags & Flag::ALWAYS_MAKE) == 0 && this->madeTextureSet.find(key) != this->madeTextureSet.end())
+	{
+		IMZADI_LOG_INFO("Already made texture: %s", (const char*)textureFileName.GetFullPath().c_str());
+		return true;
+	}
 
 	wxFileName textureDataFileName;
 	textureDataFileName.SetPath(imageFolder);
@@ -146,6 +162,7 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 	if (!JsonUtils::WriteJsonFile(textureDoc, this->textureFileName.GetFullPath()))
 		return false;
 
+	this->madeTextureSet.insert(key);
 	return true;
 }
 

@@ -13,6 +13,7 @@
 #include "Assets/SkinWeights.h"
 #include "Assets/Animation.h"
 #include "JsonUtils.h"
+#include "TextureMaker.h"
 #include <unordered_set>
 #include <unordered_map>
 
@@ -25,10 +26,14 @@ public:
 	enum Flag
 	{
 		CONVERT_MESHES		= 0x00000001,
-		CONVERT_ANIMATIONS	= 0x00000002
+		CONVERT_ANIMATIONS	= 0x00000002,
+		MAKE_COLLISION		= 0x00000004
 	};
 
-	bool Convert(const wxString& assetFile, uint32_t flags);
+	void SetFlags(uint32_t flags) { this->flags = flags; }
+	uint32_t GetFlags() const { return this->flags; }
+
+	bool Convert(const wxString& assetFile);
 
 private:
 
@@ -52,4 +57,6 @@ private:
 	Assimp::Importer importer;
 	wxString assetFolder;
 	std::unordered_map<const aiNode*, Imzadi::Transform> nodeToWorldMap;
+	TextureMaker textureMaker;
+	uint32_t flags;
 };

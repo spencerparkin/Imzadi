@@ -1,6 +1,6 @@
 {
-    "mesh": "Models/Level1/Level1_PartC.render_mesh",
-    "collision": "Models/Level1/Level1_PartC.collision",
+    "mesh": "Models/Level1/PartC.render_mesh",
+    "collision": "Models/Level1/PartC.collision",
     "spline_deltas": [
         {
             "x": 0.0,

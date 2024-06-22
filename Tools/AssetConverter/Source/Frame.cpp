@@ -158,6 +158,7 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 			wxArrayString choiceArray;
 			choiceArray.Add("Meshes");
 			choiceArray.Add("Animations");
+			choiceArray.Add("Collision");
 			wxMultiChoiceDialog choiceDialog(this, wxString::Format("Import what from file %s?", fileName.GetName().c_str()), "What to Export", choiceArray);
 			if (choiceDialog.ShowModal() != wxID_OK)
 				return;
@@ -171,9 +172,12 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 					flags |= Converter::Flag::CONVERT_MESHES;
 				else if (selection == "Animations")
 					flags |= Converter::Flag::CONVERT_ANIMATIONS;
+				else if (selection == "Collision")
+					flags |= Converter::Flag::MAKE_COLLISION;
 			}
 
-			converter.Convert(file, flags);
+			converter.SetFlags(flags);
+			converter.Convert(file);
 		}
 	}
 }
