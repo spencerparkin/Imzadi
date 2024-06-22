@@ -3,6 +3,7 @@
 #include "GamePreview.h"
 #include "Log.h"
 #include "LogWindow.h"
+#include <wx/filename.h>
 
 wxIMPLEMENT_APP(ConverterApp);
 
@@ -19,6 +20,8 @@ ConverterApp::ConverterApp()
 {
 	if (!wxApp::OnInit())
 		return false;
+
+	wxInitAllImageHandlers();
 
 	this->frame = new Frame(wxPoint(10, 10), wxSize(1200, 800));
 	this->frame->Show();
@@ -44,8 +47,7 @@ ConverterApp::ConverterApp()
 	
 	IMZADI_LOG_INFO("Initialization succeeded!");
 
-	// TODO: Shouldn't hard-code this path.
-	gamePreview->GetAssetCache()->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
+	gamePreview->GetAssetCache()->AddAssetFolder((const char*)this->GetAssetsRootFolder().c_str());
 
 	return true;
 }
@@ -69,4 +71,22 @@ ConverterApp::ConverterApp()
 	Imzadi::LoggingSystem::Get()->ClearAllRoutes();
 
 	return 0;
+}
+
+wxString ConverterApp::GetAssetsRootFolder()
+{
+	// TODO: Shouldn't hard-code this path.
+	return R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)";
+}
+
+wxString ConverterApp::MakeAssetFileReference(const wxString& assetFile)
+{
+	// TODO: We may actually want it to be relative to the engine folder.
+	//       We should probably iterate the asset cache paths here and
+	//       choose the one that is best.  Discard any with ".." in the front.
+
+	wxFileName fileName(assetFile);
+	fileName.MakeRelativeTo(this->GetAssetsRootFolder());
+	wxString relativeAssetPath = fileName.GetFullPath();
+	return relativeAssetPath;
 }

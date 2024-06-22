@@ -12,15 +12,14 @@
 #include "Assets/Skeleton.h"
 #include "Assets/SkinWeights.h"
 #include "Assets/Animation.h"
-#include "rapidjson/document.h"
-#include "rapidjson/prettywriter.h"
+#include "JsonUtils.h"
 #include <unordered_set>
 #include <unordered_map>
 
 class Converter
 {
 public:
-	Converter(const wxString& assetRootFolder);
+	Converter();
 	virtual ~Converter();
 	
 	enum Flag
@@ -43,9 +42,6 @@ private:
 	bool MakeVector(Imzadi::Vector3& vectorOut, const aiVector3D& vectorIn);
 	bool MakeTexCoords(Imzadi::Vector2& texCoordsOut, const aiVector3D& texCoordsIn);
 	bool MakeQuat(Imzadi::Quaternion& quaternionOut, const aiQuaternion& quaternionIn);
-	wxString MakeAssetFileReference(const wxString& assetFile);
-	bool WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile);
-	bool ReadJsonFile(rapidjson::Document& jsonDoc, const wxString& assetFile);
 	bool FindParentBones(const aiNode* boneNode, std::unordered_set<const aiNode*>& boneSet);
 	bool GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& nodeToWorld);
 	bool ProcessAnimation(const aiScene* scene, const aiAnimation* animation);
@@ -55,6 +51,5 @@ private:
 
 	Assimp::Importer importer;
 	wxString assetFolder;
-	wxString assetRootFolder;
 	std::unordered_map<const aiNode*, Imzadi::Transform> nodeToWorldMap;
 };

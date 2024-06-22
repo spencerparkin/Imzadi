@@ -7,6 +7,7 @@
 #include "LogWindow.h"
 #include "RenderObjectList.h"
 #include "RenderObjectProperties.h"
+#include "FontMaker.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
@@ -15,6 +16,7 @@
 #include <wx/choicdlg.h>
 #include <wx/splitter.h>
 #include <wx/panel.h>
+#include <wx/filename.h>
 
 Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY, "Imzadi Asset Converter", pos, size), timer(this, ID_Timer)
 {
@@ -130,35 +132,50 @@ void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 
 void Frame::OnConvertAsset(wxCommandEvent& event)
 {
-	wxFileDialog fileDialog(this, "Choose file(s) to convert.", wxEmptyString, wxEmptyString, "Any file (*.*)|*.*", wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
+	wxFileDialog fileDialog(this, "Choose file(s) to convert.  "
+		"Note that for dynamic meshes, they must be exported in bind-pose.  "
+		"For animations, they must be exported with the animation applied.",
+		wxEmptyString, wxEmptyString, "Any file (*.*)|*.*", wxFD_MULTIPLE | wxFD_FILE_MUST_EXIST);
 	if (fileDialog.ShowModal() != wxID_OK)
 		return;
-	
-	wxArrayString choiceArray;
-	choiceArray.Add("Meshes");
-	choiceArray.Add("Animations");
-	wxMultiChoiceDialog choiceDialog(this, "Export what?", "What to Export", choiceArray);
-	if (choiceDialog.ShowModal() != wxID_OK)
-		return;
 
-	uint32_t flags = 0;
-	wxArrayInt selectionArray = choiceDialog.GetSelections();
-	for (int i = 0; i < selectionArray.size(); i++)
-	{
-		const wxString& selection = choiceArray[selectionArray[i]];
-		if (selection == "Meshes")
-			flags |= Converter::Flag::CONVERT_MESHES;
-		else if (selection == "Animations")
-			flags |= Converter::Flag::CONVERT_ANIMATIONS;
-	}
-
-	// TODO: Shouldn't hard-code this path.
-	Converter converter(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");
+	Converter converter;
+	FontMaker fontMaker;
 
 	wxArrayString fileArray;
 	fileDialog.GetPaths(fileArray);
 	for (const wxString& file : fileArray)
-		converter.Convert(file, flags);
+	{
+		wxFileName fileName(file);
+		wxString ext = fileName.GetExt().Lower();
+
+		if (ext == "ttf")
+		{
+			fontMaker.MakeFont(file);
+		}
+		else
+		{
+			wxArrayString choiceArray;
+			choiceArray.Add("Meshes");
+			choiceArray.Add("Animations");
+			wxMultiChoiceDialog choiceDialog(this, wxString::Format("Import what from file %s?", fileName.GetName().c_str()), "What to Export", choiceArray);
+			if (choiceDialog.ShowModal() != wxID_OK)
+				return;
+
+			uint32_t flags = 0;
+			wxArrayInt selectionArray = choiceDialog.GetSelections();
+			for (int i = 0; i < selectionArray.size(); i++)
+			{
+				const wxString& selection = choiceArray[selectionArray[i]];
+				if (selection == "Meshes")
+					flags |= Converter::Flag::CONVERT_MESHES;
+				else if (selection == "Animations")
+					flags |= Converter::Flag::CONVERT_ANIMATIONS;
+			}
+
+			converter.Convert(file, flags);
+		}
+	}
 }
 
 void Frame::OnPreviewAsset(wxCommandEvent& event)

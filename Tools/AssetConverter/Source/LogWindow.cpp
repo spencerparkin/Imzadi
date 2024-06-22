@@ -128,7 +128,7 @@ void LogWindow::OnTimer(wxTimerEvent& event)
 				if ((message.flags & (IMZADI_LOG_ERROR_FLAG | IMZADI_LOG_FATAL_ERROR_FLAG)) != 0)
 					this->logTextCtrl->SetDefaultStyle(wxTextAttr(*wxRED));
 				else if ((message.flags & IMZADI_LOG_WARNING_FLAG) != 0)
-					this->logTextCtrl->SetDefaultStyle(wxTextAttr(*wxYELLOW));
+					this->logTextCtrl->SetDefaultStyle(wxTextAttr(wxColour(128, 128, 0)));
 				else
 					this->logTextCtrl->SetDefaultStyle(wxTextAttr(*wxBLACK));
 

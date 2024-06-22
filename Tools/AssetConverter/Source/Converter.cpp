@@ -9,13 +9,9 @@
 #include "App.h"
 #include "Frame.h"
 #include <wx/textdlg.h>
-#include "rapidjson/reader.h"
-#include "rapidjson/error/en.h"
-#include "rapidjson/istreamwrapper.h"
 
-Converter::Converter(const wxString& assetRootFolder)
+Converter::Converter()
 {
-	this->assetRootFolder = assetRootFolder;
 }
 
 /*virtual*/ Converter::~Converter()
@@ -86,7 +82,7 @@ bool Converter::ProcessAnimation(const aiScene* scene, const aiAnimation* animat
 		animName = nameDialog.GetValue();
 
 	wxFileName animFile;
-	animFile.SetPath(this->assetRootFolder + "/Animations");
+	animFile.SetPath(wxGetApp().GetAssetsRootFolder() + "/Animations");
 	animFile.SetName(animName);
 	animFile.SetExt("animation");
 
@@ -99,7 +95,7 @@ bool Converter::ProcessAnimation(const aiScene* scene, const aiAnimation* animat
 
 	rapidjson::Document animDoc;
 	generatedAnimation.Save(animDoc);
-	if (!this->WriteJsonFile(animDoc, animFile.GetFullPath()))
+	if (!JsonUtils::WriteJsonFile(animDoc, animFile.GetFullPath()))
 		return false;
 
 	return true;
@@ -322,9 +318,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	meshDoc.AddMember("primitive_type", rapidjson::Value().SetString("TRIANGLE_LIST"), meshDoc.GetAllocator());
 	meshDoc.AddMember("shader", rapidjson::Value().SetString("Shaders/Standard.shader", meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("shadow_shader", rapidjson::Value().SetString("Shaders/StandardShadow.shader", meshDoc.GetAllocator()), meshDoc.GetAllocator());
-	meshDoc.AddMember("texture", rapidjson::Value().SetString(this->MakeAssetFileReference(textureFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
-	meshDoc.AddMember("index_buffer", rapidjson::Value().SetString(this->MakeAssetFileReference(indexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
-	meshDoc.AddMember("vertex_buffer", rapidjson::Value().SetString(this->MakeAssetFileReference(vertexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+	meshDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+	meshDoc.AddMember("index_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(indexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+	meshDoc.AddMember("vertex_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(vertexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
 	if (scene->mNumMaterials <= mesh->mMaterialIndex)
 	{
@@ -352,7 +348,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	rapidjson::Document textureDoc;
 	textureDoc.SetObject();
 	textureDoc.AddMember("flip_vertical", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
-	textureDoc.AddMember("image_file", rapidjson::Value().SetString(this->MakeAssetFileReference(textureFullPath), textureDoc.GetAllocator()), textureDoc.GetAllocator());
+	textureDoc.AddMember("image_file", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureFullPath), textureDoc.GetAllocator()), textureDoc.GetAllocator());
 
 	if (mesh->mNumVertices == 0)
 	{
@@ -491,8 +487,8 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 		meshDoc.AddMember("position_offset", rapidjson::Value().SetInt(0), meshDoc.GetAllocator());
 		meshDoc.AddMember("normal_offset", rapidjson::Value().SetInt(20), meshDoc.GetAllocator());
-		meshDoc.AddMember("skeleton", rapidjson::Value().SetString(this->MakeAssetFileReference(skeletonFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
-		meshDoc.AddMember("skin_weights", rapidjson::Value().SetString(this->MakeAssetFileReference(skinWeightsFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+		meshDoc.AddMember("skeleton", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(skeletonFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+		meshDoc.AddMember("skin_weights", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(skinWeightsFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
 		// Note that for this to work with 3Ds Max, the scene should have been exported
 		// with the model in bind-pose.  Even if posed, I don't know why it doesn't already
@@ -528,10 +524,10 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 			return false;
 		}
 
-		if (!this->WriteJsonFile(skeletonDoc, skeletonFileName.GetFullPath()))
+		if (!JsonUtils::WriteJsonFile(skeletonDoc, skeletonFileName.GetFullPath()))
 			return false;
 
-		if (!this->WriteJsonFile(skinWeightsDoc, skinWeightsFileName.GetFullPath()))
+		if (!JsonUtils::WriteJsonFile(skinWeightsDoc, skinWeightsFileName.GetFullPath()))
 			return false;
 
 		rapidjson::Value animationsArrayValue;
@@ -540,16 +536,16 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		meshDoc.AddMember("animations", animationsArrayValue, meshDoc.GetAllocator());
 	}
 
-	if (!this->WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
+	if (!JsonUtils::WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
 		return false;
 
-	if (!this->WriteJsonFile(textureDoc, textureFileName.GetFullPath()))
+	if (!JsonUtils::WriteJsonFile(textureDoc, textureFileName.GetFullPath()))
 		return false;
 
-	if (!this->WriteJsonFile(verticesDoc, vertexBufferFileName.GetFullPath()))
+	if (!JsonUtils::WriteJsonFile(verticesDoc, vertexBufferFileName.GetFullPath()))
 		return false;
 
-	if (!this->WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath()))
+	if (!JsonUtils::WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath()))
 		return false;
 
 	return true;
@@ -557,7 +553,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 void Converter::GatherApplicableAnimations(rapidjson::Value& animationsArrayValue, const Imzadi::Skeleton* skeleton, rapidjson::Document* doc)
 {
-	wxString animationsFolder = this->assetRootFolder + "/Animations";
+	wxString animationsFolder = wxGetApp().GetAssetsRootFolder() + "/Animations";
 	std::filesystem::path animationsFolderPath((const char*)animationsFolder.c_str());
 
 	try
@@ -572,7 +568,7 @@ void Converter::GatherApplicableAnimations(rapidjson::Value& animationsArrayValu
 					wxString animationPath(dirEntry.path().c_str());
 					if (this->IsAnimationApplicable(animationPath, skeleton))
 					{
-						wxString animationRef = this->MakeAssetFileReference(animationPath);
+						wxString animationRef = wxGetApp().MakeAssetFileReference(animationPath);
 						rapidjson::Value animationRefValue;
 						animationRefValue.SetString(animationRef, doc->GetAllocator());
 						animationsArrayValue.PushBack(animationRefValue, doc->GetAllocator());
@@ -590,7 +586,7 @@ void Converter::GatherApplicableAnimations(rapidjson::Value& animationsArrayValu
 bool Converter::IsAnimationApplicable(const wxString& animationFile, const Imzadi::Skeleton* skeleton)
 {
 	rapidjson::Document animDoc;
-	if (!this->ReadJsonFile(animDoc, animationFile))
+	if (!JsonUtils::ReadJsonFile(animDoc, animationFile))
 	{
 		IMZADI_LOG_WARNING("Warning: Could not open file: %s", (const char*)animationFile.c_str());
 		return false;
@@ -792,67 +788,4 @@ bool Converter::MakeQuat(Imzadi::Quaternion& quaternionOut, const aiQuaternion& 
 	quaternionOut.y = quaternionIn.y;
 	quaternionOut.z = quaternionIn.z;
 	return true;
-}
-
-bool Converter::WriteJsonFile(const rapidjson::Document& jsonDoc, const wxString& assetFile)
-{
-	std::filesystem::path assetPath((const char*)assetFile.c_str());
-	if (std::filesystem::exists(assetPath))
-	{
-		std::filesystem::remove(assetPath);
-		IMZADI_LOG_INFO("Deleted file: %s", (const char*)assetFile.c_str());
-	}
-
-	std::ofstream fileStream;
-	fileStream.open((const char*)assetFile.c_str(), std::ios::out);
-	if (!fileStream.is_open())
-	{
-		IMZADI_LOG_ERROR("Failed to open (for writing) the file: %s", (const char*)assetFile.c_str());
-		return false;
-	}
-
-	rapidjson::StringBuffer stringBuffer;
-	rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
-	if (!jsonDoc.Accept(prettyWriter))
-	{
-		IMZADI_LOG_ERROR("Failed to generate JSON text from JSON data for file: %s", (const char*)assetFile.c_str());
-		return false;
-	}
-
-	fileStream << stringBuffer.GetString();
-	fileStream.close();
-	IMZADI_LOG_INFO("Wrote file: %s", (const char*)assetFile.c_str());
-	return true;
-}
-
-bool Converter::ReadJsonFile(rapidjson::Document& jsonDoc, const wxString& assetFile)
-{
-	std::ifstream fileStream;
-	fileStream.open((const char*)assetFile.c_str(), std::ios::in);
-	if (!fileStream.is_open())
-	{
-		IMZADI_LOG_ERROR("Failed to open (for reading) the file: %s", (const char*)assetFile.c_str());
-		return false;
-	}
-
-	rapidjson::IStreamWrapper streamWrapper(fileStream);
-	jsonDoc.ParseStream(streamWrapper);
-	if (jsonDoc.HasParseError())
-	{
-		IMZADI_LOG_ERROR("Failed to parse file: %s", (const char*)assetFile.c_str());
-		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
-		IMZADI_LOG_ERROR("Parser error: %s", rapidjson::GetParseError_En(errorCode));
-		return false;
-	}
-
-	fileStream.close();
-	return true;
-}
-
-wxString Converter::MakeAssetFileReference(const wxString& assetFile)
-{
-	wxFileName fileName(assetFile);
-	fileName.MakeRelativeTo(this->assetRootFolder);
-	wxString relativeAssetPath = fileName.GetFullPath();
-	return relativeAssetPath;
 }

@@ -15,6 +15,9 @@ public:
 
 	Frame* GetFrame() { return this->frame; }
 
+	wxString MakeAssetFileReference(const wxString& assetFile);
+	wxString GetAssetsRootFolder();
+
 private:
 	Frame* frame;
 };
