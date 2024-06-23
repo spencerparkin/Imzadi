@@ -8,31 +8,28 @@ using namespace Imzadi;
 
 Scene::Scene()
 {
-	this->renderObjectList = new RenderObjectList();
 }
 
 /*virtual*/ Scene::~Scene()
 {
 	this->Clear();
-
-	delete this->renderObjectList;
 }
 
 void Scene::Clear()
 {
-	this->renderObjectList->clear();
+	this->renderObjectList.clear();
 }
 
 void Scene::AddRenderObject(Reference<RenderObject> renderObject)
 {
-	this->renderObjectList->push_back(renderObject);
+	this->renderObjectList.push_back(renderObject);
 }
 
 void Scene::Render(Camera* camera, RenderPass renderPass)
 {
 	std::vector<RenderObject*> visibleObjects;
 
-	for (/*const*/ Reference<RenderObject>& renderObject : *this->renderObjectList)
+	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
 	{
 		if (renderObject->IsHidden())
 			continue;
@@ -49,9 +46,13 @@ void Scene::Render(Camera* camera, RenderPass renderPass)
 	});
 
 	for (RenderObject* renderObject : visibleObjects)
-	{
 		renderObject->Render(camera, renderPass);
-	}
+}
+
+void Scene::PrepareRenderObjects()
+{
+	for (Reference<RenderObject>& renderObject : this->renderObjectList)
+		renderObject->Prepare();
 }
 
 //--------------------------- RenderObject ---------------------------
@@ -68,4 +69,8 @@ RenderObject::RenderObject()
 /*virtual*/ int RenderObject::SortKey() const
 {
 	return 0;
+}
+
+/*virtual*/ void RenderObject::Prepare()
+{
 }

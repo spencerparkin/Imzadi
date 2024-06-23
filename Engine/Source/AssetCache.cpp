@@ -10,6 +10,7 @@
 #include "Assets/SkinnedRenderMesh.h"
 #include "Assets/SkinWeights.h"
 #include "Assets/Skeleton.h"
+#include "Assets/Font.h"
 #include "Log.h"
 #include "Game.h"
 #include <algorithm>
@@ -138,6 +139,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new SkinWeights();
 	else if (ext == ".skeleton")
 		return new Skeleton();
+	else if (ext == ".font")
+		return new Font();
 
 	return nullptr;
 }

@@ -127,10 +127,12 @@ RenderMeshAsset::RenderMeshAsset()
 
 /*virtual*/ bool RenderMeshAsset::Unload()
 {
-	// Note that we don't want to unload our texture, buffers,
-	// or shaders here, because they may be in use by some
-	// other render mesh.  We don't leak anything by doing
-	// nothing here, because those types of assets unload themselves.
+	this->vertexBuffer.Set(nullptr);
+	this->indexBuffer.Set(nullptr);
+	this->mainPassShader.Set(nullptr);
+	this->shadowPassShader.Set(nullptr);
+	this->texture.Set(nullptr);
+
 	return true;
 }
 

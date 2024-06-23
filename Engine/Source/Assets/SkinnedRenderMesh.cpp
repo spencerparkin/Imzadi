@@ -150,6 +150,12 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 {
 	RenderMeshAsset::Unload();
 
+	this->bindPoseVertices.Reset();
+	this->currentPoseVertices.Reset();
+	this->skeleton.Reset();
+	this->skinWeights.Reset();
+	this->animationMap.clear();
+
 	return true;
 }
 

@@ -724,6 +724,11 @@ std::string Game::PopControllerUser()
 /*virtual*/ void Game::Tick(TickPass tickPass, double deltaTimeSeconds)
 {
 	this->AdvanceEntities(tickPass, deltaTimeSeconds);
+
+	if (tickPass == TickPass::MID_TICK)
+	{
+		this->scene->PrepareRenderObjects();
+	}
 }
 
 /*virtual*/ bool Game::PreShutdown()

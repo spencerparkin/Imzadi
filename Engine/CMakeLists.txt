@@ -104,6 +104,8 @@ set(GAME_ENGINE_SOURCES
     Source/RenderObjects/DebugLines.h
     Source/RenderObjects/RenderMeshInstance.cpp
     Source/RenderObjects/RenderMeshInstance.h
+    Source/RenderObjects/TextRenderObject.cpp
+    Source/RenderObjects/TextRenderObject.h
     Source/Assets/Animation.cpp
     Source/Assets/Animation.h
     Source/Assets/Buffer.cpp
@@ -126,6 +128,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/SkinWeights.h
     Source/Assets/Texture.cpp
     Source/Assets/Texture.h
+    Source/Assets/Font.cpp
+    Source/Assets/Font.h
 )
     
 source_group("Source" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_ENGINE_SOURCES})
