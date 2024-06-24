@@ -1,10 +1,12 @@
 #include "Font.h"
 #include "Log.h"
+#include "Game.h"
 
 using namespace Imzadi;
 
 Font::Font()
 {
+	this->indexBuffer = nullptr;
 }
 
 /*virtual*/ Font::~Font()
@@ -74,12 +76,59 @@ Font::Font()
 			charInfo.minUV.y = charInfoValue["min_v"].GetFloat();
 			charInfo.maxUV.x = charInfoValue["max_u"].GetFloat();
 			charInfo.maxUV.y = charInfoValue["max_v"].GetFloat();
+
+			charInfo.width = charInfo.maxUV.x - charInfo.minUV.x;
+			charInfo.height = charInfo.maxUV.y - charInfo.minUV.y;
+
+			charInfo.aspectRatio = (charInfo.height > 0) ? (charInfo.width / charInfo.height) : 0.0;
 		}
 
 		this->charInfoArray.push_back(charInfo);
 	}
 
-	// TODO: Load and own font shader too?
+	if (!assetCache->LoadAsset("Shaders/Text.shader", asset))
+	{
+		IMZADI_LOG_ERROR("Failed to load text shader.");
+		return false;
+	}
+
+	this->textShader.SafeSet(asset.Get());
+	if (!this->textShader)
+	{
+		IMZADI_LOG_ERROR("Loaded something other than a shader for the text shader.");
+		return false;
+	}
+
+	uint32_t maxCharacters = 1024;
+
+	D3D11_BUFFER_DESC bufferDesc{};
+	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+	bufferDesc.ByteWidth = sizeof(uint16_t) * 6 * maxCharacters;
+
+	std::vector<uint16_t> indexArray;
+	for (int i = 0; i < maxCharacters; i++)
+	{
+		int j = i * 4;
+
+		indexArray.push_back(j + 0);
+		indexArray.push_back(j + 1);
+		indexArray.push_back(j + 2);
+
+		indexArray.push_back(j + 0);
+		indexArray.push_back(j + 2);
+		indexArray.push_back(j + 3);
+	}
+
+	D3D11_SUBRESOURCE_DATA subResourceData{};
+	subResourceData.pSysMem = indexArray.data();
+
+	HRESULT result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, &subResourceData, &this->indexBuffer);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create index buffer for font asset.  Error code: %d", result);
+		return false;
+	}
 
 	return true;
 }
@@ -88,5 +137,18 @@ Font::Font()
 {
 	this->charInfoArray.clear();
 	this->textureAtlas.Set(nullptr);
+	SafeRelease(this->indexBuffer);
+	return true;
+}
+
+bool Font::GetCharInfo(char ch, CharacterInfo& info) const
+{
+	if (!(0 <= ch && ch < this->charInfoArray.size()))
+		return false;
+
+	info = this->charInfoArray[ch];
+	if (info.minUV == info.maxUV)
+		return false;
+
 	return true;
 }

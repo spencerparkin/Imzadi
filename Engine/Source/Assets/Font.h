@@ -2,6 +2,7 @@
 
 #include "AssetCache.h"
 #include "Assets/Texture.h"
+#include "Assets/Shader.h"
 #include "Math/Vector2.h"
 
 namespace Imzadi
@@ -19,16 +20,26 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
-	private:
 		struct CharacterInfo
 		{
 			Vector2 minUV;
 			Vector2 maxUV;
+			double width;
+			double height;
+			double aspectRatio;
 		};
+
+		bool GetCharInfo(char ch, CharacterInfo& info) const;
+		Shader* GetShader() { return this->textShader.Get(); }
+		ID3D11Buffer* GetIndexBuffer() { return this->indexBuffer; }
+
+	private:
 
 		typedef std::vector<CharacterInfo> CharacterInfoArray;
 
 		CharacterInfoArray charInfoArray;
 		Reference<Texture> textureAtlas;
+		Reference<Shader> textShader;
+		ID3D11Buffer* indexBuffer;
 	};
 }

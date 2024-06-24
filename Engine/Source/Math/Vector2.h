@@ -250,4 +250,14 @@ namespace Imzadi
 			vectorA.y * vectorB.y
 		);
 	}
+
+	inline bool operator==(const Vector2& vectorA, const Vector2& vectorB)
+	{
+		return vectorA.x == vectorB.x && vectorA.y == vectorB.y;
+	}
+
+	inline bool operator!=(const Vector2& vectorA, const Vector2& vectorB)
+	{
+		return vectorA.x != vectorB.x || vectorA.y != vectorB.y;
+	}
 }

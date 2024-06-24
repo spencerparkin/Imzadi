@@ -93,10 +93,10 @@ void AssetCache::RemoveAssetFolder(const std::string& assetFolder)
 
 std::string AssetCache::MakeKey(const std::string& assetFile)
 {
-	// TODO: Of course, we'll have a problem here if two files have the same name but are in different directories.
 	std::filesystem::path assetPath(assetFile);
-	std::string key = assetPath.filename().string();
+	std::string key = assetPath.lexically_normal().string();
 	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return std::tolower(c); });
+	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return (c == '\\' || c == '.') ? '_' : c; });
 	return key;
 }
 

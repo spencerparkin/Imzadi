@@ -48,7 +48,23 @@ void LoggingSystem::PrintLogMessage(uint32_t messageFlags, const std::string& lo
 
 	if ((messageFlags & IMZADI_LOG_FATAL_ERROR_FLAG) != 0)
 	{
-		// TODO: Halt here.  Maybe break the debugger if we sense it is attached?
+		// We've encountered an error so bad that the program can't continue.
+		// Just hang out here until we're terminated.
+
+		if (IsDebuggerPresent())
+		{
+			while (true)
+			{
+				DebugBreak();
+			}
+		}
+		else
+		{
+			while (true)
+			{
+				IMZADI_ASSERT(false);
+			}
+		}
 	}
 }
 

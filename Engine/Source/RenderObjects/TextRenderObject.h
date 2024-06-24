@@ -59,6 +59,16 @@ namespace Imzadi
 		const std::string& GetText() const;
 
 		/**
+		 * Set the color used to render the text.
+		 */
+		void SetColor(const Vector3& color);
+
+		/**
+		 * Get the color used to render the text.
+		 */
+		const Vector3& GetColor() const;
+
+		/**
 		 * Try to load a font by the given name and then cache it on this text render
 		 * object for use while rendering.  This could cause a hiccup during rendering
 		 * unless all possibly-needed fonts are simply pre-cached, which I'll probably do.
@@ -66,12 +76,13 @@ namespace Imzadi
 		 * @param[in] fontName A font by this name is searched for in the engine's font folder.
 		 * @return True is returned if the font was successfully found and loaded; false, otherwise.
 		 */
-		bool SetFront(const std::string& fontName);
+		bool SetFont(const std::string& fontName);
 
 	private:
 		Reference<Font> font;
 		ID3D11Buffer* vertexBuffer;
 		std::string text;
+		Vector3 color;
 		uint32_t flags;
 		Transform objectToTargetSpace;
 	};
