@@ -7,6 +7,7 @@ cbuffer constants : register(b0)
 {
     float4x4 objectToProjection;
     float3 textColor;
+    float zFactor;
 };
 
 struct VS_Input
@@ -27,6 +28,7 @@ VS_Output VS_Main(VS_Input input)
 {
     VS_Output output;
     output.position = mul(objectToProjection, float4(input.position, 0.0f, 1.0f));
+    output.position.z *= zFactor;
     output.texCoord = input.texCoord;
     return output;
 }

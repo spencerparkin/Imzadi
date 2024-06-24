@@ -143,6 +143,7 @@ double TextRenderObject::CalculateStringWidth()
 	{
 		Matrix4x4 objectToCameraMat;
 		this->objectToTargetSpace.GetToMatrix(objectToCameraMat);
+
 		objectToProjMat = cameraToProjMat * objectToCameraMat;
 	}
 	else
@@ -150,7 +151,22 @@ double TextRenderObject::CalculateStringWidth()
 		Matrix4x4 objectToWorldMat, worldToCameraMat;
 		this->objectToTargetSpace.GetToMatrix(objectToWorldMat);
 		camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
+
 		objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
+
+		if ((this->flags & Flag::ALWAYS_FACING_CAMERA) != 0)
+		{
+			Matrix4x4 rotationMat(camera->GetCameraToWorldTransform().matrix);
+			objectToProjMat = objectToProjMat * rotationMat;
+		}
+
+		if ((this->flags & Flag::CONSTANT_SIZE) != 0)
+		{
+			double scale = (camera->GetEyePoint() - this->objectToTargetSpace.translation).Length();
+			Matrix4x4 scaleMat;
+			scaleMat.SetScale(Vector3(scale, scale, scale));
+			objectToProjMat = objectToProjMat * scaleMat;
+		}
 	}
 
 	const Shader::Constant* constant = nullptr;
@@ -160,6 +176,10 @@ double TextRenderObject::CalculateStringWidth()
 
 	if (shader->GetConstantInfo("textColor", constant))
 		StoreShaderConstant(&mappedSubresource, constant, &this->color);
+
+	double zFactor = ((this->flags & Flag::ALWAYS_ON_TOP) != 0) ? 0.0 : 1.0;
+	if (shader->GetConstantInfo("zFactor", constant))
+		StoreShaderConstant(&mappedSubresource, constant, &zFactor);
 
 	deviceContext->Unmap(constantsBuffer, 0);
 

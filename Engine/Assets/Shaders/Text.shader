@@ -9,6 +9,11 @@
             "offset": 64,
             "size": 12,
             "type": "float"
+        },
+        "zFactor": {
+            "offset": 76,
+            "size": 4,
+            "type": "float"
         }
     },
     "ps_entry_point": "PS_Main",

@@ -22,7 +22,7 @@ namespace Imzadi
 		{
 			REBUILD_VERTEX_BUFFER		= 0x00000001,		///< This indicates that the vertex buffer for the text needs to be regenerated.  It is used internally and never needs to be set by the user.
 			ALWAYS_FACING_CAMERA		= 0x00000002,		///< This indicates that we need to bill-board the text quads so that they face the camera.  Ignored if sticking with camera.
-			NO_FORESHORTENING			= 0x00000004,		///< This indicates that the text should be the same size no matter how far away or close it is to the camera.  Ignored if sticking with camera.
+			CONSTANT_SIZE				= 0x00000004,		///< This indicates that the text should be the same size no matter how far away or close it is to the camera.  Ignored if sticking with camera.
 			ALWAYS_ON_TOP				= 0x00000008,		///< This indicates that nothing should draw over the top of the text.
 			STICK_WITH_CAMERA			= 0x00000010,		///< If used, our transform goes from object space to camera space, not the typical object space to world space.
 			LEFT_JUSTIFY				= 0x00000020,		///< Left-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
