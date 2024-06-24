@@ -79,9 +79,16 @@ Font::Font()
 
 			charInfo.width = charInfo.maxUV.x - charInfo.minUV.x;
 			charInfo.height = charInfo.maxUV.y - charInfo.minUV.y;
-
-			charInfo.aspectRatio = (charInfo.height > 0) ? (charInfo.width / charInfo.height) : 0.0;
 		}
+
+		if (charInfoValue.HasMember("pen_offset_x") && charInfoValue["pen_offset_x"].IsFloat())
+			charInfo.penOffset.x = charInfoValue["pen_offset_x"].GetFloat();
+
+		if (charInfoValue.HasMember("pen_offset_y") && charInfoValue["pen_offset_y"].IsFloat())
+			charInfo.penOffset.y = charInfoValue["pen_offset_y"].GetFloat();
+
+		if (charInfoValue.HasMember("advance") && charInfoValue["advance"].IsFloat())
+			charInfo.advance = charInfoValue["advance"].GetFloat();
 
 		this->charInfoArray.push_back(charInfo);
 	}
@@ -147,8 +154,5 @@ bool Font::GetCharInfo(char ch, CharacterInfo& info) const
 		return false;
 
 	info = this->charInfoArray[ch];
-	if (info.minUV == info.maxUV)
-		return false;
-
 	return true;
 }

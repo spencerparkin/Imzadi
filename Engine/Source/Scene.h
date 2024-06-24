@@ -98,6 +98,9 @@ namespace Imzadi
 
 		/**
 		 * This gives us some control over the order in which render objects render.
+		 * Rather than have a separate pass for opaque and translucent objects, alpha
+		 * blending is enabled in the main pass, and this key can be used to make sure
+		 * that opaque things are drawn before anything that has transparency.
 		 */
 		virtual int SortKey() const;
 

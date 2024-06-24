@@ -11,7 +11,7 @@ cbuffer constants : register(b0)
 
 struct VS_Input
 {
-    float3 position : POS;
+    float2 position : POS;
     float2 texCoord : TEX;
 };
 
@@ -26,7 +26,7 @@ struct VS_Output
 VS_Output VS_Main(VS_Input input)
 {
     VS_Output output;
-    output.position = mul(objectToProjection, float4(input.position, 1.0f));
+    output.position = mul(objectToProjection, float4(input.position, 0.0f, 1.0f));
     output.texCoord = input.texCoord;
     return output;
 }
@@ -35,7 +35,8 @@ VS_Output VS_Main(VS_Input input)
 
 float4 PS_Main(VS_Output input) : SV_TARGET
 {
-    float alpha = atlasTexture.Sample(atlasSampler, input.texCoord);
+    float alpha = atlasTexture.Sample(atlasSampler, input.texCoord).a;
+    alpha = clamp(alpha, 0.0f, 1.0f);
     float4 color = float4(textColor, alpha);
     return color;
 }

@@ -68,7 +68,7 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 		IMZADI_LOG_INFO("Num charmaps found: %d", face->num_charmaps);
 		IMZADI_LOG_INFO("Num fixed sizes found: %d", face->num_fixed_sizes);
 	
-		error = FT_Set_Pixel_Sizes(face, 32, 32);
+		error = FT_Set_Pixel_Sizes(face, 45, 45);
 		if (error)
 		{
 			IMZADI_LOG_ERROR("Failed to set pixel sizes with error: %d", error);
@@ -127,10 +127,17 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 			}
 
 			FT_GlyphSlot slot = face->glyph;
+			double advance = double(slot->advance.x >> 6) / double(atlasWidth);
+			characterValue.AddMember("advance", rapidjson::Value().SetFloat(advance), fontDoc.GetAllocator());
+
+			double penOffsetX = double(slot->bitmap_left) / double(atlasWidth);
+			double penOffsetY = double(int(slot->bitmap_top) - int(slot->bitmap.rows)) / double(atlasHeight);
+			characterValue.AddMember("pen_offset_x", rapidjson::Value().SetFloat(penOffsetX), fontDoc.GetAllocator());
+			characterValue.AddMember("pen_offset_y", rapidjson::Value().SetFloat(penOffsetY), fontDoc.GetAllocator());
 
 			if (!slot->bitmap.buffer)
 			{
-				IMZADI_LOG_WARNING("Character %d didn't have a bitmap associated with it.", i);
+				IMZADI_LOG_WARNING("Character %d didn't have a bitmap associated with it.  (Could just be a space.)", i);
 				characterValue.AddMember("no_glyph", rapidjson::Value().SetBool(true), fontDoc.GetAllocator());
 			}
 			else
@@ -156,10 +163,10 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 					break;
 				}
 
-				float minU = float(atlasX) / float(atlasWidth);
-				float minV = float(atlasY) / float(atlasHeight);
-				float maxU = float(atlasX + slot->bitmap.width) / float(atlasWidth);
-				float maxV = float(atlasY + slot->bitmap.rows) / float(atlasHeight);
+				double minU = double(atlasX) / double(atlasWidth);
+				double minV = double(atlasY) / double(atlasHeight);
+				double maxU = double(atlasX + slot->bitmap.width) / double(atlasWidth);
+				double maxV = double(atlasY + slot->bitmap.rows) / double(atlasHeight);
 
 				characterValue.AddMember("min_u", rapidjson::Value().SetFloat(minU), fontDoc.GetAllocator());
 				characterValue.AddMember("min_v", rapidjson::Value().SetFloat(minV), fontDoc.GetAllocator());
@@ -182,13 +189,13 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 						{
 							case FT_PIXEL_MODE_GRAY:
 							{
-								float alpha = float(*glyphPixel) / float(slot->bitmap.num_grays);
-								if (alpha > 1.0f)
-									alpha = 1.0f;
-								else if (alpha < 0.0f)
-									alpha = 0.0f;
+								double alpha = double(*glyphPixel) / double(slot->bitmap.num_grays);
+								if (alpha > 1.0)
+									alpha = 1.0;
+								else if (alpha < 0.0)
+									alpha = 0.0;
 
-								unsigned char greyValue = unsigned char(alpha * 255.0f);
+								unsigned char greyValue = unsigned char(alpha * 255.0);
 
 								atlasColorPixel[0] = 0x00;
 								atlasColorPixel[1] = 0x00;

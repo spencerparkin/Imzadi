@@ -18,7 +18,7 @@
     "vs_entry_point": "VS_Main",
     "vs_input_layout": [
         {
-            "element_format": "R32G32B32_FLOAT",
+            "element_format": "R32G32_FLOAT",
             "semantic": "POS",
             "semantic_index": 0,
             "slot": 0

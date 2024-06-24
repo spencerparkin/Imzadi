@@ -264,6 +264,7 @@ namespace Imzadi
 		ID3D11DepthStencilView* depthStencilView;
 		ID3D11RasterizerState* mainPassRasterizerState;
 		ID3D11RasterizerState* shadowPassRasterizerState;
+		ID3D11BlendState* mainPassBlendState;
 		ID3D11DepthStencilState* depthStencilState;
 		ID3D11DepthStencilView* shadowBufferView;
 		ID3D11ShaderResourceView* shadowBufferViewForShader;

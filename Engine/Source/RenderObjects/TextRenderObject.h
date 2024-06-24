@@ -78,6 +78,18 @@ namespace Imzadi
 		 */
 		bool SetFont(const std::string& fontName);
 
+		/**
+		 * Set the transform for the text.  This takes it from object
+		 * space to world space, or object space to camera space, depending
+		 * on how the render object is configured.
+		 */
+		void SetTransform(const Transform& transform);
+
+		/**
+		 * Get the transform being used to render this text object.
+		 */
+		const Transform& GetTransform() const;
+
 	private:
 		Reference<Font> font;
 		ID3D11Buffer* vertexBuffer;

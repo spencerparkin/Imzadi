@@ -96,7 +96,6 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 	std::filesystem::path assetPath(assetFile);
 	std::string key = assetPath.lexically_normal().string();
 	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return std::tolower(c); });
-	std::transform(key.begin(), key.end(), key.begin(), [](unsigned char c) { return (c == '\\' || c == '.') ? '_' : c; });
 	return key;
 }
 
@@ -147,17 +146,17 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 
 bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset)
 {
-	std::string key;
-	asset.Set(this->FindAsset(assetFile, &key));
-	if (asset)
-		return true;
-
 	std::string resolvedAssetFile(assetFile);
 	if (!ResolveAssetPath(resolvedAssetFile))
 	{
 		IMZADI_LOG_ERROR("Failed to resolve path: " + assetFile);
 		return false;
 	}
+
+	std::string key;
+	asset.Set(this->FindAsset(resolvedAssetFile, &key));
+	if (asset)
+		return true;
 
 	asset.Set(this->CreateBlankAssetForFileType(assetFile));
 	if (!asset)

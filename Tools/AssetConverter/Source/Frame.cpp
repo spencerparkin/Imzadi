@@ -8,6 +8,7 @@
 #include "RenderObjectList.h"
 #include "RenderObjectProperties.h"
 #include "FontMaker.h"
+#include "RenderObjects/TextRenderObject.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
@@ -195,9 +196,35 @@ void Frame::OnPreviewAsset(wxCommandEvent& event)
 	fileDialog.GetPaths(fileArray);
 	for (const wxString& file : fileArray)
 	{
-		Imzadi::Reference<Imzadi::RenderObject> renderObject = game->LoadAndPlaceRenderMesh((const char*)file.c_str(), Imzadi::Vector3(0.0, 0.0, 0.0), Imzadi::Quaternion());
+		wxFileName fileName(file);
+		wxString ext = fileName.GetExt().Lower();
+
+		Imzadi::Reference<Imzadi::RenderObject> renderObject;
+
+		if (ext == "font")
+		{
+			Imzadi::Reference<Imzadi::Asset> asset;
+			if (game->GetAssetCache()->LoadAsset((const char*)file, asset))
+			{
+				Imzadi::Transform transform;
+				transform.SetIdentity();
+				transform.matrix.SetFromAxisAngle(Imzadi::Vector3(0.0, 1.0, 0.0), M_PI);
+				auto textRenderObject = new Imzadi::TextRenderObject();
+				textRenderObject->SetText("The quick brown fox jumped over the lazy dog.");
+				textRenderObject->SetFont((const char*)fileName.GetName());
+				textRenderObject->SetColor(Imzadi::Vector3(1.0, 1.0, 1.0));
+				textRenderObject->SetTransform(transform);
+				renderObject.Set(textRenderObject);
+				game->GetScene()->AddRenderObject(textRenderObject);
+			}
+		}
+		else
+		{
+			renderObject = game->LoadAndPlaceRenderMesh((const char*)file.c_str(), Imzadi::Vector3(0.0, 0.0, 0.0), Imzadi::Quaternion());
+		}
+
 		if (!renderObject)
-			errorMsg += wxString::Format("Failed to load asset: %s\n", file.c_str());
+			errorMsg += wxString::Format("Failed to make render object for asset: %s\n", file.c_str());
 		else
 			this->renderObjectList->AddRenderObject(renderObject.Get());
 	}

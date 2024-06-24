@@ -32,6 +32,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->depthStencilView = NULL;
 	this->mainPassRasterizerState = NULL;
 	this->shadowPassRasterizerState = NULL;
+	this->mainPassBlendState = NULL;
 	this->depthStencilState = NULL;
 	this->shadowBufferView = NULL;
 	this->shadowBufferViewForShader = NULL;
@@ -228,6 +229,23 @@ DebugLines* Game::GetDebugLines()
 	if (!this->RecreateViews())
 	{
 		IMZADI_LOG_ERROR("Initial view creation failed.");
+		return false;
+	}
+
+	D3D11_BLEND_DESC mainPassBlendDesc{};
+	mainPassBlendDesc.RenderTarget[0].BlendEnable = TRUE;
+	mainPassBlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+	mainPassBlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+	mainPassBlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	mainPassBlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+	mainPassBlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_ZERO;
+	mainPassBlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+	mainPassBlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
+	
+	result = this->device->CreateBlendState(&mainPassBlendDesc, &this->mainPassBlendState);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create main pass blend state.  Error code: %d", result);
 		return false;
 	}
 
@@ -616,6 +634,7 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->deviceContext->OMSetRenderTargets(0, NULL, this->shadowBufferView);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
+	this->deviceContext->OMSetBlendState(NULL, NULL, 0);
 	this->scene->Render(this->lightSourceCamera.Get(), RenderPass::SHADOW_PASS);
 	
 	// Not sure if this is necessary, but this will unbind the shadow buffer as a render target so that it can be bound later as a shader resource.
@@ -630,6 +649,7 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 	this->deviceContext->ClearDepthStencilView(this->depthStencilView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->deviceContext->OMSetRenderTargets(1, &this->frameBufferView, this->depthStencilView);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
+	this->deviceContext->OMSetBlendState(this->mainPassBlendState, NULL, 0xFFFFFFFF);
 	this->scene->Render(this->camera.Get(), RenderPass::MAIN_PASS);
 
 	// This will unbind the the shadow buffer as a shader resource so that it can be bound again as a render target.
@@ -773,6 +793,7 @@ std::string Game::PopControllerUser()
 
 	SafeRelease(this->mainPassRasterizerState);
 	SafeRelease(this->shadowPassRasterizerState);
+	SafeRelease(this->mainPassBlendState);
 	SafeRelease(this->depthStencilState);
 	SafeRelease(this->shadowBufferView);
 	SafeRelease(this->shadowBufferViewForShader);

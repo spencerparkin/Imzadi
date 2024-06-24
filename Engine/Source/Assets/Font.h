@@ -24,14 +24,16 @@ namespace Imzadi
 		{
 			Vector2 minUV;
 			Vector2 maxUV;
+			Vector2 penOffset;
+			double advance;
 			double width;
 			double height;
-			double aspectRatio;
 		};
 
 		bool GetCharInfo(char ch, CharacterInfo& info) const;
 		Shader* GetShader() { return this->textShader.Get(); }
 		ID3D11Buffer* GetIndexBuffer() { return this->indexBuffer; }
+		Texture* GetTextureAtlas() { return this->textureAtlas.Get(); }
 
 	private:
 

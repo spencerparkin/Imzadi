@@ -37,7 +37,7 @@ TextRenderObject::TextRenderObject()
 		D3D11_BUFFER_DESC vertexBufferDesc{};
 		vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 		vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-		vertexBufferDesc.ByteWidth = sizeof(float) * 30 * maxCharacters;	// 1 quad per character, 4 vertices per quad, 5 floats per vertex.
+		vertexBufferDesc.ByteWidth = sizeof(float) * 16 * maxCharacters;	// 1 quad per character, 4 vertices per quad, 4 floats per vertex.
 		vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 
 		result = Game::Get()->GetDevice()->CreateBuffer(&vertexBufferDesc, NULL, &this->vertexBuffer);
@@ -66,31 +66,32 @@ TextRenderObject::TextRenderObject()
 		if (!this->font->GetCharInfo(ch, info))
 			continue;
 
-		*floatPtr++ = penLocation.x;
-		*floatPtr++ = penLocation.y;
-		*floatPtr++ = 0.0;
-		*floatPtr++ = info.minUV.x;
-		*floatPtr++ = info.minUV.y;
+		if (info.minUV != info.maxUV)
+		{
+			Vector2 glyphLocation = penLocation + info.penOffset;
 
-		*floatPtr++ = penLocation.x + info.width;
-		*floatPtr++ = penLocation.y;
-		*floatPtr++ = 0.0;
-		*floatPtr++ = info.maxUV.x;
-		*floatPtr++ = info.minUV.y;
+			*floatPtr++ = glyphLocation.x;
+			*floatPtr++ = glyphLocation.y;
+			*floatPtr++ = info.minUV.x;
+			*floatPtr++ = info.maxUV.y;
 
-		*floatPtr++ = penLocation.x + info.width;
-		*floatPtr++ = penLocation.y + info.height;
-		*floatPtr++ = 0.0;
-		*floatPtr++ = info.maxUV.x;
-		*floatPtr++ = info.maxUV.y;
+			*floatPtr++ = glyphLocation.x + info.width;
+			*floatPtr++ = glyphLocation.y;
+			*floatPtr++ = info.maxUV.x;
+			*floatPtr++ = info.maxUV.y;
 
-		*floatPtr++ = penLocation.x;
-		*floatPtr++ = penLocation.y + info.height;
-		*floatPtr++ = 0.0;
-		*floatPtr++ = info.minUV.x;
-		*floatPtr++ = info.maxUV.y;
+			*floatPtr++ = glyphLocation.x + info.width;
+			*floatPtr++ = glyphLocation.y + info.height;
+			*floatPtr++ = info.maxUV.x;
+			*floatPtr++ = info.minUV.y;
 
-		penLocation.x += info.width;
+			*floatPtr++ = glyphLocation.x;
+			*floatPtr++ = glyphLocation.y + info.height;
+			*floatPtr++ = info.minUV.x;
+			*floatPtr++ = info.minUV.y;
+		}
+
+		penLocation.x += info.advance;
 	}
 
 	deviceContext->Unmap(this->vertexBuffer, 0);
@@ -136,7 +137,7 @@ TextRenderObject::TextRenderObject()
 
 	deviceContext->Unmap(constantsBuffer, 0);
 
-	deviceContext->IASetPrimitiveTopology(D3D10_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+	deviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 	deviceContext->IASetInputLayout(shader->GetInputLayout());
 
 	deviceContext->VSSetShader(shader->GetVertexShader(), NULL, 0);
@@ -145,7 +146,13 @@ TextRenderObject::TextRenderObject()
 	deviceContext->VSSetConstantBuffers(0, 1, &constantsBuffer);
 	deviceContext->PSSetConstantBuffers(0, 1, &constantsBuffer);
 
-	UINT stride = 5 * sizeof(float);
+	Texture* textureAtlas = this->font->GetTextureAtlas();
+	ID3D11ShaderResourceView* textureAtlasView = textureAtlas->GetTextureView();
+	ID3D11SamplerState* textureAtlasSamplerState = textureAtlas->GetSamplerState();
+	deviceContext->PSSetShaderResources(0, 1, &textureAtlasView);
+	deviceContext->PSSetSamplers(0, 1, &textureAtlasSamplerState);
+
+	UINT stride = 4 * sizeof(float);
 	UINT offset = 0;
 	deviceContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &stride, &offset);
 
@@ -219,4 +226,14 @@ bool TextRenderObject::SetFont(const std::string& fontName)
 	}
 
 	return true;
+}
+
+void TextRenderObject::SetTransform(const Transform& transform)
+{
+	this->objectToTargetSpace = transform;
+}
+
+const Transform& TextRenderObject::GetTransform() const
+{
+	return this->objectToTargetSpace;
 }

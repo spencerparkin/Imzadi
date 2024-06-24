@@ -3,6 +3,5 @@
     "height": 1024,
     "data": "Fonts\\Roboto_Regular.texture_data",
     "format": "A",
-    "compressed": true,
-    "compressed_size": 41906
+    "compressed": true
 }
