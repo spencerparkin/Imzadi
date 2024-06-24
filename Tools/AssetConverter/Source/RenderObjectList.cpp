@@ -1,6 +1,7 @@
 #include "RenderObjectList.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
+#include "RenderObjects/TextRenderObject.h"
 #include "App.h"
 #include "Frame.h"
 #include "GamePreview.h"
@@ -103,6 +104,8 @@ void RenderObjectList::UpdateListView()
 					return "Dynamic Mesh";
 				else if (dynamic_cast<const Imzadi::RenderMeshInstance*>(renderObject))
 					return "Static Mesh";
+				else if (dynamic_cast<const Imzadi::TextRenderObject*>(renderObject))
+					return "Text";
 				break;
 			}
 		}

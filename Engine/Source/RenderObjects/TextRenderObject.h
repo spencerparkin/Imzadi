@@ -91,6 +91,8 @@ namespace Imzadi
 		const Transform& GetTransform() const;
 
 	private:
+		double CalculateStringWidth();
+
 		Reference<Font> font;
 		ID3D11Buffer* vertexBuffer;
 		std::string text;

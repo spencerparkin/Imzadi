@@ -57,7 +57,13 @@ TextRenderObject::TextRenderObject()
 
 	Vector2 penLocation(0.0, 0.0);
 
-	// TODO: I know this is very wrong, but just do this for now to get something working.
+	if ((this->flags & Flag::LEFT_JUSTIFY) != 0)
+		penLocation.x = 0.0;
+	else if ((this->flags & Flag::RIGHT_JUSTIFY) != 0)
+		penLocation.x = -this->CalculateStringWidth();
+	else if((this->flags & Flag::CENTER_JUSTIFY) != 0)
+		penLocation.x = -this->CalculateStringWidth() / 2.0;
+	
 	auto floatPtr = static_cast<float*>(mappedSubresource.pData);
 	for (int i = 0; this->text.c_str()[i] != '\0'; i++)
 	{
@@ -97,6 +103,20 @@ TextRenderObject::TextRenderObject()
 	deviceContext->Unmap(this->vertexBuffer, 0);
 }
 
+double TextRenderObject::CalculateStringWidth()
+{
+	double penLocationX = 0.0;
+	for (int i = 0; this->text.c_str()[i] != '\0'; i++)
+	{
+		char ch = this->text.c_str()[i];
+		Font::CharacterInfo info;
+		if (this->font->GetCharInfo(ch, info))
+			penLocationX += info.advance;
+	}
+
+	return penLocationX;
+}
+
 /*virtual*/ void TextRenderObject::Render(Camera* camera, RenderPass renderPass)
 {
 	if (renderPass != RenderPass::MAIN_PASS)
@@ -115,17 +135,23 @@ TextRenderObject::TextRenderObject()
 	if (FAILED(result))
 		return;
 
-	Matrix4x4 worldToCameraMat;
-	camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
-
 	Matrix4x4 cameraToProjMat;
 	camera->GetProjectionMatrix(cameraToProjMat);
 
-	Matrix4x4 objectToWorldMat;
-	this->objectToTargetSpace.GetToMatrix(objectToWorldMat);
-
-	Matrix4x4 objectToProjMat;
-	objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
+	Matrix4x4 objectToProjMat;	
+	if ((this->flags & Flag::STICK_WITH_CAMERA) != 0)
+	{
+		Matrix4x4 objectToCameraMat;
+		this->objectToTargetSpace.GetToMatrix(objectToCameraMat);
+		objectToProjMat = cameraToProjMat * objectToCameraMat;
+	}
+	else
+	{
+		Matrix4x4 objectToWorldMat, worldToCameraMat;
+		this->objectToTargetSpace.GetToMatrix(objectToWorldMat);
+		camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
+		objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
+	}
 
 	const Shader::Constant* constant = nullptr;
 
@@ -176,7 +202,11 @@ TextRenderObject::TextRenderObject()
 
 void TextRenderObject::SetFlags(uint32_t givenFlags)
 {
-	this->flags = givenFlags;
+	if (this->flags != givenFlags)
+	{
+		this->flags = givenFlags;
+		this->flags |= Flag::REBUILD_VERTEX_BUFFER;
+	}
 }
 
 uint32_t TextRenderObject::GetFlags() const

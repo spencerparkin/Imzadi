@@ -206,14 +206,21 @@ void Frame::OnPreviewAsset(wxCommandEvent& event)
 			Imzadi::Reference<Imzadi::Asset> asset;
 			if (game->GetAssetCache()->LoadAsset((const char*)file, asset))
 			{
-				Imzadi::Transform transform;
-				transform.SetIdentity();
-				transform.matrix.SetFromAxisAngle(Imzadi::Vector3(0.0, 1.0, 0.0), M_PI);
+				Imzadi::Transform rotation;
+				rotation.SetIdentity();
+				rotation.matrix.SetFromAxisAngle(Imzadi::Vector3(0.0, 1.0, 0.0), 0.0);
+				Imzadi::Transform scale;
+				scale.SetIdentity();
+				scale.matrix.SetUniformScale(10.0);
+				Imzadi::Transform translation;
+				translation.SetIdentity();
+				translation.translation.SetComponents(0.0, 0.0, -10.0);
 				auto textRenderObject = new Imzadi::TextRenderObject();
 				textRenderObject->SetText("The quick brown fox jumped over the lazy dog.");
 				textRenderObject->SetFont((const char*)fileName.GetName());
 				textRenderObject->SetColor(Imzadi::Vector3(1.0, 1.0, 1.0));
-				textRenderObject->SetTransform(transform);
+				textRenderObject->SetTransform(translation * rotation * scale);
+				textRenderObject->SetFlags(Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY | Imzadi::TextRenderObject::Flag::STICK_WITH_CAMERA);
 				renderObject.Set(textRenderObject);
 				game->GetScene()->AddRenderObject(textRenderObject);
 			}
