@@ -124,6 +124,49 @@ double TextRenderObject::CalculateStringWidth()
 
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
+	Matrix4x4 objectToProjMat;
+
+	if ((this->flags & Flag::STICK_WITH_CAMERA_PROJ) != 0)
+	{
+		Matrix4x4 objectToCameraMat;
+		this->objectToTargetSpace.GetToMatrix(objectToProjMat);
+	}
+	else
+	{
+		Matrix4x4 cameraToProjMat;
+		camera->GetProjectionMatrix(cameraToProjMat);
+
+		if ((this->flags & Flag::STICK_WITH_CAMERA) != 0)
+		{
+			Matrix4x4 objectToCameraMat;
+			this->objectToTargetSpace.GetToMatrix(objectToCameraMat);
+
+			objectToProjMat = cameraToProjMat * objectToCameraMat;
+		}
+		else
+		{
+			Matrix4x4 objectToWorldMat, worldToCameraMat;
+			this->objectToTargetSpace.GetToMatrix(objectToWorldMat);
+			camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
+
+			objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
+
+			if ((this->flags & Flag::ALWAYS_FACING_CAMERA) != 0)
+			{
+				Matrix4x4 rotationMat(camera->GetCameraToWorldTransform().matrix);
+				objectToProjMat = objectToProjMat * rotationMat;
+			}
+
+			if ((this->flags & Flag::CONSTANT_SIZE) != 0)
+			{
+				double scale = (camera->GetEyePoint() - this->objectToTargetSpace.translation).Length();
+				Matrix4x4 scaleMat;
+				scaleMat.SetScale(Vector3(scale, scale, scale));
+				objectToProjMat = objectToProjMat * scaleMat;
+			}
+		}
+	}
+
 	Shader* shader = this->font->GetShader();
 
 	ID3D11Buffer* constantsBuffer = shader->GetConstantsBuffer();
@@ -134,40 +177,6 @@ double TextRenderObject::CalculateStringWidth()
 	HRESULT result = deviceContext->Map(constantsBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedSubresource);
 	if (FAILED(result))
 		return;
-
-	Matrix4x4 cameraToProjMat;
-	camera->GetProjectionMatrix(cameraToProjMat);
-
-	Matrix4x4 objectToProjMat;	
-	if ((this->flags & Flag::STICK_WITH_CAMERA) != 0)
-	{
-		Matrix4x4 objectToCameraMat;
-		this->objectToTargetSpace.GetToMatrix(objectToCameraMat);
-
-		objectToProjMat = cameraToProjMat * objectToCameraMat;
-	}
-	else
-	{
-		Matrix4x4 objectToWorldMat, worldToCameraMat;
-		this->objectToTargetSpace.GetToMatrix(objectToWorldMat);
-		camera->GetWorldToCameraTransform().GetToMatrix(worldToCameraMat);
-
-		objectToProjMat = cameraToProjMat * worldToCameraMat * objectToWorldMat;
-
-		if ((this->flags & Flag::ALWAYS_FACING_CAMERA) != 0)
-		{
-			Matrix4x4 rotationMat(camera->GetCameraToWorldTransform().matrix);
-			objectToProjMat = objectToProjMat * rotationMat;
-		}
-
-		if ((this->flags & Flag::CONSTANT_SIZE) != 0)
-		{
-			double scale = (camera->GetEyePoint() - this->objectToTargetSpace.translation).Length();
-			Matrix4x4 scaleMat;
-			scaleMat.SetScale(Vector3(scale, scale, scale));
-			objectToProjMat = objectToProjMat * scaleMat;
-		}
-	}
 
 	const Shader::Constant* constant = nullptr;
 

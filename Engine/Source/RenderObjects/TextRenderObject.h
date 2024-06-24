@@ -25,9 +25,10 @@ namespace Imzadi
 			CONSTANT_SIZE				= 0x00000004,		///< This indicates that the text should be the same size no matter how far away or close it is to the camera.  Ignored if sticking with camera.
 			ALWAYS_ON_TOP				= 0x00000008,		///< This indicates that nothing should draw over the top of the text.
 			STICK_WITH_CAMERA			= 0x00000010,		///< If used, our transform goes from object space to camera space, not the typical object space to world space.
-			LEFT_JUSTIFY				= 0x00000020,		///< Left-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
-			RIGHT_JUSTIFY				= 0x00000040,		///< Right-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
-			CENTER_JUSTIFY				= 0x00000080		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
+			STICK_WITH_CAMERA_PROJ		= 0x00000020,		///< This overrides the STICK_WITH_CAMERA flag, and, if used, our transform goes from object space to projection space.
+			LEFT_JUSTIFY				= 0x00000040,		///< Left-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
+			RIGHT_JUSTIFY				= 0x00000080,		///< Right-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
+			CENTER_JUSTIFY				= 0x00000100		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 		};
 
 		/**
@@ -85,8 +86,9 @@ namespace Imzadi
 
 		/**
 		 * Set the transform for the text.  This takes it from object
-		 * space to world space, or object space to camera space, depending
-		 * on how the render object is configured.
+		 * space to world space, or object space to camera space, or
+		 * even object space to projection space, depending on how the
+		 * render object is configured.  See the TextRenderObject::Flag enum.
 		 */
 		void SetTransform(const Transform& transform);
 
