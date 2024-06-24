@@ -107,4 +107,20 @@ namespace Imzadi
 		uint32_t flags;
 		Transform objectToTargetSpace;
 	};
+
+	/**
+	 * This text render object is used to display the engine's current frame-rate.
+	 */
+	class FPSRenderObject : public TextRenderObject
+	{
+	public:
+		FPSRenderObject();
+		virtual ~FPSRenderObject();
+
+		virtual void Prepare() override;
+
+	private:
+		std::list<double> deltaTimeList;
+		uint32_t deltaTimeListMaxSize;
+	};
 }

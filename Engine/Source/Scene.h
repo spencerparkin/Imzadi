@@ -3,6 +3,7 @@
 #include "Reference.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include <list>
+#include <unordered_map>
 
 namespace Imzadi
 {
@@ -17,7 +18,12 @@ namespace Imzadi
 
 	/**
 	 * This class represents the entire renderable scene and how we're viewing it.
-	 * It is a collection of RenderObject instances and can be asked to update and draw each frame.
+	 * It is a collection of RenderObject instances and can be asked to draw each frame.
+	 * 
+	 * The scene here doesn't organize render objects into a hierarchy.  Maybe it should,
+	 * but for now it doesn't.  There's also no spacial sorting going on here for the
+	 * expidition of visible surface determination.  For now, I'm just doing a frustum
+	 * check for each render object.
 	 */
 	class IMZADI_API Scene : public ReferenceCounted
 	{
@@ -33,8 +39,38 @@ namespace Imzadi
 
 		/**
 		 * Add a RenderObject instance to the scene.  It will get drawn if it intersects the view frustum.
+		 * 
+		 * @param[in] renderObject This is the render object to add to the scene.
+		 * @return A name for the render object is returned that can be used to refer to it in other calls.  An empty string is returned on failure.
 		 */
-		void AddRenderObject(Reference<RenderObject> renderObject);
+		std::string AddRenderObject(Reference<RenderObject> renderObject);
+
+		/**
+		 * Add a RenderObject instance to the scene by name.
+		 * 
+		 * @param[in] name The render object will be referred to in this call and others by this name.
+		 * @param[in] renderObject This is the render object to add to the scene.
+		 * @return True is returned on success; false, otherwise.  Failure can occur if there is a name collision.
+		 */
+		bool AddRenderObject(const std::string& name, Reference<RenderObject> renderObject);
+
+		/**
+		 * Remove a RenderObject instance from the scene by name.
+		 * 
+		 * @param[in] name The render object by this name will be removed.
+		 * @param[out] renderObject The removed render object is returned here, if given as non-null.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool RemoveRenderObject(const std::string& name, Reference<RenderObject>* renderObject = nullptr);
+
+		/**
+		 * Find a render object in the scene by the given name.
+		 * 
+		 * @param[in] name Look for a render object stored under this name.
+		 * @param[out] renderObject The found render object, if any, is returned in this reference.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool FindRenderObject(const std::string& name, Reference<RenderObject>& renderObject);
 
 		/**
 		 * Submit draw-calls for everything approximately deemed visible in the scene
@@ -53,14 +89,8 @@ namespace Imzadi
 		void PrepareRenderObjects();
 
 	private:
-		typedef std::list<Reference<RenderObject>> RenderObjectList;
-
-		// Note that a more sophisticated system would spacially sort scene objects
-		// or put them in some sort of hierarchy or something like that.  I'm just
-		// going to do something super simple here and just have a list of render
-		// objects.  That's it.  I'll cull them based on the view frustum, but
-		// that's as far as I'm going to take visible surface determination for now.
-		RenderObjectList renderObjectList;
+		typedef std::unordered_map<std::string, Reference<RenderObject>> RenderObjectMap;
+		RenderObjectMap renderObjectMap;
 	};
 
 	/**

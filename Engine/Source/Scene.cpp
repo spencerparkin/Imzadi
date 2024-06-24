@@ -1,6 +1,7 @@
 #include "Scene.h"
 #include "Camera.h"
 #include <algorithm>
+#include <format>
 
 using namespace Imzadi;
 
@@ -17,28 +18,65 @@ Scene::Scene()
 
 void Scene::Clear()
 {
-	this->renderObjectList.clear();
+	this->renderObjectMap.clear();
 }
 
-void Scene::AddRenderObject(Reference<RenderObject> renderObject)
+std::string Scene::AddRenderObject(Reference<RenderObject> renderObject)
 {
-	this->renderObjectList.push_back(renderObject);
+	std::string name = std::format("{:#010x}", uintptr_t(renderObject.Get()));
+	if (!this->AddRenderObject(name, renderObject))
+		return "";
+
+	return name;
+}
+
+bool Scene::AddRenderObject(const std::string& name, Reference<RenderObject> renderObject)
+{
+	if (this->renderObjectMap.find(name) != this->renderObjectMap.end())
+		return false;
+
+	this->renderObjectMap.insert(std::pair<std::string, Reference<RenderObject>>(name, renderObject));
+	return true;
+}
+
+bool Scene::RemoveRenderObject(const std::string& name, Reference<RenderObject>* renderObject /*= nullptr*/)
+{
+	RenderObjectMap::iterator iter = this->renderObjectMap.find(name);
+	if (iter == this->renderObjectMap.end())
+		return false;
+
+	if (renderObject)
+		renderObject->Set(iter->second);
+
+	this->renderObjectMap.erase(iter);
+	return true;
+}
+
+bool Scene::FindRenderObject(const std::string& name, Reference<RenderObject>& renderObject)
+{
+	RenderObjectMap::iterator iter = this->renderObjectMap.find(name);
+	if (iter == this->renderObjectMap.end())
+		return false;
+
+	renderObject.Set(iter->second);
+	return true;
 }
 
 void Scene::Render(Camera* camera, RenderPass renderPass)
 {
 	std::vector<RenderObject*> visibleObjects;
 
-	for (/*const*/ Reference<RenderObject>& renderObject : this->renderObjectList)
+	for (auto pair : this->renderObjectMap)
 	{
+		RenderObject* renderObject = pair.second.Get();
 		if (renderObject->IsHidden())
 			continue;
 
 		// TODO: Activate this code when ready.
-		//if (!camera->IsApproximatelyVisible(renderObject.Get()))
+		//if (!camera->IsApproximatelyVisible(renderObject))
 		//	continue;
 			
-		visibleObjects.push_back(renderObject.Get());
+		visibleObjects.push_back(renderObject);
 	}
 
 	std::sort(visibleObjects.begin(), visibleObjects.end(), [](const RenderObject* objectA, const RenderObject* objectB) -> bool {
@@ -51,8 +89,11 @@ void Scene::Render(Camera* camera, RenderPass renderPass)
 
 void Scene::PrepareRenderObjects()
 {
-	for (Reference<RenderObject>& renderObject : this->renderObjectList)
+	for (auto pair : this->renderObjectMap)
+	{
+		RenderObject* renderObject = pair.second.Get();
 		renderObject->Prepare();
+	}
 }
 
 //--------------------------- RenderObject ---------------------------

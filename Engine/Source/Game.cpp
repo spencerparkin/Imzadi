@@ -3,6 +3,7 @@
 #include "Assets/RenderMesh.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
+#include "RenderObjects/TextRenderObject.h"
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
@@ -20,6 +21,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 {
 	this->accelerationDuetoGravity = 40.0;
 	this->collisionSystemDebugDrawFlags = 0;
+	this->deltaTimeSeconds = 0.0;
 	this->lastTickTime = 0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
@@ -477,7 +479,7 @@ bool Game::RecreateViews()
 
 	IMZADI_LOG_INFO("Viewport dimensions: %d x %d", int(this->mainPassViewport.Width), int(this->mainPassViewport.Height));
 
-	double aspectRatio = double(mainPassViewport.Width) / double(mainPassViewport.Height);
+	double aspectRatio = double(this->mainPassViewport.Width) / double(this->mainPassViewport.Height);
 
 	Frustum frustum;
 	frustum.SetFromAspectRatio(aspectRatio, M_PI / 3.0, 0.1, 1000.0);
@@ -509,14 +511,14 @@ bool Game::RecreateViews()
 
 	clock_t currentTickTime = ::clock();
 	clock_t deltaTickTime = currentTickTime - this->lastTickTime;
-	double deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
+	this->deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
 	this->lastTickTime = currentTickTime;
 
 	// This can be useful while debugging, but I'm also doing this because
 	// I'm seeing the first frame's delta-time be way too big and this can
 	// cause the character to move too far in the first frame and then tunnel
 	// through the ground.
-	if (deltaTimeSeconds >= 0.1)
+	if (this->deltaTimeSeconds >= 0.1)
 		return true;
 
 	this->debugLines->Clear();
@@ -526,16 +528,16 @@ bool Game::RecreateViews()
 	this->controller.Update();
 
 	// Can initiate collision queries in this pass.
-	this->Tick(TickPass::PRE_TICK, deltaTimeSeconds);
+	this->Tick(TickPass::PRE_TICK);
 
 	// Do work that runs in parallel with the collision system.  (e.g., animating skeletons and performing skinning.)
-	this->Tick(TickPass::MID_TICK, deltaTimeSeconds);
+	this->Tick(TickPass::MID_TICK);
 
 	// Stall waiting for the collision system to complete all queries and commands.
 	this->collisionSystem.FlushAllTasks();
 
 	// Collision queries can now be acquired and used in this pass.  (e.g., to solve constraints.)
-	this->Tick(TickPass::POST_TICK, deltaTimeSeconds);
+	this->Tick(TickPass::POST_TICK);
 
 	if (this->windowResized)
 	{
@@ -588,7 +590,7 @@ void Game::AddEntity(Entity* entity)
 	this->spawnedEntityQueue.push_back(entity);
 }
 
-void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
+void Game::AdvanceEntities(TickPass tickPass)
 {
 	while (this->spawnedEntityQueue.size() > 0)
 	{
@@ -607,7 +609,7 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 
 		Entity* entity = *iter;
 
-		if (!entity->Tick(tickPass, deltaTimeSeconds))
+		if (!entity->Tick(tickPass, this->deltaTimeSeconds))
 		{
 			entity->Shutdown(false);
 			this->tickingEntityList.erase(iter);
@@ -681,6 +683,8 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 				this->collisionSystemDebugDrawFlags ^= IMZADI_DRAW_FLAG_AABB_TREE;
 			else if (wParam == VK_F4)
 				AnimatedMeshInstance::SetRenderSkeletons(!AnimatedMeshInstance::GetRenderSkeletons());
+			else if (wParam == VK_F5)
+				this->ToggleFPSDisplay();
 			break;
 		}
 		case WM_DESTROY:
@@ -709,6 +713,22 @@ void Game::AdvanceEntities(TickPass tickPass, double deltaTimeSeconds)
 	}
 
 	return DefWindowProc(windowHandle, msg, wParam, lParam);
+}
+
+void Game::ToggleFPSDisplay()
+{
+	if (!this->scene)
+		return;
+
+	Reference<RenderObject> renderObj;
+	if (this->scene->FindRenderObject("fps", renderObj))
+		this->scene->RemoveRenderObject("fps");
+	else
+	{
+		auto fpsText = new FPSRenderObject();
+		fpsText->SetFont("UbuntuMono_R");
+		this->scene->AddRenderObject("fps", fpsText);
+	}
 }
 
 Controller* Game::GetController(const std::string& controllerUser)
@@ -741,9 +761,9 @@ std::string Game::PopControllerUser()
 	return controllerUser;
 }
 
-/*virtual*/ void Game::Tick(TickPass tickPass, double deltaTimeSeconds)
+/*virtual*/ void Game::Tick(TickPass tickPass)
 {
-	this->AdvanceEntities(tickPass, deltaTimeSeconds);
+	this->AdvanceEntities(tickPass);
 
 	if (tickPass == TickPass::MID_TICK)
 	{

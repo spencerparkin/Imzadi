@@ -5,11 +5,14 @@
 
 using namespace Imzadi;
 
+//---------------------------- TextRenderObject ----------------------------
+
 TextRenderObject::TextRenderObject()
 {
 	this->flags = 0;
 	this->vertexBuffer = nullptr;
 	this->objectToTargetSpace.SetIdentity();
+	this->color.SetComponents(1.0, 1.0, 1.0);
 }
 
 /*virtual*/ TextRenderObject::~TextRenderObject()
@@ -120,6 +123,9 @@ double TextRenderObject::CalculateStringWidth()
 /*virtual*/ void TextRenderObject::Render(Camera* camera, RenderPass renderPass)
 {
 	if (renderPass != RenderPass::MAIN_PASS)
+		return;
+
+	if (this->text.length() == 0)
 		return;
 
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
@@ -300,4 +306,47 @@ void TextRenderObject::SetTransform(const Transform& transform)
 const Transform& TextRenderObject::GetTransform() const
 {
 	return this->objectToTargetSpace;
+}
+
+//---------------------------- FPSRenderObject ----------------------------
+
+FPSRenderObject::FPSRenderObject()
+{
+	this->deltaTimeListMaxSize = 16;
+}
+
+/*virtual*/ FPSRenderObject::~FPSRenderObject()
+{
+}
+
+/*virtual*/ void FPSRenderObject::Prepare()
+{
+	this->deltaTimeList.push_back(Game::Get()->GetDeltaTime());
+	while (this->deltaTimeList.size() > this->deltaTimeListMaxSize)
+		this->deltaTimeList.pop_front();
+
+	double averageFrameTimeSeconds = 0.0;
+	for (double deltaTimeSeconds : this->deltaTimeList)
+		averageFrameTimeSeconds += deltaTimeSeconds;
+	averageFrameTimeSeconds /= double(this->deltaTimeList.size());
+
+	double frameRateFPS = 1.0 / averageFrameTimeSeconds;
+	this->SetText(std::format("FPS: {:.2f}", frameRateFPS));
+
+	const D3D11_VIEWPORT* viewport = Game::Get()->GetViewportInfo();
+	double aspectRatio = double(viewport->Width) / double(viewport->Height);
+
+	Transform scale;
+	scale.SetIdentity();
+	scale.matrix.SetNonUniformScale(Vector3(1.0, aspectRatio, 1.0));
+
+	Transform translate;
+	translate.SetIdentity();
+	translate.translation.SetComponents(0.9, 0.9, -0.5);
+
+	this->SetTransform(translate * scale);
+
+	this->SetFlags(Flag::ALWAYS_ON_TOP | Flag::RIGHT_JUSTIFY | Flag::STICK_WITH_CAMERA_PROJ);
+
+	TextRenderObject::Prepare();
 }

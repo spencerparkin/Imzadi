@@ -46,9 +46,9 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 	return Game::PreShutdown();
 }
 
-/*virtual*/ void GamePreview::Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds)
+/*virtual*/ void GamePreview::Tick(Imzadi::TickPass tickPass)
 {
-	Game::Tick(tickPass, deltaTimeSeconds);
+	Game::Tick(tickPass);
 
 	if (tickPass == Imzadi::TickPass::MID_TICK)
 	{

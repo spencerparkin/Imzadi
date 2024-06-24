@@ -105,7 +105,7 @@ namespace Imzadi
 		 * 
 		 * @param tickPass This let's you know what kind of work is most appropriately done in this pass.
 		 */
-		virtual void Tick(TickPass tickPass, double deltaTimeSeconds);
+		virtual void Tick(TickPass tickPass);
 
 		/**
 		 * This gets called in Shutdown after everything else is done.
@@ -225,10 +225,13 @@ namespace Imzadi
 		AssetCache* GetAssetCache();
 		void SetAssetCache(AssetCache* assetCache);
 
+		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
+		double GetDeltaTime() const { return this->deltaTimeSeconds; }
+
 	protected:
 
 		void AddEntity(Entity* entity);
-		void AdvanceEntities(TickPass tickPass, double deltaTimeSeconds);
+		void AdvanceEntities(TickPass tickPass);
 
 		/**
 		 * This performse the typical Win32 API of grabbing and dispatching windows messages.
@@ -251,6 +254,7 @@ namespace Imzadi
 		static LRESULT CALLBACK WndProcEntryFunc(HWND windowHandle, UINT msg, WPARAM wParam, LPARAM lParam);
 
 		bool RecreateViews();
+		void ToggleFPSDisplay();
 
 		TCHAR windowTitle[256];
 		HINSTANCE instance;
@@ -284,6 +288,7 @@ namespace Imzadi
 		double accelerationDuetoGravity;
 		Reference<DebugLines> debugLines;
 		uint32_t collisionSystemDebugDrawFlags;
+		double deltaTimeSeconds;
 		clock_t lastTickTime;
 		static Game* gameSingleton;
 	};

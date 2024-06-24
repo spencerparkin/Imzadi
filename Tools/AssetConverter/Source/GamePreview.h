@@ -16,7 +16,7 @@ public:
 	virtual bool CreateRenderWindow() override;
 	virtual void PumpWindowsMessages() override;
 	virtual bool PostInit() override;
-	virtual void Tick(Imzadi::TickPass tickPass, double deltaTimeSeconds) override;
+	virtual void Tick(Imzadi::TickPass tickPass) override;
 	virtual bool PreShutdown() override;
 
 	void SetAnimatingMesh(Imzadi::AnimatedMeshInstance* instance);
