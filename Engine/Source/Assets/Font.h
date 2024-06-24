@@ -34,6 +34,7 @@ namespace Imzadi
 		Shader* GetShader() { return this->textShader.Get(); }
 		ID3D11Buffer* GetIndexBuffer() { return this->indexBuffer; }
 		Texture* GetTextureAtlas() { return this->textureAtlas.Get(); }
+		const std::string& GetName() const { return this->name; }
 
 	private:
 
@@ -43,5 +44,6 @@ namespace Imzadi
 		Reference<Texture> textureAtlas;
 		Reference<Shader> textShader;
 		ID3D11Buffer* indexBuffer;
+		std::string name;
 	};
 }

@@ -278,6 +278,11 @@ bool TextRenderObject::SetFont(const std::string& fontName)
 	return true;
 }
 
+Font* TextRenderObject::GetFont()
+{
+	return this->font.Get();
+}
+
 void TextRenderObject::SetTransform(const Transform& transform)
 {
 	this->objectToTargetSpace = transform;

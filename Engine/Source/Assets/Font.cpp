@@ -37,6 +37,11 @@ Font::Font()
 		return false;
 	}
 
+	if (jsonDoc.HasMember("name") && jsonDoc["name"].IsString())
+		this->name = jsonDoc["name"].GetString();
+	else
+		this->name = "?";
+
 	if (!jsonDoc.HasMember("character_array") || !jsonDoc["character_array"].IsArray())
 	{
 		IMZADI_LOG_ERROR("Expected \"character_array\" member in the JSON data as an array.");

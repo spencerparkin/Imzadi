@@ -1,6 +1,7 @@
 #include "RenderObjectProperties.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "RenderObjects/RenderMeshInstance.h"
+#include "RenderObjects/TextRenderObject.h"
 #include "Assets/Skeleton.h"
 
 RenderObjectProperties::RenderObjectProperties(wxWindow* parent) : wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE | wxTE_RICH | wxHSCROLL)
@@ -84,5 +85,18 @@ void RenderObjectProperties::PrintPropertiesOf(Imzadi::RenderObject* renderObjec
 				}
 			}
 		}
+	}
+
+	auto textRenderObject = dynamic_cast<Imzadi::TextRenderObject*>(renderObject);
+	if (textRenderObject)
+	{
+		this->AppendText("Text Properties\n");
+		this->AppendText("===============\n");
+
+		Imzadi::Vector3 color = textRenderObject->GetColor();
+		this->AppendText(wxString::Format("Color: %f, %f, %f\n", color.x, color.y, color.z));
+
+		Imzadi::Font* font = textRenderObject->GetFont();
+		this->AppendText(wxString::Format("Font: %s\n", font->GetName().c_str()));
 	}
 }

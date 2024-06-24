@@ -52,6 +52,7 @@ bool FontMaker::MakeFont(const wxString& fontFile)
 	{
 		rapidjson::Document fontDoc;
 		fontDoc.SetObject();
+		fontDoc.AddMember("name", rapidjson::Value().SetString((const char*)fontFileName.GetName(), fontDoc.GetAllocator()), fontDoc.GetAllocator());
 
 		rapidjson::Value characterArrayValue;
 		characterArrayValue.SetArray();

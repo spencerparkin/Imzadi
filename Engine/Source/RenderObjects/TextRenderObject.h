@@ -79,6 +79,11 @@ namespace Imzadi
 		bool SetFont(const std::string& fontName);
 
 		/**
+		 * Return the font being used to render this text object.
+		 */
+		Font* GetFont();
+
+		/**
 		 * Set the transform for the text.  This takes it from object
 		 * space to world space, or object space to camera space, depending
 		 * on how the render object is configured.
