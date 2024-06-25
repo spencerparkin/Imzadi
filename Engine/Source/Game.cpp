@@ -655,7 +655,7 @@ void Game::AdvanceEntities(TickPass tickPass)
 	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
 	this->deviceContext->OMSetRenderTargets(0, NULL, this->shadowBufferView);
 	this->deviceContext->OMSetDepthStencilState(this->depthStencilState, 0);
-	this->deviceContext->OMSetBlendState(NULL, NULL, 0);
+	this->deviceContext->OMSetBlendState(NULL, NULL, 0xFFFFFFFF);
 	this->scene->Render(this->lightSourceCamera.Get(), RenderPass::SHADOW_PASS);
 	
 	// Not sure if this is necessary, but this will unbind the shadow buffer as a render target so that it can be bound later as a shader resource.
