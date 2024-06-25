@@ -121,11 +121,17 @@ Texture::Texture()
 	D3D11_TEXTURE2D_DESC textureDesc{};
 	textureDesc.Width = textureWidth;
 	textureDesc.Height = textureHeight;
-	textureDesc.MipLevels = 1;
+	textureDesc.MipLevels = 1;		// TODO: Need to make MIPs at some point.
 	textureDesc.ArraySize = 1;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+	if (jsonDoc.HasMember("for_staging") && jsonDoc["for_staging"].GetBool())
+	{
+		textureDesc.Usage = D3D11_USAGE_STAGING;
+		textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+	}
 
 	if(format == "RGBA")
 		textureDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB;
@@ -147,6 +153,9 @@ Texture::Texture()
 		IMZADI_LOG_ERROR(std::format("CreateTexture2D() failed with error code: {}", result));
 		return false;
 	}
+
+	if (jsonDoc.HasMember("for_staging") && jsonDoc["for_staging"].GetBool())
+		return true;
 
 	result = Game::Get()->GetDevice()->CreateShaderResourceView(texture, NULL, &this->textureView);
 	if (FAILED(result))

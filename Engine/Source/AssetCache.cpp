@@ -11,6 +11,7 @@
 #include "Assets/SkinWeights.h"
 #include "Assets/Skeleton.h"
 #include "Assets/Font.h"
+#include "Assets/CubeTexture.h"
 #include "Log.h"
 #include "Game.h"
 #include <algorithm>
@@ -140,6 +141,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new Skeleton();
 	else if (ext == ".font")
 		return new Font();
+	else if (ext == ".cube_texture")
+		return new CubeTexture();
 
 	return nullptr;
 }

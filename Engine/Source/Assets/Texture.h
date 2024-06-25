@@ -5,6 +5,9 @@
 
 namespace Imzadi
 {
+	/**
+	 * These can be diffuse textures, alpha maps, bump maps, reflection maps, etc.
+	 */
 	class IMZADI_API Texture : public Asset
 	{
 	public:
@@ -14,6 +17,7 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
+		ID3D11Texture2D* GetTexture() { return this->texture; }
 		ID3D11ShaderResourceView* GetTextureView() { return this->textureView; }
 		ID3D11SamplerState* GetSamplerState() { return this->samplerState; }
 

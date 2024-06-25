@@ -136,6 +136,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/Texture.h
     Source/Assets/Font.cpp
     Source/Assets/Font.h
+    Source/Assets/CubeTexture.cpp
+    Source/Assets/CubeTexture.h
 )
     
 source_group("Source" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_ENGINE_SOURCES})
