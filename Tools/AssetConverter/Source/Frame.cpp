@@ -154,6 +154,17 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 		{
 			fontMaker.MakeFont(file);
 		}
+		else if (ext == "png")
+		{
+			TextureMaker textureMaker;
+			uint32_t flags = 0;
+			flags |= TextureMaker::Flag::COLOR;
+			flags |= TextureMaker::Flag::ALPHA;
+			flags |= TextureMaker::Flag::COMPRESS;
+			flags |= TextureMaker::Flag::FLIP_VERTICAL;
+			flags |= TextureMaker::Flag::MAKE_ALPHA;
+			textureMaker.MakeTexture(file, flags);
+		}
 		else
 		{
 			wxArrayString choiceArray;
