@@ -22,13 +22,11 @@ namespace Imzadi
 
 		ID3D11Texture2D* GetTexture() { return this->cubeTexture; }
 		ID3D11ShaderResourceView* GetTextureView() { return this->cubeTextureView; }
-		ID3D11SamplerState* GetSamplerState() { return this->samplerState; }
 
 	private:
 		bool Load(std::vector<Reference<Texture>>& textureArray);
 
 		ID3D11Texture2D* cubeTexture;
 		ID3D11ShaderResourceView* cubeTextureView;
-		ID3D11SamplerState* samplerState;
 	};
 }

@@ -209,7 +209,7 @@ double TextRenderObject::CalculateStringWidth()
 
 	Texture* textureAtlas = this->font->GetTextureAtlas();
 	ID3D11ShaderResourceView* textureAtlasView = textureAtlas->GetTextureView();
-	ID3D11SamplerState* textureAtlasSamplerState = textureAtlas->GetSamplerState();
+	ID3D11SamplerState* textureAtlasSamplerState = Game::Get()->GetGeneralSamplerState();
 	deviceContext->PSSetShaderResources(0, 1, &textureAtlasView);
 	deviceContext->PSSetSamplers(0, 1, &textureAtlasSamplerState);
 

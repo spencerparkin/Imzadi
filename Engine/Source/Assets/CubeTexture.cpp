@@ -9,7 +9,6 @@ CubeTexture::CubeTexture()
 {
 	this->cubeTexture = nullptr;
 	this->cubeTextureView = nullptr;
-	this->samplerState = nullptr;
 }
 
 /*virtual*/ CubeTexture::~CubeTexture()
@@ -141,8 +140,6 @@ bool CubeTexture::Load(std::vector<Reference<Texture>>& textureArray)
 		return false;
 	}
 
-	// TODO: Maybe we only need one sampler state for the entire engine for now?
-
 	return true;
 }
 
@@ -150,7 +147,6 @@ bool CubeTexture::Load(std::vector<Reference<Texture>>& textureArray)
 {
 	SafeRelease(this->cubeTexture);
 	SafeRelease(this->cubeTextureView);
-	SafeRelease(this->samplerState);
 
 	return true;
 }

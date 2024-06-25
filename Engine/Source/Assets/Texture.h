@@ -19,11 +19,9 @@ namespace Imzadi
 
 		ID3D11Texture2D* GetTexture() { return this->texture; }
 		ID3D11ShaderResourceView* GetTextureView() { return this->textureView; }
-		ID3D11SamplerState* GetSamplerState() { return this->samplerState; }
 
 	private:
 		ID3D11Texture2D* texture;
 		ID3D11ShaderResourceView* textureView;
-		ID3D11SamplerState* samplerState;
 	};
 }

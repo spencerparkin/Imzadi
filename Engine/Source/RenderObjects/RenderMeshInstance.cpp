@@ -156,7 +156,7 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 		if (texture)
 		{
 			shaderResourceViewArray.push_back(texture->GetTextureView());
-			samplerStateArray.push_back(texture->GetSamplerState());
+			samplerStateArray.push_back(Game::Get()->GetGeneralSamplerState());
 		}
 
 		ID3D11ShaderResourceView* shadowBufferResourceView = Game::Get()->GetShadowBufferResourceViewForShader();

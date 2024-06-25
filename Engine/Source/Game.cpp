@@ -39,6 +39,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->shadowBufferView = NULL;
 	this->shadowBufferViewForShader = NULL;
 	this->shadowBufferSamplerState = NULL;
+	this->generalSamplerState = NULL;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
@@ -373,6 +374,24 @@ DebugLines* Game::GetDebugLines()
 	if (FAILED(result))
 	{
 		IMZADI_LOG_ERROR("Failed to create sampler state for shadow buffer.  Error code: %d", result);
+		return false;
+	}
+
+	D3D11_SAMPLER_DESC samplerDesc{};
+	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+	samplerDesc.BorderColor[0] = 1.0f;
+	samplerDesc.BorderColor[1] = 1.0f;
+	samplerDesc.BorderColor[2] = 1.0f;
+	samplerDesc.BorderColor[3] = 1.0f;
+	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
+
+	result = Game::Get()->GetDevice()->CreateSamplerState(&samplerDesc, &this->generalSamplerState);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR(std::format("CreateSamplerState() failed with error code: {}", result));
 		return false;
 	}
 
@@ -815,6 +834,7 @@ std::string Game::PopControllerUser()
 	SafeRelease(this->shadowPassRasterizerState);
 	SafeRelease(this->mainPassBlendState);
 	SafeRelease(this->depthStencilState);
+	SafeRelease(this->generalSamplerState);
 	SafeRelease(this->shadowBufferView);
 	SafeRelease(this->shadowBufferViewForShader);
 	SafeRelease(this->shadowBufferSamplerState);

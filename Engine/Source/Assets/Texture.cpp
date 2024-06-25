@@ -9,7 +9,6 @@ Texture::Texture()
 {
 	this->texture = nullptr;
 	this->textureView = nullptr;
-	this->samplerState = nullptr;
 }
 
 /*virtual*/ Texture::~Texture()
@@ -164,24 +163,6 @@ Texture::Texture()
 		return false;
 	}
 
-	D3D11_SAMPLER_DESC samplerDesc{};
-	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-	samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	samplerDesc.BorderColor[0] = 1.0f;
-	samplerDesc.BorderColor[1] = 1.0f;
-	samplerDesc.BorderColor[2] = 1.0f;
-	samplerDesc.BorderColor[3] = 1.0f;
-	samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-
-	result = Game::Get()->GetDevice()->CreateSamplerState(&samplerDesc, &this->samplerState);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR(std::format("CreateSamplerState() failed with error code: {}", result));
-		return false;
-	}
-
 	return true;
 }
 
@@ -189,7 +170,6 @@ Texture::Texture()
 {
 	SafeRelease(this->textureView);
 	SafeRelease(this->texture);
-	SafeRelease(this->samplerState);
 
 	return true;
 }
