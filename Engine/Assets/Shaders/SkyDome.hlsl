@@ -26,6 +26,7 @@ VS_Output VS_Main(VS_Input input)
     VS_Output output;
     output.objPos = input.position;
     output.projPos = mul(objectToProjection, float4(input.position, 1.0f));
+    output.projPos.z = 1.0f;
     return output;
 }
 
@@ -35,5 +36,6 @@ float4 PS_Main(VS_Output input) : SV_TARGET
 {
     float3 texCoordVec = normalize(input.objPos);
     float4 color = cubeTexture.Sample(cubeSampler, texCoordVec);
+    color.a = 1.0f;
     return color;
 }

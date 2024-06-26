@@ -165,6 +165,8 @@ if __name__ == '__main__':
     # TODO: For the port from DX11 to DX12, here we want to dxc.exe instead of fxc.exe to compile shaders.
     #       Until we do the port, Pix for windows isn't going to work as far as debugging shaders, which sucks.
 
+    # TODO: Don't recompile everything all the time.  Only recompile what needs to be recompiled.  Compile incrementally.
+
     assets_base_dir = os.getcwd()
 
     print('Deleting PDB files...')

@@ -171,12 +171,12 @@ bool Converter::GenerateSkyDome(const wxString& assetFile, const aiScene* scene,
 
 	rapidjson::Value textureArrayValue;
 	textureArrayValue.SetArray();
-	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NX.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
 	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_PX.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
-	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NY.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NX.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
 	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_PY.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
-	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NZ.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NY.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
 	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_PZ.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NZ.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
 
 	cubeTextureDoc.AddMember("texture_array", textureArrayValue, cubeTextureDoc.GetAllocator());
 
