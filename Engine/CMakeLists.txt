@@ -18,6 +18,8 @@ set(GAME_ENGINE_SOURCES
     Source/Controller.h
     Source/Log.cpp
     Source/Log.h
+    Source/StateCache.cpp
+    Source/StateCache.h
     Source/Entities/Enemy.cpp
     Source/Entities/Enemy.h
     Source/Entities/FollowCam.cpp

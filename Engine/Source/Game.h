@@ -15,6 +15,7 @@
 #include "Math/Quaternion.h"
 #include "Controller.h"
 #include "Collision/System.h"
+#include "StateCache.h"
 
 #define IMZADI_GAME_WINDOW_CLASS_NAME		TEXT("ImzadiGameWindowClass")
 
@@ -228,6 +229,10 @@ namespace Imzadi
 		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
 		double GetDeltaTime() const { return this->deltaTimeSeconds; }
 
+		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>* GetRasterStateCache() { return &this->rasterStateCache; }
+		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC>* GetDepthStencilStateCache() { return &this->depthStencilStateCache; }
+		StateCache<ID3D11BlendState, D3D11_BLEND_DESC>* GetBlendStateCache() { return &this->blendStateCache; }
+
 	protected:
 
 		void AddEntity(Entity* entity);
@@ -266,12 +271,11 @@ namespace Imzadi
 		IDXGISwapChain* swapChain;
 		ID3D11RenderTargetView* frameBufferView;
 		ID3D11DepthStencilView* depthStencilView;
-		ID3D11RasterizerState* mainPassRasterizerState;
-		ID3D11RasterizerState* shadowPassRasterizerState;
-		ID3D11BlendState* mainPassBlendState;
-		ID3D11DepthStencilState* depthStencilState;
 		ID3D11DepthStencilView* shadowBufferView;
 		ID3D11ShaderResourceView* shadowBufferViewForShader;
+		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC> rasterStateCache;
+		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC> depthStencilStateCache;
+		StateCache<ID3D11BlendState, D3D11_BLEND_DESC> blendStateCache;
 		ID3D11SamplerState* generalSamplerState;
 		D3D11_VIEWPORT mainPassViewport;
 		D3D11_VIEWPORT shadowPassViewport;
@@ -292,14 +296,4 @@ namespace Imzadi
 		clock_t lastTickTime;
 		static Game* gameSingleton;
 	};
-
-	template<typename T>
-	void IMZADI_API SafeRelease(T*& thing)
-	{
-		if (thing)
-		{
-			thing->Release();
-			thing = nullptr;
-		}
-	}
 }

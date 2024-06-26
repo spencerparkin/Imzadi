@@ -31,3 +31,13 @@
 #define IMZADI_AXIS_FLAG_X					0x00000001
 #define IMZADI_AXIS_FLAG_Y					0x00000002
 #define IMZADI_AXIS_FLAG_Z					0x00000004
+
+template<typename T>
+void IMZADI_API SafeRelease(T*& thing)
+{
+	if (thing)
+	{
+		thing->Release();
+		thing = nullptr;
+	}
+}
