@@ -2,6 +2,7 @@
     "width": 512,
     "height": 512,
     "data": "Textures\\SkyDome_PX.texture_data",
+    "for_staging": true,
     "format": "RGBA",
     "compressed": true
 }

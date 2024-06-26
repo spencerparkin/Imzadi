@@ -2,7 +2,10 @@
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "RenderObjects/SkyDomeRenderObject.h"
 #include "Assets/Skeleton.h"
+#include "Assets/SkyDome.h"
+#include "Assets/CubeTexture.h"
 
 RenderObjectProperties::RenderObjectProperties(wxWindow* parent) : wxTextCtrl(parent, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_READONLY | wxTE_MULTILINE | wxTE_RICH | wxHSCROLL)
 {
@@ -98,5 +101,25 @@ void RenderObjectProperties::PrintPropertiesOf(Imzadi::RenderObject* renderObjec
 
 		Imzadi::Font* font = textRenderObject->GetFont();
 		this->AppendText(wxString::Format("Font: %s\n", font->GetName().c_str()));
+	}
+
+	auto skyDomeRenderObject = dynamic_cast<Imzadi::SkyDomeRenderObject*>(renderObject);
+	if (skyDomeRenderObject)
+	{
+		this->AppendText("Sky Dome Properties\n");
+		this->AppendText("===================\n");
+
+		Imzadi::SkyDome* skyDome = skyDomeRenderObject->GetSkyDome();
+		if (skyDome)
+		{
+			Imzadi::CubeTexture* cubeTexture = skyDome->GetCubeTexture();
+			if (cubeTexture)
+			{
+				D3D11_TEXTURE2D_DESC textureDesc{};
+				cubeTexture->GetTexture()->GetDesc(&textureDesc);
+
+				this->AppendText(wxString::Format("Cube texture is %d x %d for each side.", textureDesc.Width, textureDesc.Height));
+			}
+		}
 	}
 }

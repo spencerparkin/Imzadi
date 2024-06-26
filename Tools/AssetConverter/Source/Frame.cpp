@@ -157,12 +157,17 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 		else if (ext == "png")
 		{
 			TextureMaker textureMaker;
+			
 			uint32_t flags = 0;
 			flags |= TextureMaker::Flag::COLOR;
 			flags |= TextureMaker::Flag::ALPHA;
 			flags |= TextureMaker::Flag::COMPRESS;
 			flags |= TextureMaker::Flag::FLIP_VERTICAL;
 			flags |= TextureMaker::Flag::MAKE_ALPHA;
+
+			if (wxYES == wxMessageBox(wxString::Format("Make texture %s for a cube map?", file.c_str()), "Cube Map?", wxICON_QUESTION | wxYES_NO, this))
+				flags |= TextureMaker::Flag::FOR_CUBE_MAP;
+
 			textureMaker.MakeTexture(file, flags);
 		}
 		else
@@ -171,6 +176,7 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 			choiceArray.Add("Meshes");
 			choiceArray.Add("Animations");
 			choiceArray.Add("Collision");
+			choiceArray.Add("SkyDome");
 			wxMultiChoiceDialog choiceDialog(this, wxString::Format("Import what from file %s?", fileName.GetName().c_str()), "What to Export", choiceArray);
 			if (choiceDialog.ShowModal() != wxID_OK)
 				return;
@@ -186,6 +192,8 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 					flags |= Converter::Flag::CONVERT_ANIMATIONS;
 				else if (selection == "Collision")
 					flags |= Converter::Flag::MAKE_COLLISION;
+				else if (selection == "SkyDome")
+					flags |= Converter::Flag::CONVERT_SKYDOME;
 			}
 
 			converter.SetFlags(flags);

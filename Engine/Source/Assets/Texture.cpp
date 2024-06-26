@@ -130,6 +130,7 @@ Texture::Texture()
 	{
 		textureDesc.Usage = D3D11_USAGE_STAGING;
 		textureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ | D3D11_CPU_ACCESS_WRITE;
+		textureDesc.BindFlags = 0;
 	}
 
 	if(format == "RGBA")

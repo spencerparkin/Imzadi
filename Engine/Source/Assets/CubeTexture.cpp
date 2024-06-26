@@ -102,6 +102,8 @@ bool CubeTexture::Load(std::vector<Reference<Texture>>& textureArray)
 
 	textureDesc.ArraySize = textureArray.size();
 	textureDesc.MiscFlags = D3D11_RESOURCE_MISC_TEXTURECUBE;
+	textureDesc.Usage = D3D11_USAGE_DEFAULT;
+	textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
 
 	HRESULT result = device->CreateTexture2D(&textureDesc, NULL, &this->cubeTexture);
 	if (FAILED(result))

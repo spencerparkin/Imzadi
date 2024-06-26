@@ -1,0 +1,7 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/SkyDome.shader",
+    "cube_texture": "Models\\SkyDome\\SkyDome.cube_texture",
+    "index_buffer": "Models\\SkyDome\\SkyDome_Indices.buffer",
+    "vertex_buffer": "Models\\SkyDome\\SkyDome_Vertices.buffer"
+}

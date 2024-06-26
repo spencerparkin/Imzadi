@@ -17,7 +17,8 @@ public:
 		COMPRESS		= 0x00000004,
 		MAKE_ALPHA		= 0x00000008,
 		FLIP_VERTICAL	= 0x00000010,
-		ALWAYS_MAKE		= 0x00000020
+		ALWAYS_MAKE		= 0x00000020,
+		FOR_CUBE_MAP	= 0x00000040
 	};
 
 	bool MakeTexture(const wxString& imageFilePath, uint32_t flags);

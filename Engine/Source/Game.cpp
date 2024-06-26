@@ -414,12 +414,15 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMe
 	{
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 		{
-			Transform objectToWorld;
-			objectToWorld.matrix.SetFromQuat(orientation);
-			objectToWorld.translation = position;
-
 			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
-			instance->SetObjectToWorldTransform(objectToWorld);
+			if (instance)
+			{
+				Transform objectToWorld;
+				objectToWorld.matrix.SetFromQuat(orientation);
+				objectToWorld.translation = position;
+				instance->SetObjectToWorldTransform(objectToWorld);
+			}
+
 			this->scene->AddRenderObject(renderMesh);
 		}
 	}

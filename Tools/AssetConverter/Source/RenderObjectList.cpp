@@ -2,6 +2,7 @@
 #include "RenderObjects/RenderMeshInstance.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "RenderObjects/SkyDomeRenderObject.h"
 #include "App.h"
 #include "Frame.h"
 #include "GamePreview.h"
@@ -106,6 +107,8 @@ void RenderObjectList::UpdateListView()
 					return "Static Mesh";
 				else if (dynamic_cast<const Imzadi::TextRenderObject*>(renderObject))
 					return "Text";
+				else if (dynamic_cast<const Imzadi::SkyDomeRenderObject*>(renderObject))
+					return "Sky Dome";
 				break;
 			}
 		}

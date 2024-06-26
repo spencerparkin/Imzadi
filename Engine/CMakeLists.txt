@@ -112,6 +112,8 @@ set(GAME_ENGINE_SOURCES
     Source/RenderObjects/RenderMeshInstance.h
     Source/RenderObjects/TextRenderObject.cpp
     Source/RenderObjects/TextRenderObject.h
+    Source/RenderObjects/SkyDomeRenderObject.cpp
+    Source/RenderObjects/SkyDomeRenderObject.h
     Source/Assets/Animation.cpp
     Source/Assets/Animation.h
     Source/Assets/Buffer.cpp
@@ -138,6 +140,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/Font.h
     Source/Assets/CubeTexture.cpp
     Source/Assets/CubeTexture.h
+    Source/Assets/SkyDome.cpp
+    Source/Assets/SkyDome.h
 )
     
 source_group("Source" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_ENGINE_SOURCES})

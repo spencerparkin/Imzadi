@@ -1,0 +1,10 @@
+{
+    "texture_array": [
+        "Textures/SkyDome_NX.texture",
+        "Textures/SkyDome_PX.texture",
+        "Textures/SkyDome_NY.texture",
+        "Textures/SkyDome_PY.texture",
+        "Textures/SkyDome_NZ.texture",
+        "Textures/SkyDome_PZ.texture"
+    ]
+}

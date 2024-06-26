@@ -38,16 +38,16 @@ bool Converter::Convert(const wxString& assetFile)
 		return false;
 	}
 
+	IMZADI_LOG_INFO("Generating node-to-world transformation map...");
+	this->nodeToWorldMap.clear();
+	if (!this->GenerateNodeToWorldMap(scene->mRootNode))
+	{
+		IMZADI_LOG_ERROR("Failed to generate transformation map.");
+		return false;
+	}
+
 	if ((this->flags & Flag::CONVERT_MESHES) != 0)
 	{
-		IMZADI_LOG_INFO("Generating node-to-world transformation map...");
-		this->nodeToWorldMap.clear();
-		if (!this->GenerateNodeToWorldMap(scene->mRootNode))
-		{
-			IMZADI_LOG_ERROR("Failed to generate transformation map.");
-			return false;
-		}
-
 		IMZADI_LOG_INFO("Processing scene graph...");
 		if (!this->ProcessSceneGraph(scene, scene->mRootNode))
 		{
@@ -70,6 +70,127 @@ bool Converter::Convert(const wxString& assetFile)
 			}
 		}
 	}
+
+	if ((this->flags & Flag::CONVERT_SKYDOME) != 0)
+	{
+		const aiNode* skyDomeNode = this->FindNodeByName(scene, "SkyDome");
+		if (!skyDomeNode)
+		{
+			IMZADI_LOG_ERROR("Failed to find sky-dome node.");
+			return false;
+		}
+
+		if (!this->GenerateSkyDome(assetFile, scene, skyDomeNode))
+		{
+			IMZADI_LOG_ERROR("Failed to generate sky-dome.");
+			return false;
+		}
+	}
+
+	return true;
+}
+
+const aiNode* Converter::FindNodeByName(const aiScene* scene, const char* name)
+{
+	std::list<const aiNode*> nodeQueue;
+	nodeQueue.push_back(scene->mRootNode);
+	while (nodeQueue.size() > 0)
+	{
+		std::list<const aiNode*>::iterator iter = nodeQueue.begin();
+		const aiNode* node = *iter;
+		nodeQueue.erase(iter);
+
+		if (strcmp(node->mName.C_Str(), name) == 0)
+			return node;
+
+		for (int i = 0; i < node->mNumChildren; i++)
+			nodeQueue.push_back(node->mChildren[i]);
+	}
+
+	return nullptr;
+}
+
+bool Converter::GenerateSkyDome(const wxString& assetFile, const aiScene* scene, const aiNode* node)
+{
+	wxFileName fileName(assetFile);
+
+	wxFileName skyDomeFile;
+	skyDomeFile.SetPath(fileName.GetPath());
+	skyDomeFile.SetName(fileName.GetName());
+	skyDomeFile.SetExt("sky_dome");
+
+	wxFileName cubeTextureFile;
+	cubeTextureFile.SetPath(fileName.GetPath());
+	cubeTextureFile.SetName(fileName.GetName());
+	cubeTextureFile.SetExt("cube_texture");
+
+	const aiMesh* mesh = scene->mMeshes[node->mMeshes[0]];
+
+	wxFileName vertexBufferFileName;
+	vertexBufferFileName.SetPath(this->assetFolder);
+	vertexBufferFileName.SetName(wxString(mesh->mName.C_Str()) + "_Vertices");
+	vertexBufferFileName.SetExt("buffer");
+
+	wxFileName indexBufferFileName;
+	indexBufferFileName.SetPath(this->assetFolder);
+	indexBufferFileName.SetName(wxString(mesh->mName.C_Str()) + "_Indices");
+	indexBufferFileName.SetExt("buffer");
+
+	if (node->mNumMeshes != 1)
+	{
+		IMZADI_LOG_ERROR("Didn't find a sky-dome mesh.");
+		return false;
+	}
+
+	rapidjson::Document skyDomeDoc;
+	skyDomeDoc.SetObject();
+	skyDomeDoc.AddMember("primitive_type", rapidjson::Value().SetString("TRIANGLE_LIST"), skyDomeDoc.GetAllocator());
+	skyDomeDoc.AddMember("shader", rapidjson::Value().SetString("Shaders/SkyDome.shader", skyDomeDoc.GetAllocator()), skyDomeDoc.GetAllocator());
+	skyDomeDoc.AddMember("cube_texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(cubeTextureFile.GetFullPath()), skyDomeDoc.GetAllocator()), skyDomeDoc.GetAllocator());
+	skyDomeDoc.AddMember("index_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(indexBufferFileName.GetFullPath()), skyDomeDoc.GetAllocator()), skyDomeDoc.GetAllocator());
+	skyDomeDoc.AddMember("vertex_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(vertexBufferFileName.GetFullPath()), skyDomeDoc.GetAllocator()), skyDomeDoc.GetAllocator());
+
+	Imzadi::Transform nodeToWorld;
+	if (!this->GetNodeToWorldTransform(node, nodeToWorld))
+	{
+		IMZADI_LOG_ERROR("Failed to get node-to-world transform for the sky-dome node.");
+		return false;
+	}
+
+	rapidjson::Document indicesDoc;
+	if (!this->GenerateIndexBuffer(indicesDoc, mesh))
+		return false;
+
+	rapidjson::Document verticesDoc;
+	Imzadi::AxisAlignedBoundingBox boundingBox;
+	if (!this->GenerateVertexBuffer(verticesDoc, mesh, nodeToWorld, VBufFlag::POSITION, boundingBox))
+		return false;
+
+	rapidjson::Document cubeTextureDoc;		// For now, this is just meant to be hand-edited after we kick it out.
+	cubeTextureDoc.SetObject();
+
+	rapidjson::Value textureArrayValue;
+	textureArrayValue.SetArray();
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NX.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_PX.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NY.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_PY.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_NZ.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+	textureArrayValue.PushBack(rapidjson::Value().SetString("Textures/SkyDome_PZ.texture", cubeTextureDoc.GetAllocator()), cubeTextureDoc.GetAllocator());
+
+	cubeTextureDoc.AddMember("texture_array", textureArrayValue, cubeTextureDoc.GetAllocator());
+
+	if (!JsonUtils::WriteJsonFile(skyDomeDoc, skyDomeFile.GetFullPath()))
+		return false;
+
+	if (!JsonUtils::WriteJsonFile(cubeTextureDoc, cubeTextureFile.GetFullPath()))
+		return false;
+
+	if (!JsonUtils::WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath()))
+		return false;
+
+	if (!JsonUtils::WriteJsonFile(verticesDoc, vertexBufferFileName.GetFullPath()))
+		return false;
 
 	return true;
 }
@@ -290,6 +411,136 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 	return true;
 }
 
+bool Converter::GenerateIndexBuffer(rapidjson::Document& indicesDoc, const aiMesh* mesh)
+{
+	indicesDoc.SetObject();
+
+	rapidjson::Value indexBufferValue;
+	indexBufferValue.SetArray();
+
+	for (int i = 0; i < mesh->mNumFaces; i++)
+	{
+		const aiFace* face = &mesh->mFaces[i];
+		if (face->mNumIndices != 3)
+		{
+			IMZADI_LOG_ERROR("Error: Expected exactly 3 indices in face.");
+			return false;
+		}
+
+		for (int j = 0; j < face->mNumIndices; j++)
+		{
+			unsigned int index = face->mIndices[j];
+			indexBufferValue.PushBack(rapidjson::Value().SetUint(index), indicesDoc.GetAllocator());
+
+			if (index != static_cast<unsigned int>(static_cast<unsigned short>(index)))
+			{
+				IMZADI_LOG_ERROR("Error: Index (%d) doesn't fit in an unsigned short.", index);
+				return false;
+			}
+		}
+	}
+
+	indicesDoc.AddMember("bind", rapidjson::Value().SetString("index", indicesDoc.GetAllocator()), indicesDoc.GetAllocator());
+	indicesDoc.AddMember("stride", rapidjson::Value().SetInt(1), indicesDoc.GetAllocator());
+	indicesDoc.AddMember("type", rapidjson::Value().SetString("ushort", indicesDoc.GetAllocator()), indicesDoc.GetAllocator());
+	indicesDoc.AddMember("buffer", indexBufferValue, indicesDoc.GetAllocator());
+
+	return true;
+}
+
+bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld, uint32_t flags, Imzadi::AxisAlignedBoundingBox& boundingBox)
+{
+	if (mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
+	{
+		IMZADI_LOG_ERROR("Only triangle primitive currently supported.");
+		return false;
+	}
+
+	if (mesh->mNumFaces == 0)
+	{
+		IMZADI_LOG_ERROR("No faces found.");
+		return false;
+	}
+
+	if (mesh->mNumVertices == 0)
+	{
+		IMZADI_LOG_ERROR("No vertices in mesh!");
+		return false;
+	}
+
+	if ((flags & VBufFlag::TEXCOORD) != 0 && mesh->mNumUVComponents[0] != 2)
+	{
+		IMZADI_LOG_ERROR("Expected exactly 2 UV components in first channel.");
+		return false;
+	}
+
+	verticesDoc.SetObject();
+
+	rapidjson::Value vertexBufferValue;
+	vertexBufferValue.SetArray();
+
+	this->MakeVector(boundingBox.minCorner, mesh->mVertices[0]);
+	boundingBox.maxCorner = boundingBox.minCorner;
+
+	for (int i = 0; i < mesh->mNumVertices; i++)
+	{
+		if ((flags & VBufFlag::POSITION) != 0)
+		{
+			Imzadi::Vector3 position;
+			if (!this->MakeVector(position, mesh->mVertices[i]))
+				return false;
+
+			position = nodeToWorld.TransformPoint(position);
+
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.x), verticesDoc.GetAllocator());
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.y), verticesDoc.GetAllocator());
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.z), verticesDoc.GetAllocator());
+
+			boundingBox.Expand(position);
+		}
+
+		if ((flags & VBufFlag::TEXCOORD) != 0)
+		{
+			Imzadi::Vector2 texCoords;
+			if (!this->MakeTexCoords(texCoords, mesh->mTextureCoords[0][i]))
+				return false;
+
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(texCoords.x), verticesDoc.GetAllocator());
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(texCoords.y), verticesDoc.GetAllocator());
+		}
+
+		if ((flags & VBufFlag::NORMAL) != 0)
+		{
+			Imzadi::Vector3 normal;
+			if (!this->MakeVector(normal, mesh->mNormals[i]))
+				return false;
+
+			normal = nodeToWorld.TransformVector(normal);
+			if (!normal.Normalize())
+				return false;
+
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.x), verticesDoc.GetAllocator());
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.y), verticesDoc.GetAllocator());
+			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.z), verticesDoc.GetAllocator());
+		}
+	}
+
+	UINT stride = 0;
+	if ((flags & VBufFlag::POSITION))
+		stride += 3;
+	if ((flags & VBufFlag::TEXCOORD))
+		stride += 2;
+	if ((flags & VBufFlag::NORMAL))
+		stride += 3;
+
+	verticesDoc.AddMember("bind", rapidjson::Value().SetString("vertex", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
+	verticesDoc.AddMember("stride", rapidjson::Value().SetInt(stride), verticesDoc.GetAllocator());
+	verticesDoc.AddMember("type", rapidjson::Value().SetString("float", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
+	verticesDoc.AddMember("buffer", vertexBufferValue, verticesDoc.GetAllocator());
+
+	return true;
+}
+
 bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh)
 {
 	IMZADI_LOG_INFO("Processing mesh: %s", mesh->mName.C_Str());
@@ -353,26 +604,6 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	meshDoc.AddMember("texture", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(this->textureMaker.GetTextureFilePath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
-	if (mesh->mNumVertices == 0)
-	{
-		IMZADI_LOG_ERROR("Error: No vertices found.");
-		return false;
-	}
-
-	if (mesh->mNumUVComponents[0] != 2)
-	{
-		IMZADI_LOG_ERROR("Error: Expected exactly 2 UV components in first channel.");
-		return false;
-	}
-
-	rapidjson::Document verticesDoc;
-	verticesDoc.SetObject();
-
-	rapidjson::Value vertexBufferValue;
-	vertexBufferValue.SetArray();
-
-	Imzadi::AxisAlignedBoundingBox* boundingBox = nullptr;
-
 	Imzadi::Transform nodeToWorld;
 	if (!this->GetNodeToWorldTransform(node, nodeToWorld))
 	{
@@ -380,45 +611,14 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		return false;
 	}
 
-	for (int i = 0; i < mesh->mNumVertices; i++)
-	{
-		Imzadi::Vector3 position, normal;
-		Imzadi::Vector2 texCoords;
+	rapidjson::Document verticesDoc;
+	Imzadi::AxisAlignedBoundingBox boundingBox;
+	if (!this->GenerateVertexBuffer(verticesDoc, mesh, nodeToWorld, VBufFlag::POSITION | VBufFlag::NORMAL | VBufFlag::TEXCOORD, boundingBox))
+		return false;
 
-		if (!this->MakeVector(position, mesh->mVertices[i]))
-			return false;
-
-		if (!this->MakeTexCoords(texCoords, mesh->mTextureCoords[0][i]))
-			return false;
-
-		if (!this->MakeVector(normal, mesh->mNormals[i]))
-			return false;
-
-		position = nodeToWorld.TransformPoint(position);
-		normal = nodeToWorld.TransformVector(normal);
-
-		if (!normal.Normalize())
-			return false;
-
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.x), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.y), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.z), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(texCoords.x), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(texCoords.y), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.x), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.y), verticesDoc.GetAllocator());
-		vertexBufferValue.PushBack(rapidjson::Value().SetFloat(normal.z), verticesDoc.GetAllocator());
-
-		if (boundingBox)
-			boundingBox->Expand(position);
-		else
-			boundingBox = new Imzadi::AxisAlignedBoundingBox(position);
-	}
-
-	verticesDoc.AddMember("bind", rapidjson::Value().SetString("vertex", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
-	verticesDoc.AddMember("stride", rapidjson::Value().SetInt(8), verticesDoc.GetAllocator());
-	verticesDoc.AddMember("type", rapidjson::Value().SetString("float", verticesDoc.GetAllocator()), verticesDoc.GetAllocator());
-	verticesDoc.AddMember("buffer", vertexBufferValue, verticesDoc.GetAllocator());
+	rapidjson::Value boundingBoxValue;
+	Imzadi::Asset::SaveBoundingBox(boundingBoxValue, boundingBox, &meshDoc);
+	meshDoc.AddMember("bounding_box", boundingBoxValue, meshDoc.GetAllocator());
 
 	if (mesh->HasBones())
 	{
@@ -426,55 +626,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		verticesDoc.AddMember("bare_buffer", rapidjson::Value().SetBool(true), verticesDoc.GetAllocator());
 	}
 
-	rapidjson::Value boundingBoxValue;
-	Imzadi::Asset::SaveBoundingBox(boundingBoxValue, *boundingBox, &meshDoc);
-	meshDoc.AddMember("bounding_box", boundingBoxValue, meshDoc.GetAllocator());
-	delete boundingBox;
-
-	if (mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
-	{
-		IMZADI_LOG_ERROR("Error: Only triangle primitive currently supported.");
-		return false;
-	}
-
-	if (mesh->mNumFaces == 0)
-	{
-		IMZADI_LOG_ERROR("Error: No faces found.");
-		return false;
-	}
-
 	rapidjson::Document indicesDoc;
-	indicesDoc.SetObject();
-
-	rapidjson::Value indexBufferValue;
-	indexBufferValue.SetArray();
-
-	for (int i = 0; i < mesh->mNumFaces; i++)
-	{
-		const aiFace* face = &mesh->mFaces[i];
-		if (face->mNumIndices != 3)
-		{
-			IMZADI_LOG_ERROR("Error: Expected exactly 3 indices in face.");
-			return false;
-		}
-
-		for (int j = 0; j < face->mNumIndices; j++)
-		{
-			unsigned int index = face->mIndices[j];
-			indexBufferValue.PushBack(rapidjson::Value().SetUint(index), indicesDoc.GetAllocator());
-
-			if (index != static_cast<unsigned int>(static_cast<unsigned short>(index)))
-			{
-				IMZADI_LOG_ERROR("Error: Index (%d) doesn't fit in an unsigned short.", index);
-				return false;
-			}
-		}
-	}
-
-	indicesDoc.AddMember("bind", rapidjson::Value().SetString("index", indicesDoc.GetAllocator()), indicesDoc.GetAllocator());
-	indicesDoc.AddMember("stride", rapidjson::Value().SetInt(1), indicesDoc.GetAllocator());
-	indicesDoc.AddMember("type", rapidjson::Value().SetString("ushort", indicesDoc.GetAllocator()), indicesDoc.GetAllocator());
-	indicesDoc.AddMember("buffer", indexBufferValue, indicesDoc.GetAllocator());
+	if (!this->GenerateIndexBuffer(indicesDoc, mesh))
+		return false;
 
 	if ((this->flags & Flag::MAKE_COLLISION) != 0)
 	{

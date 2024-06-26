@@ -27,7 +27,8 @@ public:
 	{
 		CONVERT_MESHES		= 0x00000001,
 		CONVERT_ANIMATIONS	= 0x00000002,
-		MAKE_COLLISION		= 0x00000004
+		CONVERT_SKYDOME		= 0x00000004,
+		MAKE_COLLISION		= 0x00000008
 	};
 
 	void SetFlags(uint32_t flags) { this->flags = flags; }
@@ -36,6 +37,13 @@ public:
 	bool Convert(const wxString& assetFile);
 
 private:
+
+	enum VBufFlag
+	{
+		POSITION		= 0x00000001,
+		NORMAL			= 0x00000002,
+		TEXCOORD		= 0x00000004
+	};
 
 	bool GenerateNodeToWorldMap(const aiNode* node);
 	bool ProcessSceneGraph(const aiScene* scene, const aiNode* node);
@@ -53,6 +61,10 @@ private:
 	bool FindNextKeyFrame(const aiAnimation* animation, double& currentTick, Imzadi::KeyFrame*& keyFrame);
 	void GatherApplicableAnimations(rapidjson::Value& animationsArrayValue, const Imzadi::Skeleton* skeleton, rapidjson::Document* doc);
 	bool IsAnimationApplicable(const wxString& animationFile, const Imzadi::Skeleton* skeleton);
+	const aiNode* FindNodeByName(const aiScene* scene, const char* name);
+	bool GenerateSkyDome(const wxString& assetFile, const aiScene* scene, const aiNode* node);
+	bool GenerateIndexBuffer(rapidjson::Document& indicesDoc, const aiMesh* mesh);
+	bool GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld, uint32_t flags, Imzadi::AxisAlignedBoundingBox& boundingBox);
 
 	Assimp::Importer importer;
 	wxString assetFolder;

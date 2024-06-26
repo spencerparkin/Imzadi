@@ -12,6 +12,7 @@
 #include "Assets/Skeleton.h"
 #include "Assets/Font.h"
 #include "Assets/CubeTexture.h"
+#include "Assets/SkyDome.h"
 #include "Log.h"
 #include "Game.h"
 #include <algorithm>
@@ -143,6 +144,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new Font();
 	else if (ext == ".cube_texture")
 		return new CubeTexture();
+	else if (ext == ".sky_dome")
+		return new SkyDome();
 
 	return nullptr;
 }

@@ -57,6 +57,9 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 	textureDoc.AddMember("height", rapidjson::Value().SetUint(image.GetHeight()), textureDoc.GetAllocator());
 	textureDoc.AddMember("data", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureDataFileName.GetFullPath()), textureDoc.GetAllocator()), textureDoc.GetAllocator());
 
+	if ((flags & Flag::FOR_CUBE_MAP) != 0)
+		textureDoc.AddMember("for_staging", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
+
 	uint32_t texelSizeBytes = 0;
 	if ((flags & (Flag::COLOR | Flag::ALPHA)) == (Flag::COLOR | Flag::ALPHA))
 	{
