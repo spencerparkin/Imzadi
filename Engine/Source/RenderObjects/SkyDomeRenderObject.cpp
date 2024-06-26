@@ -85,3 +85,10 @@ SkyDomeRenderObject::SkyDomeRenderObject()
 {
 	// TODO: Write this.
 }
+
+/*virtual*/ int SkyDomeRenderObject::SortKey() const
+{
+	// We need to render before anything else, and when we
+	// do render, we don't want to touch the Z-buffer.
+	return -std::numeric_limits<int>::max();
+}
