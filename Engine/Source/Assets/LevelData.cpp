@@ -64,6 +64,12 @@ LevelData::LevelData()
 		return false;
 	}
 
+	if (jsonDoc.HasMember("sky_dome") && jsonDoc["sky_dome"].IsString())
+		this->skyDomeFile = jsonDoc["sky_dome"].GetString();
+
+	if (jsonDoc.HasMember("cube_texture") && jsonDoc["cube_texture"].IsString())
+		this->cubeTextureFile = jsonDoc["cube_texture"].GetString();
+
 	return true;
 }
 

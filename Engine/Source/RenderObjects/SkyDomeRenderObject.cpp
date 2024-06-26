@@ -21,6 +21,10 @@ SkyDomeRenderObject::SkyDomeRenderObject()
 	if (!shader)
 		return;
 
+	CubeTexture* cubeTexture = this->skyDome->GetCubeTexture();
+	if (!cubeTexture)
+		return;
+
 	Buffer* vertexBuffer = this->skyDome->GetVertexBuffer();
 	Buffer* indexBuffer = this->skyDome->GetIndexBuffer();
 
@@ -41,7 +45,7 @@ SkyDomeRenderObject::SkyDomeRenderObject()
 	ID3D11Buffer* vertexBufferIface = vertexBuffer->GetBuffer();
 	deviceContext->IASetVertexBuffers(0, 1, &vertexBufferIface, &stride, &offset);
 
-	ID3D11ShaderResourceView* shaderResourceView = this->skyDome->GetCubeTexture()->GetTextureView();
+	ID3D11ShaderResourceView* shaderResourceView = cubeTexture->GetTextureView();
 	ID3D11SamplerState* samplerState = Game::Get()->GetGeneralSamplerState();
 	deviceContext->PSSetShaderResources(0, 1, &shaderResourceView);
 	deviceContext->PSSetSamplers(0, 1, &samplerState);

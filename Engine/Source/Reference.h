@@ -158,13 +158,16 @@ namespace Imzadi
 
 		void Set(ReferenceCounted* refCounted)
 		{
-			if (this->refCounted)
-				this->refCounted->DecRef();
+			if (refCounted != this->refCounted)
+			{
+				if (this->refCounted)
+					this->refCounted->DecRef();
 
-			this->refCounted = refCounted;
+				this->refCounted = refCounted;
 
-			if (this->refCounted)
-				this->refCounted->IncRef();
+				if (this->refCounted)
+					this->refCounted->IncRef();
+			}
 		}
 
 		void SafeSet(ReferenceCounted* refCounted)

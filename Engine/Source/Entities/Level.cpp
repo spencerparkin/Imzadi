@@ -7,6 +7,7 @@
 #include "Math/Quaternion.h"
 #include "Assets/CollisionShapeSet.h"
 #include "Assets/LevelData.h"
+#include "RenderObjects/SkyDomeRenderObject.h"
 #include "MovingPlatform.h"
 #include <format>
 
@@ -40,6 +41,27 @@ Level::Level()
 
 	for (const std::string& modelFile : levelData->GetModelFilesArray())
 		Game::Get()->LoadAndPlaceRenderMesh(modelFile, Vector3(), Quaternion());
+
+	std::string skyDomeFile = levelData->GetSkyDomeFile();
+	if (skyDomeFile.length() > 0)
+	{
+		Reference<RenderObject> renderObject = Game::Get()->LoadAndPlaceRenderMesh(skyDomeFile, Vector3(), Quaternion());
+
+		std::string cubeTextureFile = levelData->GetCubeTextureFile();
+		if (cubeTextureFile.length() > 0)
+		{
+			if (Game::Get()->GetAssetCache()->LoadAsset(cubeTextureFile, asset))
+			{
+				CubeTexture* cubeTexture = dynamic_cast<CubeTexture*>(asset.Get());
+				if (cubeTexture)
+				{
+					auto skyDomeRenderObj = dynamic_cast<SkyDomeRenderObject*>(renderObject.Get());
+					if (skyDomeRenderObj)
+						skyDomeRenderObj->GetSkyDome()->SetCubeTexture(cubeTexture);
+				}
+			}
+		}
+	}
 
 	Hero* hero = this->SpawnHero();
 	hero->SetRestartLocation(levelData->GetPlayerStartPosition());

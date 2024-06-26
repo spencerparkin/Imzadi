@@ -16,6 +16,7 @@ namespace Imzadi
 		virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) override;
 
 		CubeTexture* GetCubeTexture() { return this->cubeTexture.Get(); }
+		void SetCubeTexture(CubeTexture* cubeTexture) { this->cubeTexture.Set(cubeTexture); }
 
 	private:
 		Reference<CubeTexture> cubeTexture;
