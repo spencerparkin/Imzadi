@@ -163,6 +163,7 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 			flags |= TextureMaker::Flag::ALPHA;
 			flags |= TextureMaker::Flag::COMPRESS;
 			flags |= TextureMaker::Flag::FLIP_VERTICAL;
+			//flags |= TextureMaker::Flag::FLIP_HORIZONTAL;
 			flags |= TextureMaker::Flag::MAKE_ALPHA;
 
 			if (wxYES == wxMessageBox(wxString::Format("Make texture %s for a cube map?", file.c_str()), "Cube Map?", wxICON_QUESTION | wxYES_NO, this))

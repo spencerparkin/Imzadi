@@ -1,0 +1,10 @@
+{
+    "texture_array": [
+        "Textures/DesertSkyBox/SkyBox_PX.texture",
+        "Textures/DesertSkyBox/SkyBox_NX.texture",
+        "Textures/DesertSkyBox/SkyBox_PY.texture",
+        "Textures/DesertSkyBox/SkyBox_NY.texture",
+        "Textures/DesertSkyBox/SkyBox_PZ.texture",
+        "Textures/DesertSkyBox/SkyBox_NZ.texture"
+    ]
+}

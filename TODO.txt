@@ -13,4 +13,5 @@ TODO:
 [ ] The run animation should be sped-up/slowed-down based on the character's velocity.
 [ ] Add another character, but this time an NPC that you can interact with.  May need to refactor some code for this.  Can we do path-following?
 [ ] Add another level.  How do we handle smooth level transition?
-[ ] Would be neat to add cube-mapping with dynamic reflections.
+[/] Would be neat to add cube-mapping with dynamic reflections.  (I added a sky-box, but am not yet doing any environment/reflection mapping.)
+[ ] Need to add MIP-mapping.  All textures have just one MIP right now.

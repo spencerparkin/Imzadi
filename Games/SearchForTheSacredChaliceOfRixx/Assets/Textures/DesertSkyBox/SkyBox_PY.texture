@@ -1,0 +1,8 @@
+{
+    "width": 256,
+    "height": 256,
+    "data": "Textures\\DesertSkyBox\\SkyBox_PY.texture_data",
+    "for_staging": true,
+    "format": "RGBA",
+    "compressed": true
+}

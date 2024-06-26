@@ -105,11 +105,15 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 	{
 		for (int col = 0; col < image.GetWidth(); col++)
 		{
-			unsigned char* texel = nullptr;
-			if ((flags & Flag::FLIP_VERTICAL) == 0)
-				texel = &textureDataBuffer.get()[(row * image.GetWidth() + col) * texelSizeBytes];
-			else
-				texel = &textureDataBuffer.get()[((image.GetHeight() - 1 - row) * image.GetWidth() + col) * texelSizeBytes];
+			int wantedRow = row;
+			if ((flags & Flag::FLIP_VERTICAL) != 0)
+				wantedRow = image.GetHeight() - 1 - row;
+
+			int wantedCol = col;
+			if ((flags & Flag::FLIP_HORIZONTAL) != 0)
+				wantedCol = image.GetWidth() - 1 - col;
+
+			unsigned char* texel = &textureDataBuffer.get()[(wantedRow * image.GetWidth() + wantedCol) * texelSizeBytes];
 
 			if ((flags & Flag::COLOR) != 0)
 			{
