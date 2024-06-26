@@ -38,7 +38,6 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->depthStencilState = NULL;
 	this->shadowBufferView = NULL;
 	this->shadowBufferViewForShader = NULL;
-	this->shadowBufferSamplerState = NULL;
 	this->generalSamplerState = NULL;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
@@ -362,20 +361,6 @@ DebugLines* Game::GetDebugLines()
 
 	shadowBuffer->Release();
 	shadowBuffer = nullptr;
-
-	D3D11_SAMPLER_DESC shadowSamplerDesc{};
-	shadowSamplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-	shadowSamplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
-	shadowSamplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
-	shadowSamplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
-	shadowSamplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-
-	result = this->device->CreateSamplerState(&shadowSamplerDesc, &this->shadowBufferSamplerState);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR("Failed to create sampler state for shadow buffer.  Error code: %d", result);
-		return false;
-	}
 
 	D3D11_SAMPLER_DESC samplerDesc{};
 	samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
@@ -840,7 +825,6 @@ std::string Game::PopControllerUser()
 	SafeRelease(this->generalSamplerState);
 	SafeRelease(this->shadowBufferView);
 	SafeRelease(this->shadowBufferViewForShader);
-	SafeRelease(this->shadowBufferSamplerState);
 	SafeRelease(this->device);
 	SafeRelease(this->deviceContext);
 	SafeRelease(this->swapChain);

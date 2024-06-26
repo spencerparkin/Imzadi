@@ -145,7 +145,6 @@ namespace Imzadi
 		ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
 		ID3D11SamplerState* GetGeneralSamplerState() { return this->generalSamplerState; }
 		ID3D11ShaderResourceView* GetShadowBufferResourceViewForShader() { return this->shadowBufferViewForShader; }
-		ID3D11SamplerState* GetShadowBufferSamplerState() { return this->shadowBufferSamplerState; }
 
 		struct LightParams
 		{
@@ -273,7 +272,6 @@ namespace Imzadi
 		ID3D11DepthStencilState* depthStencilState;
 		ID3D11DepthStencilView* shadowBufferView;
 		ID3D11ShaderResourceView* shadowBufferViewForShader;
-		ID3D11SamplerState* shadowBufferSamplerState;
 		ID3D11SamplerState* generalSamplerState;
 		D3D11_VIEWPORT mainPassViewport;
 		D3D11_VIEWPORT shadowPassViewport;
