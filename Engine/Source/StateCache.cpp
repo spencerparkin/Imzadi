@@ -4,6 +4,8 @@
 
 using namespace Imzadi;
 
+#if 0
+
 //----------------------------- StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC> -----------------------------
 
 /*virtual*/ void* StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>::CreateState(const void* desc)
@@ -108,3 +110,5 @@ using namespace Imzadi;
 {
 	this->guts.ClearCache();
 }
+
+#endif

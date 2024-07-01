@@ -10,7 +10,9 @@ using namespace Imzadi;
 TextRenderObject::TextRenderObject()
 {
 	this->flags = 0;
+#if 0
 	this->vertexBuffer = nullptr;
+#endif
 	this->objectToTargetSpace.SetIdentity();
 	this->color.SetComponents(1.0, 1.0, 1.0);
 }
@@ -18,7 +20,9 @@ TextRenderObject::TextRenderObject()
 /*virtual*/ TextRenderObject::~TextRenderObject()
 {
 	this->font.Reset();
+#if 0
 	SafeRelease(this->vertexBuffer);
+#endif
 }
 
 /*virtual*/ void TextRenderObject::Prepare()
@@ -30,6 +34,7 @@ TextRenderObject::TextRenderObject()
 
 	HRESULT result = 0;
 
+#if 0
 	if (!this->vertexBuffer)
 	{
 		D3D11_BUFFER_DESC indexBufferDesc{};
@@ -104,6 +109,7 @@ TextRenderObject::TextRenderObject()
 	}
 
 	deviceContext->Unmap(this->vertexBuffer, 0);
+#endif
 }
 
 double TextRenderObject::CalculateStringWidth()
@@ -128,6 +134,7 @@ double TextRenderObject::CalculateStringWidth()
 	if (this->text.length() == 0)
 		return;
 
+#if 0
 	D3D11_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -254,6 +261,7 @@ double TextRenderObject::CalculateStringWidth()
 
 	UINT numElements = this->text.length() * 6;
 	deviceContext->DrawIndexed(numElements, 0, 0);
+#endif
 }
 
 /*virtual*/ void TextRenderObject::GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const
@@ -352,6 +360,7 @@ FPSRenderObject::FPSRenderObject()
 
 /*virtual*/ void FPSRenderObject::Prepare()
 {
+#if 0
 	this->deltaTimeList.push_back(Game::Get()->GetDeltaTime());
 	while (this->deltaTimeList.size() > this->deltaTimeListMaxSize)
 		this->deltaTimeList.pop_front();
@@ -380,4 +389,5 @@ FPSRenderObject::FPSRenderObject()
 	this->SetFlags(Flag::ALWAYS_ON_TOP | Flag::RIGHT_JUSTIFY | Flag::STICK_WITH_CAMERA_PROJ);
 
 	TextRenderObject::Prepare();
+#endif
 }

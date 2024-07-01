@@ -227,6 +227,7 @@ void SkinnedRenderMesh::DeformMesh()
 		currentPoseNormalBuffer[2] = currentPoseNormal.z;
 	}
 
+#if 0
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
 	// Note that we read form a bare buffer and wrote into a bare buffer beforehand so that
@@ -241,6 +242,7 @@ void SkinnedRenderMesh::DeformMesh()
 
 	::memcpy(mappedSubresource.pData, this->currentPoseVertices->GetBuffer(), this->currentPoseVertices->GetSize());
 	deviceContext->Unmap(this->vertexBuffer->GetBuffer(), 0);
+#endif
 }
 
 /*virtual*/ bool SkinnedRenderMesh::MakeRenderInstance(Reference<RenderObject>& renderObject)

@@ -23,6 +23,7 @@ RenderMeshInstance::RenderMeshInstance()
 
 void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 {
+#if 0
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
 	Shader* shader = nullptr;
@@ -219,6 +220,7 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 		UINT numElements = indexBuffer->GetNumElements();
 		deviceContext->DrawIndexed(numElements, 0, 0);
 	}
+#endif
 }
 
 /*virtual*/ void RenderMeshInstance::GetWorldBoundingSphere(Vector3& center, double& radius) const

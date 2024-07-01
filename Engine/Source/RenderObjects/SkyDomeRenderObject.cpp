@@ -25,6 +25,7 @@ SkyDomeRenderObject::SkyDomeRenderObject()
 	if (!cubeTexture)
 		return;
 
+#if 0
 	D3D11_BLEND_DESC blendDesc{};
 	blendDesc.RenderTarget[0].BlendEnable = TRUE;
 	blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
@@ -110,6 +111,7 @@ SkyDomeRenderObject::SkyDomeRenderObject()
 
 	UINT numElements = indexBuffer->GetNumElements();
 	deviceContext->DrawIndexed(numElements, 0, 0);
+#endif
 }
 
 /*virtual*/ void SkyDomeRenderObject::GetWorldBoundingSphere(Vector3& center, double& radius) const

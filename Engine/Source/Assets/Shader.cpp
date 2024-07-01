@@ -9,6 +9,7 @@ using namespace Imzadi;
 
 Shader::Shader()
 {
+#if 0
 	this->inputLayout = nullptr;
 	this->pixelShader = nullptr;
 	this->vertexShader = nullptr;
@@ -16,6 +17,7 @@ Shader::Shader()
 	this->psBlob = nullptr;
 	this->constantsBuffer = nullptr;
 	this->constantsBufferSize = 0;
+#endif
 }
 
 /*virtual*/ Shader::~Shader()
@@ -32,6 +34,7 @@ Shader::Shader()
 
 	HRESULT result = 0;
 
+#if 0
 	if (jsonDoc.HasMember("vs_shader_object") && jsonDoc.HasMember("ps_shader_object"))
 	{
 		if (!jsonDoc["vs_shader_object"].IsString() || !jsonDoc["ps_shader_object"].IsString())
@@ -270,6 +273,7 @@ Shader::Shader()
 			}
 		}
 	}
+#endif
 
 	return true;
 }
@@ -284,6 +288,7 @@ bool Shader::GetConstantInfo(const std::string& name, const Constant*& constant)
 	return true;
 }
 
+#if 0
 bool Shader::PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, const rapidjson::Value& inputLayoutArrayValue, std::vector<std::string>& semanticArray)
 {
 	for (int i = 0; i < inputLayoutArrayValue.Size(); i++)
@@ -369,15 +374,18 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 
 	return true;
 }
+#endif
 
 /*virtual*/ bool Shader::Unload()
 {
+#if 0
 	SafeRelease(this->vsBlob);
 	SafeRelease(this->psBlob);
 	SafeRelease(this->vertexShader);
 	SafeRelease(this->pixelShader);
 	SafeRelease(this->inputLayout);
 	SafeRelease(this->constantsBuffer);
+#endif
 
 	return true;
 }

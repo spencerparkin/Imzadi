@@ -160,7 +160,7 @@ target_compile_definitions(ImzadiGameEngine PRIVATE
 )
 
 target_link_libraries(ImzadiGameEngine PRIVATE
-    d3d11.lib
+    d3d12.lib
     d3dcompiler.lib    
     Xinput9_1_0.lib
     cabinet.lib

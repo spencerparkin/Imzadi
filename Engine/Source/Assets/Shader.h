@@ -6,7 +6,7 @@
 #include "Math/Vector4.h"
 #include "Math/Matrix3x3.h"
 #include "Math/Matrix4x4.h"
-#include <d3d11.h>
+#include <d3d12.h>
 #include <unordered_map>
 
 namespace Imzadi
@@ -20,11 +20,13 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
+#if 0
 		ID3D11InputLayout* GetInputLayout() { return this->inputLayout; }
 		ID3D11VertexShader* GetVertexShader() { return this->vertexShader; }
 		ID3D11PixelShader* GetPixelShader() { return this->pixelShader; }
 		ID3D11Buffer* GetConstantsBuffer() { return this->constantsBuffer; }
 		UINT GetConstantsBufferSize() { return this->constantsBufferSize; }
+#endif
 
 		struct Constant
 		{
@@ -37,6 +39,7 @@ namespace Imzadi
 
 	private:
 
+#if 0
 		bool CompileShader(const std::string& shaderFile, const std::string& entryPoint, const std::string& shaderModel, ID3DBlob*& blob);
 
 		bool PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, const rapidjson::Value& inputLayoutArrayValue, std::vector<std::string>& semanticArray);
@@ -45,6 +48,7 @@ namespace Imzadi
 		ID3D11VertexShader* vertexShader;
 		ID3D11PixelShader* pixelShader;
 		ID3D11Buffer* constantsBuffer;
+#endif
 		UINT constantsBufferSize;
 		ID3DBlob* vsBlob;
 		ID3DBlob* psBlob;
@@ -62,6 +66,7 @@ namespace Imzadi
 		return offset;
 	}
 
+#if 0
 	inline void StoreShaderConstant(D3D11_MAPPED_SUBRESOURCE* subResource, const Shader::Constant* constant, const double* scalar)
 	{
 		if (constant->format == DXGI_FORMAT_R32_FLOAT && constant->size == sizeof(float))
@@ -124,4 +129,5 @@ namespace Imzadi
 					*ele++ = float(matrix->ele[j][i]);	// Note the swap of i and j here!
 		}
 	}
+#endif
 }

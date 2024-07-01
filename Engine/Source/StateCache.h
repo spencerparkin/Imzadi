@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Defines.h"
-#include <d3d11.h>
+#include <d3d12.h>
 #include <unordered_map>
 #include <string>
 
@@ -30,6 +30,7 @@ namespace Imzadi
 	}
 }
 
+#if 0
 template<>
 struct std::hash<D3D11_RASTERIZER_DESC>
 {
@@ -208,3 +209,4 @@ namespace Imzadi
 		StateCacheGuts<ID3D11BlendState, D3D11_BLEND_DESC> guts;
 	};
 }
+#endif

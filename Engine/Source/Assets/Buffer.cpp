@@ -9,7 +9,9 @@ using namespace Imzadi;
 
 Buffer::Buffer()
 {
+#if 0
 	this->buffer = nullptr;
+#endif
 	this->strideBytes = 0;
 	this->numElements = 0;
 	this->componentFormat = DXGI_FORMAT_UNKNOWN;
@@ -105,6 +107,7 @@ Buffer::Buffer()
 	UINT numComponents = bufferValue.Size();
 	this->numElements = numComponents / strideComponents;
 	
+#if 0
 	D3D11_BUFFER_DESC bufferDesc{};
 	bufferDesc.ByteWidth = numComponents * componentTypeSize;
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -225,13 +228,16 @@ Buffer::Buffer()
 		IMZADI_LOG_ERROR(std::format("CreateBuffer() failed with error code: {}", result));
 		return false;
 	}
+#endif
 
 	return true;
 }
 
 /*virtual*/ bool Buffer::Unload()
 {
+#if 0
 	SafeRelease(this->buffer);
+#endif
 
 	return true;
 }
@@ -243,6 +249,7 @@ bool Buffer::GetBareBuffer(Reference<BareBuffer>& givenBareBuffer)
 		this->bareBuffer.Set(new BareBuffer());
 		this->bareBuffer->SetSize(this->numElements * this->strideBytes);
 		
+#if 0
 		ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 		if (!deviceContext)
 		{
@@ -260,6 +267,7 @@ bool Buffer::GetBareBuffer(Reference<BareBuffer>& givenBareBuffer)
 
 		::memcpy(bareBuffer->GetBuffer(), mappedSubresource.pData, this->bareBuffer->GetSize());
 		deviceContext->Unmap(this->buffer, 0);
+#endif
 	}
 
 	givenBareBuffer = this->bareBuffer;

@@ -7,8 +7,10 @@ using namespace Imzadi;
 
 CubeTexture::CubeTexture()
 {
+#if 0
 	this->cubeTexture = nullptr;
 	this->cubeTextureView = nullptr;
+#endif
 }
 
 /*virtual*/ CubeTexture::~CubeTexture()
@@ -75,6 +77,7 @@ CubeTexture::CubeTexture()
 
 bool CubeTexture::Load(std::vector<Reference<Texture>>& textureArray)
 {
+#if 0
 	D3D11_TEXTURE2D_DESC textureDesc{};
 	textureArray[0]->GetTexture()->GetDesc(&textureDesc);
 
@@ -141,14 +144,17 @@ bool CubeTexture::Load(std::vector<Reference<Texture>>& textureArray)
 		IMZADI_LOG_ERROR("Failed to create shader resource view for cube texture.  Error code: %d", result);
 		return false;
 	}
+#endif
 
 	return true;
 }
 
 /*virtual*/ bool CubeTexture::Unload()
 {
+#if 0
 	SafeRelease(this->cubeTexture);
 	SafeRelease(this->cubeTextureView);
+#endif
 
 	return true;
 }

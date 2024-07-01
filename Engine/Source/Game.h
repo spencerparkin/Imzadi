@@ -4,7 +4,7 @@
 #	define WIN32_LEAN_AND_MEAN
 #endif
 #include <Windows.h>
-#include <d3d11.h>
+#include <d3d12.h>
 #include <string>
 #include <list>
 #include <time.h>
@@ -142,10 +142,12 @@ namespace Imzadi
 		static Game* Get();
 		static void Set(Game* game);
 
+#if 0
 		ID3D11Device* GetDevice() { return this->device; }
 		ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
 		ID3D11SamplerState* GetGeneralSamplerState() { return this->generalSamplerState; }
 		ID3D11ShaderResourceView* GetShadowBufferResourceViewForShader() { return this->shadowBufferViewForShader; }
+#endif
 
 		struct LightParams
 		{
@@ -226,12 +228,14 @@ namespace Imzadi
 		AssetCache* GetAssetCache();
 		void SetAssetCache(AssetCache* assetCache);
 
+#if 0
 		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
 		double GetDeltaTime() const { return this->deltaTimeSeconds; }
 
 		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>* GetRasterStateCache() { return &this->rasterStateCache; }
 		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC>* GetDepthStencilStateCache() { return &this->depthStencilStateCache; }
 		StateCache<ID3D11BlendState, D3D11_BLEND_DESC>* GetBlendStateCache() { return &this->blendStateCache; }
+#endif
 
 	protected:
 
@@ -266,6 +270,8 @@ namespace Imzadi
 		HWND mainWindowHandle;
 		bool keepRunning;
 		bool windowResized;
+
+#if 0
 		ID3D11Device* device;
 		ID3D11DeviceContext* deviceContext;
 		IDXGISwapChain* swapChain;
@@ -279,6 +285,8 @@ namespace Imzadi
 		ID3D11SamplerState* generalSamplerState;
 		D3D11_VIEWPORT mainPassViewport;
 		D3D11_VIEWPORT shadowPassViewport;
+#endif
+
 		Reference<Scene> scene;
 		Reference<AssetCache> assetCache;
 		Reference<Camera> camera;

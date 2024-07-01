@@ -7,8 +7,10 @@ using namespace Imzadi;
 
 Texture::Texture()
 {
+#if 0
 	this->texture = nullptr;
 	this->textureView = nullptr;
+#endif
 }
 
 /*virtual*/ Texture::~Texture()
@@ -121,6 +123,7 @@ Texture::Texture()
 		textureData = decompressedDataBuffer.get();
 	}
 
+#if 0
 	D3D11_TEXTURE2D_DESC textureDesc{};
 	textureDesc.Width = textureWidth;
 	textureDesc.Height = textureHeight;
@@ -176,14 +179,17 @@ Texture::Texture()
 		IMZADI_LOG_ERROR(std::format("CreateShaderResourceView() failed with error code: {}", result));
 		return false;
 	}
+#endif
 
 	return true;
 }
 
 /*virtual*/ bool Texture::Unload()
 {
+#if 0
 	SafeRelease(this->textureView);
 	SafeRelease(this->texture);
+#endif
 
 	return true;
 }

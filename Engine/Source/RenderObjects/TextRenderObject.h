@@ -3,7 +3,7 @@
 #include "Scene.h"
 #include "Assets/Font.h"
 #include "Math/Transform.h"
-#include <d3d11.h>
+#include <d3d12.h>
 
 namespace Imzadi
 {
@@ -101,7 +101,9 @@ namespace Imzadi
 		double CalculateStringWidth();
 
 		Reference<Font> font;
+#if 0
 		ID3D11Buffer* vertexBuffer;
+#endif
 		std::string text;
 		Vector3 color;
 		uint32_t flags;

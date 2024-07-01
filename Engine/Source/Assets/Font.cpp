@@ -6,7 +6,9 @@ using namespace Imzadi;
 
 Font::Font()
 {
+#if 0
 	this->indexBuffer = nullptr;
+#endif
 }
 
 /*virtual*/ Font::~Font()
@@ -113,6 +115,7 @@ Font::Font()
 
 	uint32_t maxCharacters = 1024;
 
+#if 0
 	D3D11_BUFFER_DESC bufferDesc{};
 	bufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
 	bufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
@@ -141,6 +144,7 @@ Font::Font()
 		IMZADI_LOG_ERROR("Failed to create index buffer for font asset.  Error code: %d", result);
 		return false;
 	}
+#endif
 
 	return true;
 }
@@ -149,7 +153,9 @@ Font::Font()
 {
 	this->charInfoArray.clear();
 	this->textureAtlas.Set(nullptr);
+#if 0
 	SafeRelease(this->indexBuffer);
+#endif
 	return true;
 }
 

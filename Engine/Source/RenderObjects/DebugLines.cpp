@@ -8,14 +8,18 @@ using namespace Imzadi;
 
 DebugLines::DebugLines()
 {
+#if 0
 	this->vertexBuffer = nullptr;
+#endif
 	this->maxLines = 10000;
 }
 
 /*virtual*/ DebugLines::~DebugLines()
 {
 	this->shader.Reset();
+#if 0
 	SafeRelease(this->vertexBuffer);
+#endif
 }
 
 /*virtual*/ void DebugLines::Render(Camera* camera, RenderPass renderPass)
@@ -35,6 +39,7 @@ DebugLines::DebugLines()
 		this->shader.SafeSet(asset.Get());
 	}
 
+#if 0
 	if (!this->vertexBuffer)
 	{
 		D3D11_BUFFER_DESC bufferDesc{};
@@ -147,6 +152,7 @@ DebugLines::DebugLines()
 	deviceContext->IASetVertexBuffers(0, 1, &this->vertexBuffer, &stride, &offset);
 
 	deviceContext->Draw(this->lineArray.size() * 2, 0);
+#endif
 }
 
 /*virtual*/ void DebugLines::GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const

@@ -3,7 +3,7 @@
 #include "Scene.h"
 #include "Math/LineSegment.h"
 #include "Assets/Shader.h"
-#include <d3d11.h>
+#include <d3d12.h>
 
 namespace Imzadi
 {
@@ -31,7 +31,9 @@ namespace Imzadi
 
 	private:
 		std::vector<Line> lineArray;
+#if 0
 		ID3D11Buffer* vertexBuffer;
+#endif
 		Reference<Shader> shader;
 		int maxLines;
 	};

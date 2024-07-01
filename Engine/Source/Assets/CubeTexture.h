@@ -2,7 +2,7 @@
 
 #include "AssetCache.h"
 #include "Texture.h"
-#include <d3d11.h>
+#include <d3d12.h>
 
 namespace Imzadi
 {
@@ -20,13 +20,17 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
+#if 0
 		ID3D11Texture2D* GetTexture() { return this->cubeTexture; }
 		ID3D11ShaderResourceView* GetTextureView() { return this->cubeTextureView; }
+#endif
 
 	private:
 		bool Load(std::vector<Reference<Texture>>& textureArray);
 
+#if 0
 		ID3D11Texture2D* cubeTexture;
 		ID3D11ShaderResourceView* cubeTextureView;
+#endif
 	};
 }

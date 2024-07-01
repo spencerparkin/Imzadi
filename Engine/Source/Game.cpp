@@ -27,6 +27,8 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->mainWindowHandle = NULL;
 	this->keepRunning = false;
 	this->windowResized = false;
+
+#if 0
 	this->device = NULL;
 	this->deviceContext = NULL;
 	this->swapChain = NULL;
@@ -35,6 +37,8 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->shadowBufferView = NULL;
 	this->shadowBufferViewForShader = NULL;
 	this->generalSamplerState = NULL;
+#endif
+
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
@@ -42,8 +46,10 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->lightParams.directionalLightIntensity = 1.0;
 	this->lightParams.ambientLightIntensity = 0.1;
 	this->lightParams.lightCameraDistance = 200.0;
+#if 0
 	ZeroMemory(&this->mainPassViewport, sizeof(D3D11_VIEWPORT));
 	ZeroMemory(&this->shadowPassViewport, sizeof(D3D11_VIEWPORT));
+#endif
 	lstrcpy(this->windowTitle, "Imzadi Game Engine");
 }
 
@@ -171,6 +177,9 @@ DebugLines* Game::GetDebugLines()
 		return false;
 	}
 
+	HRESULT result = 0;
+
+#if 0
 	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1 };
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 #if defined _DEBUG
@@ -190,7 +199,7 @@ DebugLines* Game::GetDebugLines()
 	swapChainDesc.Flags = 0;
 	swapChainDesc.OutputWindow = this->mainWindowHandle;
 
-	HRESULT result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
+	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
 													creationFlags, featureLevels, ARRAYSIZE(featureLevels),
 													D3D11_SDK_VERSION, &swapChainDesc, &this->swapChain,
 													&this->device, NULL, &this->deviceContext);
@@ -216,6 +225,7 @@ DebugLines* Game::GetDebugLines()
 		}
 		debug->Release();
 	}
+#endif //_DEBUG
 #endif
 
 	this->SetCamera(new Camera());
@@ -240,6 +250,7 @@ DebugLines* Game::GetDebugLines()
 	this->lightSourceCamera->SetViewMode(Camera::ViewMode::ORTHOGRAPHIC);
 	this->lightSourceCamera->SetOrthographicParams(orthoParams);
 
+#if 0
 	this->shadowPassViewport.Width = 4096.0f;
 	this->shadowPassViewport.Height = 4096.0f;
 	this->shadowPassViewport.TopLeftX = 0.0f;
@@ -309,6 +320,7 @@ DebugLines* Game::GetDebugLines()
 		IMZADI_LOG_ERROR(std::format("CreateSamplerState() failed with error code: {}", result));
 		return false;
 	}
+#endif
 
 	if (!this->PostInit())
 	{
@@ -347,6 +359,7 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMe
 
 bool Game::RecreateViews()
 {
+#if 0
 	SafeRelease(this->frameBufferView);
 	SafeRelease(this->depthStencilView);
 
@@ -424,6 +437,7 @@ bool Game::RecreateViews()
 	Camera::OrthographicParams orthoParams = this->camera->GetOrthographicParameters();
 	orthoParams.desiredAspectRatio = aspectRatio;
 	this->camera->SetOrthographicParams(orthoParams);
+#endif
 
 	return true;
 }
@@ -478,7 +492,9 @@ bool Game::RecreateViews()
 
 	if (this->windowResized)
 	{
+#if 0
 		this->deviceContext->OMSetRenderTargets(0, NULL, NULL);
+#endif
 		this->RecreateViews();
 		this->windowResized = false;
 	}
@@ -567,6 +583,7 @@ void Game::AdvanceEntities(TickPass tickPass)
 		this->lightSourceCamera->SetCameraToWorldTransform(lightCameraToWorld);
 	}
 
+#if 0
 	// This is the shadow pass.
 	this->deviceContext->RSSetViewports(1, &this->shadowPassViewport);
 	this->deviceContext->ClearDepthStencilView(this->shadowBufferView, D3D11_CLEAR_DEPTH, 1.0f, 0);
@@ -592,6 +609,7 @@ void Game::AdvanceEntities(TickPass tickPass)
 	this->deviceContext->PSSetSamplers(0, 2, samplerStateArray);
 
 	this->swapChain->Present(1, 0);
+#endif
 }
 
 /*virtual*/ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
@@ -742,6 +760,7 @@ std::string Game::PopControllerUser()
 		this->assetCache.Reset();
 	}
 
+#if 0
 	this->rasterStateCache.ClearCache();
 	this->depthStencilStateCache.ClearCache();
 	this->blendStateCache.ClearCache();
@@ -754,6 +773,7 @@ std::string Game::PopControllerUser()
 	SafeRelease(this->swapChain);
 	SafeRelease(this->frameBufferView);
 	SafeRelease(this->depthStencilView);
+#endif
 
 	if (this->mainWindowHandle)
 	{
