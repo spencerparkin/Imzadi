@@ -137,6 +137,8 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 
 	std::unique_ptr<unsigned char> textureDataBuffer(new unsigned char[textureDataBufferSize]);
 
+	wxImage originalImage = image;
+
 	unsigned char* mipTexture = textureDataBuffer.get();
 	width = image.GetWidth();
 	height = image.GetHeight();
@@ -185,6 +187,8 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 
 		if (i + 1 < numMips)
 		{
+			// Always down-sample from the original image, not the previous MIP.
+			image = originalImage;
 			image.Rescale(width, height, wxIMAGE_QUALITY_HIGH);
 		}
 	}
