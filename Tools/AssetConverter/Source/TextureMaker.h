@@ -19,7 +19,8 @@ public:
 		FLIP_VERTICAL	= 0x00000010,
 		FLIP_HORIZONTAL	= 0x00000020,
 		ALWAYS_MAKE		= 0x00000040,
-		FOR_CUBE_MAP	= 0x00000080
+		FOR_CUBE_MAP	= 0x00000080,
+		MIP_MAPS		= 0x00000100
 	};
 
 	bool MakeTexture(const wxString& imageFilePath, uint32_t flags);

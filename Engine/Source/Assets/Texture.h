@@ -21,6 +21,8 @@ namespace Imzadi
 		ID3D11ShaderResourceView* GetTextureView() { return this->textureView; }
 
 	private:
+		uint32_t CalcUncompressedTextureSize(uint32_t numMips, uint32_t texelSize, uint32_t textureWidth, uint32_t textureHeight);
+
 		ID3D11Texture2D* texture;
 		ID3D11ShaderResourceView* textureView;
 	};

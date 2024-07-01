@@ -14,6 +14,7 @@
 Converter::Converter()
 {
 	this->flags = 0;
+	this->textureMakerFlags = 0;
 }
 
 /*virtual*/ Converter::~Converter()

@@ -143,8 +143,60 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 	Converter converter;
 	FontMaker fontMaker;
 
+	uint32_t textureMakerFlags = 0;
+	uint32_t converterFlags = 0;
+
+	bool textureMakerFlagsNeeded = false;
+	bool converterFlagsNeeded = false;
+
 	wxArrayString fileArray;
 	fileDialog.GetPaths(fileArray);
+	for (const wxString& file : fileArray)
+	{
+		wxFileName fileName(file);
+		wxString ext = fileName.GetExt().Lower();
+
+		if (ext == "png")
+		{
+			textureMakerFlagsNeeded = true;
+		}
+		else if (ext == "fbx")
+		{
+			textureMakerFlagsNeeded = true;
+			converterFlagsNeeded = true;
+		}
+	}
+
+	if (converterFlagsNeeded)
+	{
+		std::vector<FlagChoice> flagChoiceArray = {
+			{"Meshes", Converter::Flag::CONVERT_MESHES},
+			{"Animations", Converter::Flag::CONVERT_ANIMATIONS},
+			{"Collision", Converter::Flag::MAKE_COLLISION},
+			{"Sky Dome", Converter::Flag::CONVERT_SKYDOME}
+		};
+
+		if (!this->FlagsFromDialog("Import what across all chosen export files?", flagChoiceArray, converterFlags))
+			return;
+	}
+
+	if (textureMakerFlagsNeeded)
+	{
+		std::vector<FlagChoice> flagChoiceArray = {
+			{"Color", TextureMaker::Flag::COLOR},
+			{"Alpha", TextureMaker::Flag::ALPHA},
+			{"Compress", TextureMaker::Flag::COMPRESS},
+			{"Flip Vertical", TextureMaker::Flag::FLIP_VERTICAL},
+			{"Flip Horizontal", TextureMaker::Flag::FLIP_HORIZONTAL},
+			{"Make Alpha", TextureMaker::Flag::MAKE_ALPHA},
+			{"Make Mips", TextureMaker::Flag::MIP_MAPS},
+			{"For Cube-Map", TextureMaker::Flag::FOR_CUBE_MAP}
+		};
+
+		if (!this->FlagsFromDialog("Build textures how across all selected textures or those found in all chosen export files?", flagChoiceArray, textureMakerFlags))
+			return;
+	}
+
 	for (const wxString& file : fileArray)
 	{
 		wxFileName fileName(file);
@@ -157,50 +209,44 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 		else if (ext == "png")
 		{
 			TextureMaker textureMaker;
-			
-			uint32_t flags = 0;
-			flags |= TextureMaker::Flag::COLOR;
-			flags |= TextureMaker::Flag::ALPHA;
-			flags |= TextureMaker::Flag::COMPRESS;
-			flags |= TextureMaker::Flag::FLIP_VERTICAL;
-			//flags |= TextureMaker::Flag::FLIP_HORIZONTAL;
-			flags |= TextureMaker::Flag::MAKE_ALPHA;
-
-			if (wxYES == wxMessageBox(wxString::Format("Make texture %s for a cube map?", file.c_str()), "Cube Map?", wxICON_QUESTION | wxYES_NO, this))
-				flags |= TextureMaker::Flag::FOR_CUBE_MAP;
-
-			textureMaker.MakeTexture(file, flags);
+			textureMaker.MakeTexture(file, textureMakerFlags);
 		}
 		else
 		{
-			wxArrayString choiceArray;
-			choiceArray.Add("Meshes");
-			choiceArray.Add("Animations");
-			choiceArray.Add("Collision");
-			choiceArray.Add("SkyDome");
-			wxMultiChoiceDialog choiceDialog(this, wxString::Format("Import what from file %s?", fileName.GetName().c_str()), "What to Export", choiceArray);
-			if (choiceDialog.ShowModal() != wxID_OK)
-				return;
-
-			uint32_t flags = 0;
-			wxArrayInt selectionArray = choiceDialog.GetSelections();
-			for (int i = 0; i < selectionArray.size(); i++)
-			{
-				const wxString& selection = choiceArray[selectionArray[i]];
-				if (selection == "Meshes")
-					flags |= Converter::Flag::CONVERT_MESHES;
-				else if (selection == "Animations")
-					flags |= Converter::Flag::CONVERT_ANIMATIONS;
-				else if (selection == "Collision")
-					flags |= Converter::Flag::MAKE_COLLISION;
-				else if (selection == "SkyDome")
-					flags |= Converter::Flag::CONVERT_SKYDOME;
-			}
-
-			converter.SetFlags(flags);
+			converter.SetFlags(converterFlags);
+			converter.SetTextureMakerFlags(textureMakerFlags);
 			converter.Convert(file);
 		}
 	}
+}
+
+bool Frame::FlagsFromDialog(const wxString& prompt, const std::vector<FlagChoice>& flagChoiceArray, uint32_t& chosenFlags)
+{
+	chosenFlags = 0;
+
+	wxArrayString choiceArray;
+	for (const FlagChoice& flagChoice : flagChoiceArray)
+		choiceArray.Add(flagChoice.name);
+
+	wxMultiChoiceDialog choiceDialog(this, prompt, "Choose, Please", choiceArray);
+	if (choiceDialog.ShowModal() != wxID_OK)
+		return false;
+
+	wxArrayInt selectionArray = choiceDialog.GetSelections();
+	for (int i = 0; i < selectionArray.size(); i++)
+	{
+		const wxString& selection = choiceArray[selectionArray[i]];
+		for (const FlagChoice& flagChoice : flagChoiceArray)
+		{
+			if (flagChoice.name == selection)
+			{
+				chosenFlags |= flagChoice.flag;
+				break;
+			}
+		}
+	}
+
+	return true;
 }
 
 void Frame::OnPreviewAsset(wxCommandEvent& event)

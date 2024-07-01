@@ -34,6 +34,9 @@ public:
 	void SetFlags(uint32_t flags) { this->flags = flags; }
 	uint32_t GetFlags() const { return this->flags; }
 
+	void SetTextureMakerFlags(uint32_t textureMakerFlags) { this->textureMakerFlags = textureMakerFlags; }
+	uint32_t GetTextureMakerFlags() const { return this->textureMakerFlags; }
+
 	bool Convert(const wxString& assetFile);
 
 private:
@@ -71,4 +74,5 @@ private:
 	std::unordered_map<const aiNode*, Imzadi::Transform> nodeToWorldMap;
 	TextureMaker textureMaker;
 	uint32_t flags;
+	uint32_t textureMakerFlags;
 };

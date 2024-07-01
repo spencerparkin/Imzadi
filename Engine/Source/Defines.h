@@ -17,6 +17,7 @@
 #define IMZADI_SIGN(x)				((x) < 0.0 ? -1.0 : 1.0)
 #define IMZADI_DEGS_TO_RADS(x)		((x) * (180.0 / M_PI))
 #define IMZADI_RADS_TO_DEGS(x)		((x) * (M_PI / 180.0))
+#define IMZADI_IS_POW_TWO(x)		((x & (x - 1)) == 0)
 
 #define IMZADI_DRAW_FLAG_SHAPES				0x00000001
 #define IMZADI_DRAW_FLAG_SHAPE_BOXES		0x00000002

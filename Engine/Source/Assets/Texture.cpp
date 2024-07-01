@@ -93,6 +93,10 @@ Texture::Texture()
 
 	const unsigned char* textureData = dataBuffer.get();
 
+	uint32_t numMips = 1;
+	if (jsonDoc.HasMember("num_mips") && jsonDoc["num_mips"].IsUint())
+		numMips = jsonDoc["num_mips"].GetUint();
+
 	std::unique_ptr<unsigned char> decompressedDataBuffer;
 	if (jsonDoc.HasMember("compressed") && jsonDoc["compressed"].GetBool())
 	{
@@ -104,7 +108,7 @@ Texture::Texture()
 			return false;
 		}
 
-		ULONG_PTR uncompressedSizeBytes = textureWidth * textureHeight * texelSizeBytes;
+		ULONG_PTR uncompressedSizeBytes = this->CalcUncompressedTextureSize(numMips, texelSizeBytes, textureWidth, textureHeight);
 		decompressedDataBuffer.reset(new unsigned char[uncompressedSizeBytes]);
 
 		if (!Decompress(decompressor, dataBuffer.get(), dataSizeBytes, decompressedDataBuffer.get(), uncompressedSizeBytes, &uncompressedSizeBytes))
@@ -120,7 +124,7 @@ Texture::Texture()
 	D3D11_TEXTURE2D_DESC textureDesc{};
 	textureDesc.Width = textureWidth;
 	textureDesc.Height = textureHeight;
-	textureDesc.MipLevels = 1;		// TODO: Need to make MIPs at some point.
+	textureDesc.MipLevels = numMips;
 	textureDesc.ArraySize = 1;
 	textureDesc.SampleDesc.Count = 1;
 	textureDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -143,11 +147,20 @@ Texture::Texture()
 		return false;
 	}
 
-	D3D11_SUBRESOURCE_DATA textureSubresourceData{};
-	textureSubresourceData.pSysMem = textureData;
-	textureSubresourceData.SysMemPitch = textureWidth * texelSizeBytes;
+	std::unique_ptr<D3D11_SUBRESOURCE_DATA> subResourceArray(new D3D11_SUBRESOURCE_DATA[numMips]);
 
-	HRESULT result = Game::Get()->GetDevice()->CreateTexture2D(&textureDesc, &textureSubresourceData, &this->texture);
+	const unsigned char* mipTextureData = textureData;
+	for (uint32_t i = 0; i < numMips; i++)
+	{
+		D3D11_SUBRESOURCE_DATA* subResource = &subResourceArray.get()[i];
+		subResource->pSysMem = mipTextureData;
+		subResource->SysMemPitch = textureWidth * texelSizeBytes;
+		mipTextureData += textureWidth * textureHeight * texelSizeBytes;
+		textureWidth >>= 1;
+		textureHeight >>= 1;
+	}
+
+	HRESULT result = Game::Get()->GetDevice()->CreateTexture2D(&textureDesc, subResourceArray.get(), &this->texture);
 	if (FAILED(result))
 	{
 		IMZADI_LOG_ERROR(std::format("CreateTexture2D() failed with error code: {}", result));
@@ -157,7 +170,7 @@ Texture::Texture()
 	if (jsonDoc.HasMember("for_staging") && jsonDoc["for_staging"].GetBool())
 		return true;
 
-	result = Game::Get()->GetDevice()->CreateShaderResourceView(texture, NULL, &this->textureView);
+	result = Game::Get()->GetDevice()->CreateShaderResourceView(this->texture, NULL, &this->textureView);
 	if (FAILED(result))
 	{
 		IMZADI_LOG_ERROR(std::format("CreateShaderResourceView() failed with error code: {}", result));
@@ -173,4 +186,19 @@ Texture::Texture()
 	SafeRelease(this->texture);
 
 	return true;
+}
+
+uint32_t Texture::CalcUncompressedTextureSize(uint32_t numMips, uint32_t texelSize, uint32_t textureWidth, uint32_t textureHeight)
+{
+	uint32_t textureSize = 0;
+
+	while (numMips-- > 0)
+	{
+		IMZADI_ASSERT(textureWidth > 0 && textureHeight > 0);
+		textureSize += textureWidth * textureHeight * texelSize;
+		textureWidth >>= 1;
+		textureHeight >>= 1;
+	}
+
+	return textureSize;
 }

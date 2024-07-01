@@ -2,6 +2,7 @@
     "width": 256,
     "height": 256,
     "data": "Textures\\Weirdo.texture_data",
+    "num_mips": 9,
     "format": "RGBA",
     "compressed": true
 }

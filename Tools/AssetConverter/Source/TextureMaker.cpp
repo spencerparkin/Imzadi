@@ -57,6 +57,33 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 	textureDoc.AddMember("height", rapidjson::Value().SetUint(image.GetHeight()), textureDoc.GetAllocator());
 	textureDoc.AddMember("data", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(textureDataFileName.GetFullPath()), textureDoc.GetAllocator()), textureDoc.GetAllocator());
 
+	uint32_t numMips = 1;
+
+	if ((flags & Flag::MIP_MAPS) != 0)
+	{
+		if (!IMZADI_IS_POW_TWO(image.GetWidth()) || !IMZADI_IS_POW_TWO(image.GetHeight()))
+		{
+			IMZADI_LOG_ERROR("If doing mip-maps, the texture dimensions must be a power of two, not %d x %d.", image.GetWidth(), image.GetHeight());
+			return false;
+		}
+
+		if (image.GetWidth() != image.GetHeight())
+		{
+			IMZADI_LOG_ERROR("If doing mip-maps, we require, for simplicity, that the texture dimensions be square, not %d x %d.", image.GetWidth(), image.GetHeight());
+			return false;
+		}
+
+		numMips = 0;
+		uint32_t size = image.GetWidth();
+		while (size > 0)
+		{
+			numMips++;
+			size >>= 1;
+		}
+	}
+
+	textureDoc.AddMember("num_mips", rapidjson::Value().SetUint(numMips), textureDoc.GetAllocator());
+
 	if ((flags & Flag::FOR_CUBE_MAP) != 0)
 		textureDoc.AddMember("for_staging", rapidjson::Value().SetBool(true), textureDoc.GetAllocator());
 
@@ -98,41 +125,67 @@ bool TextureMaker::MakeTexture(const wxString& imageFilePath, uint32_t flags)
 		return false;
 	}
 
-	uint32_t textureDataBufferSize = image.GetWidth() * image.GetHeight() * texelSizeBytes;
+	uint32_t textureDataBufferSize = 0;
+	uint32_t width = image.GetWidth();
+	uint32_t height = image.GetHeight();
+	for (uint32_t i = 0; i < numMips; i++)
+	{
+		textureDataBufferSize += width * height * texelSizeBytes;
+		width >>= 1;
+		height >>= 1;
+	}
+
 	std::unique_ptr<unsigned char> textureDataBuffer(new unsigned char[textureDataBufferSize]);
 
-	for (int row = 0; row < image.GetHeight(); row++)
+	unsigned char* mipTexture = textureDataBuffer.get();
+	width = image.GetWidth();
+	height = image.GetHeight();
+	for (uint32_t i = 0; i < numMips; i++)
 	{
-		for (int col = 0; col < image.GetWidth(); col++)
+		IMZADI_ASSERT(width == image.GetWidth() && height == image.GetHeight());
+
+		for (uint32_t row = 0; row < height; row++)
 		{
-			int wantedRow = row;
-			if ((flags & Flag::FLIP_VERTICAL) != 0)
-				wantedRow = image.GetHeight() - 1 - row;
-
-			int wantedCol = col;
-			if ((flags & Flag::FLIP_HORIZONTAL) != 0)
-				wantedCol = image.GetWidth() - 1 - col;
-
-			unsigned char* texel = &textureDataBuffer.get()[(wantedRow * image.GetWidth() + wantedCol) * texelSizeBytes];
-
-			if ((flags & Flag::COLOR) != 0)
+			for (uint32_t col = 0; col < width; col++)
 			{
-				const unsigned char* colorPixel = &image.GetData()[(row * image.GetWidth() + col) * 3];
+				int wantedRow = row;
+				if ((flags & Flag::FLIP_VERTICAL) != 0)
+					wantedRow = height - 1 - row;
 
-				texel[0] = colorPixel[0];
-				texel[1] = colorPixel[1];
-				texel[2] = colorPixel[2];
-			}
+				int wantedCol = col;
+				if ((flags & Flag::FLIP_HORIZONTAL) != 0)
+					wantedCol = width - 1 - col;
 
-			if ((flags & Flag::ALPHA) != 0)
-			{
-				const unsigned char* alphaPixel = &image.GetAlpha()[row * image.GetWidth() + col];
+				unsigned char* texel = &mipTexture[(wantedRow * width + wantedCol) * texelSizeBytes];
 
 				if ((flags & Flag::COLOR) != 0)
-					texel[3] = *alphaPixel;
-				else
-					texel[0] = *alphaPixel;
+				{
+					const unsigned char* colorPixel = &image.GetData()[(row * width + col) * 3];
+
+					texel[0] = colorPixel[0];
+					texel[1] = colorPixel[1];
+					texel[2] = colorPixel[2];
+				}
+
+				if ((flags & Flag::ALPHA) != 0)
+				{
+					const unsigned char* alphaPixel = &image.GetAlpha()[row * width + col];
+
+					if ((flags & Flag::COLOR) != 0)
+						texel[3] = *alphaPixel;
+					else
+						texel[0] = *alphaPixel;
+				}
 			}
+		}
+
+		mipTexture += width * height * texelSizeBytes;
+		width >>= 1;
+		height >>= 1;
+
+		if (i + 1 < numMips)
+		{
+			image.Rescale(width, height, wxIMAGE_QUALITY_HIGH);
 		}
 	}
 

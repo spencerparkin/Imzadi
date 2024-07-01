@@ -40,6 +40,14 @@ protected:
 	void OnUpdateUI(wxUpdateUIEvent& event);
 	void OnCloseWindow(wxCloseEvent& event);
 
+	struct FlagChoice
+	{
+		wxString name;
+		uint32_t flag;
+	};
+
+	bool FlagsFromDialog(const wxString& prompt, const std::vector<FlagChoice>& flagChoiceArray, uint32_t& chosenFlags);
+
 	Canvas* canvas;
 	RenderObjectList* renderObjectList;
 	RenderObjectProperties* renderObjectProperties;
