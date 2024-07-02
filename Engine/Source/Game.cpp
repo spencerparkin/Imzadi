@@ -29,7 +29,6 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->mainWindowHandle = NULL;
 	this->keepRunning = false;
 	this->windowResized = false;
-	this->cpuFrameIndex = 0;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
@@ -459,8 +458,6 @@ DebugLines* Game::GetDebugLines()
 	}
 #endif
 
-	this->cpuFrameIndex = 0;
-
 	if (!this->PostInit())
 	{
 		IMZADI_LOG_ERROR("Post initialization failed.");
@@ -471,17 +468,11 @@ DebugLines* Game::GetDebugLines()
 	return true;
 }
 
-Game::Frame* Game::GetCurrentGPUFrame()
+Game::Frame* Game::GetCurrentFrame()
 {
 	UINT frameIndex = this->swapChain->GetCurrentBackBufferIndex();
 	IMZADI_ASSERT(0 <= frameIndex && frameIndex < this->numFrames);
 	return &this->frameArray[frameIndex];
-}
-
-Game::Frame* Game::GetCurrentCPUFrame()
-{
-	IMZADI_ASSERT(0 <= this->cpuFrameIndex && this->cpuFrameIndex < this->numFrames);
-	return &this->frameArray[this->cpuFrameIndex];
 }
 
 bool Game::IsFrameComplete(Frame* frame)
@@ -495,20 +486,7 @@ void Game::StallUntilFrameComplete(Frame* frame)
 	if (!this->IsFrameComplete(frame))
 	{
 		WaitForSingleObjectEx(frame->fenceEvent, INFINITE, FALSE);
-		//IMZADI_ASSERT(this->IsFrameComplete(frame));
-
-		// I'm not serious here.  This is just a test.
-		UINT64 fenceValue = frame->fence->GetCompletedValue();
-		if (frame->targetFenceValue != fenceValue)
-		{
-			while (true)
-			{
-				Sleep(100);
-				fenceValue = frame->fence->GetCompletedValue();
-				if (fenceValue == frame->targetFenceValue)
-					break;
-			}
-		}
+		IMZADI_ASSERT(this->IsFrameComplete(frame));
 	}
 }
 
@@ -552,8 +530,8 @@ bool Game::RecreateViews()
 	for (int i = 0; i < this->numFrames; i++)
 	{
 		Frame* frame = &this->frameArray[i];
-		SafeRelease(frame->renderTarget);
-		SafeRelease(frame->depthStencil);
+		frame->renderTarget.Reset();
+		frame->depthStencil.Reset();
 	}
 
 	if (this->windowResized)
@@ -826,10 +804,15 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 	HRESULT result = 0;
 
-	Frame* frame = this->GetCurrentCPUFrame();
-
-	// Wait until the GPU is done working on the frame before we mess with it.
+	Frame* frame = this->GetCurrentFrame();
 	this->StallUntilFrameComplete(frame);
+	if (frame->targetFenceValue > 0)
+		this->swapChain->Present(1, 0);
+
+	frame = this->GetCurrentFrame();
+	IMZADI_ASSERT(this->IsFrameComplete(frame));
+
+	UINT frameIndex = this->swapChain->GetCurrentBackBufferIndex();
 
 	frame->commandAllocator->Reset();
 	frame->commandList->Reset(frame->commandAllocator.Get(), nullptr);
@@ -845,11 +828,11 @@ void Game::AdvanceEntities(TickPass tickPass)
 	
 	UINT renderTargetViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle = this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
-	renderTargetViewHandle.ptr += this->cpuFrameIndex * renderTargetViewDescriptorSize;
+	renderTargetViewHandle.ptr += frameIndex * renderTargetViewDescriptorSize;
 
 	UINT depthStencilViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilViewHandle = this->depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
-	depthStencilViewHandle.ptr += this->cpuFrameIndex * depthStencilViewDescriptorSize;
+	depthStencilViewHandle.ptr += frameIndex * depthStencilViewDescriptorSize;
 
 	frame->commandList->OMSetRenderTargets(1, &renderTargetViewHandle, FALSE, nullptr);
 
@@ -875,20 +858,15 @@ void Game::AdvanceEntities(TickPass tickPass)
 	ID3D12CommandList* commandListArray[] = { frame->commandList.Get() };
 	this->commandQueue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
 
-	// We're done with all commands for this frame.
-	this->cpuFrameIndex = (this->cpuFrameIndex + 1) % this->numFrames;
-
 	// Lastly, schedule a signal to occur on the GPU to tell us (on the CPU) when the frame is done.
 	frame->targetFenceValue++;
 	this->commandQueue->Signal(frame->fence.Get(), frame->targetFenceValue);
+	ResetEvent(frame->fenceEvent);
 	frame->fence->SetEventOnCompletion(frame->targetFenceValue, frame->fenceEvent);
 
-	// Rotate the swap-chain as we discover each frame being completed.
-	frame = this->GetCurrentGPUFrame();
-	if (this->IsFrameComplete(frame))
-	{
-		this->swapChain->Present(1, 0);
-	}
+	// Note that we don't stall here waiting for the frame to complete.
+	// Rather, we want to do a bunch of work in parallel with the GPU.
+	// That's why we stall at the start of the next render.
 }
 
 /*virtual*/ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
@@ -1042,18 +1020,18 @@ std::string Game::PopControllerUser()
 	for (int i = 0; i < this->numFrames; i++)
 	{
 		Frame* frame = &this->frameArray[i];
-		SafeRelease(frame->renderTarget);
-		SafeRelease(frame->depthStencil);
-		SafeRelease(frame->commandAllocator);
-		SafeRelease(frame->commandList);
+		frame->renderTarget.Reset();
+		frame->depthStencil.Reset();
+		frame->commandAllocator.Reset();
+		frame->commandList.Reset();
 	}
 
-	SafeRelease(this->device);
-	SafeRelease(this->swapChain);
-	SafeRelease(this->rootSignature);
-	SafeRelease(this->renderTargetViewHeap);
-	SafeRelease(this->depthStencilViewHeap);
-	SafeRelease(this->commandQueue);
+	this->device.Reset();
+	this->swapChain.Reset();
+	this->rootSignature.Reset();
+	this->renderTargetViewHeap.Reset();
+	this->depthStencilViewHeap.Reset();
+	this->commandQueue.Reset();
 
 	if (this->mainWindowHandle)
 	{

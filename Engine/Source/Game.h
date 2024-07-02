@@ -280,8 +280,7 @@ namespace Imzadi
 			UINT64 targetFenceValue;
 		};
 
-		Frame* GetCurrentCPUFrame();	// This is the frame that the CPU wants to work on.
-		Frame* GetCurrentGPUFrame();	// This is the frame that the GPU is working on.
+		Frame* GetCurrentFrame();
 		void StallUntilFrameComplete(Frame* frame);
 		void StallUntilAllFramesComplete();
 		bool IsFrameComplete(Frame* frame);
@@ -301,7 +300,6 @@ namespace Imzadi
 		D3D12_VIEWPORT shadowPassViewport;
 		static const UINT numFrames = 2;
 		Frame frameArray[numFrames];
-		UINT cpuFrameIndex;
 		Reference<Scene> scene;
 		Reference<AssetCache> assetCache;
 		Reference<Camera> camera;
