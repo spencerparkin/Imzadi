@@ -162,7 +162,7 @@ target_compile_definitions(ImzadiGameEngine PRIVATE
 target_link_libraries(ImzadiGameEngine PRIVATE
     d3d12.lib
     dxgi.lib
-    d3dcompiler.lib    
+    d3dcompiler.lib
     Xinput9_1_0.lib
     cabinet.lib
 )

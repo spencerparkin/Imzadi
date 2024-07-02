@@ -12,6 +12,8 @@
 #include "Log.h"
 #include <format>
 #include <math.h>
+#include <codecvt>
+#include <locale>
 
 using namespace Imzadi;
 
@@ -168,8 +170,6 @@ DebugLines* Game::GetDebugLines()
 
 	HRESULT result = 0;
 
-	// Without enabling this we don't get useful logging output from DX12 when
-	// the API is miss-used or something else goes wrong.
 #if defined _DEBUG
 	ComPtr<ID3D12Debug> debugController;
 	result = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
@@ -179,6 +179,8 @@ DebugLines* Game::GetDebugLines()
 		return false;
 	}
 
+	// Without enabling this we don't get useful logging output from DX12 when
+	// the API is miss-used or something else goes wrong, I think.
 	debugController->EnableDebugLayer();
 #endif
 
@@ -208,7 +210,7 @@ DebugLines* Game::GetDebugLines()
 		if (FAILED(result))
 			break;
 
-		DXGI_ADAPTER_DESC1 adapterDesc;
+		DXGI_ADAPTER_DESC1 adapterDesc{};
 		adapter1->GetDesc1(&adapterDesc);
 		if ((adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
 			continue;
@@ -229,6 +231,11 @@ DebugLines* Game::GetDebugLines()
 		IMZADI_LOG_ERROR("Failed to find a GPU we can use.");
 		return false;
 	}
+
+	DXGI_ADAPTER_DESC1 chosenAdapterDesc{};
+	chosenAdapter->GetDesc1(&chosenAdapterDesc);
+	std::string gpuDesc = std::wstring_convert<std::codecvt_utf8<wchar_t>, wchar_t>().to_bytes(std::wstring(chosenAdapterDesc.Description));
+	IMZADI_LOG_INFO("GPU chosen: %s", gpuDesc.c_str());
 
 	result = D3D12CreateDevice(chosenAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&this->device));
 	if (FAILED(result))
@@ -298,6 +305,30 @@ DebugLines* Game::GetDebugLines()
 	if (!this->camera->LookAt(Vector3(-20.0, 30.0, 50.0), Vector3(0.0, 0.0, 0.0), Vector3(0.0, 1.0, 0.0)))
 		return false;
 
+	// Create synchronization object's we'll need to manage the CPU and GPU time-lines.
+	// Specifically, we never want to mess with data on the CPU that the GPU is still using.
+	for (int i = 0; i < this->numFrames; i++)
+	{
+		Frame* frame = &this->frameArray[i];
+
+		result = this->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frame->fence));
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to create fence with error: %d", result);
+			return false;
+		}
+
+		frame->fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		if (!frame->fenceEvent)
+		{
+			IMZADI_LOG_ERROR("Failed to create fence event with error: %d", GetLastError());
+			return false;
+		}
+
+		// All frames start life in the completed state.
+		frame->targetFenceValue = frame->fence->GetCompletedValue();
+	}
+
 	this->windowResized = false;
 	if (!this->RecreateViews())
 	{
@@ -335,8 +366,6 @@ DebugLines* Game::GetDebugLines()
 		}
 
 		// Note that no initial pipeline state is bound here.  We'll do that when we're ready to draw something.
-		// Also, commands will be allocated from the current frame's command allocator, but this changes as we
-		// cycle through frames using the Reset() method of the command list object.
 		result = this->device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frame->commandAllocator.Get(), nullptr, IID_PPV_ARGS(&frame->commandList));
 		if (FAILED(result))
 		{
@@ -430,30 +459,6 @@ DebugLines* Game::GetDebugLines()
 	}
 #endif
 
-	// Create synchronization object's we'll need to manage the CPU and GPU time-lines.
-	// Specifically, we never want to mess with data on the CPU that the GPU is still using.
-	for (int i = 0; i < this->numFrames; i++)
-	{
-		Frame* frame = &this->frameArray[i];
-
-		result = this->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frame->fence));
-		if (FAILED(result))
-		{
-			IMZADI_LOG_ERROR("Failed to create fence with error: %d", result);
-			return false;
-		}
-
-		frame->fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
-		if (!frame->fenceEvent)
-		{
-			IMZADI_LOG_ERROR("Failed to create fence event with error: %d", GetLastError());
-			return false;
-		}
-
-		// All frames start life in the completed state.
-		frame->targetFenceValue = frame->fence->GetCompletedValue();
-	}
-
 	this->cpuFrameIndex = 0;
 
 	if (!this->PostInit())
@@ -481,7 +486,8 @@ Game::Frame* Game::GetCurrentCPUFrame()
 
 bool Game::IsFrameComplete(Frame* frame)
 {
-	return frame->fence->GetCompletedValue() == frame->targetFenceValue;
+	UINT64 fenceValue = frame->fence->GetCompletedValue();
+	return fenceValue == frame->targetFenceValue;
 }
 
 void Game::StallUntilFrameComplete(Frame* frame)
@@ -489,7 +495,20 @@ void Game::StallUntilFrameComplete(Frame* frame)
 	if (!this->IsFrameComplete(frame))
 	{
 		WaitForSingleObjectEx(frame->fenceEvent, INFINITE, FALSE);
-		IMZADI_ASSERT(this->IsFrameComplete(frame));
+		//IMZADI_ASSERT(this->IsFrameComplete(frame));
+
+		// I'm not serious here.  This is just a test.
+		UINT64 fenceValue = frame->fence->GetCompletedValue();
+		if (frame->targetFenceValue != fenceValue)
+		{
+			while (true)
+			{
+				Sleep(100);
+				fenceValue = frame->fence->GetCompletedValue();
+				if (fenceValue == frame->targetFenceValue)
+					break;
+			}
+		}
 	}
 }
 
@@ -547,15 +566,52 @@ bool Game::RecreateViews()
 		}
 	}
 
+	RECT clientRect;
+	GetClientRect(this->mainWindowHandle, &clientRect);
+
+	this->mainPassViewport.TopLeftX = 0.0f;
+	this->mainPassViewport.TopLeftY = 0.0f;
+	this->mainPassViewport.Width = FLOAT(clientRect.right - clientRect.left);
+	this->mainPassViewport.Height = FLOAT(clientRect.bottom - clientRect.top);
+	this->mainPassViewport.MinDepth = 0.0f;
+	this->mainPassViewport.MaxDepth = 1.0f;
+
+	// Do we just overwrite the view heaps or do we need to free them first?
+
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle = this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
 	UINT renderTargetViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilViewHandle = this->depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
 	UINT depthStencilViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
 
+	D3D12_RESOURCE_DESC depthStencilResourceDesc{};
+	depthStencilResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
+	depthStencilResourceDesc.Alignment = 0;
+	depthStencilResourceDesc.Width = mainPassViewport.Width;
+	depthStencilResourceDesc.Height = mainPassViewport.Height;
+	depthStencilResourceDesc.DepthOrArraySize = 1;
+	depthStencilResourceDesc.MipLevels = 1;
+	depthStencilResourceDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilResourceDesc.SampleDesc.Count = 1;
+	depthStencilResourceDesc.SampleDesc.Quality = 0;
+	depthStencilResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_UNKNOWN;
+	depthStencilResourceDesc.Flags = D3D12_RESOURCE_FLAG_ALLOW_DEPTH_STENCIL;
+
+	D3D12_HEAP_PROPERTIES depthStencilHeapProperties{};
+	depthStencilHeapProperties.Type = D3D12_HEAP_TYPE_DEFAULT;
+	depthStencilHeapProperties.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_UNKNOWN;
+	depthStencilHeapProperties.MemoryPoolPreference = D3D12_MEMORY_POOL_UNKNOWN;
+
+	D3D12_CLEAR_VALUE depthStencilClearValue{};
+	depthStencilClearValue.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilClearValue.DepthStencil.Depth = 1.0f;
+	depthStencilClearValue.DepthStencil.Stencil = 0;
+
 	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
-	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_READ_ONLY_DEPTH;
+	depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_NONE;
+	depthStencilViewDesc.ViewDimension = D3D12_DSV_DIMENSION_TEXTURE2D;
+	depthStencilViewDesc.Texture2D.MipSlice = 0;
 
 	for (int i = 0; i < this->numFrames; i++)
 	{
@@ -571,19 +627,22 @@ bool Game::RecreateViews()
 		this->device->CreateRenderTargetView(frame->renderTarget.Get(), nullptr, renderTargetViewHandle);
 		renderTargetViewHandle.ptr += renderTargetViewDescriptorSize;
 
+		result = this->device->CreateCommittedResource(
+										&depthStencilHeapProperties,
+										D3D12_HEAP_FLAG_NONE,
+										&depthStencilResourceDesc,
+										D3D12_RESOURCE_STATE_DEPTH_WRITE,
+										&depthStencilClearValue,
+										IID_PPV_ARGS(&frame->depthStencil));
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to create depth stencil buffer for frame %d with error: %d", i, result);
+			return false;
+		}
+
 		this->device->CreateDepthStencilView(frame->depthStencil.Get(), &depthStencilViewDesc, depthStencilViewHandle);
-		renderTargetViewHandle.ptr += depthStencilViewDescriptorSize;
+		depthStencilViewHandle.ptr += depthStencilViewDescriptorSize;
 	}
-
-	RECT clientRect;
-	GetClientRect(this->mainWindowHandle, &clientRect);
-
-	this->mainPassViewport.TopLeftX = 0.0f;
-	this->mainPassViewport.TopLeftY = 0.0f;
-	this->mainPassViewport.Width = FLOAT(clientRect.right - clientRect.left);
-	this->mainPassViewport.Height = FLOAT(clientRect.bottom - clientRect.top);
-	this->mainPassViewport.MinDepth = 0.0f;
-	this->mainPassViewport.MaxDepth = 1.0f;
 
 	IMZADI_LOG_INFO("Viewport dimensions: %d x %d", int(this->mainPassViewport.Width), int(this->mainPassViewport.Height));
 
@@ -815,6 +874,9 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 	ID3D12CommandList* commandListArray[] = { frame->commandList.Get() };
 	this->commandQueue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
+
+	// We're done with all commands for this frame.
+	this->cpuFrameIndex = (this->cpuFrameIndex + 1) % this->numFrames;
 
 	// Lastly, schedule a signal to occur on the GPU to tell us (on the CPU) when the frame is done.
 	frame->targetFenceValue++;
