@@ -34,7 +34,7 @@
 #define IMZADI_AXIS_FLAG_Z					0x00000004
 
 template<typename T>
-void IMZADI_API SafeRelease(T*& thing)
+void IMZADI_API SafeRelease(T& thing)
 {
 	if (thing)
 	{

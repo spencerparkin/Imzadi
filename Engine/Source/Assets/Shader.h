@@ -7,7 +7,10 @@
 #include "Math/Matrix3x3.h"
 #include "Math/Matrix4x4.h"
 #include <d3d12.h>
+#include <wrl/client.h>
 #include <unordered_map>
+
+using Microsoft::WRL::ComPtr;
 
 namespace Imzadi
 {
@@ -49,6 +52,7 @@ namespace Imzadi
 		ID3D11PixelShader* pixelShader;
 		ID3D11Buffer* constantsBuffer;
 #endif
+		ComPtr<ID3D12PipelineState> pipelineState;
 		UINT constantsBufferSize;
 		ID3DBlob* vsBlob;
 		ID3DBlob* psBlob;

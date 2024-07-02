@@ -103,6 +103,7 @@ void RenderObjectProperties::PrintPropertiesOf(Imzadi::RenderObject* renderObjec
 		this->AppendText(wxString::Format("Font: %s\n", font->GetName().c_str()));
 	}
 
+#if 0
 	auto skyDomeRenderObject = dynamic_cast<Imzadi::SkyDomeRenderObject*>(renderObject);
 	if (skyDomeRenderObject)
 	{
@@ -122,4 +123,5 @@ void RenderObjectProperties::PrintPropertiesOf(Imzadi::RenderObject* renderObjec
 			}
 		}
 	}
+#endif
 }

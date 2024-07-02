@@ -5,6 +5,8 @@
 #endif
 #include <Windows.h>
 #include <d3d12.h>
+#include <dxgi1_6.h>
+#include <wrl/client.h>
 #include <string>
 #include <list>
 #include <time.h>
@@ -18,6 +20,8 @@
 #include "StateCache.h"
 
 #define IMZADI_GAME_WINDOW_CLASS_NAME		TEXT("ImzadiGameWindowClass")
+
+using Microsoft::WRL::ComPtr;
 
 namespace Imzadi
 {
@@ -265,28 +269,39 @@ namespace Imzadi
 		bool RecreateViews();
 		void ToggleFPSDisplay();
 
+		struct Frame
+		{
+			ComPtr<ID3D12Resource> renderTarget;
+			ComPtr<ID3D12Resource> depthStencil;
+			ComPtr<ID3D12CommandAllocator> commandAllocator;
+			ComPtr<ID3D12GraphicsCommandList> commandList;
+			HANDLE fenceEvent;
+			ComPtr<ID3D12Fence> fence;
+			UINT64 targetFenceValue;
+		};
+
+		Frame* GetCurrentCPUFrame();	// This is the frame that the CPU wants to work on.
+		Frame* GetCurrentGPUFrame();	// This is the frame that the GPU is working on.
+		void StallUntilFrameComplete(Frame* frame);
+		void StallUntilAllFramesComplete();
+		bool IsFrameComplete(Frame* frame);
+
 		TCHAR windowTitle[256];
 		HINSTANCE instance;
 		HWND mainWindowHandle;
 		bool keepRunning;
 		bool windowResized;
-
-#if 0
-		ID3D11Device* device;
-		ID3D11DeviceContext* deviceContext;
-		IDXGISwapChain* swapChain;
-		ID3D11RenderTargetView* frameBufferView;
-		ID3D11DepthStencilView* depthStencilView;
-		ID3D11DepthStencilView* shadowBufferView;
-		ID3D11ShaderResourceView* shadowBufferViewForShader;
-		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC> rasterStateCache;
-		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC> depthStencilStateCache;
-		StateCache<ID3D11BlendState, D3D11_BLEND_DESC> blendStateCache;
-		ID3D11SamplerState* generalSamplerState;
-		D3D11_VIEWPORT mainPassViewport;
-		D3D11_VIEWPORT shadowPassViewport;
-#endif
-
+		ComPtr<IDXGISwapChain3> swapChain;
+		ComPtr<ID3D12Device> device;
+		ComPtr<ID3D12RootSignature> rootSignature;
+		ComPtr<ID3D12DescriptorHeap> renderTargetViewHeap;
+		ComPtr<ID3D12DescriptorHeap> depthStencilViewHeap;
+		ComPtr<ID3D12CommandQueue> commandQueue;
+		D3D12_VIEWPORT mainPassViewport;
+		D3D12_VIEWPORT shadowPassViewport;
+		static const UINT numFrames = 2;
+		Frame frameArray[numFrames];
+		UINT cpuFrameIndex;
 		Reference<Scene> scene;
 		Reference<AssetCache> assetCache;
 		Reference<Camera> camera;

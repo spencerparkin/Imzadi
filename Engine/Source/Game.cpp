@@ -27,18 +27,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->mainWindowHandle = NULL;
 	this->keepRunning = false;
 	this->windowResized = false;
-
-#if 0
-	this->device = NULL;
-	this->deviceContext = NULL;
-	this->swapChain = NULL;
-	this->frameBufferView = NULL;
-	this->depthStencilView = NULL;
-	this->shadowBufferView = NULL;
-	this->shadowBufferViewForShader = NULL;
-	this->generalSamplerState = NULL;
-#endif
-
+	this->cpuFrameIndex = 0;
 	this->scene = nullptr;
 	this->assetCache = nullptr;
 	this->lightParams.lightDirection = Vector3(0.2, -1.0, 0.2).Normalized();
@@ -46,10 +35,10 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->lightParams.directionalLightIntensity = 1.0;
 	this->lightParams.ambientLightIntensity = 0.1;
 	this->lightParams.lightCameraDistance = 200.0;
-#if 0
-	ZeroMemory(&this->mainPassViewport, sizeof(D3D11_VIEWPORT));
-	ZeroMemory(&this->shadowPassViewport, sizeof(D3D11_VIEWPORT));
-#endif
+
+	ZeroMemory(&this->mainPassViewport, sizeof(D3D12_VIEWPORT));
+	ZeroMemory(&this->shadowPassViewport, sizeof(D3D12_VIEWPORT));
+
 	lstrcpy(this->windowTitle, "Imzadi Game Engine");
 }
 
@@ -179,54 +168,130 @@ DebugLines* Game::GetDebugLines()
 
 	HRESULT result = 0;
 
-#if 0
-	D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1 };
-	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
+	// Without enabling this we don't get useful logging output from DX12 when
+	// the API is miss-used or something else goes wrong.
 #if defined _DEBUG
-	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
-#endif
-
-	DXGI_SWAP_CHAIN_DESC swapChainDesc{};
-	swapChainDesc.BufferDesc.Width = 0;
-	swapChainDesc.BufferDesc.Height = 0;
-	swapChainDesc.BufferDesc.Format = DXGI_FORMAT_B8G8R8A8_UNORM_SRGB;
-	swapChainDesc.SampleDesc.Count = 1;
-	swapChainDesc.SampleDesc.Quality = 0;
-	swapChainDesc.Windowed = TRUE;
-	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-	swapChainDesc.BufferCount = 2;
-	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-	swapChainDesc.Flags = 0;
-	swapChainDesc.OutputWindow = this->mainWindowHandle;
-
-	result = D3D11CreateDeviceAndSwapChain(NULL, D3D_DRIVER_TYPE_HARDWARE, NULL,
-													creationFlags, featureLevels, ARRAYSIZE(featureLevels),
-													D3D11_SDK_VERSION, &swapChainDesc, &this->swapChain,
-													&this->device, NULL, &this->deviceContext);
-
+	ComPtr<ID3D12Debug> debugController;
+	result = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
 	if (FAILED(result))
 	{
-		IMZADI_LOG_ERROR("Failed to create D3D11 device, context and swap-chain!  Error code: %d", GetLastError());
+		IMZADI_LOG_ERROR("Failed to get debug interface with error code: %d", result);
 		return false;
 	}
 
-#if defined _DEBUG
-	ID3D11Debug* debug = nullptr;
-	device->QueryInterface(__uuidof(ID3D11Debug), (void**)&debug);
-	if (debug)
+	debugController->EnableDebugLayer();
+#endif
+
+	ComPtr<IDXGIFactory2> factory2;
+	result = CreateDXGIFactory(IID_PPV_ARGS(&factory2));
+	if (FAILED(result))
 	{
-		ID3D11InfoQueue* infoQueue = nullptr;
-		result = debug->QueryInterface(__uuidof(ID3D11InfoQueue), (void**)&infoQueue);
+		IMZADI_LOG_ERROR("Failed to create DXGI factory2 with error code: %d", result);
+		return false;
+	}
+
+	ComPtr<IDXGIFactory6> factory6;
+	result = factory2->QueryInterface(IID_PPV_ARGS(&factory6));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create DXGI factory6 from factory2 with error code: %d", result);
+		return false;
+	}
+
+	// Look for a GPU to suit our needs.  We just use the first one we find.
+	ComPtr<IDXGIAdapter1> chosenAdapter;
+	UINT adapterNumber = 0;
+	while (true)
+	{
+		ComPtr<IDXGIAdapter1> adapter1;
+		result = factory6->EnumAdapterByGpuPreference(adapterNumber, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&adapter1));
+		if (FAILED(result))
+			break;
+
+		DXGI_ADAPTER_DESC1 adapterDesc;
+		adapter1->GetDesc1(&adapterDesc);
+		if ((adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) != 0)
+			continue;
+		
+		// This won't actually create the device, but it will test to see if device creation would succeed.
+		result = D3D12CreateDevice(adapter1.Get(), D3D_FEATURE_LEVEL_12_0, __uuidof(ID3D12Device), nullptr);
 		if (SUCCEEDED(result))
 		{
-			infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_CORRUPTION, TRUE);
-			infoQueue->SetBreakOnSeverity(D3D11_MESSAGE_SEVERITY_ERROR, TRUE);
-			infoQueue->Release();
+			chosenAdapter = adapter1.Detach();
+			break;
 		}
-		debug->Release();
+
+		adapterNumber++;
 	}
-#endif //_DEBUG
-#endif
+
+	if (!chosenAdapter)
+	{
+		IMZADI_LOG_ERROR("Failed to find a GPU we can use.");
+		return false;
+	}
+
+	result = D3D12CreateDevice(chosenAdapter.Get(), D3D_FEATURE_LEVEL_12_0, IID_PPV_ARGS(&this->device));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create D3D12 device from chosen GPU adapater.  Error: %d", result);
+		return false;
+	}
+
+	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
+	commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
+	commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
+	result = this->device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&this->commandQueue));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create command queue with error: %d", result);
+		return false;
+	}
+
+	DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
+	swapChainDesc.BufferCount = this->numFrames;
+	swapChainDesc.Width = 0;
+	swapChainDesc.Height = 0;
+	swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
+	swapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+	swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
+	swapChainDesc.SampleDesc.Count = 1;
+
+	ComPtr<IDXGISwapChain1> swapChain1;
+	result = factory2->CreateSwapChainForHwnd(this->commandQueue.Get(), this->mainWindowHandle, &swapChainDesc, nullptr, nullptr, &swapChain1);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create swap-chain with error: %d", result);
+		return false;
+	}
+
+	result = swapChain1.As(&this->swapChain);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to cast swap-chain.  Error: %d", result);
+		return false;
+	}
+
+	D3D12_DESCRIPTOR_HEAP_DESC renderTargetViewHeapDesc{};
+	renderTargetViewHeapDesc.NumDescriptors = this->numFrames;
+	renderTargetViewHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_RTV;
+	renderTargetViewHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	result = this->device->CreateDescriptorHeap(&renderTargetViewHeapDesc, IID_PPV_ARGS(&this->renderTargetViewHeap));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create RTV descriptor heap with error: %d", result);
+		return false;
+	}
+
+	D3D12_DESCRIPTOR_HEAP_DESC depthStencilViewHeapDesc{};
+	depthStencilViewHeapDesc.NumDescriptors = this->numFrames;
+	depthStencilViewHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_DSV;
+	depthStencilViewHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_NONE;
+	result = this->device->CreateDescriptorHeap(&depthStencilViewHeapDesc, IID_PPV_ARGS(&this->depthStencilViewHeap));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create DSV descriptor heap with error: %d", result);
+		return false;
+	}
 
 	this->SetCamera(new Camera());
 	this->camera->SetViewMode(Camera::ViewMode::PERSPECTIVE);
@@ -238,6 +303,49 @@ DebugLines* Game::GetDebugLines()
 	{
 		IMZADI_LOG_ERROR("Initial view creation failed.");
 		return false;
+	}
+
+	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
+	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
+
+	ComPtr<ID3DBlob> signature, error;
+	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to serialize root signature with error: %d", result);
+		return false;
+	}
+
+	result = this->device->CreateRootSignature(0, signature->GetBufferPointer(), signature->GetBufferSize(), IID_PPV_ARGS(&this->rootSignature));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create root signature with error: %d", result);
+		return false;
+	}
+
+	for (int i = 0; i < this->numFrames; i++)
+	{
+		Frame* frame = &this->frameArray[i];
+
+		result = this->device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frame->commandAllocator));
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to create command allocator for frame %d.  Error: %d", i, result);
+			return false;
+		}
+
+		// Note that no initial pipeline state is bound here.  We'll do that when we're ready to draw something.
+		// Also, commands will be allocated from the current frame's command allocator, but this changes as we
+		// cycle through frames using the Reset() method of the command list object.
+		result = this->device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frame->commandAllocator.Get(), nullptr, IID_PPV_ARGS(&frame->commandList));
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to create initial graphics command list for frame %d with error: %d", i, result);
+			return false;
+		}
+
+		// Start life in the closed state rather than the recording state.
+		frame->commandList->Close();
 	}
 
 	Camera::OrthographicParams orthoParams{};
@@ -322,6 +430,32 @@ DebugLines* Game::GetDebugLines()
 	}
 #endif
 
+	// Create synchronization object's we'll need to manage the CPU and GPU time-lines.
+	// Specifically, we never want to mess with data on the CPU that the GPU is still using.
+	for (int i = 0; i < this->numFrames; i++)
+	{
+		Frame* frame = &this->frameArray[i];
+
+		result = this->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&frame->fence));
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to create fence with error: %d", result);
+			return false;
+		}
+
+		frame->fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+		if (!frame->fenceEvent)
+		{
+			IMZADI_LOG_ERROR("Failed to create fence event with error: %d", GetLastError());
+			return false;
+		}
+
+		// All frames start life in the completed state.
+		frame->targetFenceValue = frame->fence->GetCompletedValue();
+	}
+
+	this->cpuFrameIndex = 0;
+
 	if (!this->PostInit())
 	{
 		IMZADI_LOG_ERROR("Post initialization failed.");
@@ -330,6 +464,39 @@ DebugLines* Game::GetDebugLines()
 
 	this->keepRunning = true;
 	return true;
+}
+
+Game::Frame* Game::GetCurrentGPUFrame()
+{
+	UINT frameIndex = this->swapChain->GetCurrentBackBufferIndex();
+	IMZADI_ASSERT(0 <= frameIndex && frameIndex < this->numFrames);
+	return &this->frameArray[frameIndex];
+}
+
+Game::Frame* Game::GetCurrentCPUFrame()
+{
+	IMZADI_ASSERT(0 <= this->cpuFrameIndex && this->cpuFrameIndex < this->numFrames);
+	return &this->frameArray[this->cpuFrameIndex];
+}
+
+bool Game::IsFrameComplete(Frame* frame)
+{
+	return frame->fence->GetCompletedValue() == frame->targetFenceValue;
+}
+
+void Game::StallUntilFrameComplete(Frame* frame)
+{
+	if (!this->IsFrameComplete(frame))
+	{
+		WaitForSingleObjectEx(frame->fenceEvent, INFINITE, FALSE);
+		IMZADI_ASSERT(this->IsFrameComplete(frame));
+	}
+}
+
+void Game::StallUntilAllFramesComplete()
+{
+	for (int i = 0; i < this->numFrames; i++)
+		this->StallUntilFrameComplete(&this->frameArray[i]);
 }
 
 Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMeshFile, const Vector3& position, const Quaternion& orientation)
@@ -359,11 +526,16 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMe
 
 bool Game::RecreateViews()
 {
-#if 0
-	SafeRelease(this->frameBufferView);
-	SafeRelease(this->depthStencilView);
-
 	HRESULT result = 0;
+
+	this->StallUntilAllFramesComplete();
+
+	for (int i = 0; i < this->numFrames; i++)
+	{
+		Frame* frame = &this->frameArray[i];
+		SafeRelease(frame->renderTarget);
+		SafeRelease(frame->depthStencil);
+	}
 
 	if (this->windowResized)
 	{
@@ -375,47 +547,33 @@ bool Game::RecreateViews()
 		}
 	}
 
-	ID3D11Texture2D* backBufferTexture = nullptr;
-	result = this->swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&backBufferTexture);
-	if (FAILED(result))
+	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle = this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
+	UINT renderTargetViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilViewHandle = this->depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+	UINT depthStencilViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+
+	D3D12_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc{};
+	depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+	depthStencilViewDesc.Flags = D3D12_DSV_FLAG_READ_ONLY_DEPTH;
+
+	for (int i = 0; i < this->numFrames; i++)
 	{
-		IMZADI_LOG_ERROR("Failed to get back-buffer from swap-chain.  Error code: %d", result);
-		return false;
+		Frame* frame = &this->frameArray[i];
+
+		result = this->swapChain->GetBuffer(i, IID_PPV_ARGS(&frame->renderTarget));
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to get swap chain buffer %d with error: %d", i, result);
+			return false;
+		}
+
+		this->device->CreateRenderTargetView(frame->renderTarget.Get(), nullptr, renderTargetViewHandle);
+		renderTargetViewHandle.ptr += renderTargetViewDescriptorSize;
+
+		this->device->CreateDepthStencilView(frame->depthStencil.Get(), &depthStencilViewDesc, depthStencilViewHandle);
+		renderTargetViewHandle.ptr += depthStencilViewDescriptorSize;
 	}
-
-	result = this->device->CreateRenderTargetView(backBufferTexture, NULL, &this->frameBufferView);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR("Failed to create render target view of back buffer.  Error code: %d", result);
-		return false;
-	}
-
-	D3D11_TEXTURE2D_DESC depthBufferDesc;
-	backBufferTexture->GetDesc(&depthBufferDesc);
-
-	backBufferTexture->Release();
-	backBufferTexture = nullptr;
-
-	depthBufferDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-	depthBufferDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-
-	ID3D11Texture2D* depthBuffer = nullptr;
-	result = this->device->CreateTexture2D(&depthBufferDesc, NULL, &depthBuffer);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR("Failed to create depth buffer.  Error code: %d", result);
-		return false;
-	}
-
-	result = this->device->CreateDepthStencilView(depthBuffer, NULL, &this->depthStencilView);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR("Failed to depth stencil view of depth buffer.  Error code: %d", result);
-		return false;
-	}
-
-	depthBuffer->Release();
-	depthBuffer = nullptr;
 
 	RECT clientRect;
 	GetClientRect(this->mainWindowHandle, &clientRect);
@@ -437,7 +595,6 @@ bool Game::RecreateViews()
 	Camera::OrthographicParams orthoParams = this->camera->GetOrthographicParameters();
 	orthoParams.desiredAspectRatio = aspectRatio;
 	this->camera->SetOrthographicParams(orthoParams);
-#endif
 
 	return true;
 }
@@ -492,9 +649,6 @@ bool Game::RecreateViews()
 
 	if (this->windowResized)
 	{
-#if 0
-		this->deviceContext->OMSetRenderTargets(0, NULL, NULL);
-#endif
 		this->RecreateViews();
 		this->windowResized = false;
 	}
@@ -610,6 +764,69 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 	this->swapChain->Present(1, 0);
 #endif
+
+	HRESULT result = 0;
+
+	Frame* frame = this->GetCurrentCPUFrame();
+
+	// Wait until the GPU is done working on the frame before we mess with it.
+	this->StallUntilFrameComplete(frame);
+
+	frame->commandAllocator->Reset();
+	frame->commandList->Reset(frame->commandAllocator.Get(), nullptr);
+
+	D3D12_RESOURCE_BARRIER barrierPresentToTarget{};
+	barrierPresentToTarget.Transition.pResource = frame->renderTarget.Get();
+	barrierPresentToTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
+	barrierPresentToTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	frame->commandList->ResourceBarrier(1, &barrierPresentToTarget);
+
+	frame->commandList->SetGraphicsRootSignature(this->rootSignature.Get());
+	frame->commandList->RSSetViewports(1, &this->mainPassViewport);
+	
+	UINT renderTargetViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
+	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle = this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
+	renderTargetViewHandle.ptr += this->cpuFrameIndex * renderTargetViewDescriptorSize;
+
+	UINT depthStencilViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_DSV);
+	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilViewHandle = this->depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
+	depthStencilViewHandle.ptr += this->cpuFrameIndex * depthStencilViewDescriptorSize;
+
+	frame->commandList->OMSetRenderTargets(1, &renderTargetViewHandle, FALSE, nullptr);
+
+	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
+	frame->commandList->ClearRenderTargetView(renderTargetViewHandle, clearColor, 0, nullptr);
+
+	frame->commandList->ClearDepthStencilView(depthStencilViewHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+
+	// TODO: Call out to the scene to populate more commands in the list here.
+
+	D3D12_RESOURCE_BARRIER barrierTargetToPresent{};
+	barrierTargetToPresent.Transition.pResource = frame->renderTarget.Get();
+	barrierTargetToPresent.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
+	barrierTargetToPresent.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
+	frame->commandList->ResourceBarrier(1, &barrierTargetToPresent);
+
+	result = frame->commandList->Close();
+	if (FAILED(result))
+	{
+		IMZADI_LOG_FATAL_ERROR("Failed to close command list with error: %d", result);
+	}
+
+	ID3D12CommandList* commandListArray[] = { frame->commandList.Get() };
+	this->commandQueue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
+
+	// Lastly, schedule a signal to occur on the GPU to tell us (on the CPU) when the frame is done.
+	frame->targetFenceValue++;
+	this->commandQueue->Signal(frame->fence.Get(), frame->targetFenceValue);
+	frame->fence->SetEventOnCompletion(frame->targetFenceValue, frame->fenceEvent);
+
+	// Rotate the swap-chain as we discover each frame being completed.
+	frame = this->GetCurrentGPUFrame();
+	if (this->IsFrameComplete(frame))
+	{
+		this->swapChain->Present(1, 0);
+	}
 }
 
 /*virtual*/ LRESULT Game::WndProc(UINT msg, WPARAM wParam, LPARAM lParam)
@@ -732,9 +949,9 @@ std::string Game::PopControllerUser()
 
 /*virtual*/ bool Game::Shutdown()
 {
-	this->PreShutdown();
+	this->StallUntilAllFramesComplete();
 
-	// TODO: Do we need to wait for the GPU to finish?!
+	this->PreShutdown();
 
 	this->spawnedEntityQueue.clear();
 
@@ -760,20 +977,21 @@ std::string Game::PopControllerUser()
 		this->assetCache.Reset();
 	}
 
-#if 0
-	this->rasterStateCache.ClearCache();
-	this->depthStencilStateCache.ClearCache();
-	this->blendStateCache.ClearCache();
+	for (int i = 0; i < this->numFrames; i++)
+	{
+		Frame* frame = &this->frameArray[i];
+		SafeRelease(frame->renderTarget);
+		SafeRelease(frame->depthStencil);
+		SafeRelease(frame->commandAllocator);
+		SafeRelease(frame->commandList);
+	}
 
-	SafeRelease(this->generalSamplerState);
-	SafeRelease(this->shadowBufferView);
-	SafeRelease(this->shadowBufferViewForShader);
 	SafeRelease(this->device);
-	SafeRelease(this->deviceContext);
 	SafeRelease(this->swapChain);
-	SafeRelease(this->frameBufferView);
-	SafeRelease(this->depthStencilView);
-#endif
+	SafeRelease(this->rootSignature);
+	SafeRelease(this->renderTargetViewHeap);
+	SafeRelease(this->depthStencilViewHeap);
+	SafeRelease(this->commandQueue);
 
 	if (this->mainWindowHandle)
 	{
