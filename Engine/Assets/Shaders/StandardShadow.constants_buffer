@@ -1,0 +1,11 @@
+{
+    "constants": {
+        "objectToProjection": {
+            "offset": 0,
+            "size": 64,
+            "type": "float"
+        }
+    },
+    "size": 256,
+    "type": "dynamic_small"
+}

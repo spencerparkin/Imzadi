@@ -86,7 +86,7 @@ def align(offset, multiple, direction):
     return offset
 
 def calculate_constant_buffer_layout(shader_data, assets_base_dir):
-    if 'shader_code' not in shader_data:
+    if 'shader_code' not in shader_data or 'constants_buffer' not in shader_data:
         return False
 
     hlsl_file = os.path.join(assets_base_dir, shader_data['shader_code'])
@@ -146,7 +146,22 @@ def calculate_constant_buffer_layout(shader_data, assets_base_dir):
                 constants_map[var_name] = constant_data
                 current_offset += size
 
-    shader_data['constants'] = constants_map
+    current_offset = align(current_offset, 256, 'up')
+
+    constants_buffer_file = os.path.join(assets_base_dir, shader_data['constants_buffer'])
+    if os.path.exists(constants_buffer_file):
+        os.remove(constants_buffer_file)
+
+    constants_buffer_data = {
+        'constants': constants_map,
+        'size': current_offset,
+        'type': 'dynamic_small'
+    }
+
+    with open(constants_buffer_file, 'w') as handle:
+        json_text = json.dumps(constants_buffer_data, sort_keys=True, indent=4)
+        handle.write(json_text)
+
     return True
 
 def process_shader_file(shader_file, assets_base_dir, config, shader_pdb_dir):
@@ -156,10 +171,12 @@ def process_shader_file(shader_file, assets_base_dir, config, shader_pdb_dir):
         if 'vs_shader_object' in shader_data and 'ps_shader_object' in shader_data and 'shader_code' in shader_data:
             compile_shader(shader_data, config, 'vs', assets_base_dir, shader_pdb_dir)
             compile_shader(shader_data, config, 'ps', assets_base_dir, shader_pdb_dir)
-    if calculate_constant_buffer_layout(shader_data, assets_base_dir):
-        with open(shader_file, 'w') as handle:
-            json_text = json.dumps(shader_data, sort_keys=True, indent=4)
-            handle.write(json_text)
+
+    calculate_constant_buffer_layout(shader_data, assets_base_dir)
+
+    #    with open(shader_file, 'w') as handle:
+    #        json_text = json.dumps(shader_data, sort_keys=True, indent=4)
+    #        handle.write(json_text)
 
 if __name__ == '__main__':
     # TODO: Don't recompile everything all the time.  Only recompile what needs to be recompiled.  Compile incrementally.

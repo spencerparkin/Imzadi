@@ -1,0 +1,21 @@
+{
+    "constants": {
+        "objectToProjection": {
+            "offset": 0,
+            "size": 64,
+            "type": "float"
+        },
+        "textColor": {
+            "offset": 64,
+            "size": 12,
+            "type": "float"
+        },
+        "zFactor": {
+            "offset": 76,
+            "size": 4,
+            "type": "float"
+        }
+    },
+    "size": 256,
+    "type": "dynamic_small"
+}

@@ -1,11 +1,5 @@
 {
-    "constants": {
-        "objectToProjection": {
-            "offset": 0,
-            "size": 64,
-            "type": "float"
-        }
-    },
+    "constants_buffer": "Shaders/StandardShadow.constants_buffer",
     "ps_entry_point": "PS_Main",
     "ps_model": "ps_5_0",
     "ps_shader_object": "Shaders/StandardShadowPS.dxbc",

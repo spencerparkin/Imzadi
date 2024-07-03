@@ -1,21 +1,5 @@
 {
-    "constants": {
-        "objectToProjection": {
-            "offset": 0,
-            "size": 64,
-            "type": "float"
-        },
-        "textColor": {
-            "offset": 64,
-            "size": 12,
-            "type": "float"
-        },
-        "zFactor": {
-            "offset": 76,
-            "size": 4,
-            "type": "float"
-        }
-    },
+    "constants_buffer": "Shaders/Text.constants_buffer",
     "ps_entry_point": "PS_Main",
     "ps_model": "ps_5_0",
     "ps_shader_object": "Shaders/TextPS.dxbc",
