@@ -350,6 +350,8 @@ DebugLines* Game::GetDebugLines()
 	D3D12_ROOT_SIGNATURE_DESC rootSignatureDesc{};
 	rootSignatureDesc.Flags = D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT;
 
+	// TODO: Need to add constants buffer visibility, etc.
+
 	ComPtr<ID3DBlob> signature, error;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
 	if (FAILED(result))
@@ -1024,6 +1026,8 @@ std::string Game::PopControllerUser()
 	this->StallUntilAllFramesComplete();
 
 	this->PreShutdown();
+
+	// TODO: Where's the leak?  DX12 says I'm leaking some resources.  :(
 
 	this->spawnedEntityQueue.clear();
 
