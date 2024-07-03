@@ -352,6 +352,22 @@ DebugLines* Game::GetDebugLines()
 
 	// TODO: Need to add constants buffer visibility, etc.
 
+	/*
+	 * I'm calling this branch a failure.  I could try to push it further,
+	 * but even if I could make it somehow work, I'm starting to like it
+	 * less and less.  I think a better way to go about all this is to first
+	 * insulate the game engine from DX11 using an RHI.  Once that's done,
+	 * try to add an alternative RHI implimentation based on DX12.  In fact,
+	 * if I'm not mistaken, DX11 might already be based on DX12 in some cases.
+	 * Anyhow, an RHI would also make it possible to one day implement Vulkan
+	 * or just plane ol' OpenGL, if you wanted to.
+	 * 
+	 * Well, I wouldn't say this branch is an entire failure.  I did learn some
+	 * things here about DX12, and that will be useful when I try to get back
+	 * into it again some time later, I suppose.
+	 * 
+	 */
+
 	ComPtr<ID3DBlob> signature, error;
 	result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1, &signature, &error);
 	if (FAILED(result))
