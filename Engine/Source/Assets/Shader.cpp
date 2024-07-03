@@ -378,7 +378,7 @@ bool Shader::ConfigureBlendState(const rapidjson::Document& jsonDoc, D3D12_BLEND
 			return false;
 	}
 
-	if (!jsonDoc.HasMember("dest_blend") && jsonDoc["dest_blend"].IsString())
+	if (jsonDoc.HasMember("dest_blend") && jsonDoc["dest_blend"].IsString())
 	{
 		std::string destBlend = jsonDoc["dest_blend"].GetString();
 
@@ -386,7 +386,7 @@ bool Shader::ConfigureBlendState(const rapidjson::Document& jsonDoc, D3D12_BLEND
 			return false;
 	}
 
-	if (!jsonDoc.HasMember("blend_op") && jsonDoc["blend_op"].IsString())
+	if (jsonDoc.HasMember("blend_op") && jsonDoc["blend_op"].IsString())
 	{
 		std::string blendOpStr = jsonDoc["blend_op"].GetString();
 
@@ -402,7 +402,7 @@ bool Shader::ConfigureBlendState(const rapidjson::Document& jsonDoc, D3D12_BLEND
 			return false;
 	}
 
-	if (!jsonDoc.HasMember("dest_blend_alpha") && jsonDoc["dest_blend_alpha"].IsString())
+	if (jsonDoc.HasMember("dest_blend_alpha") && jsonDoc["dest_blend_alpha"].IsString())
 	{
 		std::string destBlend = jsonDoc["dest_blend_alpha"].GetString();
 
@@ -410,7 +410,7 @@ bool Shader::ConfigureBlendState(const rapidjson::Document& jsonDoc, D3D12_BLEND
 			return false;
 	}
 
-	if (!jsonDoc.HasMember("blend_op_alpha") && jsonDoc["blend_op_alpha"].IsString())
+	if (jsonDoc.HasMember("blend_op_alpha") && jsonDoc["blend_op_alpha"].IsString())
 	{
 		std::string blendOpStr = jsonDoc["blend_op_alpha"].GetString();
 
