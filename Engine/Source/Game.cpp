@@ -575,8 +575,6 @@ bool Game::RecreateViews()
 	this->mainPassViewport.MinDepth = 0.0f;
 	this->mainPassViewport.MaxDepth = 1.0f;
 
-	// Do we just overwrite the view heaps or do we need to free them first?
-
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle = this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
 	UINT renderTargetViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 
@@ -875,7 +873,7 @@ void Game::EnqueuePreRenderCallback(PreRenderCallback callback)
 
 	this->commandData.list->ClearDepthStencilView(depthStencilViewHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
-	// TODO: Call out to the scene to populate more commands in the list here.
+	this->scene->Render(this->camera.Get(), RenderPass::MAIN_PASS);
 
 	D3D12_RESOURCE_BARRIER barrierTargetToPresent{};
 	barrierTargetToPresent.Transition.pResource = frame->renderTarget.Get();
