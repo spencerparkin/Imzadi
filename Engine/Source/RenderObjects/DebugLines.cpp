@@ -22,14 +22,8 @@ DebugLines::DebugLines()
 #endif
 }
 
-/*virtual*/ void DebugLines::Render(Camera* camera, RenderPass renderPass)
+/*virtual*/ void DebugLines::Prepare()
 {
-	if (renderPass != RenderPass::MAIN_PASS)
-		return;
-
-	if (this->lineArray.size() == 0)
-		return;
-
 	if (!this->shader)
 	{
 		Reference<Asset> asset;
@@ -38,6 +32,15 @@ DebugLines::DebugLines()
 
 		this->shader.SafeSet(asset.Get());
 	}
+}
+
+/*virtual*/ void DebugLines::Render(Camera* camera, RenderPass renderPass)
+{
+	if (renderPass != RenderPass::MAIN_PASS)
+		return;
+
+	if (this->lineArray.size() == 0)
+		return;
 
 #if 0
 	if (!this->vertexBuffer)
