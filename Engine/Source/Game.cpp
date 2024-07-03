@@ -169,6 +169,8 @@ DebugLines* Game::GetDebugLines()
 
 	HRESULT result = 0;
 
+	UINT factoryFlags = 0;
+
 #if defined _DEBUG
 	ComPtr<ID3D12Debug> debugController;
 	result = D3D12GetDebugInterface(IID_PPV_ARGS(&debugController));
@@ -181,10 +183,13 @@ DebugLines* Game::GetDebugLines()
 	// Without enabling this we don't get useful logging output from DX12 when
 	// the API is miss-used or something else goes wrong, I think.
 	debugController->EnableDebugLayer();
+
+	// Not sure at the moment why we care about this flag, but okay.
+	factoryFlags |= DXGI_CREATE_FACTORY_DEBUG;
 #endif
 
 	ComPtr<IDXGIFactory2> factory2;
-	result = CreateDXGIFactory(IID_PPV_ARGS(&factory2));
+	result = CreateDXGIFactory2(factoryFlags, IID_PPV_ARGS(&factory2));
 	if (FAILED(result))
 	{
 		IMZADI_LOG_ERROR("Failed to create DXGI factory2 with error code: %d", result);
