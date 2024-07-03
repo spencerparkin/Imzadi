@@ -81,7 +81,7 @@ float4 PS_Main(VS_Output input) : SV_TARGET
         if (0.0 <= lightCameraUVs.x && lightCameraUVs.x <= 1.0 &&
             0.0 <= lightCameraUVs.y && lightCameraUVs.y <= 1.0)
         {
-            float depth = shadowTexture.Sample(shadowSampler, lightCameraUVs);
+            float depth = (float)shadowTexture.Sample(shadowSampler, lightCameraUVs);
             float shadowBufferDistance = lightCameraNear + depth * (lightCameraFar - lightCameraNear);
             float surfacePointDistance = abs(lambda);
             float tolerance = 0.5;

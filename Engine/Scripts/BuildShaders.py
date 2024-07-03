@@ -36,7 +36,7 @@ def find_all_files(search_dir, found_file_list, desired_ext):
 
 def compile_shader(shader_data, config, prefix, assets_base_dir, shader_pdb_dir):
     sdk_bin_dir = r'C:\Program Files (x86)\Windows Kits\10\bin\10.0.22621.0\x64'
-    compiler_exe = os.path.join(sdk_bin_dir, 'fxc.exe')     # Note that dxc.exe works here, but then the game crashes.  I have no idea what's going on.
+    compiler_exe = os.path.join(sdk_bin_dir, 'dxc.exe')
     if not os.path.exists(compiler_exe):
         raise Exception('Could not locate: ' + compiler_exe)
 
@@ -162,9 +162,6 @@ def process_shader_file(shader_file, assets_base_dir, config, shader_pdb_dir):
             handle.write(json_text)
 
 if __name__ == '__main__':
-    # TODO: For the port from DX11 to DX12, here we want to dxc.exe instead of fxc.exe to compile shaders.
-    #       Until we do the port, Pix for windows isn't going to work as far as debugging shaders, which sucks.
-
     # TODO: Don't recompile everything all the time.  Only recompile what needs to be recompiled.  Compile incrementally.
 
     assets_base_dir = os.getcwd()
