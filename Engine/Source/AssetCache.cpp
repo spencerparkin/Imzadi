@@ -1,6 +1,7 @@
 #include "AssetCache.h"
 #include "Assets/RenderMesh.h"
 #include "Assets/Buffer.h"
+#include "Assets/ConstantsBuffer.h"
 #include "Assets/Shader.h"
 #include "Assets/Texture.h"
 #include "Assets/CollisionShapeSet.h"
@@ -124,8 +125,10 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new Shader();
 	else if (ext == ".texture")
 		return new Texture();
-	else if (ext == ".buffer")
-		return new Buffer();
+	else if (ext == ".element_buffer")
+		return new ElementBuffer();
+	else if (ext == ".constants_buffer")
+		return new ConstantsBuffer();
 	else if (ext == ".collision")
 		return new CollisionShapeSet();
 	else if (ext == ".level")

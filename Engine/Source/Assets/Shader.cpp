@@ -9,15 +9,6 @@ using namespace Imzadi;
 
 Shader::Shader()
 {
-#if 0
-	this->inputLayout = nullptr;
-	this->pixelShader = nullptr;
-	this->vertexShader = nullptr;
-	this->vsBlob = nullptr;
-	this->psBlob = nullptr;
-	this->constantsBuffer = nullptr;
-	this->constantsBufferSize = 0;
-#endif
 }
 
 /*virtual*/ Shader::~Shader()
@@ -32,9 +23,13 @@ Shader::Shader()
 		return false;
 	}
 
+	// Do we really need to do this?  I'm not entirely sure, but I guess it couldn't hurt.
+	Game::Get()->WaitForGPUIdle();
+
 	HRESULT result = 0;
 
-#if 0
+	ComPtr<ID3DBlob> psBlob, vsBlob;
+
 	if (jsonDoc.HasMember("vs_shader_object") && jsonDoc.HasMember("ps_shader_object"))
 	{
 		if (!jsonDoc["vs_shader_object"].IsString() || !jsonDoc["ps_shader_object"].IsString())
@@ -61,14 +56,14 @@ Shader::Shader()
 		std::wstring vsShaderObjFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(vsShaderObjFile);
 		std::wstring psShaderObjFileW = std::wstring_convert<std::codecvt_utf8<wchar_t>>().from_bytes(psShaderObjFile);
 
-		result = D3DReadFileToBlob(vsShaderObjFileW.c_str(), &this->vsBlob);
+		result = D3DReadFileToBlob(vsShaderObjFileW.c_str(), &vsBlob);
 		if (FAILED(result))
 		{
 			IMZADI_LOG_ERROR(std::format("Failed to read VS file blob ({}) with error code: {}", vsShaderObjFile.c_str(), result));
 			return false;
 		}
 
-		result = D3DReadFileToBlob(psShaderObjFileW.c_str(), &this->psBlob);
+		result = D3DReadFileToBlob(psShaderObjFileW.c_str(), &psBlob);
 		if (FAILED(result))
 		{
 			IMZADI_LOG_ERROR(std::format("Failed to read PS file blob ({}) with error code: {}", psShaderObjFile.c_str(), result));
@@ -106,36 +101,22 @@ Shader::Shader()
 		if (jsonDoc.HasMember("ps_model") && jsonDoc["ps_model"].IsString())
 			psModel = jsonDoc["ps_model"].GetString();
 
-		if (!this->CompileShader(shaderCodeFile, vsEntryPoint, vsModel, this->vsBlob))
+		if (!this->CompileShader(shaderCodeFile, vsEntryPoint, vsModel, *vsBlob.GetAddressOf()))
 		{
 			IMZADI_LOG_ERROR("VS compilation failed.");
 			return false;
 		}
 
-		if (!this->CompileShader(shaderCodeFile, psEntryPoint, psModel, this->psBlob))
+		if (!this->CompileShader(shaderCodeFile, psEntryPoint, psModel, *psBlob.GetAddressOf()))
 		{
 			IMZADI_LOG_ERROR("PS compilation failed.");
 			return false;
 		}
 	}
 
-	if (!this->vsBlob || !this->psBlob)
+	if (!vsBlob.Get() || !psBlob.Get())
 	{
 		IMZADI_LOG_ERROR("Did not acquire both a VS and PS shader blob.");
-		return false;
-	}
-
-	result = Game::Get()->GetDevice()->CreateVertexShader(this->vsBlob->GetBufferPointer(), this->vsBlob->GetBufferSize(), nullptr, &this->vertexShader);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR(std::format("Failed to create VS with error code: {}", result));
-		return false;
-	}
-
-	result = Game::Get()->GetDevice()->CreatePixelShader(this->psBlob->GetBufferPointer(), this->psBlob->GetBufferSize(), nullptr, &this->pixelShader);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR(std::format("Failed to create PS with error code: {}", result));
 		return false;
 	}
 
@@ -152,7 +133,7 @@ Shader::Shader()
 		return false;
 	}
 
-	std::unique_ptr<D3D11_INPUT_ELEMENT_DESC[]> inputElementDescArray(new D3D11_INPUT_ELEMENT_DESC[inputLayoutValue.Size()]);
+	std::unique_ptr<D3D12_INPUT_ELEMENT_DESC[]> inputElementDescArray(new D3D12_INPUT_ELEMENT_DESC[inputLayoutValue.Size()]);
 	std::vector<std::string> semanticArray;
 	semanticArray.reserve(inputLayoutValue.Size());
 	if (!this->PopulateInputLayout(inputElementDescArray.get(), inputLayoutValue, semanticArray))
@@ -161,140 +142,68 @@ Shader::Shader()
 		return false;
 	}
 
-	result = Game::Get()->GetDevice()->CreateInputLayout(inputElementDescArray.get(), inputLayoutValue.Size(), vsBlob->GetBufferPointer(), vsBlob->GetBufferSize(), &this->inputLayout);
+	D3D12_RASTERIZER_DESC rasterizerDesc{};
+	if (!this->ConfigureRasterizationState(jsonDoc, rasterizerDesc))
+		return false;
+
+	D3D12_DEPTH_STENCIL_DESC depthStencilDesc{};
+	if (!this->ConfigureDepthStencilState(jsonDoc, depthStencilDesc))
+		return false;
+
+	D3D12_BLEND_DESC blendDesc{};
+	if (!this->ConfigureBlendState(jsonDoc, blendDesc))
+		return false;
+
+	D3D12_GRAPHICS_PIPELINE_STATE_DESC pipelineStateDesc{};
+	pipelineStateDesc.InputLayout = { inputElementDescArray.get(), inputLayoutValue.Size() };
+	pipelineStateDesc.pRootSignature = Game::Get()->GetRootSignature();
+	pipelineStateDesc.VS.pShaderBytecode = vsBlob->GetBufferPointer();
+	pipelineStateDesc.VS.BytecodeLength = vsBlob->GetBufferSize();
+	pipelineStateDesc.PS.pShaderBytecode = psBlob->GetBufferPointer();
+	pipelineStateDesc.PS.BytecodeLength = psBlob->GetBufferSize();
+	pipelineStateDesc.RasterizerState = rasterizerDesc;
+	pipelineStateDesc.DepthStencilState = depthStencilDesc;
+	pipelineStateDesc.BlendState = blendDesc;
+	pipelineStateDesc.SampleMask = UINT_MAX;
+	pipelineStateDesc.PrimitiveTopologyType = D3D12_PRIMITIVE_TOPOLOGY_TYPE_TRIANGLE;
+	pipelineStateDesc.NumRenderTargets = 1;
+	pipelineStateDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM;
+	pipelineStateDesc.SampleDesc.Count = 1;
+
+	result = Game::Get()->GetDevice()->CreateGraphicsPipelineState(&pipelineStateDesc, IID_PPV_ARGS(&this->pipelineState));
 	if (FAILED(result))
 	{
-		IMZADI_LOG_ERROR(std::format("CreateInputLayout() call failed with error code: {}", result));
+		IMZADI_LOG_ERROR("Failed to created graphics pipeline state with error: %d", result);
 		return false;
 	}
 
-	this->vsBlob->Release();
-	this->vsBlob = nullptr;
-
-	this->psBlob->Release();
-	this->psBlob = nullptr;
-
-	if (jsonDoc.HasMember("constants") && jsonDoc["constants"].IsObject())
+	if (jsonDoc.HasMember("constants_buffer") && jsonDoc["constants_buffer"].IsString())
 	{
-		this->constantsBufferSize = 0;
-
-		const rapidjson::Value& constantsValue = jsonDoc["constants"];
-		for (auto iter = constantsValue.MemberBegin(); iter != constantsValue.MemberEnd(); ++iter)
+		std::string constantsBufferFile = jsonDoc["constants_buffer"].GetString();
+		Reference<Asset> asset;
+		if (!assetCache->LoadAsset(constantsBufferFile, asset))
 		{
-			const rapidjson::Value& constantsEntryName = iter->name;
-			const rapidjson::Value& constantsEntryValue = iter->value;
-
-			if (!constantsEntryValue.HasMember("offset") || !constantsEntryValue["offset"].IsInt())
-			{
-				IMZADI_LOG_ERROR("No \"offset\" member found or it's not an int.");
-				return false;
-			}
-
-			if (!constantsEntryValue.HasMember("size") || !constantsEntryValue["size"].IsInt())
-			{
-				IMZADI_LOG_ERROR("No \"size\" member found or it's not an int.");
-				return false;
-			}
-
-			if (!constantsEntryValue.HasMember("type") || !constantsEntryValue["type"].IsString())
-			{
-				IMZADI_LOG_ERROR("No \"type\" member found or it's not an int.");
-				return false;
-			}
-
-			Constant constant;
-			constant.offset = constantsEntryValue["offset"].GetInt();
-			constant.size = constantsEntryValue["size"].GetInt();
-			std::string type = constantsEntryValue["type"].GetString();
-			if (type == "float")
-				constant.format = DXGI_FORMAT_R32_FLOAT;
-			else
-			{
-				IMZADI_LOG_ERROR(std::format("Did not recognize type \"{}\" or it is not yet supported.", type.c_str()));
-				return false;
-			}
-
-			std::string name = constantsEntryName.GetString();
-			this->constantsMap.insert(std::pair<std::string, Constant>(name, constant));
-
-			if (this->constantsBufferSize < constant.offset + constant.size)
-				this->constantsBufferSize = constant.offset + constant.size;
+			IMZADI_LOG_ERROR("Failed to load constants buffer asset for shader asset.");
+			return false;
 		}
 
-		// The buffer size must be a multiple of 16.
-		this->constantsBufferSize = Align16(this->constantsBufferSize);
-
-		// Sanity check the data in the constants map.  Note that we don't
-		// check for any overlap here, but we do check for proper bounds.
-		for (auto pair : this->constantsMap)
+		this->constantsBuffer.SafeSet(asset.Get());
+		if (!this->constantsBuffer.Get())
 		{
-			const Constant& constant = pair.second;
-			if (constant.size == 0)
-			{
-				IMZADI_LOG_ERROR("Shader constant was of size zero.");
-				return false;
-			}
-
-			if (constant.offset >= this->constantsBufferSize)
-			{
-				IMZADI_LOG_ERROR(std::format("Shader constant offset ({}) is out of range ([0,{}]).", constant.offset, this->constantsBufferSize - 1));
-				return false;
-			}
-
-			if (constant.offset + constant.size > this->constantsBufferSize)
-			{
-				IMZADI_LOG_ERROR(std::format("Shader constant at offset {} with size {} overflows the constant buffer size {}.", constant.offset, constant.size, this->constantsBufferSize));
-				return false;
-			}
-			
-			// Make sure the constant doesn't straddle a 16-byte boundary.
-			UINT boundaryA = Align16(constant.offset);
-			UINT boundaryB = Align16(constant.offset + constant.size);
-			if (boundaryA != boundaryB && boundaryB < constant.offset + constant.size)
-			{
-				IMZADI_LOG_ERROR(std::format("Shader constant at offset {} with size {} straddles a 16-byte boundary.", constant.offset, constant.size));
-				return false;
-			}
-		}
-
-		if (this->constantsBufferSize > 0)
-		{
-			D3D11_BUFFER_DESC bufferDesc{};
-			bufferDesc.ByteWidth = this->constantsBufferSize;
-			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
-			bufferDesc.BindFlags = D3D11_BIND_CONSTANT_BUFFER;
-			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
-
-			result = Game::Get()->GetDevice()->CreateBuffer(&bufferDesc, NULL, &this->constantsBuffer);
-			if (FAILED(result))
-			{
-				IMZADI_LOG_ERROR(std::format("CreateBuffer() call failed with error code: {}", result));
-				return false;
-			}
+			IMZADI_LOG_ERROR("Whatever loaded for the constants buffer wasn't a constants buffer.");
+			return false;
 		}
 	}
-#endif
 
 	return true;
 }
 
-bool Shader::GetConstantInfo(const std::string& name, const Constant*& constant)
-{
-	ConstantsMap::iterator iter = this->constantsMap.find(name);
-	if (iter == this->constantsMap.end())
-		return false;
-
-	constant = &iter->second;
-	return true;
-}
-
-#if 0
-bool Shader::PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, const rapidjson::Value& inputLayoutArrayValue, std::vector<std::string>& semanticArray)
+bool Shader::PopulateInputLayout(D3D12_INPUT_ELEMENT_DESC* inputLayoutArray, const rapidjson::Value& inputLayoutArrayValue, std::vector<std::string>& semanticArray)
 {
 	for (int i = 0; i < inputLayoutArrayValue.Size(); i++)
 	{
-		D3D11_INPUT_ELEMENT_DESC* inputElementDesc = &inputLayoutArray[i];
-		::memset(inputElementDesc, 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
+		D3D12_INPUT_ELEMENT_DESC* inputElementDesc = &inputLayoutArray[i];
+		::memset(inputElementDesc, 0, sizeof(D3D12_INPUT_ELEMENT_DESC));
 
 		const rapidjson::Value& inputLayoutElementValue = inputLayoutArrayValue[i];
 		if (!inputLayoutElementValue.IsObject())
@@ -335,8 +244,8 @@ bool Shader::PopulateInputLayout(D3D11_INPUT_ELEMENT_DESC* inputLayoutArray, con
 			return false;
 		}
 
-		inputElementDesc->AlignedByteOffset = (i == 0) ? 0 : D3D11_APPEND_ALIGNED_ELEMENT;
-		inputElementDesc->InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
+		inputElementDesc->AlignedByteOffset = (i == 0) ? 0 : D3D12_APPEND_ALIGNED_ELEMENT;
+		inputElementDesc->InputSlotClass = D3D12_INPUT_CLASSIFICATION_PER_VERTEX_DATA;
 
 		if (inputLayoutElementValue.HasMember("slot") && inputLayoutElementValue["slot"].IsInt())
 			inputElementDesc->InputSlot = inputLayoutElementValue["slot"].GetInt();
@@ -354,7 +263,7 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 	flags |= D3DCOMPILE_SKIP_OPTIMIZATION | D3DCOMPILE_DEBUG;
 #endif
 
-	ID3DBlob* errorsBlob = nullptr;
+	ComPtr<ID3DBlob> errorsBlob;
 	HRESULT result = D3DCompileFromFile(shaderFileW.c_str(), nullptr, nullptr, entryPoint.c_str(), shaderModel.c_str(), flags, 0, &blob, &errorsBlob);
 	if (FAILED(result))
 	{
@@ -365,27 +274,189 @@ bool Shader::CompileShader(const std::string& shaderFile, const std::string& ent
 			errorMsg = "File not found!";
 
 		IMZADI_LOG_ERROR(std::format("Shader compilation of file {} failed with error code {}, because: {}", shaderFile.c_str(), result, errorMsg));
-		
-		if (errorsBlob)
-			errorsBlob->Release();
-
 		return false;
 	}
 
 	return true;
 }
-#endif
+
+bool Shader::ConfigureRasterizationState(const rapidjson::Document& jsonDoc, D3D12_RASTERIZER_DESC& rasterizerDesc)
+{
+	::memset(&rasterizerDesc, 0, sizeof(rasterizerDesc));
+
+	if (jsonDoc.HasMember("fill_mode") && jsonDoc["fill_mode"].IsString())
+	{
+		std::string fillMode = jsonDoc["fill_mode"].GetString();
+
+		if (fillMode == "FILL_SOLID")
+			rasterizerDesc.FillMode = D3D12_FILL_MODE_SOLID;
+		else if (fillMode == "FILL_WIREFRAME")
+			rasterizerDesc.FillMode = D3D12_FILL_MODE_WIREFRAME;
+		else
+		{
+			IMZADI_LOG_ERROR("Did not recognize fill mode: %s", fillMode.c_str());
+			return false;
+		}
+	}
+
+	if (jsonDoc.HasMember("cull_mode") && jsonDoc["cull_mode"].IsString())
+	{
+		std::string cullMode = jsonDoc["cull_mode"].GetString();
+
+		if (cullMode == "CULL_BACK")
+			rasterizerDesc.CullMode = D3D12_CULL_MODE_BACK;
+		else if (cullMode == "CULL_FRONT")
+			rasterizerDesc.CullMode = D3D12_CULL_MODE_FRONT;
+		else if (cullMode == "CULL_NONE")
+			rasterizerDesc.CullMode = D3D12_CULL_MODE_NONE;
+		else
+		{
+			IMZADI_LOG_ERROR("Did not recognize cull mode: %s", cullMode.c_str());
+			return false;
+		}
+	}
+
+	if (jsonDoc.HasMember("front_ccw") && jsonDoc["front_ccw"].IsBool())
+	{
+		if (jsonDoc["front_ccw"].GetBool())
+			rasterizerDesc.FrontCounterClockwise = TRUE;
+		else
+			rasterizerDesc.FrontCounterClockwise = FALSE;
+	}
+
+	if (jsonDoc.HasMember("depth_clip_enabled") && jsonDoc["depth_clip_enabled"].IsBool())
+	{
+		if (jsonDoc["depth_clip_enabled"].GetBool())
+			rasterizerDesc.DepthClipEnable = TRUE;
+		else
+			rasterizerDesc.DepthClipEnable = FALSE;
+	}
+
+	return true;
+}
+
+bool Shader::ConfigureDepthStencilState(const rapidjson::Document& jsonDoc, D3D12_DEPTH_STENCIL_DESC& depthStencilDesc)
+{
+	::memset(&depthStencilDesc, 0, sizeof(depthStencilDesc));
+
+	if (jsonDoc.HasMember("depth_enabled") && jsonDoc["depth_enabled"].IsBool())
+	{
+		if (jsonDoc["depth_enabled"].GetBool())
+			depthStencilDesc.DepthEnable = TRUE;
+		else
+			depthStencilDesc.DepthEnable = FALSE;
+	}
+
+	if (jsonDoc.HasMember("stencil_enabled") && jsonDoc["stencil_enabled"].IsBool())
+	{
+		if (jsonDoc["stencil_enabled"].GetBool())
+			depthStencilDesc.StencilEnable = TRUE;
+		else
+			depthStencilDesc.StencilEnable = FALSE;
+	}
+
+	return true;
+}
+
+bool Shader::ConfigureBlendState(const rapidjson::Document& jsonDoc, D3D12_BLEND_DESC& blendDesc)
+{
+	::memset(&blendDesc, 0, sizeof(blendDesc));
+
+	if (jsonDoc.HasMember("blend_enabled") && jsonDoc["blend_enabled"].IsBool())
+	{
+		if (jsonDoc["blend_enabled"].GetBool())
+			blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		else
+			blendDesc.RenderTarget[0].BlendEnable = FALSE;
+	}
+
+	if (jsonDoc.HasMember("src_blend") && jsonDoc["src_blend"].IsString())
+	{
+		std::string srcBlend = jsonDoc["src_blend"].GetString();
+
+		if (!this->TranslateBlend(srcBlend, blendDesc.RenderTarget[0].SrcBlend))
+			return false;
+	}
+
+	if (!jsonDoc.HasMember("dest_blend") && jsonDoc["dest_blend"].IsString())
+	{
+		std::string destBlend = jsonDoc["dest_blend"].GetString();
+
+		if (!this->TranslateBlend(destBlend, blendDesc.RenderTarget[0].DestBlend))
+			return false;
+	}
+
+	if (!jsonDoc.HasMember("blend_op") && jsonDoc["blend_op"].IsString())
+	{
+		std::string blendOpStr = jsonDoc["blend_op"].GetString();
+
+		if (!this->TranslateBlendOp(blendOpStr, blendDesc.RenderTarget[0].BlendOp))
+			return false;
+	}
+
+	if (jsonDoc.HasMember("src_blend_alpha") && jsonDoc["src_blend_alpha"].IsString())
+	{
+		std::string srcBlend = jsonDoc["src_blend_alpha"].GetString();
+
+		if (!this->TranslateBlend(srcBlend, blendDesc.RenderTarget[0].SrcBlendAlpha))
+			return false;
+	}
+
+	if (!jsonDoc.HasMember("dest_blend_alpha") && jsonDoc["dest_blend_alpha"].IsString())
+	{
+		std::string destBlend = jsonDoc["dest_blend_alpha"].GetString();
+
+		if (!this->TranslateBlend(destBlend, blendDesc.RenderTarget[0].DestBlendAlpha))
+			return false;
+	}
+
+	if (!jsonDoc.HasMember("blend_op_alpha") && jsonDoc["blend_op_alpha"].IsString())
+	{
+		std::string blendOpStr = jsonDoc["blend_op_alpha"].GetString();
+
+		if (!this->TranslateBlendOp(blendOpStr, blendDesc.RenderTarget[0].BlendOpAlpha))
+			return false;
+	}
+
+	return true;
+}
+
+bool Shader::TranslateBlend(const std::string& blendStr, D3D12_BLEND& blend)
+{
+	if (blendStr == "BLEND_SRC_ALPHA")
+		blend = D3D12_BLEND_SRC_ALPHA;
+	else if (blendStr == "BLEND_INV_SRC_ALPHA")
+		blend = D3D12_BLEND_INV_SRC_ALPHA;
+	else if (blendStr == "BLEND_ONE")
+		blend = D3D12_BLEND_ONE;
+	else if (blendStr == "BLEND_ZERO")
+		blend = D3D12_BLEND_ZERO;
+	else
+	{
+		IMZADI_LOG_ERROR("Did not recognize blend: %s", blendStr.c_str());
+		return false;
+	}
+
+	return true;
+}
+
+bool Shader::TranslateBlendOp(const std::string& blendOpStr, D3D12_BLEND_OP& blendOp)
+{
+	if (blendOpStr == "BLEND_OP_ADD")
+		blendOp = D3D12_BLEND_OP_ADD;
+	else
+	{
+		IMZADI_LOG_ERROR("Did not recognize blend: %s", blendOpStr.c_str());
+		return false;
+	}
+
+	return true;
+}
 
 /*virtual*/ bool Shader::Unload()
 {
-#if 0
-	SafeRelease(this->vsBlob);
-	SafeRelease(this->psBlob);
-	SafeRelease(this->vertexShader);
-	SafeRelease(this->pixelShader);
-	SafeRelease(this->inputLayout);
-	SafeRelease(this->constantsBuffer);
-#endif
+	this->pipelineState.Reset();
+	this->constantsBuffer.Reset();
 
 	return true;
 }

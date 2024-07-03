@@ -120,6 +120,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/Animation.h
     Source/Assets/Buffer.cpp
     Source/Assets/Buffer.h
+    Source/Assets/ConstantsBuffer.cpp
+    Source/Assets/ConstantsBuffer.h
     Source/Assets/CollisionShapeSet.cpp
     Source/Assets/CollisionShapeSet.h
     Source/Assets/LevelData.cpp

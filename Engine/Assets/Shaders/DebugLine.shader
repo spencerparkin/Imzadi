@@ -26,5 +26,24 @@
         }
     ],
     "vs_model": "vs_5_0",
-    "vs_shader_object": "Shaders/DebugLineVS.dxbc"
+    "vs_shader_object": "Shaders/DebugLineVS.dxbc",
+    "rasterizer_state": {
+        "fill_mode": "FILL_SOLID",
+        "cull_mode": "CULL_BACK",
+        "front_ccw": true,
+        "depth_clip_enabled": true
+    },
+    "depth_stencil_state": {
+        "depth_enabled": true,
+        "stencil_enabled": false
+    },
+    "blend_state": {
+        "blend_enabled": true,
+        "src_blend": "BLEND_SRC_ALPHA",
+        "dest_blend": "BLEND_INV_SRC_ALPHA",
+        "blend_op": "BLEND_OP_ADD",
+        "src_blend_alpha": "BLEND_ONE",
+        "dest_blend_alpha": "BLEND_ZERO",
+        "blend_op_alpha": "BLEND_OP_ADD"
+    }
 }

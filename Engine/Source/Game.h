@@ -9,6 +9,7 @@
 #include <wrl/client.h>
 #include <string>
 #include <list>
+#include <functional>
 #include <time.h>
 #include "Reference.h"
 #include "RenderObjects/DebugLines.h"
@@ -142,16 +143,11 @@ namespace Imzadi
 		void SetCamera(Reference<Camera> camera);
 		CollisionSystem* GetCollisionSystem();
 		DebugLines* GetDebugLines();
+		ID3D12Device* GetDevice() { return this->device.Get(); }
+		ID3D12RootSignature* GetRootSignature() { return this->rootSignature.Get(); }
 
 		static Game* Get();
 		static void Set(Game* game);
-
-#if 0
-		ID3D11Device* GetDevice() { return this->device; }
-		ID3D11DeviceContext* GetDeviceContext() { return this->deviceContext; }
-		ID3D11SamplerState* GetGeneralSamplerState() { return this->generalSamplerState; }
-		ID3D11ShaderResourceView* GetShadowBufferResourceViewForShader() { return this->shadowBufferViewForShader; }
-#endif
 
 		struct LightParams
 		{
@@ -232,14 +228,24 @@ namespace Imzadi
 		AssetCache* GetAssetCache();
 		void SetAssetCache(AssetCache* assetCache);
 
-#if 0
-		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
+		const D3D12_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
 		double GetDeltaTime() const { return this->deltaTimeSeconds; }
 
-		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>* GetRasterStateCache() { return &this->rasterStateCache; }
-		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC>* GetDepthStencilStateCache() { return &this->depthStencilStateCache; }
-		StateCache<ID3D11BlendState, D3D11_BLEND_DESC>* GetBlendStateCache() { return &this->blendStateCache; }
-#endif
+		void WaitForGPUIdle() { this->StallUntilAllFramesComplete(); }
+
+		struct CommandData
+		{
+			ComPtr<ID3D12CommandAllocator> allocator;
+			ComPtr<ID3D12GraphicsCommandList> list;
+			ComPtr<ID3D12CommandQueue> queue;
+			HANDLE fenceEvent;
+			ComPtr<ID3D12Fence> fence;
+		};
+
+		CommandData* GetCommandData() { return &this->commandData; }
+
+		typedef std::function<void(ID3D12GraphicsCommandList*)> PreRenderCallback;
+		void EnqueuePreRenderCallback(PreRenderCallback callback);
 
 	protected:
 
@@ -273,8 +279,6 @@ namespace Imzadi
 		{
 			ComPtr<ID3D12Resource> renderTarget;
 			ComPtr<ID3D12Resource> depthStencil;
-			ComPtr<ID3D12CommandAllocator> commandAllocator;
-			ComPtr<ID3D12GraphicsCommandList> commandList;
 			HANDLE fenceEvent;
 			ComPtr<ID3D12Fence> fence;
 			UINT64 targetFenceValue;
@@ -295,11 +299,12 @@ namespace Imzadi
 		ComPtr<ID3D12RootSignature> rootSignature;
 		ComPtr<ID3D12DescriptorHeap> renderTargetViewHeap;
 		ComPtr<ID3D12DescriptorHeap> depthStencilViewHeap;
-		ComPtr<ID3D12CommandQueue> commandQueue;
+		CommandData commandData;
 		D3D12_VIEWPORT mainPassViewport;
 		D3D12_VIEWPORT shadowPassViewport;
 		static const UINT numFrames = 2;
 		Frame frameArray[numFrames];
+		std::list<PreRenderCallback> preRenderCallbackQueue;
 		Reference<Scene> scene;
 		Reference<AssetCache> assetCache;
 		Reference<Camera> camera;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <assert.h>
+#include <stdint.h>
 
 #if defined IMZADI_EXPORT
 #	define IMZADI_API		__declspec(dllexport)
@@ -32,3 +33,22 @@
 #define IMZADI_AXIS_FLAG_X					0x00000001
 #define IMZADI_AXIS_FLAG_Y					0x00000002
 #define IMZADI_AXIS_FLAG_Z					0x00000004
+
+namespace Imzadi
+{
+	inline uint32_t Align(uint32_t offset, uint32_t alignment)
+	{
+		/* TODO: Does this work?
+		uint32_t mask = alignment - 1;
+		if ((offset & mask) != 0)
+			offset += alignment;
+		offset &= mask;
+		*/
+
+		// I'm sure there is a fancy bit-twittling way
+		// to do this, but this is fine for now.
+		while (offset % alignment != 0)
+			offset++;
+		return offset;
+	}
+}

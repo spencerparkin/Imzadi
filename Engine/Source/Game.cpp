@@ -36,6 +36,13 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->lightParams.directionalLightIntensity = 1.0;
 	this->lightParams.ambientLightIntensity = 0.1;
 	this->lightParams.lightCameraDistance = 200.0;
+	this->commandData.fenceEvent = INVALID_HANDLE_VALUE;
+
+	for (int i = 0; i < this->numFrames; i++)
+	{
+		Frame* frame = &this->frameArray[i];
+		frame->fenceEvent = INVALID_HANDLE_VALUE;
+	}
 
 	ZeroMemory(&this->mainPassViewport, sizeof(D3D12_VIEWPORT));
 	ZeroMemory(&this->shadowPassViewport, sizeof(D3D12_VIEWPORT));
@@ -251,7 +258,7 @@ DebugLines* Game::GetDebugLines()
 	D3D12_COMMAND_QUEUE_DESC commandQueueDesc{};
 	commandQueueDesc.Flags = D3D12_COMMAND_QUEUE_FLAG_NONE;
 	commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-	result = this->device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&this->commandQueue));
+	result = this->device->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&this->commandData.queue));
 	if (FAILED(result))
 	{
 		IMZADI_LOG_ERROR("Failed to create command queue with error: %d", result);
@@ -268,7 +275,7 @@ DebugLines* Game::GetDebugLines()
 	swapChainDesc.SampleDesc.Count = 1;
 
 	ComPtr<IDXGISwapChain1> swapChain1;
-	result = factory2->CreateSwapChainForHwnd(this->commandQueue.Get(), this->mainWindowHandle, &swapChainDesc, nullptr, nullptr, &swapChain1);
+	result = factory2->CreateSwapChainForHwnd(this->commandData.queue.Get(), this->mainWindowHandle, &swapChainDesc, nullptr, nullptr, &swapChain1);
 	if (FAILED(result))
 	{
 		IMZADI_LOG_ERROR("Failed to create swap-chain with error: %d", result);
@@ -358,27 +365,36 @@ DebugLines* Game::GetDebugLines()
 		return false;
 	}
 
-	for (int i = 0; i < this->numFrames; i++)
+	result = this->device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&this->commandData.allocator));
+	if (FAILED(result))
 	{
-		Frame* frame = &this->frameArray[i];
+		IMZADI_LOG_ERROR("Failed to create command allocator with error: %d", result);
+		return false;
+	}
 
-		result = this->device->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&frame->commandAllocator));
-		if (FAILED(result))
-		{
-			IMZADI_LOG_ERROR("Failed to create command allocator for frame %d.  Error: %d", i, result);
-			return false;
-		}
+	// Note that no initial pipeline state is bound here.  We'll do that when we're ready to draw something.
+	result = this->device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, this->commandData.allocator.Get(), nullptr, IID_PPV_ARGS(&this->commandData.list));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create initial graphics command list for with error: %d", result);
+		return false;
+	}
 
-		// Note that no initial pipeline state is bound here.  We'll do that when we're ready to draw something.
-		result = this->device->CreateCommandList(0, D3D12_COMMAND_LIST_TYPE_DIRECT, frame->commandAllocator.Get(), nullptr, IID_PPV_ARGS(&frame->commandList));
-		if (FAILED(result))
-		{
-			IMZADI_LOG_ERROR("Failed to create initial graphics command list for frame %d with error: %d", i, result);
-			return false;
-		}
+	// Start life in the closed state rather than the recording state.
+	this->commandData.list->Close();
 
-		// Start life in the closed state rather than the recording state.
-		frame->commandList->Close();
+	result = this->device->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&this->commandData.fence));
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to create fence for command data with error: %d", result);
+		return false;
+	}
+
+	this->commandData.fenceEvent = CreateEvent(nullptr, FALSE, FALSE, nullptr);
+	if (!this->commandData.fenceEvent)
+	{
+		IMZADI_LOG_ERROR("Failed to create fence event with error: %d", GetLastError());
+		return false;
 	}
 
 	Camera::OrthographicParams orthoParams{};
@@ -768,6 +784,11 @@ void Game::AdvanceEntities(TickPass tickPass)
 	}
 }
 
+void Game::EnqueuePreRenderCallback(PreRenderCallback callback)
+{
+	this->preRenderCallbackQueue.push_back(callback);
+}
+
 /*virtual*/ void Game::Render()
 {
 	Vector3 lightCameraPosition = this->camera->GetEyePoint() - this->lightParams.lightCameraDistance * this->lightParams.lightDirection;
@@ -819,17 +840,25 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 	UINT frameIndex = this->swapChain->GetCurrentBackBufferIndex();
 
-	frame->commandAllocator->Reset();
-	frame->commandList->Reset(frame->commandAllocator.Get(), nullptr);
+	this->commandData.allocator->Reset();
+	this->commandData.list->Reset(this->commandData.allocator.Get(), nullptr);
+
+	while (this->preRenderCallbackQueue.size() > 0)
+	{
+		std::list<PreRenderCallback>::iterator iter = this->preRenderCallbackQueue.begin();
+		PreRenderCallback callback = *iter;
+		this->preRenderCallbackQueue.erase(iter);
+		callback(this->commandData.list.Get());
+	}
 
 	D3D12_RESOURCE_BARRIER barrierPresentToTarget{};
 	barrierPresentToTarget.Transition.pResource = frame->renderTarget.Get();
 	barrierPresentToTarget.Transition.StateBefore = D3D12_RESOURCE_STATE_PRESENT;
 	barrierPresentToTarget.Transition.StateAfter = D3D12_RESOURCE_STATE_RENDER_TARGET;
-	frame->commandList->ResourceBarrier(1, &barrierPresentToTarget);
+	this->commandData.list->ResourceBarrier(1, &barrierPresentToTarget);
 
-	frame->commandList->SetGraphicsRootSignature(this->rootSignature.Get());
-	frame->commandList->RSSetViewports(1, &this->mainPassViewport);
+	this->commandData.list->SetGraphicsRootSignature(this->rootSignature.Get());
+	this->commandData.list->RSSetViewports(1, &this->mainPassViewport);
 	
 	UINT renderTargetViewDescriptorSize = this->device->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_RTV);
 	D3D12_CPU_DESCRIPTOR_HANDLE renderTargetViewHandle = this->renderTargetViewHeap->GetCPUDescriptorHandleForHeapStart();
@@ -839,12 +868,12 @@ void Game::AdvanceEntities(TickPass tickPass)
 	D3D12_CPU_DESCRIPTOR_HANDLE depthStencilViewHandle = this->depthStencilViewHeap->GetCPUDescriptorHandleForHeapStart();
 	depthStencilViewHandle.ptr += frameIndex * depthStencilViewDescriptorSize;
 
-	frame->commandList->OMSetRenderTargets(1, &renderTargetViewHandle, FALSE, nullptr);
+	this->commandData.list->OMSetRenderTargets(1, &renderTargetViewHandle, FALSE, nullptr);
 
 	const float clearColor[] = { 0.0f, 0.2f, 0.4f, 1.0f };
-	frame->commandList->ClearRenderTargetView(renderTargetViewHandle, clearColor, 0, nullptr);
+	this->commandData.list->ClearRenderTargetView(renderTargetViewHandle, clearColor, 0, nullptr);
 
-	frame->commandList->ClearDepthStencilView(depthStencilViewHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
+	this->commandData.list->ClearDepthStencilView(depthStencilViewHandle, D3D12_CLEAR_FLAG_DEPTH, 1.0f, 0, 0, nullptr);
 
 	// TODO: Call out to the scene to populate more commands in the list here.
 
@@ -852,22 +881,22 @@ void Game::AdvanceEntities(TickPass tickPass)
 	barrierTargetToPresent.Transition.pResource = frame->renderTarget.Get();
 	barrierTargetToPresent.Transition.StateBefore = D3D12_RESOURCE_STATE_RENDER_TARGET;
 	barrierTargetToPresent.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT;
-	frame->commandList->ResourceBarrier(1, &barrierTargetToPresent);
+	this->commandData.list->ResourceBarrier(1, &barrierTargetToPresent);
 
-	result = frame->commandList->Close();
+	result = this->commandData.list->Close();
 	if (FAILED(result))
 	{
 		IMZADI_LOG_FATAL_ERROR("Failed to close command list with error: %d", result);
 	}
 
-	ID3D12CommandList* commandListArray[] = { frame->commandList.Get() };
-	this->commandQueue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
+	ID3D12CommandList* commandListArray[] = { this->commandData.list.Get() };
+	this->commandData.queue->ExecuteCommandLists(_countof(commandListArray), commandListArray);
 
 	// Lastly, schedule a signal to occur on the GPU to tell us (on the CPU) when the frame is done.
-	frame->targetFenceValue++;
-	this->commandQueue->Signal(frame->fence.Get(), frame->targetFenceValue);
 	ResetEvent(frame->fenceEvent);
+	frame->targetFenceValue++;
 	frame->fence->SetEventOnCompletion(frame->targetFenceValue, frame->fenceEvent);
+	this->commandData.queue->Signal(frame->fence.Get(), frame->targetFenceValue);
 
 	// Note that we don't stall here waiting for the frame to complete.
 	// Rather, we want to do a bunch of work in parallel with the GPU.
@@ -1027,8 +1056,7 @@ std::string Game::PopControllerUser()
 		Frame* frame = &this->frameArray[i];
 		frame->renderTarget.Reset();
 		frame->depthStencil.Reset();
-		frame->commandAllocator.Reset();
-		frame->commandList.Reset();
+		CloseHandle(frame->fenceEvent);
 	}
 
 	this->device.Reset();
@@ -1036,7 +1064,11 @@ std::string Game::PopControllerUser()
 	this->rootSignature.Reset();
 	this->renderTargetViewHeap.Reset();
 	this->depthStencilViewHeap.Reset();
-	this->commandQueue.Reset();
+	this->commandData.allocator.Reset();
+	this->commandData.list.Reset();
+	this->commandData.queue.Reset();
+	this->commandData.fence.Reset();
+	CloseHandle(this->commandData.fenceEvent);
 
 	if (this->mainWindowHandle)
 	{

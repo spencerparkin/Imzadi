@@ -46,6 +46,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 		return false;
 	}
 
+#if 0
 	if (!this->vertexBuffer->GetBareBuffer(this->bindPoseVertices))
 	{
 		IMZADI_LOG_ERROR("Failed to get bare-buffer for bind pose vertices.");
@@ -53,6 +54,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 	}
 
 	this->currentPoseVertices.Set(this->bindPoseVertices->Clone());
+#endif
 
 	if (!jsonDoc.HasMember("skin_weights") || !jsonDoc["skin_weights"].IsString())
 	{
@@ -90,6 +92,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 
 	this->normalOffset = jsonDoc["normal_offset"].GetInt();
 
+#if 0
 	uint32_t strideBytes = this->vertexBuffer->GetStride();
 
 	if (this->positionOffset + 3 * sizeof(float) > strideBytes)
@@ -103,6 +106,7 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 		IMZADI_LOG_ERROR(std::format("The normal offset {} plus size {} overflows the stride size {}.", this->normalOffset, 3 * sizeof(float), strideBytes));
 		return false;
 	}
+#endif
 
 	if (jsonDoc.HasMember("animations") && jsonDoc["animations"].IsArray())
 	{
@@ -150,8 +154,10 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 {
 	RenderMeshAsset::Unload();
 
+#if 0
 	this->bindPoseVertices.Reset();
 	this->currentPoseVertices.Reset();
+#endif
 	this->skeleton.Reset();
 	this->skinWeights.Reset();
 	this->animationMap.clear();
@@ -168,6 +174,7 @@ void SkinnedRenderMesh::GetAnimationNames(std::unordered_set<std::string>& anima
 
 void SkinnedRenderMesh::DeformMesh()
 {
+#if 0
 	uint32_t numVertices = this->vertexBuffer->GetNumElements();
 	uint32_t strideBytes = this->vertexBuffer->GetStride();
 	BYTE* bindPoseBuffer = this->bindPoseVertices->GetBuffer();
@@ -227,7 +234,6 @@ void SkinnedRenderMesh::DeformMesh()
 		currentPoseNormalBuffer[2] = currentPoseNormal.z;
 	}
 
-#if 0
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 
 	// Note that we read form a bare buffer and wrote into a bare buffer beforehand so that

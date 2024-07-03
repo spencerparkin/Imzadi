@@ -40,8 +40,10 @@ namespace Imzadi
 		void GetAnimationNames(std::unordered_set<std::string>& animationNameSet);
 
 	private:
+#if 0
 		Reference<BareBuffer> bindPoseVertices;
 		Reference<BareBuffer> currentPoseVertices;
+#endif
 		Reference<Skeleton> skeleton;
 		Reference<SkinWeights> skinWeights;
 		uint32_t positionOffset;

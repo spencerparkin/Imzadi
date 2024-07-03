@@ -148,6 +148,7 @@ size_t SkinWeights::GetNumVertices() const
 
 bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseVertexBuffer, uint32_t elementStride, uint32_t vertexOffset, double radius)
 {
+#if 0
 	if (bindPoseVertexBuffer->GetSize() % elementStride != 0)
 		return false;
 
@@ -217,7 +218,7 @@ bool SkinWeights::AutoSkin(const Skeleton* skeleton, const BareBuffer* bindPoseV
 
 		this->weightedVertexArray.push_back(boneWeightArray);
 	}
-
+#endif
 	return true;
 }
 
