@@ -8,7 +8,7 @@ TODO:
 [x] Get character animation working (even if it's mediocre like everything else.)
 [x] Refactor entire repository into a game engine and game app.  Rename the repo "GameEngine" or something like that.
 [x] Refine the asset tools/pipeline, because it's a bit of a mess.  Can we actually get a rigged/animated character flowing into the engine?  Look at the AssImp library.
-[ ] Port engine to DX12.
+[ ] Port engine to DX12.  (I started to do this, then decided it wasn't a good idea.  It's too much work.)
 [ ] Add audio support with direct sound or XAudio2?  Can we do spatial-awareness/3D sounds?
 [ ] The run animation should be sped-up/slowed-down based on the character's velocity.
 [ ] Add another character, but this time an NPC that you can interact with.  May need to refactor some code for this.  Can we do path-following?
@@ -16,3 +16,5 @@ TODO:
 [/] Would be neat to add cube-mapping with dynamic reflections.  (I added a sky-box, but am not yet doing any environment/reflection mapping.)
 [x] Need to add MIP-mapping.  All textures have just one MIP right now.
 [ ] Networking support with proxy entities?
+[ ] Add trigger-boxes for teleports and level transitions.
+[ ] Add zip-lines.
