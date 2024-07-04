@@ -16,5 +16,6 @@ TODO:
 [/] Would be neat to add cube-mapping with dynamic reflections.  (I added a sky-box, but am not yet doing any environment/reflection mapping.)
 [x] Need to add MIP-mapping.  All textures have just one MIP right now.
 [ ] Networking support with proxy entities?
-[ ] Add trigger-boxes for teleports and level transitions.
-[ ] Add zip-lines.
+[ ] Add trigger-boxes for teleports and level transitions.  I'm thinking levels should be connected in a graph, non-linearly.  That is, you can go from level X to level Y wherever they're connected.  Ultimately, you're trying to bring the chalice back to Luwaxana.
+[ ] Add zip-lines.  Must hold down a button to hang on and release the button to let go.  Need to add zip-line hanging animation.
+[ ] Landing with too much velocity should kill you.  Need to add fatal-fall-death animation.
