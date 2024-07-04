@@ -61,6 +61,11 @@ MovingPlatform::MovingPlatform()
 	this->targetDeltaIndex = 0;
 	this->bounceDelta = 1;
 
+	const Vector3& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
+	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+	objectToWorld.translation = targetDelta;
+	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+
 	return true;
 }
 
