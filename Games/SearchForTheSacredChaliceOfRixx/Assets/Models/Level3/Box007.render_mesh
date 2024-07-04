@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level3\\Box007_Indices.buffer",
+    "vertex_buffer": "Models\\Level3\\Box007_Vertices.buffer",
+    "texture": "Textures\\Beautiful.texture",
+    "bounding_box": {
+        "min": {
+            "x": -76.22802734375,
+            "y": -24.13035011291504,
+            "z": -126.01300048828125
+        },
+        "max": {
+            "x": 872.6727294921875,
+            "y": 258.2767028808594,
+            "z": -20.011680603027345
+        }
+    }
+}

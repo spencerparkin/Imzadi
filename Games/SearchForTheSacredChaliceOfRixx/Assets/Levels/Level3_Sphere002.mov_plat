@@ -1,0 +1,21 @@
+{
+    "mesh": "Models/Level3/Sphere002.render_mesh",
+    "collision": "Models/Level3/Sphere002.collision",
+    "spline_deltas": [
+        {
+            "x": -50.0,
+            "y": 0.0,
+            "z": 0.0,
+            "linger": 5.0
+        },
+        {
+            "x": 50.0,
+            "y": 0.0,
+            "z": 0.0,
+            "linger": 5.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "cycle",
+    "move_speed": 30.0
+}

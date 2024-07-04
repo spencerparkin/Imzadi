@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level3\\Sphere002_Indices.buffer",
+    "vertex_buffer": "Models\\Level3\\Sphere002_Vertices.buffer",
+    "texture": "Textures\\Beautiful.texture",
+    "bounding_box": {
+        "min": {
+            "x": -18.89670753479004,
+            "y": 0.0,
+            "z": 18.763181686401368
+        },
+        "max": {
+            "x": 18.629655838012697,
+            "y": 51.08556365966797,
+            "z": 146.4130859375
+        }
+    }
+}

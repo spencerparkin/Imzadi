@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level3\\Cylinder002_Indices.buffer",
+    "vertex_buffer": "Models\\Level3\\Cylinder002_Vertices.buffer",
+    "texture": "Textures\\Weirdo.texture",
+    "bounding_box": {
+        "min": {
+            "x": -20.882579803466798,
+            "y": -139.68893432617188,
+            "z": 0.0
+        },
+        "max": {
+            "x": 31.158870697021486,
+            "y": 0.0,
+            "z": 346.684814453125
+        }
+    }
+}

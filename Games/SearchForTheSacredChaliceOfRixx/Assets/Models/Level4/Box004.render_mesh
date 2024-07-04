@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Box004_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Box004_Vertices.buffer",
+    "texture": "Textures\\MegaWack.texture",
+    "bounding_box": {
+        "min": {
+            "x": -104.27828979492188,
+            "y": -50.45397186279297,
+            "z": -1219.74072265625
+        },
+        "max": {
+            "x": 138.44871520996095,
+            "y": 111.68851470947266,
+            "z": 0.0
+        }
+    }
+}

@@ -1,0 +1,26 @@
+{
+    "mesh": "Models/Level3/Cylinder002.render_mesh",
+    "collision": "Models/Level3/Cylinder002.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "linger": 4.0
+        },
+        {
+            "x": -330.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": -330.0,
+            "y": 312.0,
+            "z": -270.0,
+            "linger": 7.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "bounce",
+    "move_speed": 50.0
+}

@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Tube004_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Tube004_Vertices.buffer",
+    "texture": "Textures\\AstroTurf.texture",
+    "bounding_box": {
+        "min": {
+            "x": -107.35359191894531,
+            "y": -176.61373901367188,
+            "z": 0.0
+        },
+        "max": {
+            "x": 119.97420501708985,
+            "y": 171.13433837890626,
+            "z": 897.2556762695313
+        }
+    }
+}
