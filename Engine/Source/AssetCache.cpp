@@ -182,7 +182,6 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 	rapidjson::IStreamWrapper streamWrapper(fileStream);
 	rapidjson::Document jsonDoc;
 	jsonDoc.ParseStream(streamWrapper);
-
 	if (jsonDoc.HasParseError())
 	{
 		// TODO: It would be nice if we could get line and column numbers in the error message here.
