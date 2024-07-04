@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level2\\Box005_Indices.buffer",
+    "vertex_buffer": "Models\\Level2\\Box005_Vertices.buffer",
+    "texture": "Textures\\CrappyStar.texture",
+    "bounding_box": {
+        "min": {
+            "x": 4.5122809410095219,
+            "y": -5.741313934326172,
+            "z": 0.0
+        },
+        "max": {
+            "x": 32.567569732666019,
+            "y": 41.7375373840332,
+            "z": 49.214996337890628
+        }
+    }
+}

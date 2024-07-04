@@ -1,0 +1,20 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level2\\Cylinder002_Indices.buffer",
+    "vertex_buffer": "Models\\Level2\\Cylinder002_Vertices.buffer",
+    "texture": "Textures\\CreepyBlobs.texture",
+    "bounding_box": {
+        "min": {
+            "x": -3.8758201599121095,
+            "y": -7.773632526397705,
+            "z": -7.773632049560547
+        },
+        "max": {
+            "x": 79.8676986694336,
+            "y": 78.3752670288086,
+            "z": 47.7358283996582
+        }
+    }
+}

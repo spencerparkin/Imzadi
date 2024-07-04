@@ -2,7 +2,7 @@
     "width": 256,
     "height": 256,
     "data": "Textures\\AstroTurf.texture_data",
-    "num_mips": 9,
+    "num_mips": 1,
     "format": "RGBA",
     "compressed": true
 }
