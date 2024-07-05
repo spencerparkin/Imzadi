@@ -1,7 +1,7 @@
 {
     "width": 256,
     "height": 256,
-    "data": "Textures\\Funky.texture_data",
+    "data": "Textures\\Spiral.texture_data",
     "num_mips": 1,
     "format": "RGBA",
     "compressed": true

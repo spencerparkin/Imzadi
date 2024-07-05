@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level1\\Tube002_Indices.buffer",
+    "vertex_buffer": "Models\\Level1\\Tube002_Vertices.buffer",
+    "texture": "Textures\\Spiral.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -33.247825622558597,
+            "y": 0.4201519191265106,
+            "z": -120.43144989013672
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -6.970376968383789,
+            "y": -0.4201522171497345,
+            "z": -6.970376014709473
+        },
+        "max": {
+            "x": 6.970376014709473,
+            "y": 0.4201522171497345,
+            "z": 6.970377445220947
+        }
+    }
+}

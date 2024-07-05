@@ -23,5 +23,9 @@
     },
     "moving_platforms": [
         "Levels/Level1_A.mov_plat"
+    ],
+    "trigger_boxes": [
+        "Models/Level1/JumpToLevel2.trigger_box",
+        "Models/Level1/JumpToLevel3.trigger_box"
     ]
 }
