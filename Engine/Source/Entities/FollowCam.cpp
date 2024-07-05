@@ -87,7 +87,7 @@ void FollowCam::MoveCameraOrbitBehindSubject(bool immediate)
 	SphericalCoords coords;
 	coords.SetFromVector(behindVector);
 
-	Angle::MakeClose(coords.longitudeAngle, this->orbitLocation.longitudeAngle);
+	coords.longitudeAngle = Angle::MakeClose(coords.longitudeAngle, this->orbitLocation.longitudeAngle);
 
 	this->targetOrbitLocation.latitudeAngle = this->orbitLocation.latitudeAngle;
 	this->targetOrbitLocation.longitudeAngle = coords.longitudeAngle;

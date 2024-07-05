@@ -40,12 +40,12 @@ Level::Level()
 		return false;
 
 	for (const std::string& modelFile : levelData->GetModelFilesArray())
-		Game::Get()->LoadAndPlaceRenderMesh(modelFile, Vector3(), Quaternion());
+		Game::Get()->LoadAndPlaceRenderMesh(modelFile);
 
 	std::string skyDomeFile = levelData->GetSkyDomeFile();
 	if (skyDomeFile.length() > 0)
 	{
-		Reference<RenderObject> renderObject = Game::Get()->LoadAndPlaceRenderMesh(skyDomeFile, Vector3(), Quaternion());
+		Reference<RenderObject> renderObject = Game::Get()->LoadAndPlaceRenderMesh(skyDomeFile);
 
 		std::string cubeTextureFile = levelData->GetCubeTextureFile();
 		if (cubeTextureFile.length() > 0)

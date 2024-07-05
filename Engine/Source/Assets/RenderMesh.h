@@ -31,6 +31,7 @@ namespace Imzadi
 		Buffer* GetVertexBuffer() { return this->vertexBuffer.Get(); }
 		Buffer* GetIndexBuffer() { return this->indexBuffer.Get(); }
 		Texture* GetTexture() { return this->texture.Get(); }
+		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
 
 	protected:
 		D3D_PRIMITIVE_TOPOLOGY primType;
@@ -40,5 +41,6 @@ namespace Imzadi
 		Reference<Shader> shadowPassShader;
 		Reference<Texture> texture;
 		AxisAlignedBoundingBox objectSpaceBoundingBox;
+		Transform objectToWorld;
 	};
 }

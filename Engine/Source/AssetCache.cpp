@@ -13,6 +13,7 @@
 #include "Assets/Font.h"
 #include "Assets/CubeTexture.h"
 #include "Assets/SkyDome.h"
+#include "Math/Angle.h"
 #include "Log.h"
 #include "Game.h"
 #include <algorithm>
@@ -290,9 +291,9 @@ Asset::Asset()
 	if (!eulerAnglesValue["yaw"].IsFloat() || !eulerAnglesValue["pitch"].IsFloat() || !eulerAnglesValue["roll"].IsFloat())
 		return false;
 
-	double yawAngle = IMZADI_DEGS_TO_RADS(eulerAnglesValue["yaw"].GetFloat());
-	double pitchAngle = IMZADI_DEGS_TO_RADS(eulerAnglesValue["pitch"].GetFloat());
-	double rollAngle = IMZADI_DEGS_TO_RADS(eulerAnglesValue["roll"].GetFloat());
+	double yawAngle = Angle::DegreesToRadians(eulerAnglesValue["yaw"].GetFloat());
+	double pitchAngle = Angle::DegreesToRadians(eulerAnglesValue["pitch"].GetFloat());
+	double rollAngle = Angle::DegreesToRadians(eulerAnglesValue["roll"].GetFloat());
 
 	Quaternion yawQuat, pitchQuat, rollQuat;
 

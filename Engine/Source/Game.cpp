@@ -320,7 +320,10 @@ DebugLines* Game::GetDebugLines()
 	return true;
 }
 
-Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMeshFile, const Vector3& position, const Quaternion& orientation)
+Reference<RenderObject> Game::LoadAndPlaceRenderMesh(
+									const std::string& renderMeshFile,
+									const Vector3* position /*= nullptr*/,
+									const Quaternion* orientation /*= nullptr*/)
 {
 	Reference<RenderObject> renderMesh;
 	Reference<Asset> renderMeshAsset;
@@ -329,13 +332,16 @@ Reference<RenderObject> Game::LoadAndPlaceRenderMesh(const std::string& renderMe
 	{
 		if (renderMeshAsset->MakeRenderInstance(renderMesh))
 		{
-			auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
-			if (instance)
+			if (position && orientation)
 			{
-				Transform objectToWorld;
-				objectToWorld.matrix.SetFromQuat(orientation);
-				objectToWorld.translation = position;
-				instance->SetObjectToWorldTransform(objectToWorld);
+				auto instance = dynamic_cast<RenderMeshInstance*>(renderMesh.Get());
+				if (instance)
+				{
+					Transform objectToWorld;
+					objectToWorld.matrix.SetFromQuat(*orientation);
+					objectToWorld.translation = *position;
+					instance->SetObjectToWorldTransform(objectToWorld);
+				}
 			}
 
 			this->scene->AddRenderObject(renderMesh);

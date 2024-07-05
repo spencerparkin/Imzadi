@@ -170,8 +170,8 @@ namespace Imzadi
 
 		Reference<RenderObject> LoadAndPlaceRenderMesh(
 			const std::string& renderMeshFile,
-			const Vector3& position,
-			const Quaternion& orientation);
+			const Vector3* position = nullptr,
+			const Quaternion* orientation = nullptr);
 
 		/**
 		 * This doesn't seem like a terribly clever way to manage the controller

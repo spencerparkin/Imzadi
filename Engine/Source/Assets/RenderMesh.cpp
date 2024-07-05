@@ -122,6 +122,14 @@ RenderMeshAsset::RenderMeshAsset()
 		return false;
 	}
 
+	if (!jsonDoc.HasMember("object_to_world"))
+		this->objectToWorld.SetIdentity();
+	else if (!Asset::LoadTransform(jsonDoc["object_to_world"], this->objectToWorld))
+	{
+		IMZADI_LOG_ERROR("Failed to load object-to-world transform.");
+		return false;
+	}
+
 	return true;
 }
 
@@ -142,5 +150,6 @@ RenderMeshAsset::RenderMeshAsset()
 	auto instance = dynamic_cast<RenderMeshInstance*>(renderObject.Get());
 	instance->SetRenderMesh(this);
 	instance->SetBoundingBox(this->objectSpaceBoundingBox);
+	instance->SetObjectToWorldTransform(this->objectToWorld);
 	return true;
 }

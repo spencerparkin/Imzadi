@@ -1,6 +1,8 @@
 #include "MovingPlatform.h"
+#include "Math/Angle.h"
 #include "Assets/MovingPlatformData.h"
 #include "Assets/CollisionShapeSet.h"
+#include "Assets/RenderMesh.h"
 #include "Collision/Command.h"
 #include "Game.h"
 
@@ -10,6 +12,8 @@ MovingPlatform::MovingPlatform()
 {
 	this->targetDeltaIndex = 0;
 	this->bounceDelta = 1;
+	this->state = State::UNKNOWN;
+	this->remainingLingerTimeSeconds = 0.0;
 }
 
 /*virtual*/ MovingPlatform::~MovingPlatform()
@@ -33,7 +37,7 @@ MovingPlatform::MovingPlatform()
 		return false;
 
 	std::string meshFile = this->data->GetMeshFile();
-	Reference<RenderObject> renderObject = Game::Get()->LoadAndPlaceRenderMesh(meshFile, Vector3(), Quaternion());
+	Reference<RenderObject> renderObject = Game::Get()->LoadAndPlaceRenderMesh(meshFile);
 	if (!renderObject)
 		return false;
 
@@ -61,11 +65,9 @@ MovingPlatform::MovingPlatform()
 	this->targetDeltaIndex = 0;
 	this->bounceDelta = 1;
 
-	const Vector3& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
-	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-	objectToWorld.translation = targetDelta;
-	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
-
+	const MovingPlatformData::DeltaInfo& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
+	this->remainingLingerTimeSeconds = targetDelta.lingerTimeSeconds;
+	this->state = State::LINGERING;
 	return true;
 }
 
@@ -81,74 +83,78 @@ MovingPlatform::MovingPlatform()
 	if (tickPass != TickPass::PRE_TICK)
 		return true;
 
-	const Vector3& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
-
-	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-	bool arrived = false;
-	double epsilon = 1e-3;
-
-	switch (this->data->GetSplineType())
+	if (this->state == State::LINGERING)
 	{
-		case MovingPlatformData::SplineType::LERP:
+		this->remainingLingerTimeSeconds -= deltaTime;
+
+		// Have we lingered long enough?
+		if (this->remainingLingerTimeSeconds <= 0.0)
 		{
-			Vector3 moveDirection = targetDelta - objectToWorld.translation;
-			double distance = 0.0;
-			if (!moveDirection.Normalize(&distance) || distance < epsilon)
-				arrived = true;
-			else
+			// Yes.  Determine the next target delta and move into the moving state.
+			switch (this->data->GetSplineMode())
 			{
-				Vector3 moveVelocity = moveDirection * this->data->GetMoveSpeed();
-				Vector3 moveDelta = moveVelocity * deltaTime;
-				if (moveDelta.Length() > distance)
-					moveDelta = moveDirection * distance;
-				objectToWorld.translation += moveDelta;
+				case MovingPlatformData::SplineMode::BOUNCE:
+				{
+					this->targetDeltaIndex += this->bounceDelta;
+
+					if (this->targetDeltaIndex < 0)
+					{
+						this->targetDeltaIndex = 1;
+						this->bounceDelta = 1;
+					}
+					else if (this->targetDeltaIndex >= this->data->GetSplineDeltaArray().size())
+					{
+						this->targetDeltaIndex = signed(this->data->GetSplineDeltaArray().size()) - 1;
+						this->bounceDelta = -1;
+					}
+
+					break;
+				}
+				case MovingPlatformData::SplineMode::CYCLE:
+				{
+					this->targetDeltaIndex = (this->targetDeltaIndex + 1) % this->data->GetSplineDeltaArray().size();
+					break;
+				}
 			}
 
-			break;
-		}
-		case MovingPlatformData::SplineType::SMOOTH:
-		{
-			// TODO: Write this.
-			break;
+			this->state = State::MOVING;
 		}
 	}
-
-	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
-
-	for (ShapeID shapeID : this->collisionShapeArray)
+	
+	if (this->state == State::MOVING)
 	{
-		auto command = ObjectToWorldCommand::Create();
-		command->SetShapeID(shapeID);
-		command->objectToWorld = objectToWorld;
-		Game::Get()->GetCollisionSystem()->IssueCommand(command);
-	}
+		const MovingPlatformData::DeltaInfo& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
 
-	if (arrived)
-	{
-		switch (this->data->GetSplineMode())
+		const Transform& currentObjectToWorld = this->renderMesh->GetObjectToWorldTransform();
+		const Transform& originalObjectToWorld = this->renderMesh->GetRenderMesh()->GetObjectToWorldTransform();
+
+		Transform targetObjectToWorld;
+		targetObjectToWorld.translation = originalObjectToWorld.translation + targetDelta.transform.translation;
+		targetObjectToWorld.matrix = targetDelta.transform.matrix * originalObjectToWorld.matrix;
+
+		double translationalStep = this->data->GetMoveSpeed() * deltaTime;
+		double rotationalStep = this->data->GetRotationSpeed() * deltaTime;
+
+		// Have we reached our destination?
+		Transform newObjectToWorld;
+		if (!newObjectToWorld.MoveTo(currentObjectToWorld, targetObjectToWorld, translationalStep, rotationalStep))
 		{
-			case MovingPlatformData::SplineMode::BOUNCE:
-			{
-				this->targetDeltaIndex += this->bounceDelta;
+			// Yes.  Go into the lingering state.
+			this->remainingLingerTimeSeconds = targetDelta.lingerTimeSeconds;
+			this->state = State::LINGERING;
+		}
+		else
+		{
+			// No.  Move the platform for this frame.
+			this->renderMesh->SetObjectToWorldTransform(newObjectToWorld);
+		}
 
-				if (this->targetDeltaIndex < 0)
-				{
-					this->targetDeltaIndex = 1;
-					this->bounceDelta = 1;
-				}
-				else if (this->targetDeltaIndex >= this->data->GetSplineDeltaArray().size())
-				{
-					this->targetDeltaIndex = signed(this->data->GetSplineDeltaArray().size()) - 1;
-					this->bounceDelta = -1;
-				}
-
-				break;
-			}
-			case MovingPlatformData::SplineMode::CYCLE:
-			{
-				this->targetDeltaIndex = (this->targetDeltaIndex + 1) % this->data->GetSplineDeltaArray().size();
-				break;
-			}
+		for (ShapeID shapeID : this->collisionShapeArray)
+		{
+			auto command = ObjectToWorldCommand::Create();
+			command->SetShapeID(shapeID);
+			command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+			Game::Get()->GetCollisionSystem()->IssueCommand(command);
 		}
 	}
 

@@ -449,7 +449,7 @@ bool Converter::GenerateIndexBuffer(rapidjson::Document& indicesDoc, const aiMes
 	return true;
 }
 
-bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld, uint32_t flags, Imzadi::AxisAlignedBoundingBox& boundingBox)
+bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiMesh* mesh, const Imzadi::Transform& nodeToObject, uint32_t flags, Imzadi::AxisAlignedBoundingBox& boundingBox)
 {
 	if (mesh->mPrimitiveTypes != aiPrimitiveType_TRIANGLE)
 	{
@@ -491,7 +491,7 @@ bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiM
 			if (!this->MakeVector(position, mesh->mVertices[i]))
 				return false;
 
-			position = nodeToWorld.TransformPoint(position);
+			position = nodeToObject.TransformPoint(position);
 
 			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.x), verticesDoc.GetAllocator());
 			vertexBufferValue.PushBack(rapidjson::Value().SetFloat(position.y), verticesDoc.GetAllocator());
@@ -516,7 +516,7 @@ bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiM
 			if (!this->MakeVector(normal, mesh->mNormals[i]))
 				return false;
 
-			normal = nodeToWorld.TransformVector(normal);
+			normal = nodeToObject.TransformVector(normal);
 			if (!normal.Normalize())
 				return false;
 
@@ -612,9 +612,42 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		return false;
 	}
 
+	Imzadi::Transform worldToObject;
+	worldToObject.SetIdentity();
+
+	// This flag is given in most cases, but certainly not in the case of a character mesh.
+	// This is because we want the character mesh's object-space-origin to be at their feet.
+	if ((this->flags & Flag::CENTER_OBJ_SPACE_AT_ORIGIN) != 0)
+	{
+		if (mesh->mNumVertices == 0)
+		{
+			IMZADI_LOG_ERROR("Encountered mesh with zero vertices.");
+			return false;
+		}
+
+		Imzadi::Vector3 center(0.0, 0.0, 0.0);
+		for (int i = 0; i < mesh->mNumVertices; i++)
+		{
+			Imzadi::Vector3 position;
+			this->MakeVector(position, mesh->mVertices[i]);
+			center += nodeToWorld.TransformPoint(position);
+		}
+
+		center /= double(mesh->mNumVertices);
+		worldToObject.translation = -center;
+	}
+
+	Imzadi::Transform objectToWorld;
+	objectToWorld.Invert(worldToObject);
+	rapidjson::Value meshObjectToWorldValue;
+	Imzadi::Asset::SaveTransform(meshObjectToWorldValue, objectToWorld, &meshDoc);
+	meshDoc.AddMember("object_to_world", meshObjectToWorldValue, meshDoc.GetAllocator());
+
+	Imzadi::Transform nodeToObject = worldToObject * nodeToWorld;
+
 	rapidjson::Document verticesDoc;
 	Imzadi::AxisAlignedBoundingBox boundingBox;
-	if (!this->GenerateVertexBuffer(verticesDoc, mesh, nodeToWorld, VBufFlag::POSITION | VBufFlag::NORMAL | VBufFlag::TEXCOORD, boundingBox))
+	if (!this->GenerateVertexBuffer(verticesDoc, mesh, nodeToObject, VBufFlag::POSITION | VBufFlag::NORMAL | VBufFlag::TEXCOORD, boundingBox))
 		return false;
 
 	rapidjson::Value boundingBoxValue;
@@ -640,6 +673,10 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 		rapidjson::Document collisionDoc;
 		collisionDoc.SetObject();
+
+		rapidjson::Value collisionSetObjectToWorldValue;
+		Imzadi::Asset::SaveTransform(collisionSetObjectToWorldValue, objectToWorld, &collisionDoc);
+		collisionDoc.AddMember("object_to_world", collisionSetObjectToWorldValue, collisionDoc.GetAllocator());
 
 		rapidjson::Value shapeSetValue;
 		shapeSetValue.SetArray();
@@ -667,7 +704,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 				}
 
 				this->MakeVector(vertex, mesh->mVertices[k]);
-				vertex = nodeToWorld.TransformPoint(vertex);
+				vertex = nodeToObject.TransformPoint(vertex);
 
 				rapidjson::Value vertexValue;
 				Imzadi::Asset::SaveVector(vertexValue, vertex, &collisionDoc);

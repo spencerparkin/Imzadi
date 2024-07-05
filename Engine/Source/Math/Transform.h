@@ -169,6 +169,21 @@ namespace Imzadi
 		 */
 		void InterapolateBoneTransforms(const Transform& transformA, const Transform& transformB, double alpha);
 
+		/**
+		 * Assign this transform to be transform A moved toward transform B.
+		 * This is similar to interpolation, but the translation and rotation
+		 * parts are moved independently, and may not arrive at their respective
+		 * destinations at the same time.  We assume that both given transforms
+		 * here are rigid-body transforms.
+		 * 
+		 * @param[in] transformA This is the transform that will be moved.
+		 * @param[in] transformB This is the transform towards which we're moving.
+		 * @param[in] translationStep This is the distance to move translationaly and must be non-zero.
+		 * @param[in] rotationStep This is the angular distance to move rotationally and must be non-zero.
+		 * @return True is returned if movement occurred; false, otherwise.
+		 */
+		bool MoveTo(const Transform& transformA, const Transform& transformB, double translationStep, double rotationStep);
+
 	public:
 		Matrix3x3 matrix;
 		Vector3 translation;

@@ -113,3 +113,12 @@ Vector3& Vector3::Slerp(const Vector3& unitVectorA, const Vector3& unitVectorB, 
 	*this = (::sin((1.0 - alpha) * angle) * unitVectorA + ::sin(alpha * angle) * unitVectorB) / ::sin(angle);
 	return *this;
 }
+
+Vector3 Vector3::MoveTo(const Vector3& vector, double stepSize) const
+{
+	Vector3 delta = vector - *this;
+	double distance = delta.Length();
+	if (distance <= stepSize)
+		return vector;
+	return *this + delta * (stepSize / distance);
+}

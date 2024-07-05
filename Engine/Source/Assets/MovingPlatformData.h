@@ -1,7 +1,7 @@
 #pragma once
 
 #include "AssetCache.h"
-#include "Math/Vector3.h"
+#include "Math/Transform.h"
 
 namespace Imzadi
 {
@@ -36,18 +36,26 @@ namespace Imzadi
 		void SetSplineMode(SplineMode mode) { this->splineMode = mode; }
 		SplineMode GetSplineMode() const { return this->splineMode; }
 
-		const std::vector<Vector3>& GetSplineDeltaArray() const { return *this->splineDeltas; }
+		struct DeltaInfo
+		{
+			Transform transform;
+			double lingerTimeSeconds;
+		};
+
+		const std::vector<DeltaInfo>& GetSplineDeltaArray() const { return *this->splineDeltas; }
 		const std::string& GetMeshFile() const { return this->meshFile; }
 		const std::string& GetCollisionFile() const { return this->collisionFile; }
-		double GetMoveSpeed() const { return this->moveSpeed; }
+		double GetMoveSpeed() const { return this->moveSpeedUnitsPerSecond; }
+		double GetRotationSpeed() const { return this->rotationSpeedDegreesPerSecond; }
 
 	private:
 
-		std::vector<Vector3>* splineDeltas;
+		std::vector<DeltaInfo>* splineDeltas;
 		SplineType splineType;
 		SplineMode splineMode;
 		std::string meshFile;
 		std::string collisionFile;
-		double moveSpeed;
+		double moveSpeedUnitsPerSecond;
+		double rotationSpeedDegreesPerSecond;
 	};
 }

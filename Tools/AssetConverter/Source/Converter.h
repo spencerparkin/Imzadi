@@ -25,10 +25,11 @@ public:
 	
 	enum Flag
 	{
-		CONVERT_MESHES		= 0x00000001,
-		CONVERT_ANIMATIONS	= 0x00000002,
-		CONVERT_SKYDOME		= 0x00000004,
-		MAKE_COLLISION		= 0x00000008
+		CONVERT_MESHES				= 0x00000001,
+		CONVERT_ANIMATIONS			= 0x00000002,
+		CONVERT_SKYDOME				= 0x00000004,
+		MAKE_COLLISION				= 0x00000008,
+		CENTER_OBJ_SPACE_AT_ORIGIN	= 0x00000010
 	};
 
 	void SetFlags(uint32_t flags) { this->flags = flags; }
@@ -67,7 +68,7 @@ private:
 	const aiNode* FindNodeByName(const aiScene* scene, const char* name);
 	bool GenerateSkyDome(const wxString& assetFile, const aiScene* scene, const aiNode* node);
 	bool GenerateIndexBuffer(rapidjson::Document& indicesDoc, const aiMesh* mesh);
-	bool GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiMesh* mesh, const Imzadi::Transform& nodeToWorld, uint32_t flags, Imzadi::AxisAlignedBoundingBox& boundingBox);
+	bool GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiMesh* mesh, const Imzadi::Transform& nodeToObject, uint32_t flags, Imzadi::AxisAlignedBoundingBox& boundingBox);
 
 	Assimp::Importer importer;
 	wxString assetFolder;

@@ -26,9 +26,9 @@ namespace Imzadi
 		void Clear(bool deleteShapes);
 		bool GetBoundingBox(AxisAlignedBoundingBox& boundingBox) const;
 
-		const std::vector<Shape*>& GetCollisionShapeArray() { return *this->collisionShapeArray; }
+		const std::vector<Shape*>& GetCollisionShapeArray() { return this->collisionShapeArray; }
 
 	private:
-		std::vector<Shape*>* collisionShapeArray;
+		std::vector<Shape*> collisionShapeArray;
 	};
 }

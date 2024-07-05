@@ -173,10 +173,11 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 			{"Meshes", Converter::Flag::CONVERT_MESHES},
 			{"Animations", Converter::Flag::CONVERT_ANIMATIONS},
 			{"Collision", Converter::Flag::MAKE_COLLISION},
-			{"Sky Dome", Converter::Flag::CONVERT_SKYDOME}
+			{"Sky Dome", Converter::Flag::CONVERT_SKYDOME},
+			{"Center Obj. Space at Origin", Converter::Flag::CENTER_OBJ_SPACE_AT_ORIGIN}
 		};
 
-		if (!this->FlagsFromDialog("Import what across all chosen export files?", flagChoiceArray, converterFlags))
+		if (!this->FlagsFromDialog("Import what (and how) across all chosen export files?", flagChoiceArray, converterFlags))
 			return;
 	}
 
@@ -293,7 +294,7 @@ void Frame::OnPreviewAsset(wxCommandEvent& event)
 		}
 		else
 		{
-			renderObject = game->LoadAndPlaceRenderMesh((const char*)file.c_str(), Imzadi::Vector3(0.0, 0.0, 0.0), Imzadi::Quaternion());
+			renderObject = game->LoadAndPlaceRenderMesh((const char*)file.c_str());
 		}
 
 		if (!renderObject)

@@ -340,6 +340,16 @@ namespace Imzadi
 		 */
 		Vector3& Slerp(const Vector3& unitVectorA, const Vector3& unitVectorB, double alpha);
 
+		/**
+		 * Return a copy of this vector translated toward the given vector by the
+		 * given amount, but without moving passed the given vector.
+		 * 
+		 * @param[in] vector This is the target we're trying to reach.
+		 * @param[in] stepSize This is the distance we move unless it's too far.  This must be non-negative.
+		 * @return A copy of this vector moved toward the given vector is returned.
+		 */
+		Vector3 MoveTo(const Vector3& vector, double stepSize) const;
+
 	public:
 		double x, y, z;
 	};

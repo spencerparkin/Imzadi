@@ -39,11 +39,21 @@ namespace Imzadi
 		void SetMovingPlatformFile(const std::string& file) { this->movingPlatformFile = file; }
 
 	private:
+
+		enum State
+		{
+			UNKNOWN,
+			MOVING,
+			LINGERING
+		};
+
+		State state;
 		Reference<MovingPlatformData> data;
 		Reference<RenderMeshInstance> renderMesh;
 		std::vector<ShapeID> collisionShapeArray;
 		std::string movingPlatformFile;
 		int targetDeltaIndex;
 		int bounceDelta;
+		double remainingLingerTimeSeconds;
 	};
 }

@@ -3,6 +3,7 @@
 #include "Ray.h"
 #include "LineSegment.h"
 #include "Matrix4x4.h"
+#include "Angle.h"
 
 using namespace Imzadi;
 
@@ -150,6 +151,29 @@ void Transform::InterapolateBoneTransforms(const Transform& transformA, const Tr
 	double length = lengthA + alpha * (lengthB - lengthA);
 
 	this->translation = vector * length;
+}
+
+bool Transform::MoveTo(const Transform& transformA, const Transform& transformB, double translationStep, double rotationStep)
+{
+	bool moved = false;
+	Matrix3x3 rotation = transformB.matrix * transformA.matrix.Inverted();
+	Vector3 axis;
+	double angle = 0.0;
+	rotation.GetToAxisAngle(axis, angle);
+	static double epsion = 1e-3;
+	if (::fabs(angle) >= epsion)
+		moved = true;
+
+	angle = IMZADI_MIN(angle, rotationStep);
+	rotation.SetFromAxisAngle(axis, angle);
+	this->matrix = rotation * transformA.matrix;
+	this->matrix = this->matrix.Orthonormalized(IMZADI_AXIS_FLAG_X);
+
+	if (!transformA.translation.IsPoint(transformB.translation))
+		moved = true;
+
+	this->translation = transformA.translation.MoveTo(transformB.translation, translationStep);
+	return moved;
 }
 
 void Transform::Dump(std::ostream& stream) const

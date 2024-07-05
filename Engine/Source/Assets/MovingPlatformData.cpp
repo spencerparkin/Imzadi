@@ -1,12 +1,14 @@
 #include "MovingPlatformData.h"
 #include "Log.h"
+#include "Math/Angle.h"
 
 using namespace Imzadi;
 
 MovingPlatformData::MovingPlatformData()
 {
-	this->moveSpeed = 0.0;
-	this->splineDeltas = new std::vector<Vector3>();
+	this->moveSpeedUnitsPerSecond = 0.0;
+	this->rotationSpeedDegreesPerSecond = 0.0;
+	this->splineDeltas = new std::vector<DeltaInfo>();
 }
 
 /*virtual*/ MovingPlatformData::~MovingPlatformData()
@@ -41,14 +43,25 @@ MovingPlatformData::MovingPlatformData()
 	this->splineDeltas->clear();
 	for (int i = 0; i < jsonDoc["spline_deltas"].Size(); i++)
 	{
-		Vector3 delta;
-		if (!this->LoadVector(jsonDoc["spline_deltas"][i], delta))
-		{
-			IMZADI_LOG_ERROR(std::format("Failed to load spline delta {}.", i));
-			return false;
-		}
+		const rapidjson::Value& splineDeltaValue = jsonDoc["spline_deltas"][i];
 
-		this->splineDeltas->push_back(delta);
+		Vector3 translation;
+		if (!this->LoadVector(splineDeltaValue, translation))
+			translation.SetComponents(0.0, 0.0, 0.0);
+
+		Quaternion rotation;
+		if (!this->LoadEulerAngles(splineDeltaValue, rotation))
+			rotation.SetIdentity();
+
+		DeltaInfo deltaInfo;
+		deltaInfo.transform.translation = translation;
+		deltaInfo.transform.matrix.SetFromQuat(rotation);
+		deltaInfo.lingerTimeSeconds = 0.0;
+
+		if (splineDeltaValue.HasMember("linger") && splineDeltaValue["linger"].IsFloat())
+			deltaInfo.lingerTimeSeconds = splineDeltaValue["linger"].GetFloat();
+
+		this->splineDeltas->push_back(deltaInfo);
 	}
 
 	if (!jsonDoc.HasMember("spline_type") || !jsonDoc["spline_type"].IsString())
@@ -85,13 +98,13 @@ MovingPlatformData::MovingPlatformData()
 		return false;
 	}
 
-	if (!jsonDoc.HasMember("move_speed") || !jsonDoc["move_speed"].IsFloat())
-	{
-		IMZADI_LOG_ERROR("No \"move_speed\" given or it's not a float.");
-		return false;
-	}
+	this->moveSpeedUnitsPerSecond = 0.0;
+	if (jsonDoc.HasMember("move_speed") && jsonDoc["move_speed"].IsFloat())
+		this->moveSpeedUnitsPerSecond = jsonDoc["move_speed"].GetFloat();
 
-	this->moveSpeed = jsonDoc["move_speed"].GetFloat();
+	this->rotationSpeedDegreesPerSecond = 0.0;
+	if (jsonDoc.HasMember("rotation_speed") && jsonDoc["rotation_speed"].IsFloat())
+		this->rotationSpeedDegreesPerSecond = Angle::DegreesToRadians(jsonDoc["rotation_speed"].GetFloat());
 
 	return true;
 }

@@ -6,14 +6,11 @@ using namespace Imzadi;
 
 CollisionShapeSet::CollisionShapeSet()
 {
-	this->collisionShapeArray = new std::vector<Imzadi::Shape*>();
 }
 
 /*virtual*/ CollisionShapeSet::~CollisionShapeSet()
 {
 	this->Clear(true);
-
-	delete this->collisionShapeArray;
 }
 
 /*virtual*/ bool CollisionShapeSet::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
@@ -48,7 +45,7 @@ CollisionShapeSet::CollisionShapeSet()
 		if (shapeType == "polygon")
 		{
 			auto polygon = PolygonShape::Create();
-			this->collisionShapeArray->push_back(polygon);
+			this->collisionShapeArray.push_back(polygon);
 
 			if (!shapeValue.HasMember("vertex_array") || !shapeValue["vertex_array"].IsArray())
 			{
@@ -78,6 +75,20 @@ CollisionShapeSet::CollisionShapeSet()
 		}
 	}
 
+	Transform objectToWorld;
+	objectToWorld.SetIdentity();
+	if (jsonDoc.HasMember("object_to_world"))
+	{
+		if (!Asset::LoadTransform(jsonDoc["object_to_world"], objectToWorld))
+		{
+			IMZADI_LOG_ERROR("Failed to load object-to-world transform from collision file.");
+			return false;
+		}
+	}
+
+	for (Imzadi::Shape* shape : this->collisionShapeArray)
+		shape->SetObjectToWorldTransform(objectToWorld);
+
 	return true;
 }
 
@@ -91,23 +102,23 @@ CollisionShapeSet::CollisionShapeSet()
 void CollisionShapeSet::Clear(bool deleteShapes)
 {
 	if (deleteShapes)
-		for (Shape* shape : *this->collisionShapeArray)
+		for (Shape* shape : this->collisionShapeArray)
 			Shape::Free(shape);
 
-	this->collisionShapeArray->clear();
+	this->collisionShapeArray.clear();
 }
 
 bool CollisionShapeSet::GetBoundingBox(AxisAlignedBoundingBox& boundingBox) const
 {
-	if (this->collisionShapeArray->size() == 0)
+	if (this->collisionShapeArray.size() == 0)
 		return false;
 
-	Shape* shape = (*this->collisionShapeArray)[0];
+	Shape* shape = this->collisionShapeArray[0];
 	boundingBox = shape->GetBoundingBox();
 
-	for (int i = 1; i < (signed)this->collisionShapeArray->size(); i++)
+	for (int i = 1; i < (signed)this->collisionShapeArray.size(); i++)
 	{
-		shape = (*this->collisionShapeArray)[i];
+		shape = this->collisionShapeArray[i];
 		boundingBox.Expand(shape->GetBoundingBox());
 	}
 

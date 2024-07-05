@@ -11,6 +11,10 @@
 
 namespace Imzadi
 {
+	/**
+	 * As if the term "shader" was not already abused enough, we're not just a pixel shader here,
+	 * but also a vertex shader, input layout and constants buffer.
+	 */
 	class IMZADI_API Shader : public Asset
 	{
 	public:
