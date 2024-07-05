@@ -34,7 +34,7 @@ PhysicsEntity::PhysicsEntity()
 
 /*virtual*/ bool PhysicsEntity::Tick(TickPass tickPass, double deltaTime)
 {
-	if (tickPass == TickPass::PRE_TICK)
+	if (tickPass == TickPass::COMMAND_TICK)
 	{
 		Vector3 netForce(0.0, 0.0, 0.0);
 		this->AccumulateForces(netForce);

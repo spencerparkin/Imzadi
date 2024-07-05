@@ -50,7 +50,7 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 {
 	Game::Tick(tickPass);
 
-	if (tickPass == Imzadi::TickPass::MID_TICK)
+	if (tickPass == Imzadi::TickPass::PARALLEL_TICK)
 	{
 		Imzadi::DebugLines* debugLines = Game::Get()->GetDebugLines();
 

@@ -470,17 +470,11 @@ bool Game::RecreateViews()
 
 	this->controller.Update();
 
-	// Can initiate collision queries in this pass.
-	this->Tick(TickPass::PRE_TICK);
-
-	// Do work that runs in parallel with the collision system.  (e.g., animating skeletons and performing skinning.)
-	this->Tick(TickPass::MID_TICK);
-
-	// Stall waiting for the collision system to complete all queries and commands.
+	this->Tick(TickPass::COMMAND_TICK);
+	this->Tick(TickPass::QUERY_TICK);
+	this->Tick(TickPass::PARALLEL_TICK);
 	this->collisionSystem.FlushAllTasks();
-
-	// Collision queries can now be acquired and used in this pass.  (e.g., to solve constraints.)
-	this->Tick(TickPass::POST_TICK);
+	this->Tick(TickPass::RESULT_TICK);
 
 	if (this->windowResized)
 	{
@@ -702,7 +696,7 @@ std::string Game::PopControllerUser()
 {
 	this->AdvanceEntities(tickPass);
 
-	if (tickPass == TickPass::MID_TICK)
+	if (tickPass == TickPass::PARALLEL_TICK)
 	{
 		this->scene->PrepareRenderObjects();
 	}

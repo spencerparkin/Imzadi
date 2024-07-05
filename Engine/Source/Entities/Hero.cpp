@@ -132,7 +132,7 @@ Hero::Hero()
 
 	switch (tickPass)
 	{
-		case TickPass::PRE_TICK:
+		case TickPass::COMMAND_TICK:
 		{
 			Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			Matrix3x3 targetOrientation = objectToWorld.matrix;
@@ -158,6 +158,10 @@ Hero::Hero()
 			command->objectToWorld = objectToWorld;
 			collisionSystem->IssueCommand(command);
 
+			break;
+		}
+		case TickPass::QUERY_TICK:
+		{
 			auto boundsQuery = ShapeInBoundsQuery::Create();
 			boundsQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
@@ -173,6 +177,10 @@ Hero::Hero()
 				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
 			}
 
+			break;
+		}
+		case TickPass::PARALLEL_TICK:
+		{
 			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 			if (animatedMesh)
 			{
@@ -187,19 +195,13 @@ Hero::Hero()
 					else
 						animatedMesh->SetAnimation("Run");
 				}
+
+				animatedMesh->AdvanceAnimation(deltaTime);
 			}
 
 			break;
 		}
-		case TickPass::MID_TICK:
-		{
-			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
-			if (animatedMesh)
-				animatedMesh->AdvanceAnimation(deltaTime);
-
-			break;
-		}
-		case TickPass::POST_TICK:
+		case TickPass::RESULT_TICK:
 		{
 			if (this->boundsQueryTaskID)
 			{

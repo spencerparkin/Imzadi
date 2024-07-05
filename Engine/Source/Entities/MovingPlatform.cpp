@@ -80,7 +80,7 @@ MovingPlatform::MovingPlatform()
 
 /*virtual*/ bool MovingPlatform::Tick(TickPass tickPass, double deltaTime)
 {
-	if (tickPass != TickPass::PRE_TICK)
+	if (tickPass != TickPass::COMMAND_TICK)
 		return true;
 
 	if (this->state == State::LINGERING)

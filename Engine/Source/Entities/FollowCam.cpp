@@ -45,7 +45,7 @@ FollowCam::FollowCam()
 
 /*virtual*/ bool FollowCam::Tick(TickPass tickPass, double deltaTime)
 {
-	if (tickPass != TickPass::MID_TICK)
+	if (tickPass != TickPass::PARALLEL_TICK)
 		return true;
 
 	Controller* controller = Game::Get()->GetController("Hero");
