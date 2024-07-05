@@ -126,8 +126,7 @@ namespace Imzadi
 	};
 
 	/**
-	 * Query for a collision shape's object-to-world transform, as well as
-	 * its previous object-to-world transform.
+	 * Query for a collision shape's object-to-world transform.
 	 * 
 	 * An ObjectToWorldResult class instance is returned by this query.
 	 */

@@ -135,7 +135,7 @@ Hero::Hero()
 		case TickPass::PRE_TICK:
 		{
 			Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-			Matrix3x3 targetOrienation = objectToWorld.matrix;
+			Matrix3x3 targetOrientation = objectToWorld.matrix;
 
 			if (this->velocity.Length() > 0)
 			{
@@ -145,10 +145,10 @@ Hero::Hero()
 				zAxis = -this->velocity.RejectedFrom(yAxis).Normalized();
 				xAxis = yAxis.Cross(zAxis);
 
-				targetOrienation.SetColumnVectors(xAxis, yAxis, zAxis);
+				targetOrientation.SetColumnVectors(xAxis, yAxis, zAxis);
 			}
 
-			objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrienation, 0.2);
+			objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrientation, 0.2);
 			objectToWorld.translation += this->velocity * deltaTime;
 
 			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
@@ -215,7 +215,7 @@ Hero::Hero()
 						this->Reset();
 					}
 
-					collisionSystem->Free<Result>(result);
+					collisionSystem->Free(result);
 				}
 			}
 
@@ -250,7 +250,7 @@ Hero::Hero()
 						}
 					}
 
-					collisionSystem->Free<Result>(result);
+					collisionSystem->Free(result);
 				}
 			}
 
@@ -262,13 +262,14 @@ Hero::Hero()
 					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
 					if (objectToWorldResult)
 					{
-						Vector3 groundMovementVector = objectToWorldResult->prevWorldToCurrentWorld.translation;
-						Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-						objectToWorld.translation += groundMovementVector;
-						this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+						// TODO: I think we'll need this to update a reference frame.
+						//       Can we have our character always move relative to the
+						//       ground's reference frame, and can we know how to switch
+						//       between reference frames?
+						//objectToWorldResult->objectToWorld
 					}
 
-					collisionSystem->Free<Result>(result);
+					collisionSystem->Free(result);
 				}
 			}
 

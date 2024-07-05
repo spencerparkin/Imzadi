@@ -101,7 +101,7 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 	}
 
 	auto result = ObjectToWorldResult::Create();
-	result->SetTransforms(shape->GetObjectToWorldTransform(), shape->GetPreviousObjectToWorldTransform());
+	result->objectToWorld = shape->GetObjectToWorldTransform();
 	return result;
 }
 

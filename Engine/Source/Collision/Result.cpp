@@ -142,13 +142,6 @@ ObjectToWorldResult::ObjectToWorldResult()
 	return new ObjectToWorldResult();
 }
 
-void ObjectToWorldResult::SetTransforms(const Transform& objectToWorld, const Transform& previousObjectToWorld)
-{
-	this->objectToWorld = objectToWorld;
-	this->previousObjectToWorld = previousObjectToWorld;
-	this->prevWorldToCurrentWorld = objectToWorld * previousObjectToWorld.Inverted();
-}
-
 //-------------------------------- CollisionQueryResult --------------------------------
 
 CollisionQueryResult::CollisionQueryResult()

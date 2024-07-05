@@ -225,11 +225,6 @@ namespace Imzadi
 		const Transform& GetWorldToObjectTransform() const;
 
 		/**
-		 * Get this shape's object-to-world transform before it was most recently changed.
-		 */
-		const Transform& GetPreviousObjectToWorldTransform() const;
-
-		/**
 		 * Return the smallest AABB containing this shape.
 		 */
 		const AxisAlignedBoundingBox& GetBoundingBox() const;
@@ -292,7 +287,6 @@ namespace Imzadi
 	protected:
 
 		Transform objectToWorld;			///< A shape is described in object space and then realized in world space using this transform.
-		Transform previousObjectToWorld;	///< Whenever the object-to-world transform changes, we stash the previous one here for reference.
 		Vector3 debugColor;					///< This color is used to render the shape for debugging purposes.
 		uint64_t revisionNumber;			///< This is used in the collision cache mechanism.  Any change to the shape should bump this number.
 	};

@@ -170,12 +170,8 @@ namespace Imzadi
 
 		static ObjectToWorldResult* Create();
 
-		void SetTransforms(const Transform& objectToWorld, const Transform& previousObjectToWorld);
-
 	public:
-		Transform objectToWorld;				///< This is the returned transform.
-		Transform previousObjectToWorld;		///< This is some additional information that can be useful.
-		Transform prevWorldToCurrentWorld;		///< This is the transform that takes the shape from it's previous world location to its current world location.
+		Transform objectToWorld;
 	};
 
 	class ShapePairCollisionStatus;
