@@ -13,13 +13,12 @@ Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(co
 {
 	this->thread = nullptr;
 	this->signaledToExit = false;
-	this->taskQueue = new TaskQueue();
+	this->taskQueue = new std::list<Task*>();
 	this->taskQueueMutex = new std::mutex();
 	this->taskQueueSemaphore = new std::counting_semaphore<4096>(0);
 	this->resultMap = new std::unordered_map<TaskID, Result*>();
 	this->resultMapMutex = new std::mutex();
 	this->allTasksDoneCondVar = new std::condition_variable();
-	this->numTasksPending = 0;
 }
 
 /*virtual*/ Thread::~Thread()
@@ -69,17 +68,15 @@ void Thread::Run()
 		// The semaphore count mirrors the size of the task queue.
 		this->taskQueueSemaphore->acquire();
 
-		// Grab the next task off the priority queue.
+		// Grab the next task, but don't pull it off the queue just yet.
 		Task* task = nullptr;
 		if (this->taskQueue->size() > 0)
 		{
 			std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
 			if (this->taskQueue->size() > 0)
 			{
-				// Note that we cannot get the top in one mutex and pop in another,
-				// because a push could get inbetween them.
-				task = this->taskQueue->top();
-				this->taskQueue->pop();
+				std::list<Task*>::iterator iter = this->taskQueue->begin();
+				task = *iter;
 			}
 		}
 
@@ -90,11 +87,13 @@ void Thread::Run()
 			Task::Free(task);
 			task = nullptr;
 		
-			// Note we need the guard here so that the increments and decrements are atomic.
-			// Also, the mutex works somehow in conjunction with the condition variable.
+			// Once processed, we can remove it from the queue.  This way, our wait
+			// operation returns when all tasks are truely completed.
 			{
 				std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
-				if (--this->numTasksPending == 0)
+				std::list<Task*>::iterator iter = this->taskQueue->begin();
+				this->taskQueue->erase(iter);
+				if (this->taskQueue->size() == 0)
 					this->allTasksDoneCondVar->notify_one();
 			}
 		}
@@ -108,21 +107,18 @@ void Thread::Run()
 void Thread::ClearTasks()
 {
 	std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
-
 	while (this->taskQueue->size() > 0)
 	{
-		Task* task = this->taskQueue->top();
+		std::list<Task*>::iterator iter = this->taskQueue->begin();
+		Task* task = *iter;
 		Task::Free(task);
-		this->taskQueue->pop();
+		this->taskQueue->erase(iter);
 	}
-
-	this->numTasksPending = 0;
 }
 
 void Thread::ClearResults()
 {
 	std::lock_guard<std::mutex> guard(*this->resultMapMutex);
-
 	while (this->resultMap->size() > 0)
 	{
 		std::unordered_map<TaskID, Result*>::iterator iter = this->resultMap->begin();
@@ -164,8 +160,7 @@ TaskID Thread::SendTask(Task* task)
 	// Add the task to the queue.  Make the mutex scope-lock as tight as possible.
 	{
 		std::lock_guard<std::mutex> guard(*this->taskQueueMutex);
-		this->taskQueue->push(task);
-		this->numTasksPending++;
+		this->taskQueue->push_back(task);
 	}
 
 	// Signal the collision thread that a task is available.
@@ -225,7 +220,7 @@ void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 void Thread::WaitForAllTasksToComplete()
 {
 	std::unique_lock<std::mutex> lock(*this->taskQueueMutex);
-	this->allTasksDoneCondVar->wait(lock, [=]() { return this->numTasksPending == 0; });
+	this->allTasksDoneCondVar->wait(lock, [=]() { return this->taskQueue->size() == 0; });
 }
 
 bool Thread::DumpShapes(std::ostream& stream) const

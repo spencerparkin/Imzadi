@@ -39,31 +39,8 @@ namespace Imzadi
 		 */
 		static void Free(Task* task);
 
-		/**
-		 * Set this task's priority.  Tasks with a higher priority
-		 * are served before those with relatively lower priorities.
-		 */
-		void SetPriority(uint32_t priority) { this->priority = priority; }
-
-		/**
-		 * Return this task's priority.  See @ref SetPriority.
-		 */
-		uint32_t GetPriority() const { return this->priority; }
-
 	private:
-		uint32_t priority;
 		TaskID taskID;
 		static TaskID nextTaskID;
-	};
-
-	/**
-	 * This is used to make the Task class compatiable with std::priority_queue<>.
-	 */
-	struct TaskCompare
-	{
-		bool operator()(const Task* taskA, const Task* taskB) const
-		{
-			return taskA->GetPriority() < taskB->GetPriority();
-		}
 	};
 }

@@ -8,7 +8,6 @@
 #include <thread>
 #include <mutex>
 #include <list>
-#include <queue>
 #include <semaphore>
 #include <unordered_map>
 
@@ -173,14 +172,11 @@ namespace Imzadi
 		void ClearResults();
 
 	private:
-		typedef std::priority_queue<Task*, std::vector<Task*>, TaskCompare> TaskQueue;
-
 		BoundingBoxTree boxTree;
 		bool signaledToExit;
 		std::thread* thread;
 		std::mutex* taskQueueMutex;
-		TaskQueue* taskQueue;
-		uint32_t numTasksPending;
+		std::list<Task*>* taskQueue;		// TODO: May want to replace this with a lock-free queue at some point.
 		std::counting_semaphore<4096>* taskQueueSemaphore;
 		std::mutex* resultMapMutex;
 		std::unordered_map<TaskID, Result*>* resultMap;
