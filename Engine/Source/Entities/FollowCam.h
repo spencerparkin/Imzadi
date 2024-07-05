@@ -36,6 +36,9 @@ namespace Imzadi
 		const FollowParams& GetFollowParams() const { return this->followParams; }
 		void SetFollowParams(const FollowParams& followParams) { this->followParams = followParams; }
 
+		void SetCameraUser(const std::string& user) { this->cameraUser = user; }
+		const std::string& GetCameraUser() const { return this->cameraUser; }
+
 	private:
 		void CalculateCameraPositionAndOrientation();
 		void MoveCameraOrbitBehindSubject(bool immediate);
@@ -46,5 +49,6 @@ namespace Imzadi
 		FollowParams followParams;
 		SphericalCoords orbitLocation;
 		SphericalCoords targetOrbitLocation;
+		std::string cameraUser;
 	};
 }

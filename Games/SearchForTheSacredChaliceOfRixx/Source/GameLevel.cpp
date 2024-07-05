@@ -9,7 +9,7 @@ GameLevel::GameLevel()
 {
 }
 
-/*virtual*/ Imzadi::Hero* GameLevel::SpawnHero()
+/*virtual*/ Imzadi::Biped* GameLevel::SpawnMainCharacter()
 {
 	return Imzadi::Game::Get()->SpawnEntity<DeannaTroi>();
 }

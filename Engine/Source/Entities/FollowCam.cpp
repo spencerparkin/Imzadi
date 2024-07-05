@@ -48,7 +48,7 @@ FollowCam::FollowCam()
 	if (tickPass != TickPass::PARALLEL_TICK)
 		return true;
 
-	Controller* controller = Game::Get()->GetController("Hero");
+	Controller* controller = Game::Get()->GetController(this->cameraUser);
 	if (controller)
 	{
 		if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))

@@ -1,5 +1,4 @@
-#include "Hero.h"
-#include "FollowCam.h"
+#include "Biped.h"
 #include "Game.h"
 #include "Assets/RenderMesh.h"
 #include "Assets/SkinnedRenderMesh.h"
@@ -17,37 +16,28 @@
 
 using namespace Imzadi;
 
-Hero::Hero()
+Biped::Biped()
 {
 	this->collisionShapeID = 0;
 	this->groundShapeID = 0;
-	this->cameraHandle = 0;
-	this->maxMoveSpeed = 20.0;
 	this->boundsQueryTaskID = 0;
 	this->collisionQueryTaskID = 0;
 	this->groundQueryTaskID = 0;
 	this->inContactWithGround = false;
+	this->canRestart = true;
 }
 
-/*virtual*/ Hero::~Hero()
+/*virtual*/ Biped::~Biped()
 {
 }
 
-/*virtual*/ bool Hero::Setup()
+/*virtual*/ bool Biped::Setup()
 {
 	if (!this->renderMesh.Get())
 	{
-		IMZADI_LOG_ERROR("Derivatives of the Hero class need to initialize the render mesh.");
+		IMZADI_LOG_ERROR("Derivatives of the Biped class need to initialize the render mesh.");
 		return false;
 	}
-
-	Game::Get()->PushControllerUser("Hero");
-
-	FollowCam* followCam = Game::Get()->SpawnEntity<FollowCam>();
-	followCam->SetSubject(this);
-	followCam->SetCamera(Game::Get()->GetCamera());
-
-	this->cameraHandle = followCam->GetHandle();
 
 	// TODO: Really should get capsule size from somewhere on disk.
 	auto capsule = CapsuleShape::Create();
@@ -58,72 +48,18 @@ Hero::Hero()
 	if (this->collisionShapeID == 0)
 		return false;
 
-	this->inContactWithGround = true;
+	this->inContactWithGround = false;
 	return true;
 }
 
-/*virtual*/ bool Hero::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool Biped::Shutdown(bool gameShuttingDown)
 {
-	Game::Get()->PopControllerUser();
+	PhysicsEntity::Shutdown(gameShuttingDown);
 
 	return true;
 }
 
-/*virtual*/ void Hero::AccumulateForces(Imzadi::Vector3& netForce)
-{
-	PhysicsEntity::AccumulateForces(netForce);
-
-	Controller* controller = Game::Get()->GetController("Hero");
-	if (!controller)
-		return;
-
-	if (this->inContactWithGround && controller->ButtonPressed(XINPUT_GAMEPAD_Y))
-	{
-		Vector3 jumpForce(0.0, 1000.0, 0.0);
-		netForce += jumpForce;
-	}
-}
-
-/*virtual*/ void Hero::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
-{
-	PhysicsEntity::IntegrateVelocity(acceleration, deltaTime);
-
-	if (this->inContactWithGround)
-	{
-		Reference<ReferenceCounted> followCamRef;
-		HandleManager::Get()->GetObjectFromHandle(this->cameraHandle, followCamRef);
-		auto followCam = dynamic_cast<FollowCam*>(followCamRef.Get());
-		if (!followCam)
-			return;
-
-		Vector2 leftStick(0.0, 0.0);
-		Controller* controller = Game::Get()->GetController("Hero");
-		if (controller)
-			controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
-
-		Camera* camera = followCam->GetCamera();
-		if (!camera)
-			return;
-
-		Transform cameraToWorld = camera->GetCameraToWorldTransform();
-
-		Vector3 xAxis, yAxis, zAxis;
-		cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
-
-		Vector3 upVector(0.0, 1.0, 0.0);
-		xAxis = xAxis.RejectedFrom(upVector).Normalized();
-		zAxis = zAxis.RejectedFrom(upVector).Normalized();
-
-		Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
-
-		// We don't stomp the Y-component here, because we still want
-		// the effects of gravity applied on our character continuously.
-		this->velocity.x = moveDelta.x;
-		this->velocity.z = moveDelta.z;
-	}
-}
-
-/*virtual*/ bool Hero::Tick(TickPass tickPass, double deltaTime)
+/*virtual*/ bool Biped::Tick(TickPass tickPass, double deltaTime)
 {
 	if (!PhysicsEntity::Tick(tickPass, deltaTime))
 		return false;
@@ -134,6 +70,7 @@ Hero::Hero()
 	{
 		case TickPass::COMMAND_TICK:
 		{
+			// Make sure the render mesh faces the direction we're moving.
 			Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			Matrix3x3 targetOrientation = objectToWorld.matrix;
 
@@ -153,6 +90,7 @@ Hero::Hero()
 
 			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 
+			// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
 			auto command = ObjectToWorldCommand::Create();
 			command->SetShapeID(this->collisionShapeID);
 			command->objectToWorld = objectToWorld;
@@ -162,6 +100,8 @@ Hero::Hero()
 		}
 		case TickPass::QUERY_TICK:
 		{
+			// Kick-off the queries we'll need later to resolve collision constraints.
+
 			auto boundsQuery = ShapeInBoundsQuery::Create();
 			boundsQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
@@ -181,6 +121,8 @@ Hero::Hero()
 		}
 		case TickPass::PARALLEL_TICK:
 		{
+			// Make sure we're playing an appropriate animation and pump the animation system.
+
 			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 			if (animatedMesh)
 			{
@@ -205,19 +147,23 @@ Hero::Hero()
 		{
 			if (this->boundsQueryTaskID)
 			{
+				bool characterDied = false;
 				Result* result = collisionSystem->ObtainQueryResult(this->boundsQueryTaskID);
 				if (result)
 				{
 					auto boolResult = dynamic_cast<BoolResult*>(result);
 					if (boolResult && !boolResult->GetAnswer())
-					{
-						// Our character has gone out of bounds of the collision world!
-						// This is probably because we fell off a platform into the infinite
-						// void down below.  We have died!
-						this->Reset();
-					}
+						characterDied = true;
 
 					collisionSystem->Free(result);
+				}
+
+				if (characterDied)
+				{
+					if (this->canRestart)
+						this->Reset();
+					else
+						return false;
 				}
 			}
 
@@ -282,7 +228,7 @@ Hero::Hero()
 	return true;
 }
 
-/*virtual*/ bool Hero::GetTransform(Transform& transform)
+/*virtual*/ bool Biped::GetTransform(Transform& transform)
 {
 	if (!this->renderMesh)
 		return false;
@@ -291,7 +237,7 @@ Hero::Hero()
 	return true;
 }
 
-/*virtual*/ void Hero::Reset()
+/*virtual*/ void Biped::Reset()
 {
 	PhysicsEntity::Reset();
 

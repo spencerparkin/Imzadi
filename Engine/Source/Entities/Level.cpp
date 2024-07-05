@@ -1,7 +1,7 @@
 #include "Level.h"
 #include "Game.h"
 #include "Scene.h"
-#include "Hero.h"
+#include "Biped.h"
 #include "AssetCache.h"
 #include "Math/Vector3.h"
 #include "Math/Quaternion.h"
@@ -22,7 +22,7 @@ Level::Level()
 {
 }
 
-/*virtual*/ Hero* Level::SpawnHero()
+/*virtual*/ Biped* Level::SpawnMainCharacter()
 {
 	return nullptr;
 }
@@ -63,9 +63,14 @@ Level::Level()
 		}
 	}
 
-	Hero* hero = this->SpawnHero();
-	hero->SetRestartLocation(levelData->GetPlayerStartPosition());
-	hero->SetRestartOrientation(levelData->GetPlayerStartOrientation());
+	Biped* biped = this->SpawnMainCharacter();
+	if (biped)
+	{
+		biped->SetRestartLocation(levelData->GetPlayerStartPosition());
+		biped->SetRestartOrientation(levelData->GetPlayerStartOrientation());
+	}
+
+	// TODO: Spawn other characters throughout the level as dictated in the level JSON file.
 
 	AxisAlignedBoundingBox collisionWorldBox;
 	std::vector<Reference<CollisionShapeSet>> collisionShapeSetArray;
@@ -115,14 +120,6 @@ Level::Level()
 	Game::Get()->GetCollisionSystem()->Clear();
 	Game::Get()->GetCollisionSystem()->Shutdown();
 	Game::Get()->GetScene()->Clear();
-
-	if (!gameShuttingDown)
-	{
-		// The end of one level marks the beginning of a new one; that is,
-		// unless the whole game is shutting down.
-		Level* nextLevel = Game::Get()->SpawnEntity<Level>();
-		nextLevel->SetLevelNumber(this->GetLevelNumber() + 1);
-	}
 
 	return true;
 }

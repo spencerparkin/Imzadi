@@ -10,33 +10,35 @@
 namespace Imzadi
 {
 	/**
-	 * An instance of this class is the protagonist of our game saga.
+	 * Instances of this class represent any sort of person in the game,
+	 * whether they be the main protagonist, an antogonist, or just some
+	 * sort of NPC.
 	 */
-	class IMZADI_API Hero : public PhysicsEntity
+	class IMZADI_API Biped : public PhysicsEntity
 	{
 	public:
-		Hero();
-		virtual ~Hero();
+		Biped();
+		virtual ~Biped();
 
 		virtual bool Setup() override;
 		virtual bool Shutdown(bool gameShuttingDown) override;
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
 		virtual bool GetTransform(Transform& transform) override;
-		virtual void AccumulateForces(Vector3& netForce) override;
-		virtual void IntegrateVelocity(const Vector3& acceleration, double deltaTime) override;
 		virtual void Reset() override;
 
 		void SetRestartLocation(const Vector3& restartLocation) { this->restartLocation = restartLocation; }
 		void SetRestartOrientation(const Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }
 
+		void SetCanRestart(bool canRestart) { this->canRestart = canRestart; }
+		bool GetCanRestart() const { return this->canRestart; }
+
 	protected:
 		Vector3 restartLocation;
 		Quaternion restartOrientation;
+		bool canRestart;
 		ShapeID collisionShapeID;
 		ShapeID groundShapeID;
 		Reference<RenderMeshInstance> renderMesh;
-		uint32_t cameraHandle;
-		double maxMoveSpeed;
 		bool inContactWithGround;
 		TaskID boundsQueryTaskID;
 		TaskID collisionQueryTaskID;

@@ -20,14 +20,12 @@ set(GAME_ENGINE_SOURCES
     Source/Log.h
     Source/StateCache.cpp
     Source/StateCache.h
-    Source/Entities/Enemy.cpp
-    Source/Entities/Enemy.h
     Source/Entities/FollowCam.cpp
     Source/Entities/FollowCam.h
     Source/Entities/FreeCam.cpp
     Source/Entities/FreeCam.h
-    Source/Entities/Hero.cpp
-    Source/Entities/Hero.h
+    Source/Entities/Biped.cpp
+    Source/Entities/Biped.h
     Source/Entities/Level.cpp
     Source/Entities/Level.h
     Source/Entities/MovingPlatform.cpp

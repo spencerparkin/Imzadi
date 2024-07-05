@@ -4,7 +4,7 @@
 
 namespace Imzadi
 {
-	class Hero;
+	class Biped;
 
 	/**
 	 * An instance of this class represents the level being played in the game.
@@ -37,7 +37,7 @@ namespace Imzadi
 		/**
 		 * Override this to spawn the character being played in the level.
 		 */
-		virtual Hero* SpawnHero();
+		virtual Biped* SpawnMainCharacter();
 
 		void SetLevelNumber(int levelNumber) { this->levelNumber = levelNumber; }
 		int GetLevelNumber() { return this->levelNumber; }
