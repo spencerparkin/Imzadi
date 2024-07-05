@@ -22,5 +22,5 @@
     "spline_type": "lerp",
     "spline_mode": "cycle",
     "move_speed": 1.0,
-    "rotation_speed": 20.0
+    "rotation_speed": 40.0
 }
