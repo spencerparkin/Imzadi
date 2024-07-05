@@ -11,6 +11,11 @@ using namespace Imzadi;
 
 Command::Command()
 {
+	// Generally, we want commands to have a higher priority than queries,
+	// because commands mutate the state of the collision system, while
+	// queries simply inspect it.  A mix of commands and queries are sent
+	// each frame, but we want all commands to happen before the queries.
+	this->SetPriority(1);
 }
 
 /*virtual*/ Command::~Command()
