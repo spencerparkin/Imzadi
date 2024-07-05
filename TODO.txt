@@ -8,7 +8,7 @@ TODO:
 [x] Get character animation working (even if it's mediocre like everything else.)
 [x] Refactor entire repository into a game engine and game app.  Rename the repo "GameEngine" or something like that.
 [x] Refine the asset tools/pipeline, because it's a bit of a mess.  Can we actually get a rigged/animated character flowing into the engine?  Look at the AssImp library.
-[ ] Port engine to DX12.  (I started to do this, then decided it wasn't a good idea.  It's too much work.)
+[-] Port engine to DX12.  (I started to do this, then decided it wasn't a good idea.  It's too much work.)
 [ ] Add audio support with direct sound or XAudio2?  Can we do spatial-awareness/3D sounds?
 [ ] The run animation should be sped-up/slowed-down based on the character's velocity.
 [ ] Add another character, but this time an NPC that you can interact with.  May need to refactor some code for this.  Can we do path-following?
@@ -21,3 +21,6 @@ TODO:
 [ ] Landing with too much velocity should kill you.  Need to add fatal-fall-death animation.
 [ ] Lots of bugs with regards to trying to stand and run and jump on a moving platform.  Maybe we need to track the player's reference frame and all physics are relative to that reference frame.  Of course, the reference frame can be moving.
 [ ] Looks like I broke something when I added non-identity object-to-world transforms for collision shape sets.
+[ ] Add autonomous borg drones that can rome around and use collision queries to keep from going over the edge.  If they see you, they come after you.  If they touch you, do die.
+[ ] Add an inventory.  You'll need it to collect the chalice and horgones and whatever else.  Maybe some teleports or doors need keys.
+[ ] Cull render objects against the view frustum.
