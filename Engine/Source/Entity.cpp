@@ -15,7 +15,7 @@ Entity::Entity()
 	return true;
 }
 
-/*virtual*/ bool Entity::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool Entity::Shutdown()
 {
 	return true;
 }

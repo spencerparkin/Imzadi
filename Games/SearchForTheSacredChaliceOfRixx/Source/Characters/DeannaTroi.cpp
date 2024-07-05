@@ -32,9 +32,9 @@ DeannaTroi::DeannaTroi()
 	return true;
 }
 
-/*virtual*/ bool DeannaTroi::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool DeannaTroi::Shutdown()
 {
-	Biped::Shutdown(gameShuttingDown);
+	Biped::Shutdown();
 
 	Imzadi::Game::Get()->PopControllerUser();
 

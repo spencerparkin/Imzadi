@@ -394,10 +394,23 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 		{
 			IMZADI_LOG_INFO("Processing mesh %d of %d.", i + 1, node->mNumMeshes);
 			const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-			if (!this->ProcessMesh(scene, node, mesh))
+
+			std::string meshName(mesh->mName.C_Str());
+			if (meshName.find("TriggerBox") == 0)
 			{
-				IMZADI_LOG_ERROR("Mesh processing failed!");
-				return false;
+				if (!this->ProcessTriggerBox(scene, node, mesh))
+				{
+					IMZADI_LOG_ERROR("Trigger-box processing failed!");
+					return false;
+				}
+			}
+			else
+			{
+				if (!this->ProcessMesh(scene, node, mesh))
+				{
+					IMZADI_LOG_ERROR("Mesh processing failed!");
+					return false;
+				}
 			}
 		}
 	}
@@ -408,6 +421,57 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 		if (!this->ProcessSceneGraph(scene, childNode))
 			return false;
 	}
+
+	return true;
+}
+
+bool Converter::ProcessTriggerBox(const aiScene* scene, const aiNode* node, const aiMesh* mesh)
+{
+	Imzadi::Transform nodeToWorld;
+	if (!this->GetNodeToWorldTransform(node, nodeToWorld))
+	{
+		IMZADI_LOG_ERROR("Error: Failed to get node-to-world transform for mesh node.");
+		return false;
+	}
+
+	Imzadi::AxisAlignedBoundingBox boundingBox;
+	
+	boundingBox.MakeReadyForExpansion();
+
+	for (int i = 0; i < mesh->mNumVertices; i++)
+	{
+		Imzadi::Vector3 position;
+		this->MakeVector(position, mesh->mVertices[i]);
+		position = nodeToWorld.TransformPoint(position);
+		boundingBox.Expand(position);
+	}
+
+	std::string meshName(mesh->mName.C_Str());
+	size_t i = meshName.find('_');
+	if (i == std::string::npos)
+	{
+		IMZADI_LOG_ERROR("Mesh name \"%s\" has no underscore in it.  Everything right of the underscore is used to name the trigger-box.  Left of the underscore should be \"TriggerBox\".", meshName.c_str());
+		return false;
+	}
+
+	std::string triggerBoxName = meshName.substr(i + 1, std::string::npos);
+
+	wxFileName triggerBoxFileName;
+	triggerBoxFileName.SetPath(this->assetFolder);
+	triggerBoxFileName.SetName(triggerBoxName);
+	triggerBoxFileName.SetExt("trigger_box");
+
+	rapidjson::Document triggerBoxDoc;
+	triggerBoxDoc.SetObject();
+
+	rapidjson::Value triggerBoxValue;
+	Imzadi::Asset::SaveBoundingBox(triggerBoxValue, boundingBox, &triggerBoxDoc);
+
+	triggerBoxDoc.AddMember("box", triggerBoxValue, triggerBoxDoc.GetAllocator());
+	triggerBoxDoc.AddMember("name", rapidjson::Value().SetString(triggerBoxName.c_str(), triggerBoxDoc.GetAllocator()), triggerBoxDoc.GetAllocator());
+
+	if (!JsonUtils::WriteJsonFile(triggerBoxDoc, triggerBoxFileName.GetFullPath()))
+		return false;
 
 	return true;
 }
@@ -480,8 +544,7 @@ bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiM
 	rapidjson::Value vertexBufferValue;
 	vertexBufferValue.SetArray();
 
-	this->MakeVector(boundingBox.minCorner, mesh->mVertices[0]);
-	boundingBox.maxCorner = boundingBox.minCorner;
+	boundingBox.MakeReadyForExpansion();
 
 	for (int i = 0; i < mesh->mNumVertices; i++)
 	{

@@ -100,6 +100,17 @@ void AxisAlignedBoundingBox::Scale(double scaleX, double scaleY, double scaleZ)
 	this->maxCorner = center + vector;
 }
 
+void AxisAlignedBoundingBox::MakeReadyForExpansion()
+{
+	this->minCorner.x = std::numeric_limits<double>::max();
+	this->minCorner.y = std::numeric_limits<double>::max();
+	this->minCorner.z = std::numeric_limits<double>::max();
+
+	this->maxCorner.x = -std::numeric_limits<double>::max();
+	this->maxCorner.y = -std::numeric_limits<double>::max();
+	this->maxCorner.z = -std::numeric_limits<double>::max();
+}
+
 void AxisAlignedBoundingBox::Expand(const Vector3& point)
 {
 	if (this->minCorner.x > point.x)

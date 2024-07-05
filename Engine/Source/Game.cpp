@@ -548,7 +548,7 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 		if (!entity->Tick(tickPass, this->deltaTimeSeconds))
 		{
-			entity->Shutdown(false);
+			entity->Shutdown();
 			this->tickingEntityList.erase(iter);
 		}
 
@@ -724,7 +724,7 @@ std::string Game::PopControllerUser()
 	{
 		std::list<Reference<Entity>>::iterator iter = this->tickingEntityList.begin();
 		Entity* entity = *iter;
-		entity->Shutdown(true);
+		entity->Shutdown();
 		this->tickingEntityList.erase(iter);
 	}
 

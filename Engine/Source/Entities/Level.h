@@ -16,15 +16,14 @@ namespace Imzadi
 		virtual ~Level();
 
 		/**
-		 * Load the here and all enemies into the level.
+		 * Spawn entities and populate the scene and collision world.
 		 */
 		virtual bool Setup() override;
 
 		/**
-		 * Clean-up the level and then spawn the next one, if any.
-		 * If there is no next-level, then you win!!
+		 * Wipe the scene and collision world.
 		 */
-		virtual bool Shutdown(bool gameShuttingDown) override;
+		virtual bool Shutdown() override;
 
 		/**
 		 * This is where we might, for example, animate a platform moving

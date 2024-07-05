@@ -26,7 +26,7 @@ namespace Imzadi
 		/**
 		 * Clean-up.
 		 */
-		virtual bool Shutdown(bool gameShuttingDown) override;
+		virtual bool Shutdown() override;
 
 		/**
 		 * Animate the platform's movement.

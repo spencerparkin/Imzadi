@@ -22,8 +22,10 @@ FreeCam::FreeCam()
 	return true;
 }
 
-/*virtual*/ bool FreeCam::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool FreeCam::Shutdown()
 {
+	Entity::Shutdown();
+
 	return true;
 }
 

@@ -52,9 +52,9 @@ Biped::Biped()
 	return true;
 }
 
-/*virtual*/ bool Biped::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool Biped::Shutdown()
 {
-	PhysicsEntity::Shutdown(gameShuttingDown);
+	PhysicsEntity::Shutdown();
 
 	return true;
 }

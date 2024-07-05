@@ -32,6 +32,8 @@ set(GAME_ENGINE_SOURCES
     Source/Entities/MovingPlatform.h
     Source/Entities/PhysicsEntity.cpp
     Source/Entities/PhysicsEntity.h
+    Source/Entities/TriggerBox.cpp
+    Source/Entities/TriggerBox.h
     Source/Collision/System.cpp
     Source/Collision/System.h
     Source/Collision/Thread.cpp
@@ -142,6 +144,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/CubeTexture.h
     Source/Assets/SkyDome.cpp
     Source/Assets/SkyDome.h
+    Source/Assets/TriggerBoxData.cpp
+    Source/Assets/TriggerBoxData.h
 )
     
 source_group("Source" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_ENGINE_SOURCES})

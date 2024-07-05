@@ -46,21 +46,21 @@ LevelData::LevelData()
 	this->playerStartPosition.SetComponents(0.0, 0.0, 0.0);
 	if (jsonDoc.HasMember("player_start_location") && !this->LoadVector(jsonDoc["player_start_location"], this->playerStartPosition))
 	{
-		IMZADI_LOG_ERROR("No \"player_start_location\" member found or it did not load properly as a vector.");
+		IMZADI_LOG_ERROR("The \"player_start_location\" member did not load.");
 		return false;
 	}
 
 	this->playerStartOrientation.SetIdentity();
 	if (jsonDoc.HasMember("player_start_orientation") && !this->LoadEulerAngles(jsonDoc["player_start_orientation"], this->playerStartOrientation))
 	{
-		IMZADI_LOG_ERROR("No \"player_start_orientation\" member found or it did notload properly as an orientation.");
+		IMZADI_LOG_ERROR("The \"player_start_orientation\" member did not load.");
 		return false;
 	}
 
 	this->movingPlatformFilesArray.clear();
 	if (jsonDoc.HasMember("moving_platforms") && !this->LoadStringArray(jsonDoc["moving_platforms"], this->movingPlatformFilesArray))
 	{
-		IMZADI_LOG_ERROR("No \"moving_platforms\" member found or it did not load properly.");
+		IMZADI_LOG_ERROR("The \"moving_platforms\" member did not load.");
 		return false;
 	}
 
@@ -70,6 +70,13 @@ LevelData::LevelData()
 	if (jsonDoc.HasMember("cube_texture") && jsonDoc["cube_texture"].IsString())
 		this->cubeTextureFile = jsonDoc["cube_texture"].GetString();
 
+	this->triggerBoxFilesArray.clear();
+	if (jsonDoc.HasMember("trigger_boxes") && !this->LoadStringArray(jsonDoc["trigger_boxes"], this->triggerBoxFilesArray))
+	{
+		IMZADI_LOG_ERROR("The \"trigger_boxes\" member did not load.");
+		return false;
+	}
+
 	return true;
 }
 
@@ -78,6 +85,7 @@ LevelData::LevelData()
 	this->modelFilesArray.clear();
 	this->collisionFilesArray.clear();
 	this->movingPlatformFilesArray.clear();
+	this->triggerBoxFilesArray.clear();
 
 	return true;
 }

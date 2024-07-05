@@ -27,6 +27,7 @@ namespace Imzadi
 		const std::vector<std::string>& GetModelFilesArray() { return this->modelFilesArray; }
 		const std::vector<std::string>& GetCollisionFilesArray() { return this->collisionFilesArray; }
 		const std::vector<std::string>& GetMovingPlatformFilesArray() { return this->movingPlatformFilesArray; }
+		const std::vector<std::string>& GetTriggerBoxFilesArray() { return this->triggerBoxFilesArray; }
 		const std::string& GetSkyDomeFile() { return this->skyDomeFile; }
 		const std::string& GetCubeTextureFile() { return this->cubeTextureFile; }
 		const Vector3& GetPlayerStartPosition() { return this->playerStartPosition; }
@@ -36,6 +37,7 @@ namespace Imzadi
 		std::vector<std::string> modelFilesArray;
 		std::vector<std::string> collisionFilesArray;
 		std::vector<std::string> movingPlatformFilesArray;
+		std::vector<std::string> triggerBoxFilesArray;
 		std::string skyDomeFile;
 		std::string cubeTextureFile;
 		Vector3 playerStartPosition;

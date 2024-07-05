@@ -21,7 +21,7 @@ namespace Imzadi
 		virtual ~Biped();
 
 		virtual bool Setup() override;
-		virtual bool Shutdown(bool gameShuttingDown) override;
+		virtual bool Shutdown() override;
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
 		virtual bool GetTransform(Transform& transform) override;
 		virtual void Reset() override;

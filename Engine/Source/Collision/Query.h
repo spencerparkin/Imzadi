@@ -184,6 +184,13 @@ namespace Imzadi
 		 * Create an instance of the CollisionQuery class.
 		 */
 		static CollisionQuery* Create();
+
+		// TODO: Maybe add flag here indicating that the caller doesn't care about
+		//       any calculations of how to resolve the collision; they just want
+		//       to know if a collision is occurring.  The query code doesn't have
+		//       to obey this flag if everything it has to do already to determine
+		//       a collision produced all the info anyway.  But there are cases where
+		//       we can know if things are colliding without going further.
 	};
 
 	/**

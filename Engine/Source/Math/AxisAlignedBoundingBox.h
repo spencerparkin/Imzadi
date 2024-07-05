@@ -82,6 +82,12 @@ namespace Imzadi
 		bool Intersect(const AxisAlignedBoundingBox& aabbA, const AxisAlignedBoundingBox& aabbB);
 
 		/**
+		 * Set this box to an invalid box, but one that is ready to be expanded
+		 * using repeated calls to the @ref Expand method.
+		 */
+		void MakeReadyForExpansion();
+
+		/**
 		 * Minimally expand this AABB so that it includes the given point.
 		 * 
 		 * @param[in] point This is the point to include in this box.

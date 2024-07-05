@@ -12,7 +12,7 @@ namespace Imzadi
 		virtual ~FreeCam();
 
 		virtual bool Setup() override;
-		virtual bool Shutdown(bool gameShuttingDown) override;
+		virtual bool Shutdown() override;
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
 
 		void SetCamera(Camera* camera);

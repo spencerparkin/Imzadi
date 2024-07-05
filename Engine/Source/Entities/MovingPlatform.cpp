@@ -71,7 +71,7 @@ MovingPlatform::MovingPlatform()
 	return true;
 }
 
-/*virtual*/ bool MovingPlatform::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool MovingPlatform::Shutdown()
 {
 	this->collisionShapeArray.clear();
 

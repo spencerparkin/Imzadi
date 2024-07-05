@@ -52,6 +52,7 @@ private:
 	bool GenerateNodeToWorldMap(const aiNode* node);
 	bool ProcessSceneGraph(const aiScene* scene, const aiNode* node);
 	bool ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh);
+	bool ProcessTriggerBox(const aiScene* scene, const aiNode* node, const aiMesh* mesh);
 	bool GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh);
 	bool GenerateSkeleton(Imzadi::Bone* bone, const aiNode* boneNode, const std::unordered_set<const aiNode*>& boneSet);
 	bool GenerateSkinWeights(Imzadi::SkinWeights& skinWeights, const aiMesh* mesh);

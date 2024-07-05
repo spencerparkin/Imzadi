@@ -34,7 +34,7 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 	this->assetCache->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");		// TODO: Need to not hard-code a path here.
 
 	auto level = this->SpawnEntity<GameLevel>();
-	level->SetLevelNumber(3);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
+	level->SetLevelNumber(1);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
 
 	return true;
 }

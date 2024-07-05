@@ -38,8 +38,10 @@ FollowCam::FollowCam()
 	return true;
 }
 
-/*virtual*/ bool FollowCam::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool FollowCam::Shutdown()
 {
+	Entity::Shutdown();
+
 	return true;
 }
 

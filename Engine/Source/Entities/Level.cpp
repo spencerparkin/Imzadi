@@ -9,6 +9,8 @@
 #include "Assets/LevelData.h"
 #include "RenderObjects/SkyDomeRenderObject.h"
 #include "MovingPlatform.h"
+#include "TriggerBox.h"
+#include "Log.h"
 #include <format>
 
 using namespace Imzadi;
@@ -108,14 +110,34 @@ Level::Level()
 
 	for (const std::string& movingPlatformFile : levelData->GetMovingPlatformFilesArray())
 	{
-		MovingPlatform* movingPlatform = Game::Get()->SpawnEntity<MovingPlatform>();
+		auto movingPlatform = Game::Get()->SpawnEntity<MovingPlatform>();
 		movingPlatform->SetMovingPlatformFile(movingPlatformFile);
+	}
+
+	for (const std::string& triggerBoxFile : levelData->GetTriggerBoxFilesArray())
+	{
+		if (!Game::Get()->GetAssetCache()->LoadAsset(triggerBoxFile, asset))
+		{
+			IMZADI_LOG_ERROR("Failed to load trigger box file: %s", triggerBoxFile.c_str());
+			return false;
+		}
+
+		Reference<TriggerBoxData> triggerBoxData;
+		triggerBoxData.SafeSet(asset.Get());
+		if (!triggerBoxData)
+		{
+			IMZADI_LOG_ERROR("Whatever loaded for the trigger box data wasn't trigger box data.");
+			return false;
+		}
+
+		auto triggerBox = Game::Get()->SpawnEntity<TriggerBox>();
+		triggerBox->SetData(triggerBoxData);
 	}
 
 	return true;
 }
 
-/*virtual*/ bool Level::Shutdown(bool gameShuttingDown)
+/*virtual*/ bool Level::Shutdown()
 {
 	Game::Get()->GetCollisionSystem()->Clear();
 	Game::Get()->GetCollisionSystem()->Shutdown();

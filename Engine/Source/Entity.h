@@ -24,10 +24,8 @@ namespace Imzadi
 		/**
 		 * This entity is going away.  Do any necessary clean-up.
 		 * Here the entity might remove a render object from the scene.
-		 *
-		 * @param[in] gameShuttingDown We're shutting the whole game down, not just this entity.
 		 */
-		virtual bool Shutdown(bool gameShuttingDown);
+		virtual bool Shutdown();
 
 		/**
 		 * Animate and/or simulate this entity.
@@ -44,5 +42,11 @@ namespace Imzadi
 		 * just returns false.
 		 */
 		virtual bool GetTransform(Imzadi::Transform& transform);
+
+		void SetName(const std::string& name) { this->name = name; }
+		const std::string& GetName() const { return this->name; }
+
+	protected:
+		std::string name;
 	};
 }
