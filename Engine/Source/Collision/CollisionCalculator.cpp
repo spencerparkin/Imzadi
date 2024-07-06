@@ -158,6 +158,13 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 
 		collisionStatus->separationDelta = box->GetObjectToWorldTransform().TransformVector(collisionStatus->separationDelta);
 	}
+	else if (box->ContainsPoint(sphereCenter))
+	{
+		// TODO: Oops!  The sphere could be inside the box!  At this point, we still
+		//       have all the information we need for this case.  Write code here to
+		//       handle this case.
+		IMZADI_ASSERT(false);
+	}
 
 	return collisionStatus;
 }
@@ -479,6 +486,55 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 /*virtual*/ ShapePairCollisionStatus* CollisionCalculator<PolygonShape, CapsuleShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
 {
 	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<CapsuleShape, PolygonShape>().Calculate(shapeB, shapeA);
+	if (collisionStatus)
+		collisionStatus->FlipContext();
+	return collisionStatus;
+}
+
+//------------------------------ CollisionCalculator<BoxShape, CapsuleShape> ------------------------------
+
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<BoxShape, CapsuleShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	auto box = dynamic_cast<const BoxShape*>(shapeA);
+	auto capsule = dynamic_cast<const CapsuleShape*>(shapeB);
+
+	if (!box || !capsule)
+		return nullptr;
+
+	auto collisionStatus = new ShapePairCollisionStatus(shapeA, shapeB);
+
+	Transform worldToBox = box->GetWorldToObjectTransform();
+	Transform capsuleToWorld = capsule->GetObjectToWorldTransform();
+	Transform capsuleToBox = worldToBox * capsuleToWorld;
+
+	LineSegment spine = capsuleToBox.TransformLineSegment(capsule->GetSpine());
+
+	AxisAlignedBoundingBox aabb;
+	box->GetAxisAlignedBox(aabb);
+
+	LineSegment connector;
+	connector.SetAsShortestConnector(spine, aabb);
+
+	double distance = connector.Length();
+	double radius = capsule->GetRadius();
+	if (distance < radius)
+	{
+		// TODO: Write this.
+	}
+	else if (box->ContainsPoint(spine.point[0]) || box->ContainsPoint(spine.point[1]))
+	{
+		// TODO: Write this.
+		IMZADI_ASSERT(false);
+	}
+
+	return collisionStatus;
+}
+
+//------------------------------ CollisionCalculator<CapsuleShape, BoxShape> ------------------------------
+
+/*virtual*/ ShapePairCollisionStatus* CollisionCalculator<CapsuleShape, BoxShape>::Calculate(const Shape* shapeA, const Shape* shapeB)
+{
+	ShapePairCollisionStatus* collisionStatus = CollisionCalculator<BoxShape, CapsuleShape>().Calculate(shapeB, shapeA);
 	if (collisionStatus)
 		collisionStatus->FlipContext();
 	return collisionStatus;

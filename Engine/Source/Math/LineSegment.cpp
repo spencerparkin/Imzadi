@@ -2,6 +2,9 @@
 #include "Plane.h"
 #include "Matrix2x2.h"
 #include "Vector2.h"
+#include "AxisAlignedBoundingBox.h"
+#include "Plane.h"
+#include "Ray.h"
 
 using namespace Imzadi;
 
@@ -122,6 +125,90 @@ bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const 
 	this->point[1] = lineSegmentB.Lerp(beta);
 
 	return true;
+}
+
+bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegment, const AxisAlignedBoundingBox& box)
+{
+	std::vector<LineSegment> edgeSegmentArray;
+	box.GetEdgeSegments(edgeSegmentArray);
+
+	std::vector<LineSegment> connectorArray;
+	for (const auto& edgeSegment : edgeSegmentArray)
+	{
+		LineSegment connector;
+		if (connector.SetAsShortestConnector(lineSegment, edgeSegment))
+			connectorArray.push_back(connector);
+	}
+
+	static double epsilon = 1e-4;
+	std::vector<Plane> sidePlaneArray;
+	box.GetSidePlanes(sidePlaneArray);
+	for (const auto& sidePlane : sidePlaneArray)
+	{
+		LineSegment connector;
+		if (connector.SetAsShortestConnector(lineSegment, sidePlane))
+		{
+			if (box.ContainsPoint(connector.point[1], epsilon))
+				connectorArray.push_back(connector);
+		}
+		else
+		{
+			connector.point[0] = lineSegment.point[0];
+			connector.point[1] = sidePlane.ClosestPointTo(lineSegment.point[0]);
+			if (box.ContainsPoint(connector.point[1], epsilon))
+				connectorArray.push_back(connector);
+
+			connector.point[0] = lineSegment.point[1];
+			connector.point[1] = sidePlane.ClosestPointTo(lineSegment.point[1]);
+			if (box.ContainsPoint(connector.point[1], epsilon))
+				connectorArray.push_back(connector);
+		}
+	}
+
+	double minDistance = std::numeric_limits<double>::max();
+	for (const auto& connector : connectorArray)
+	{
+		double length = connector.Length();
+		if (length < minDistance)
+		{
+			minDistance = length;
+			*this = connector;
+		}
+	}
+
+	return true;
+}
+
+bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegment, const Plane& plane)
+{
+	double distanceA = plane.SignedDistanceTo(lineSegment.point[0]);
+	double distanceB = plane.SignedDistanceTo(lineSegment.point[1]);
+
+	if (IMZADI_SIGN(distanceA) != IMZADI_SIGN(distanceB))
+	{
+		double length = lineSegment.Length();
+		Ray ray(lineSegment.point[0], lineSegment.GetDelta() / length);
+		double alpha = ray.CastAgainst(plane);
+		IMZADI_ASSERT(0.0 <= alpha && alpha <= length);
+		this->point[0] = ray.CalculatePoint(alpha);
+		this->point[1] = lineSegment.point[1];
+		return true;
+	}
+
+	if (::fabs(distanceA) < ::fabs(distanceB))
+	{
+		this->point[0] = lineSegment.point[0];
+		this->point[1] = lineSegment.point[0] - distanceA * plane.unitNormal;
+		return true;
+	}
+	else if (::fabs(distanceA) > ::fabs(distanceB))
+	{
+		this->point[0] = lineSegment.point[1];
+		this->point[1] = lineSegment.point[1] - distanceB * plane.unitNormal;
+		return true;
+	}
+
+	return false;
 }
 
 Vector3 LineSegment::GetDelta() const

@@ -1,4 +1,5 @@
 #include "Plane.h"
+#include "LineSegment.h"
 
 using namespace Imzadi;
 
@@ -81,6 +82,25 @@ Vector3 Plane::ClosestPointTo(const Vector3& point) const
 {
 	double distance = this->SignedDistanceTo(point);
 	return point - distance * this->unitNormal;
+}
+
+bool Plane::ClosestPointTo(const LineSegment& lineSegment, Vector3& planePoint) const
+{
+	LineSegment connector;
+	if (!connector.SetAsShortestConnector(lineSegment, *this))
+		return false;
+
+	planePoint = lineSegment.point[1];
+	return true;
+}
+
+double Plane::ShortestDistanceTo(const LineSegment& lineSegment) const
+{
+	LineSegment connector;
+	if (!connector.SetAsShortestConnector(lineSegment, *this))
+		return ::fabs(this->SignedDistanceTo(lineSegment.point[0]));
+
+	return connector.Length();
 }
 
 void Plane::Dump(std::ostream& stream) const

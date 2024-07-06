@@ -5,6 +5,7 @@
 namespace Imzadi
 {
 	class Plane;
+	class AxisAlignedBoundingBox;
 
 	/**
 	 * These are simply pairs of points, and we imagine a line connecting them.
@@ -70,6 +71,29 @@ namespace Imzadi
 		 * @return True is returned on success; false, otherwise, and this line segment is left undefined.
 		 */
 		bool SetAsShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB);
+
+		/**
+		 * Set this line segment as the shortest line segment connecting the given line segment
+		 * and the given axis-aligned box.  Note that we can fail here in cases where there is no
+		 * single shortest connector.  Note that we can return a degenerate line segment here in
+		 * the case that the given line segment intersects the given plane.
+		 * 
+		 * @param[in] lineSegment The first point of this line segment will be on this given line segment.
+		 * @param[in] box The second point of this line segment will be on this given box.
+		 * @return True is returend on success; false, otherwise, and this line segment is left undefined.
+		 */
+		bool SetAsShortestConnector(const LineSegment& lineSegment, const AxisAlignedBoundingBox& box);
+
+		/**
+		 * Set this line segment as the shortest line segment connecting the given line segment
+		 * and the given plane.  Note that we can fail here in cases where there is no single
+		 * shortest connector.
+		 * 
+		 * @param[in] lineSegment The first point of this line segment will be on this given line segment.
+		 * @param[in] plane The second point of this line segment will be on this given plane.
+		 * @return True is returend on success; false, otherwise, and this line segment is left undefined.
+		 */
+		bool SetAsShortestConnector(const LineSegment& lineSegment, const Plane& plane);
 
 		/**
 		 * Return the difference between the vertices of this line segment.

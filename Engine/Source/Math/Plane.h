@@ -6,6 +6,7 @@
 namespace Imzadi
 {
 	class Vector3;
+	class LineSegment;
 
 	/**
 	 * These are planes of infinite extent in 3D space and non necessarily containing the origin.
@@ -103,8 +104,26 @@ namespace Imzadi
 		/**
 		 * Calculate and return the point on this plane that is closest
 		 * to the given point.
+		 * 
+		 * @param[in] point This plane is compared agaisnt this given point.
+		 * @return The point on this plane closest to the given point is returned.
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
+
+		/**
+		 * Calculate and return the point on this plane that is closest
+		 * to the given point.
+		 * 
+		 * @param[in] lineSegment This plane is compared against this given line segment.
+		 * @param[out] planePoint Our result is put into this variable.
+		 * @return True is returned on success; false, otherwise.  We can fail if the line-segment is parallel to the plane.
+		 */
+		bool ClosestPointTo(const LineSegment& lineSegment, Vector3& planePoint) const;
+
+		/**
+		 * Calculate and return the shortest distance from this plane to the given line segment.
+		 */
+		double ShortestDistanceTo(const LineSegment& lineSegment) const;
 
 		/**
 		 * Write this plane to the given stream in binary form.

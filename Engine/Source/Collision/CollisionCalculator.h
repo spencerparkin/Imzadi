@@ -195,4 +195,24 @@ namespace Imzadi
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
 	};
+
+	/**
+	 * Calculate the collision status between a box and a capsule.
+	 */
+	template<>
+	class IMZADI_API CollisionCalculator<BoxShape, CapsuleShape> : public CollisionCalculatorInterface
+	{
+	public:
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
+
+	/**
+	 * Calculate the collision status between a capsule and a box.
+	 */
+	template<>
+	class IMZADI_API CollisionCalculator<CapsuleShape, BoxShape> : public CollisionCalculatorInterface
+	{
+	public:
+		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+	};
 }
