@@ -137,7 +137,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 
 	Vector3 delta = sphereCenter - closestBoxPoint;
 	double distance = delta.Length();
-	if (distance < sphere->GetRadius())
+	if (distance < sphere->GetRadius() || box->ContainsPoint(sphereCenter))
 	{
 		collisionStatus->inCollision = true;
 		collisionStatus->collisionCenter = Vector3(0.0, 0.0, 0.0);	// TODO: Figure this out.
@@ -145,7 +145,17 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 		double boxBorderThickness = 1e-4;
 		if (distance < boxBorderThickness)
 		{
-			collisionStatus->separationDelta = closestBoxPoint.Normalized() * sphere->GetRadius();
+			Vector3 unitDirection = closestBoxPoint.Normalized();
+			double angleX = unitDirection.AngleBetween(Vector3(1.0, 0.0, 0.0));
+			double angleY = unitDirection.AngleBetween(Vector3(0.0, 1.0, 0.0));
+			double angleZ = unitDirection.AngleBetween(Vector3(0.0, 0.0, 1.0));
+
+			if (angleX < angleY && angleX < angleZ)
+				collisionStatus->separationDelta = Vector3(sphere->GetRadius(), 0.0, 0.0);
+			else if(angleY < angleX && angleY < angleZ)
+				collisionStatus->separationDelta = Vector3(0.0, sphere->GetRadius(), 0.0);
+			else
+				collisionStatus->separationDelta = Vector3(0.0, 0.0, sphere->GetRadius());
 		}
 		else if (objectSpaceBox.ContainsPoint(sphereCenter))
 		{
@@ -157,13 +167,6 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 		}
 
 		collisionStatus->separationDelta = box->GetObjectToWorldTransform().TransformVector(collisionStatus->separationDelta);
-	}
-	else if (box->ContainsPoint(sphereCenter))
-	{
-		// TODO: Oops!  The sphere could be inside the box!  At this point, we still
-		//       have all the information we need for this case.  Write code here to
-		//       handle this case.
-		IMZADI_ASSERT(false);
 	}
 
 	return collisionStatus;
@@ -512,20 +515,7 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 	AxisAlignedBoundingBox aabb;
 	box->GetAxisAlignedBox(aabb);
 
-	LineSegment connector;
-	connector.SetAsShortestConnector(spine, aabb);
-
-	double distance = connector.Length();
-	double radius = capsule->GetRadius();
-	if (distance < radius)
-	{
-		// TODO: Write this.
-	}
-	else if (box->ContainsPoint(spine.point[0]) || box->ContainsPoint(spine.point[1]))
-	{
-		// TODO: Write this.
-		IMZADI_ASSERT(false);
-	}
+	
 
 	return collisionStatus;
 }
