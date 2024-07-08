@@ -93,7 +93,7 @@ namespace Imzadi
 		 * Of course, no drawing code is supported by the collision system.
 		 * It's up to the caller to render the data.
 		 */
-		const std::vector<RenderLine>& GetRenderLineArray() const { return *this->renderLineArray; }
+		const std::vector<RenderLine>& GetRenderLineArray() const { return this->renderLineArray; }
 
 		/**
 		 * Add a line to be rendered to the debug render result.
@@ -115,7 +115,7 @@ namespace Imzadi
 		static DebugRenderResult* Create();
 
 	private:
-		std::vector<RenderLine>* renderLineArray;
+		std::vector<RenderLine> renderLineArray;
 	};
 
 	/**
@@ -203,7 +203,7 @@ namespace Imzadi
 		 * Each pair will be a valid collision pair between two shapes, one of
 		 * which is the shape specified in the original collision query.
 		 */
-		const std::vector<Reference<ShapePairCollisionStatus>>& GetCollisionStatusArray() const { return *this->collisionStatusArray; }
+		const std::vector<Reference<ShapePairCollisionStatus>>& GetCollisionStatusArray() const { return this->collisionStatusArray; }
 
 		/**
 		 * This is used internally to set the ID of the shape in question.
@@ -241,7 +241,7 @@ namespace Imzadi
 		Vector3 GetAverageSeparationDelta(ShapeID shapeID) const;
 
 	private:
-		std::vector<Reference<ShapePairCollisionStatus>>* collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
+		std::vector<Reference<ShapePairCollisionStatus>> collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
 		ShapeID shapeID;			///< For convenience, this holds the ID of the shape in question that was the subject of the collision query.
 		Transform objectToWorld;	///< For convenience, this is the object-to-world transform of the shape in question at the time of query.
 	};

@@ -39,17 +39,15 @@ BoolResult::BoolResult()
 
 DebugRenderResult::DebugRenderResult()
 {
-	this->renderLineArray = new std::vector<RenderLine>();
 }
 
 /*virtual*/ DebugRenderResult::~DebugRenderResult()
 {
-	delete this->renderLineArray;
 }
 
 void DebugRenderResult::AddRenderLine(const RenderLine& renderLine)
 {
-	this->renderLineArray->push_back(renderLine);
+	this->renderLineArray.push_back(renderLine);
 }
 
 /*static*/ DebugRenderResult* DebugRenderResult::Create()
@@ -146,13 +144,11 @@ ObjectToWorldResult::ObjectToWorldResult()
 
 CollisionQueryResult::CollisionQueryResult()
 {
-	this->collisionStatusArray = new std::vector<Reference<ShapePairCollisionStatus>>();
 	this->shapeID = 0;
 }
 
 /*virtual*/ CollisionQueryResult::~CollisionQueryResult()
 {
-	delete this->collisionStatusArray;
 }
 
 /*static*/ CollisionQueryResult* CollisionQueryResult::Create()
@@ -162,7 +158,7 @@ CollisionQueryResult::CollisionQueryResult()
 
 void CollisionQueryResult::AddCollisionStatus(ShapePairCollisionStatus* collisionStatus)
 {
-	this->collisionStatusArray->push_back(collisionStatus);
+	this->collisionStatusArray.push_back(collisionStatus);
 }
 
 const ShapePairCollisionStatus* CollisionQueryResult::GetMostEgregiousCollision() const
@@ -170,7 +166,7 @@ const ShapePairCollisionStatus* CollisionQueryResult::GetMostEgregiousCollision(
 	double largestLength = 0.0;
 	const ShapePairCollisionStatus* foundStatus = nullptr;
 
-	for (auto collisionStatusPair : *this->collisionStatusArray)
+	for (auto collisionStatusPair : this->collisionStatusArray)
 	{
 		if (collisionStatusPair->AreInCollision())
 		{
@@ -191,7 +187,7 @@ Vector3 CollisionQueryResult::GetAverageSeparationDelta(ShapeID shapeID) const
 	Vector3 averageSeparationDelta(0.0, 0.0, 0.0);
 	double count = 0.0;
 
-	for (auto collisionStatusPair : *this->collisionStatusArray)
+	for (auto collisionStatusPair : this->collisionStatusArray)
 	{
 		if (collisionStatusPair->AreInCollision())
 		{
