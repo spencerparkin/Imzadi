@@ -8,11 +8,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2024
 		Month: 7
-		Day: 5
-		Hour: 15
-		Minute: 35
-		Second: 43
-		Millisecond: 198
+		Day: 8
+		Hour: 16
+		Minute: 34
+		Second: 16
+		Millisecond: 215
 	}
 	Creator: "FBX SDK/FBX Plugins version 2019.0"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -34,13 +34,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "3ds Max"
 			P: "Original|ApplicationVersion", "KString", "", "", "2019"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "05/07/2024 21:35:43.195"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "08/07/2024 22:34:16.213"
 			P: "Original|FileName", "KString", "", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Models\Level1\Level1.FBX"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "3ds Max"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2019"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "05/07/2024 21:35:43.195"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "08/07/2024 22:34:16.213"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "C:\Users\Spencer.Parkin\OneDrive - L3 Technologies, Inc\Documents\3dsMax"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Models\Level1\Level1.max"
 		}
@@ -77,7 +77,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 3107114106512, "", "Scene" {
+	Document: 2133138856336, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", ""
@@ -277,7 +277,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 3107577982160, "Geometry::", "Mesh" {
+	Geometry: 2132626873872, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -417,7 +417,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107577982704, "Geometry::", "Mesh" {
+	Geometry: 2132626871696, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -539,7 +539,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107577983792, "Geometry::", "Mesh" {
+	Geometry: 2132626874960, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -687,7 +687,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107577984880, "Geometry::", "Mesh" {
+	Geometry: 2132626874416, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -817,7 +817,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107577987600, "Geometry::", "Mesh" {
+	Geometry: 2132626870064, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -913,7 +913,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107577985968, "Geometry::", "Mesh" {
+	Geometry: 2132626873328, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1407,7 +1407,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107600269504, "Geometry::", "Mesh" {
+	Geometry: 2132626875504, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1901,7 +1901,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 3107600266784, "Geometry::", "Mesh" {
+	Geometry: 2132626876592, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1997,7 +1997,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 3107049099824, "Model::PartB", "Mesh" {
+	Model: 2133136906400, "Model::PartB", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2011,7 +2011,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197231488, "Model::PartC", "Mesh" {
+	Model: 2133136921744, "Model::PartC", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2025,7 +2025,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197255600, "Model::PartD", "Mesh" {
+	Model: 2133136893248, "Model::PartD", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2039,7 +2039,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197227104, "Model::PartA", "Mesh" {
+	Model: 2133136910784, "Model::PartA", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2053,7 +2053,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197238064, "Model::TriggerBox_JumpToLevel2", "Mesh" {
+	Model: 2133136895440, "Model::TriggerBox_JumpToLevel2", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2061,14 +2061,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",12.1690683364868,0.479740142822266,-120.526138305664
-			P: "Lcl Scaling", "Lcl Scaling", "", "A",1,1,0.556468
+			P: "Lcl Translation", "Lcl Translation", "", "A",12.1690683364868,0.195503234863281,-120.526138305664
+			P: "Lcl Scaling", "Lcl Scaling", "", "A",0.885619,0.831268,0.861327
 			P: "MaxHandle", "int", "Integer", "UH",6
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197246832, "Model::Tube001", "Mesh" {
+	Model: 2133136926128, "Model::Tube001", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2082,7 +2082,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197229296, "Model::Tube002", "Mesh" {
+	Model: 2133136897632, "Model::Tube002", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2096,7 +2096,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 3107197253408, "Model::TriggerBox_JumpToLevel3", "Mesh" {
+	Model: 2133136943664, "Model::TriggerBox_JumpToLevel3", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -2105,13 +2105,13 @@ Objects:  {
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
 			P: "Lcl Translation", "Lcl Translation", "", "A",-33.3498992919922,0.479740142822266,-120.526138305664
-			P: "Lcl Scaling", "Lcl Scaling", "", "A",1,1,0.556468
+			P: "Lcl Scaling", "Lcl Scaling", "", "A",0.666588,0.847969,1.013908
 			P: "MaxHandle", "int", "Integer", "UH",9
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 3107123272032, "Material::MatA", "" {
+	Material: 2133126910160, "Material::MatA", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2133,7 +2133,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123283552, "Material::MatB", "" {
+	Material: 2133126898160, "Material::MatB", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2155,7 +2155,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123277792, "Material::Material #16", "" {
+	Material: 2133126914480, "Material::Material #16", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2177,7 +2177,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123270112, "Material::Material #17", "" {
+	Material: 2133126889040, "Material::Material #17", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2199,7 +2199,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123289792, "Material::Material #18", "" {
+	Material: 2133126889520, "Material::Material #18", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2221,7 +2221,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123274912, "Material::Material #19", "" {
+	Material: 2133126914960, "Material::Material #19", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2243,7 +2243,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123278272, "Material::Material #20", "" {
+	Material: 2133126915440, "Material::Material #20", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2265,7 +2265,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123273952, "Material::Material #21", "" {
+	Material: 2133126915920, "Material::Material #21", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2287,7 +2287,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123289312, "Material::Material #15", "" {
+	Material: 2133126899120, "Material::Material #15", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2309,7 +2309,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 3107123265792, "Material::Material #27", "" {
+	Material: 2133126917360, "Material::Material #27", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -2331,7 +2331,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Video: 3107123270592, "Video::Map #2", "Clip" {
+	Video: 2133126893840, "Video::Map #2", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\AstroTurf.png"
@@ -2341,7 +2341,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\AstroTurf.png"
 		RelativeFilename: "..\..\Textures\AstroTurf.png"
 	}
-	Video: 3107123280192, "Video::Map #3", "Clip" {
+	Video: 2133126894320, "Video::Map #3", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Funky.png"
@@ -2351,7 +2351,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Funky.png"
 		RelativeFilename: "..\..\Textures\Funky.png"
 	}
-	Video: 3107123286912, "Video::Map #4", "Clip" {
+	Video: 2133126895280, "Video::Map #4", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Weirdo.png"
@@ -2361,7 +2361,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Weirdo.png"
 		RelativeFilename: "..\..\Textures\Weirdo.png"
 	}
-	Video: 3107123279232, "Video::Map #5", "Clip" {
+	Video: 2133126895760, "Video::Map #5", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Spiral.png"
@@ -2371,7 +2371,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Spiral.png"
 		RelativeFilename: "..\..\Textures\Spiral.png"
 	}
-	Texture: 3107123269632, "Texture::Map #2", "" {
+	Texture: 2133126913040, "Texture::Map #2", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #2"
@@ -2387,7 +2387,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 3107123262432, "Texture::Map #3", "" {
+	Texture: 2133126910640, "Texture::Map #3", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #3"
@@ -2403,7 +2403,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 3107123272512, "Texture::Map #4", "" {
+	Texture: 2133126916400, "Texture::Map #4", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #4"
@@ -2419,7 +2419,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 3107123262912, "Texture::Map #5", "" {
+	Texture: 2133126891920, "Texture::Map #5", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #5"
@@ -2443,110 +2443,110 @@ Objects:  {
 Connections:  {
 	
 	;Model::PartB, Model::RootNode
-	C: "OO",3107049099824,0
+	C: "OO",2133136906400,0
 	
 	;Model::PartC, Model::RootNode
-	C: "OO",3107197231488,0
+	C: "OO",2133136921744,0
 	
 	;Model::PartD, Model::RootNode
-	C: "OO",3107197255600,0
+	C: "OO",2133136893248,0
 	
 	;Model::PartA, Model::RootNode
-	C: "OO",3107197227104,0
+	C: "OO",2133136910784,0
 	
 	;Model::TriggerBox_JumpToLevel2, Model::RootNode
-	C: "OO",3107197238064,0
+	C: "OO",2133136895440,0
 	
 	;Model::Tube001, Model::RootNode
-	C: "OO",3107197246832,0
+	C: "OO",2133136926128,0
 	
 	;Model::Tube002, Model::RootNode
-	C: "OO",3107197229296,0
+	C: "OO",2133136897632,0
 	
 	;Model::TriggerBox_JumpToLevel3, Model::RootNode
-	C: "OO",3107197253408,0
+	C: "OO",2133136943664,0
 	
 	;Geometry::, Model::PartB
-	C: "OO",3107577982160,3107049099824
+	C: "OO",2132626873872,2133136906400
 	
 	;Material::MatA, Model::PartB
-	C: "OO",3107123272032,3107049099824
+	C: "OO",2133126910160,2133136906400
 	
 	;Geometry::, Model::PartC
-	C: "OO",3107577982704,3107197231488
+	C: "OO",2132626871696,2133136921744
 	
 	;Material::MatB, Model::PartC
-	C: "OO",3107123283552,3107197231488
+	C: "OO",2133126898160,2133136921744
 	
 	;Geometry::, Model::PartD
-	C: "OO",3107577983792,3107197255600
+	C: "OO",2132626874960,2133136893248
 	
 	;Material::MatA, Model::PartD
-	C: "OO",3107123272032,3107197255600
+	C: "OO",2133126910160,2133136893248
 	
 	;Geometry::, Model::PartA
-	C: "OO",3107577984880,3107197227104
+	C: "OO",2132626874416,2133136910784
 	
 	;Material::Material #16, Model::PartA
-	C: "OO",3107123277792,3107197227104
+	C: "OO",2133126914480,2133136910784
 	
 	;Material::Material #17, Model::PartA
-	C: "OO",3107123270112,3107197227104
+	C: "OO",2133126889040,2133136910784
 	
 	;Material::Material #18, Model::PartA
-	C: "OO",3107123289792,3107197227104
+	C: "OO",2133126889520,2133136910784
 	
 	;Material::Material #19, Model::PartA
-	C: "OO",3107123274912,3107197227104
+	C: "OO",2133126914960,2133136910784
 	
 	;Material::Material #20, Model::PartA
-	C: "OO",3107123278272,3107197227104
+	C: "OO",2133126915440,2133136910784
 	
 	;Material::Material #21, Model::PartA
-	C: "OO",3107123273952,3107197227104
+	C: "OO",2133126915920,2133136910784
 	
 	;Material::Material #15, Model::PartA
-	C: "OO",3107123289312,3107197227104
+	C: "OO",2133126899120,2133136910784
 	
 	;Geometry::, Model::TriggerBox_JumpToLevel2
-	C: "OO",3107577987600,3107197238064
+	C: "OO",2132626870064,2133136895440
 	
 	;Geometry::, Model::Tube001
-	C: "OO",3107577985968,3107197246832
+	C: "OO",2132626873328,2133136926128
 	
 	;Material::Material #27, Model::Tube001
-	C: "OO",3107123265792,3107197246832
+	C: "OO",2133126917360,2133136926128
 	
 	;Geometry::, Model::Tube002
-	C: "OO",3107600269504,3107197229296
+	C: "OO",2132626875504,2133136897632
 	
 	;Material::Material #27, Model::Tube002
-	C: "OO",3107123265792,3107197229296
+	C: "OO",2133126917360,2133136897632
 	
 	;Geometry::, Model::TriggerBox_JumpToLevel3
-	C: "OO",3107600266784,3107197253408
+	C: "OO",2132626876592,2133136943664
 	
 	;Texture::Map #2, Material::MatA
-	C: "OP",3107123269632,3107123272032, "DiffuseColor"
+	C: "OP",2133126913040,2133126910160, "DiffuseColor"
 	
 	;Video::Map #2, Texture::Map #2
-	C: "OO",3107123270592,3107123269632
+	C: "OO",2133126893840,2133126913040
 	
 	;Texture::Map #3, Material::MatB
-	C: "OP",3107123262432,3107123283552, "DiffuseColor"
+	C: "OP",2133126910640,2133126898160, "DiffuseColor"
 	
 	;Video::Map #3, Texture::Map #3
-	C: "OO",3107123280192,3107123262432
+	C: "OO",2133126894320,2133126910640
 	
 	;Texture::Map #4, Material::Material #15
-	C: "OP",3107123272512,3107123289312, "DiffuseColor"
+	C: "OP",2133126916400,2133126899120, "DiffuseColor"
 	
 	;Video::Map #4, Texture::Map #4
-	C: "OO",3107123286912,3107123272512
+	C: "OO",2133126895280,2133126916400
 	
 	;Texture::Map #5, Material::Material #27
-	C: "OP",3107123262912,3107123265792, "DiffuseColor"
+	C: "OP",2133126891920,2133126917360, "DiffuseColor"
 	
 	;Video::Map #5, Texture::Map #5
-	C: "OO",3107123279232,3107123262912
+	C: "OO",2133126895760,2133126891920
 }

@@ -2,12 +2,16 @@
     "static_meshes": [
         "Models/Level1/PartA.render_mesh",
         "Models/Level1/PartB.render_mesh",
-        "Models/Level1/PartD.render_mesh"
+        "Models/Level1/PartD.render_mesh",
+        "Models/Level1/Tube001.render_mesh",
+        "Models/Level1/Tube002.render_mesh"
     ],
     "static_collision": [
         "Models/Level1/PartA.collision",
         "Models/Level1/PartB.collision",
-        "Models/Level1/PartD.collision"
+        "Models/Level1/PartD.collision",
+        "Models/Level1/Tube001.collision",
+        "Models/Level1/Tube002.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
     "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
