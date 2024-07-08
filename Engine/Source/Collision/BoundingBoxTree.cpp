@@ -13,14 +13,11 @@ BoundingBoxTree::BoundingBoxTree(const AxisAlignedBoundingBox& collisionWorldExt
 {
 	this->rootNode = nullptr;
 	this->collisionWorldExtents = collisionWorldExtents;
-	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
 }
 
 /*virtual*/ BoundingBoxTree::~BoundingBoxTree()
 {
 	this->Clear();
-
-	delete this->shapeMap;
 }
 
 bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
@@ -55,7 +52,7 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 
 		// Can the shape fit into any of the children?
 		BoundingBoxNode* foundNode = nullptr;
-		for (BoundingBoxNode* childNode : *node->childNodeArray)
+		for (BoundingBoxNode* childNode : node->childNodeArray)
 		{
 			if (childNode->box.ContainsBox(shape->GetBoundingBox()))
 			{
@@ -93,8 +90,8 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 		node->BindToShape(shapeBack);
 		node->BindToShape(shapeFront);
 			
-		IMZADI_ASSERT((*node->childNodeArray)[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
-		IMZADI_ASSERT((*node->childNodeArray)[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
+		IMZADI_ASSERT(node->childNodeArray[0]->box.ContainsBox(shapeBack->GetBoundingBox()));
+		IMZADI_ASSERT(node->childNodeArray[1]->box.ContainsBox(shapeFront->GetBoundingBox()));
 
 		if (!this->Insert(shapeBack, flags))
 		{
@@ -116,7 +113,7 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 		if (node)
 			node->BindToShape(shape);
 
-		this->shapeMap->insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
+		this->shapeMap.insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
 	}
 
 	return true;
@@ -130,15 +127,15 @@ bool BoundingBoxTree::Remove(ShapeID shapeID)
 
 	if (shape->node)
 		shape->node->UnbindFromShape(shape);
-	this->shapeMap->erase(shape->GetShapeID());
+	this->shapeMap.erase(shape->GetShapeID());
 	Shape::Free(shape);
 	return true;
 }
 
 Shape* BoundingBoxTree::FindShape(ShapeID shapeID)
 {
-	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->find(shapeID);
-	if (iter == this->shapeMap->end())
+	std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap.find(shapeID);
+	if (iter == this->shapeMap.end())
 		return nullptr;
 
 	return iter->second;
@@ -146,7 +143,7 @@ Shape* BoundingBoxTree::FindShape(ShapeID shapeID)
 
 bool BoundingBoxTree::ForAllShapes(std::function<bool(const Shape*)> callback) const
 {
-	for (auto pair : *this->shapeMap)
+	for (auto pair : this->shapeMap)
 	{
 		const Shape* shape = pair.second;
 		if (!callback(shape))
@@ -158,7 +155,7 @@ bool BoundingBoxTree::ForAllShapes(std::function<bool(const Shape*)> callback) c
 
 uint32_t BoundingBoxTree::GetNumShapes() const
 {
-	return this->shapeMap->size();
+	return this->shapeMap.size();
 }
 
 void BoundingBoxTree::Clear()
@@ -168,12 +165,12 @@ void BoundingBoxTree::Clear()
 	delete this->rootNode;
 	this->rootNode = nullptr;
 
-	while (this->shapeMap->size() > 0)
+	while (this->shapeMap.size() > 0)
 	{
-		std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap->begin();
+		std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap.begin();
 		Shape* shape = iter->second;
 		Shape::Free(shape);
-		this->shapeMap->erase(iter);
+		this->shapeMap.erase(iter);
 	}
 }
 
@@ -212,14 +209,14 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 		node = *iter;
 		nodeQueue.erase(iter);
 
-		for (const BoundingBoxNode* childNode : *node->childNodeArray)
+		for (const BoundingBoxNode* childNode : node->childNodeArray)
 		{
 			AxisAlignedBoundingBox intersection;
 			if (intersection.Intersect(childNode->box, shape->GetBoundingBox()))
 				nodeQueue.push_back(childNode);
 		}
 
-		for (auto pair : *node->shapeMap)
+		for (auto pair : node->shapeMap)
 		{
 			const Shape* otherShape = pair.second;
 			if (shape == otherShape)
@@ -246,29 +243,23 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 BoundingBoxNode::BoundingBoxNode(BoundingBoxNode* parentNode)
 {
 	this->parentNode = parentNode;
-	this->childNodeArray = new std::vector<BoundingBoxNode*>();
-	this->shapeMap = new std::unordered_map<ShapeID, Shape*>();
 }
 
 /*virtual*/ BoundingBoxNode::~BoundingBoxNode()
 {
-	for (auto pair : *this->shapeMap)
+	for (auto pair : this->shapeMap)
 	{
 		Shape* shape = pair.second;
 		shape->node = nullptr;
 	}
 
-	delete this->shapeMap;
-
-	for (BoundingBoxNode* childNode : *this->childNodeArray)
+	for (BoundingBoxNode* childNode : this->childNodeArray)
 		delete childNode;
-
-	delete this->childNodeArray;
 }
 
 void BoundingBoxNode::SplitIfNotAlreadySplit()
 {
-	if (this->childNodeArray->size() > 0)
+	if (this->childNodeArray.size() > 0)
 		return;
 
 	auto nodeA = new BoundingBoxNode(this);
@@ -276,15 +267,15 @@ void BoundingBoxNode::SplitIfNotAlreadySplit()
 
 	this->box.Split(nodeA->box, nodeB->box, &this->dividingPlane);
 
-	this->childNodeArray->push_back(nodeA);
-	this->childNodeArray->push_back(nodeB);
+	this->childNodeArray.push_back(nodeA);
+	this->childNodeArray.push_back(nodeB);
 }
 
 void BoundingBoxNode::BindToShape(Shape* shape)
 {
 	if (shape->node == nullptr)
 	{
-		this->shapeMap->insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
+		this->shapeMap.insert(std::pair<ShapeID, Shape*>(shape->GetShapeID(), shape));
 		shape->node = this;
 	}
 }
@@ -293,7 +284,7 @@ void BoundingBoxNode::UnbindFromShape(Shape* shape)
 {
 	if (shape->node == this)
 	{
-		this->shapeMap->erase(shape->GetShapeID());
+		this->shapeMap.erase(shape->GetShapeID());
 		shape->node = nullptr;
 	}
 }
@@ -302,7 +293,7 @@ void BoundingBoxNode::DebugRender(DebugRenderResult* renderResult) const
 {
 	renderResult->AddLinesForBox(this->box, Vector3(1.0, 1.0, 1.0));
 
-	for (const BoundingBoxNode* childNode : *this->childNodeArray)
+	for (const BoundingBoxNode* childNode : this->childNodeArray)
 		childNode->DebugRender(renderResult);
 }
 
@@ -315,7 +306,7 @@ bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) c
 	};
 
 	std::vector<ChildHit> childHitArray;
-	for (const BoundingBoxNode* childNode : *this->childNodeArray)
+	for (const BoundingBoxNode* childNode : this->childNodeArray)
 	{
 		if (childNode->box.ContainsPoint(ray.origin))
 			childHitArray.push_back(ChildHit{ childNode, 0.0 });
@@ -341,7 +332,7 @@ bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) c
 
 	// What remains is to check the current hit, if any, against what's at this node.
 	bool hitOccurredAtThisNode = false;
-	for (auto pair : *this->shapeMap)
+	for (auto pair : this->shapeMap)
 	{
 		const Shape* shape = pair.second;
 

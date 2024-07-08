@@ -120,7 +120,7 @@ namespace Imzadi
 		bool CalculateCollision(const Shape* shape, CollisionQueryResult* collisionResult) const;
 
 	private:
-		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< We keep a map here of all shapes stored in the tree.
+		std::unordered_map<ShapeID, Shape*> shapeMap;		///< We keep a map here of all shapes stored in the tree.
 		BoundingBoxNode* rootNode;							///< The root note represents the entire space managed by the collision system.
 		AxisAlignedBoundingBox collisionWorldExtents;		///< When the root note is created, it takes on this extent.
 		mutable CollisionCache collisionCache;				///< This is used to speed up the narrow-phase of collision detection.
@@ -173,9 +173,9 @@ namespace Imzadi
 
 	private:
 		AxisAlignedBoundingBox box;							///< This is the space represented by this node.
-		std::vector<BoundingBoxNode*>* childNodeArray;		///< These are the sub-space partitions of this node.
+		std::vector<BoundingBoxNode*> childNodeArray;		///< These are the sub-space partitions of this node.
 		BoundingBoxNode* parentNode;						///< This is a pointer to the parent space containing this node.
-		std::unordered_map<ShapeID, Shape*>* shapeMap;		///< These are shapes in this node's space that cannot fit in a sub-space.
+		std::unordered_map<ShapeID, Shape*> shapeMap;		///< These are shapes in this node's space that cannot fit in a sub-space.
 		Plane dividingPlane;								///< This is a plane dividing this node's space into two sub-spaces, but not dividing any of this node's sub-nodes.
 	};
 }
