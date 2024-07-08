@@ -62,9 +62,8 @@ ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const
 		collisionStatus = cacheIter->second;
 		if (!collisionStatus->IsValid())
 		{
-			delete collisionStatus;
-			collisionStatus = nullptr;
 			this->cacheMap->erase(cacheIter);
+			collisionStatus = nullptr;
 		}
 	}
 	
@@ -77,7 +76,7 @@ ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const
 			CollisionCalculatorInterface* calculator = calculatorIter->second;
 			collisionStatus = calculator->Calculate(shapeA, shapeB);
 			if (collisionStatus)
-				this->cacheMap->insert(std::pair<std::string, ShapePairCollisionStatus*>(cacheKey, collisionStatus));
+				this->cacheMap->insert(std::pair<std::string, Reference<ShapePairCollisionStatus>>(cacheKey, collisionStatus));
 		}
 	}
 

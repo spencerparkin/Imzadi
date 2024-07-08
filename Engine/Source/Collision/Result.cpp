@@ -146,7 +146,7 @@ ObjectToWorldResult::ObjectToWorldResult()
 
 CollisionQueryResult::CollisionQueryResult()
 {
-	this->collisionStatusArray = new std::vector<ShapePairCollisionStatus*>();
+	this->collisionStatusArray = new std::vector<Reference<ShapePairCollisionStatus>>();
 	this->shapeID = 0;
 }
 

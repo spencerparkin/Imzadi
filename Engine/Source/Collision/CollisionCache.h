@@ -4,6 +4,7 @@
 #include "Math/Vector3.h"
 #include "CollisionCalculator.h"
 #include "Shape.h"
+#include "Reference.h"
 #include <unordered_map>
 #include <string>
 
@@ -60,7 +61,7 @@ namespace Imzadi
 		uint64_t MakeCalculatorKey(const Shape* shapeA, const Shape* shapeB);
 		uint64_t MakeCalculatorKey(uint32_t typeIDA, uint32_t typeIDB);
 
-		typedef std::unordered_map<std::string, ShapePairCollisionStatus*> ShapePairCollisionStatusMap;
+		typedef std::unordered_map<std::string, Reference<ShapePairCollisionStatus>> ShapePairCollisionStatusMap;
 		ShapePairCollisionStatusMap* cacheMap;
 
 		typedef std::unordered_map<uint64_t, CollisionCalculatorInterface*> CollisionCalculatorMap;
@@ -73,7 +74,7 @@ namespace Imzadi
 	 * by the collision system user.  They are made private, but don't be tempted to hack the structure,
 	 * because read/write or even just read-only access to them is not thread-safe.
 	 */
-	class IMZADI_API ShapePairCollisionStatus
+	class IMZADI_API ShapePairCollisionStatus : public ReferenceCounted
 	{
 	public:
 		ShapePairCollisionStatus(const Shape* shapeA, const Shape* shapeB);

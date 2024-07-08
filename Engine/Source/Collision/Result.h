@@ -4,6 +4,7 @@
 #include "Shape.h"
 #include "Math/LineSegment.h"
 #include "Math/Transform.h"
+#include "Reference.h"
 #include <vector>
 #include <string>
 
@@ -202,7 +203,7 @@ namespace Imzadi
 		 * Each pair will be a valid collision pair between two shapes, one of
 		 * which is the shape specified in the original collision query.
 		 */
-		const std::vector<ShapePairCollisionStatus*>& GetCollisionStatusArray() const { return *this->collisionStatusArray; }
+		const std::vector<Reference<ShapePairCollisionStatus>>& GetCollisionStatusArray() const { return *this->collisionStatusArray; }
 
 		/**
 		 * This is used internally to set the ID of the shape in question.
@@ -240,7 +241,7 @@ namespace Imzadi
 		Vector3 GetAverageSeparationDelta(ShapeID shapeID) const;
 
 	private:
-		std::vector<ShapePairCollisionStatus*>* collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
+		std::vector<Reference<ShapePairCollisionStatus>>* collisionStatusArray;	///< This is the set of collisions involving the collision query's shape.
 		ShapeID shapeID;			///< For convenience, this holds the ID of the shape in question that was the subject of the collision query.
 		Transform objectToWorld;	///< For convenience, this is the object-to-world transform of the shape in question at the time of query.
 	};
