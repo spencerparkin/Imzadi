@@ -175,11 +175,11 @@ namespace Imzadi
 		BoundingBoxTree boxTree;
 		bool signaledToExit;
 		std::thread* thread;
-		std::mutex* taskQueueMutex;
-		std::list<Task*>* taskQueue;		// TODO: May want to replace this with a lock-free queue at some point.
-		std::counting_semaphore<4096>* taskQueueSemaphore;
-		std::mutex* resultMapMutex;
-		std::unordered_map<TaskID, Result*>* resultMap;
-		std::condition_variable* allTasksDoneCondVar;
+		std::mutex taskQueueMutex;
+		std::list<Task*> taskQueue;		// TODO: May want to replace this with a lock-free queue at some point.
+		std::counting_semaphore<4096> taskQueueSemaphore;
+		std::mutex resultMapMutex;
+		std::unordered_map<TaskID, Result*> resultMap;
+		std::condition_variable allTasksDoneCondVar;
 	};
 }
