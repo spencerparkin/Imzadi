@@ -14,20 +14,16 @@ using namespace Imzadi;
 
 PolygonShape::PolygonShape(const PolygonShape& polygon) : Shape(true)
 {
-	this->vertexArray = new std::vector<Vector3>();
-
-	for (const Vector3& vertex : *polygon.vertexArray)
-		this->vertexArray->push_back(vertex);
+	for (const Vector3& vertex : polygon.vertexArray)
+		this->vertexArray.push_back(vertex);
 }
 
 PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 {
-	this->vertexArray = new std::vector<Vector3>();
 }
 
 /*virtual*/ PolygonShape::~PolygonShape()
 {
-	delete this->vertexArray;
 }
 
 /*static*/ PolygonShape* PolygonShape::Create()
@@ -66,9 +62,9 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	if (!polygon)
 		return false;
 
-	this->vertexArray->clear();
-	for (const Vector3& vertex : *polygon->vertexArray)
-		this->vertexArray->push_back(vertex);
+	this->vertexArray.clear();
+	for (const Vector3& vertex : polygon->vertexArray)
+		this->vertexArray.push_back(vertex);
 
 	return true;
 }
@@ -78,17 +74,17 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	if (!Shape::IsValid())
 		return false;
 
-	if (this->vertexArray->size() < 3)
+	if (this->vertexArray.size() < 3)
 		return false;
 
-	for (const Vector3& vertex : *this->vertexArray)
+	for (const Vector3& vertex : this->vertexArray)
 		if (!vertex.IsValid())
 			return false;
 
 	// Make sure that all the points are coplanar.
 	constexpr double tolerance = 1e-4;
 	const Plane& plane = this->GetPlane();
-	for (const Vector3& vertex : *this->vertexArray)
+	for (const Vector3& vertex : this->vertexArray)
 	{
 		double distance = plane.SignedDistanceTo(vertex);
 		if (::fabs(distance) >= tolerance)
@@ -96,14 +92,14 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	}
 
 	// Make sure the polygon is convex.
-	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
 	{
-		const Vector3& vertexA = (*this->vertexArray)[i];
-		const Vector3& vertexB = (*this->vertexArray)[(i + 1) % this->vertexArray->size()];
+		const Vector3& vertexA = this->vertexArray[i];
+		const Vector3& vertexB = this->vertexArray[(i + 1) % this->vertexArray.size()];
 		Plane edgePlane(vertexA, (vertexB - vertexA).Cross(plane.unitNormal).Normalized());
-		for (int j = 0; j < (signed)this->vertexArray->size(); j++)
+		for (int j = 0; j < (signed)this->vertexArray.size(); j++)
 		{
-			double distance = edgePlane.SignedDistanceTo((*vertexArray)[j]);
+			double distance = edgePlane.SignedDistanceTo(vertexArray[j]);
 			if (distance >= tolerance)
 				return false;
 		}
@@ -121,12 +117,12 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	double area = 0.0;
 	Vector3 center = this->GetCenter();
 
-	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
 	{
-		int j = (i + 1) % this->vertexArray->size();
+		int j = (i + 1) % this->vertexArray.size();
 
-		const Vector3& vertexA = (*this->vertexArray)[i];
-		const Vector3& vertexB = (*this->vertexArray)[j];
+		const Vector3& vertexA = this->vertexArray[i];
+		const Vector3& vertexB = this->vertexArray[j];
 
 		area += (vertexA - center).Cross(vertexB - center).Length() / 2.0;
 	}
@@ -141,19 +137,19 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 	auto polygonBack = new PolygonShape(false);
 	auto polygonFront = new PolygonShape(false);
 
-	for (int i = 0; i < (signed)this->vertexArray->size(); i++)
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
 	{
-		int j = (i + 1) % this->vertexArray->size();
+		int j = (i + 1) % this->vertexArray.size();
 
-		const Vector3& vertexA = (*this->vertexArray)[i];
-		const Vector3& vertexB = (*this->vertexArray)[j];
+		const Vector3& vertexA = this->vertexArray[i];
+		const Vector3& vertexB = this->vertexArray[j];
 
 		Plane::Side side = plane.GetSide(vertexA, planeThickness);
 
 		if (side == Plane::Side::BACK || side == Plane::Side::NEITHER)
-			polygonBack->vertexArray->push_back(vertexA);
+			polygonBack->vertexArray.push_back(vertexA);
 		if (side == Plane::Side::FRONT || side == Plane::Side::NEITHER)
-			polygonFront->vertexArray->push_back(vertexA);
+			polygonFront->vertexArray.push_back(vertexA);
 
 		double edgeLength = 0.0;
 		Ray ray(vertexA, vertexB - vertexA);
@@ -164,12 +160,12 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 		if (ray.CastAgainst(plane, alpha) && interval.ContainsInteriorValue(alpha))
 		{
 			Vector3 intersectionPoint = ray.CalculatePoint(alpha);
-			polygonBack->vertexArray->push_back(intersectionPoint);
-			polygonFront->vertexArray->push_back(intersectionPoint);
+			polygonBack->vertexArray.push_back(intersectionPoint);
+			polygonFront->vertexArray.push_back(intersectionPoint);
 		}
 	}
 
-	if (polygonBack->vertexArray->size() < 3 || polygonFront->vertexArray->size() < 3)
+	if (polygonBack->vertexArray.size() < 3 || polygonFront->vertexArray.size() < 3)
 	{
 		delete polygonBack;
 		delete polygonFront;
@@ -183,7 +179,7 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 
 const std::vector<Vector3>& PolygonShape::GetWorldVertices() const
 {
-	return *((PolygonShapeCache*)this->GetCache())->worldVertexArray;
+	return ((PolygonShapeCache*)this->GetCache())->worldVertexArray;
 }
 
 /*virtual*/ bool PolygonShape::ContainsPoint(const Vector3& point) const
@@ -259,27 +255,27 @@ const std::vector<Vector3>& PolygonShape::GetWorldVertices() const
 
 void PolygonShape::Clear()
 {
-	this->vertexArray->clear();
+	this->vertexArray.clear();
 }
 
 void PolygonShape::AddVertex(const Vector3& point)
 {
-	this->vertexArray->push_back(point);
+	this->vertexArray.push_back(point);
 }
 
 void PolygonShape::SetNumVertices(uint32_t vertexCount)
 {
-	this->vertexArray->resize(vertexCount);
+	this->vertexArray.resize(vertexCount);
 }
 
 void PolygonShape::SetVertex(int i, const Vector3& point)
 {
-	(*this->vertexArray)[this->ModIndex(i)] = point;
+	this->vertexArray[this->ModIndex(i)] = point;
 }
 
 const Vector3& PolygonShape::GetVertex(int i) const
 {
-	return (*this->vertexArray)[this->ModIndex(i)];
+	return this->vertexArray[this->ModIndex(i)];
 }
 
 const Plane& PolygonShape::GetPlane() const
@@ -304,9 +300,9 @@ const Vector3& PolygonShape::GetWorldCenter() const
 
 int PolygonShape::ModIndex(int i) const
 {
-	int j = i % this->vertexArray->size();
+	int j = i % this->vertexArray.size();
 	if (j < 0)
-		j += this->vertexArray->size();
+		j += this->vertexArray.size();
 	return j;
 }
 
@@ -326,7 +322,7 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 	double sum_yz = 0.0;
 	double sum_zz = 0.0;
 	
-	for (const Vector3& point : *this->vertexArray)
+	for (const Vector3& point : this->vertexArray)
 	{
 		sum_x += point.x;
 		sum_y += point.y;
@@ -350,7 +346,7 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 	matrixXY.ele[1][2] = sum_y;
 	matrixXY.ele[2][0] = sum_x;
 	matrixXY.ele[2][1] = sum_y;
-	matrixXY.ele[2][2] = double(this->vertexArray->size());
+	matrixXY.ele[2][2] = double(this->vertexArray.size());
 
 	// y = ax + bz + c
 	matrixXZ.ele[0][0] = sum_xx;
@@ -361,7 +357,7 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 	matrixXZ.ele[1][2] = sum_z;
 	matrixXZ.ele[2][0] = sum_x;
 	matrixXZ.ele[2][1] = sum_z;
-	matrixXZ.ele[2][2] = double(this->vertexArray->size());
+	matrixXZ.ele[2][2] = double(this->vertexArray.size());
 
 	// x = ay + bz + c
 	matrixYZ.ele[0][0] = sum_yy;
@@ -372,7 +368,7 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 	matrixYZ.ele[1][2] = sum_z;
 	matrixYZ.ele[2][0] = sum_y;
 	matrixYZ.ele[2][1] = sum_z;
-	matrixYZ.ele[2][2] = double(this->vertexArray->size());
+	matrixYZ.ele[2][2] = double(this->vertexArray.size());
 
 	double volXY = ::abs(matrixXY.Determinant());
 	double volXZ = ::abs(matrixXZ.Determinant());
@@ -435,7 +431,7 @@ bool PolygonShape::CalculatePlaneOfBestFit(Plane& plane) const
 
 void PolygonShape::SnapToPlane(const Plane& plane)
 {
-	for (Vector3& vertex : *this->vertexArray)
+	for (Vector3& vertex : this->vertexArray)
 	{
 		double distance = plane.SignedDistanceTo(vertex);
 		vertex -= plane.unitNormal * distance;
@@ -455,7 +451,7 @@ void PolygonShape::SetAsConvexHull(const std::vector<Vector3>& pointCloud)
 	// This can be expensive, and there is an algorithm with better time-complexity, but do this for now.
 	// We don't want there to be any redundant points in the list.
 	std::vector<Vector3> planarPointCloud;
-	for (const Vector3& vertex : *polygon.vertexArray)
+	for (const Vector3& vertex : polygon.vertexArray)
 		if (vertex.IsAnyPoint(planarPointCloud, 1e-5))
 			planarPointCloud.push_back(vertex);
 
@@ -464,18 +460,18 @@ void PolygonShape::SetAsConvexHull(const std::vector<Vector3>& pointCloud)
 
 void PolygonShape::FixWindingOfTriangle(const Vector3& desiredNormal)
 {
-	if (this->vertexArray->size() == 3)
+	if (this->vertexArray.size() == 3)
 	{
-		const Vector3& pointA = (*this->vertexArray)[0];
-		const Vector3& pointB = (*this->vertexArray)[1];
-		const Vector3& pointC = (*this->vertexArray)[2];
+		const Vector3& pointA = this->vertexArray[0];
+		const Vector3& pointB = this->vertexArray[1];
+		const Vector3& pointC = this->vertexArray[2];
 
 		double determinant = (pointB - pointA).Cross(pointC - pointA).Dot(desiredNormal);
 		if (determinant < 0.0)
 		{
-			(*this->vertexArray)[0] = pointA;
-			(*this->vertexArray)[1] = pointC;
-			(*this->vertexArray)[2] = pointB;
+			this->vertexArray[0] = pointA;
+			this->vertexArray[1] = pointC;
+			this->vertexArray[2] = pointB;
 		}
 	}
 }
@@ -539,13 +535,13 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 	polygonB.CalculateConvexHullInternal(planarPointCloudB, plane);
 
 	// The secret sauce is now the ability to simply combine two convex hulls into one.
-	for (const Vector3& vertex : *polygonA.vertexArray)
+	for (const Vector3& vertex : polygonA.vertexArray)
 		this->AddVertex(vertex);
-	for (const Vector3& vertex : *polygonB.vertexArray)
+	for (const Vector3& vertex : polygonB.vertexArray)
 		this->AddVertex(vertex);
 
 	// Handle some trivial cases first.
-	if (polygonA.vertexArray->size() + polygonB.vertexArray->size() <= 3)
+	if (polygonA.vertexArray.size() + polygonB.vertexArray.size() <= 3)
 	{
 		this->FixWindingOfTriangle(plane.unitNormal);
 		return;
@@ -555,9 +551,9 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 	// It doesn't matter that we started with polygonA, then did polygonB.  What matters is that
 	// generally, the edges go in a counter-clock-wise direction.
 	std::list<LineSegment> edgeList;
-	for (int i = 0; i < (signed)polygonA.vertexArray->size(); i++)
+	for (int i = 0; i < (signed)polygonA.vertexArray.size(); i++)
 		edgeList.push_back(LineSegment(polygonA.GetVertex(i), polygonA.GetVertex(i + 1)));
-	for (int i = 0; i < (signed)polygonB.vertexArray->size(); i++)
+	for (int i = 0; i < (signed)polygonB.vertexArray.size(); i++)
 		edgeList.push_back(LineSegment(polygonB.GetVertex(i), polygonB.GetVertex(i + 1)));
 
 	// Cull those that are not on the convex hull.
@@ -573,7 +569,7 @@ void PolygonShape::CalculateConvexHullInternal(const std::vector<Vector3>& plana
 		edgePlane.center = edge.point[0];
 		edgePlane.unitNormal = (edge.point[1] - edge.point[0]).Cross(plane.unitNormal).Normalized();
 
-		if (edgePlane.AnyPointOnSide(*this->vertexArray, Plane::Side::BACK))
+		if (edgePlane.AnyPointOnSide(this->vertexArray, Plane::Side::BACK))
 			edgeList.erase(iter);
 
 		iter = nextIter;
@@ -667,8 +663,8 @@ bool PolygonShape::IntersectsWith(const LineSegment& lineSegment, Vector3& inter
 	if (!Shape::Dump(stream))
 		return false;
 
-	stream << uint32_t(this->vertexArray->size());
-	for (const Vector3& vertex : *this->vertexArray)
+	stream << uint32_t(this->vertexArray.size());
+	for (const Vector3& vertex : this->vertexArray)
 		vertex.Dump(stream);
 
 	return true;
@@ -681,12 +677,12 @@ bool PolygonShape::IntersectsWith(const LineSegment& lineSegment, Vector3& inter
 
 	uint32_t numVertices = 0;
 	stream >> numVertices;
-	this->vertexArray->clear();
+	this->vertexArray.clear();
 	for (uint32_t i = 0; i < numVertices; i++)
 	{
 		Vector3 vertex;
 		vertex.Restore(stream);
-		this->vertexArray->push_back(vertex);
+		this->vertexArray.push_back(vertex);
 	}
 
 	return true;
@@ -696,12 +692,10 @@ bool PolygonShape::IntersectsWith(const LineSegment& lineSegment, Vector3& inter
 
 PolygonShapeCache::PolygonShapeCache()
 {
-	this->worldVertexArray = new std::vector<Vector3>();
 }
 
 /*virtual*/ PolygonShapeCache::~PolygonShapeCache()
 {
-	delete this->worldVertexArray;
 }
 
 /*virtual*/ void PolygonShapeCache::Update(const Shape* shape)
@@ -710,7 +704,7 @@ PolygonShapeCache::PolygonShapeCache()
 
 	auto polygon = (const PolygonShape*)shape;
 	
-	if (polygon->vertexArray->size() <= 2)
+	if (polygon->vertexArray.size() <= 2)
 	{
 		this->plane = Plane();
 		this->center = Vector3(0.0, 0.0, 0.0);
@@ -718,20 +712,20 @@ PolygonShapeCache::PolygonShapeCache()
 	else
 	{
 		this->center = Vector3(0.0, 0.0, 0.0);
-		for (const Vector3& vertex : *polygon->vertexArray)
+		for (const Vector3& vertex : polygon->vertexArray)
 			this->center += vertex;
 		
-		this->center /= double(polygon->vertexArray->size());
+		this->center /= double(polygon->vertexArray.size());
 		this->worldCenter = polygon->objectToWorld.TransformPoint(this->center);
 
 		Vector3 normal(0.0, 0.0, 0.0);
 
-		for (int i = 0; i < (signed)polygon->vertexArray->size(); i++)
+		for (int i = 0; i < (signed)polygon->vertexArray.size(); i++)
 		{
-			int j = (i + 1) % polygon->vertexArray->size();
+			int j = (i + 1) % polygon->vertexArray.size();
 
-			const Vector3& vertexA = (*polygon->vertexArray)[i];
-			const Vector3& vertexB = (*polygon->vertexArray)[j];
+			const Vector3& vertexA = polygon->vertexArray[i];
+			const Vector3& vertexB = polygon->vertexArray[j];
 
 			normal += (vertexA - this->center).Cross(vertexB - this->center);
 		}
@@ -740,9 +734,9 @@ PolygonShapeCache::PolygonShapeCache()
 		this->worldPlane = polygon->objectToWorld.TransformPlane(this->plane);
 	}
 
-	this->worldVertexArray->clear();
-	for (const Vector3& vertex : *polygon->vertexArray)
-		this->worldVertexArray->push_back(polygon->objectToWorld.TransformPoint(vertex));
+	this->worldVertexArray.clear();
+	for (const Vector3& vertex : polygon->vertexArray)
+		this->worldVertexArray.push_back(polygon->objectToWorld.TransformPoint(vertex));
 
-	this->boundingBox.SetToBoundPointCloud(*this->worldVertexArray);
+	this->boundingBox.SetToBoundPointCloud(this->worldVertexArray);
 }

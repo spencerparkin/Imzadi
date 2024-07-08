@@ -261,7 +261,7 @@ namespace Imzadi
 		void FixWindingOfTriangle(const Vector3& desiredNormal);
 
 	private:
-		std::vector<Vector3>* vertexArray;
+		std::vector<Vector3> vertexArray;
 	};
 
 	/**
@@ -285,6 +285,6 @@ namespace Imzadi
 		Vector3 worldCenter;	///< This is the center of the polygon in world-space.
 		Plane plane;			///< This is the plane containing the object-space polygon with normal facing the direction of the front-space of the polygon.
 		Plane worldPlane;		///< This is the plane containing the world-space polygon with normal facing the direction of the front-space of the polygon.
-		std::vector<Vector3>* worldVertexArray;		///< These are the world-space vertices of the polygon.
+		std::vector<Vector3> worldVertexArray;		///< These are the world-space vertices of the polygon.
 	};
 }
