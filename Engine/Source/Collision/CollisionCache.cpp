@@ -13,9 +13,6 @@ using namespace Imzadi;
 
 CollisionCache::CollisionCache()
 {
-	this->cacheMap = new ShapePairCollisionStatusMap();
-	this->calculatorMap = new CollisionCalculatorMap();
-
 	// Sphere:
 	this->AddCalculator<SphereShape, SphereShape>();
 	this->AddCalculator<SphereShape, CapsuleShape>();
@@ -45,9 +42,6 @@ CollisionCache::CollisionCache()
 {
 	this->Clear();
 	this->ClearCalculatorMap();
-
-	delete this->cacheMap;
-	delete this->calculatorMap;
 }
 
 ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const Shape* shapeA, const Shape* shapeB)
@@ -56,13 +50,13 @@ ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const
 
 	std::string cacheKey = this->MakeCacheKey(shapeA, shapeB);
 
-	ShapePairCollisionStatusMap::iterator cacheIter = this->cacheMap->find(cacheKey);
-	if (cacheIter != this->cacheMap->end())
+	ShapePairCollisionStatusMap::iterator cacheIter = this->cacheMap.find(cacheKey);
+	if (cacheIter != this->cacheMap.end())
 	{
 		collisionStatus = cacheIter->second;
 		if (!collisionStatus->IsValid())
 		{
-			this->cacheMap->erase(cacheIter);
+			this->cacheMap.erase(cacheIter);
 			collisionStatus = nullptr;
 		}
 	}
@@ -70,13 +64,13 @@ ShapePairCollisionStatus* CollisionCache::DetermineCollisionStatusOfShapes(const
 	if (!collisionStatus)
 	{
 		uint64_t calculatorKey = this->MakeCalculatorKey(shapeA, shapeB);
-		CollisionCalculatorMap::iterator calculatorIter = this->calculatorMap->find(calculatorKey);
-		if (calculatorIter != this->calculatorMap->end())
+		CollisionCalculatorMap::iterator calculatorIter = this->calculatorMap.find(calculatorKey);
+		if (calculatorIter != this->calculatorMap.end())
 		{
 			CollisionCalculatorInterface* calculator = calculatorIter->second;
 			collisionStatus = calculator->Calculate(shapeA, shapeB);
 			if (collisionStatus)
-				this->cacheMap->insert(std::pair<std::string, Reference<ShapePairCollisionStatus>>(cacheKey, collisionStatus));
+				this->cacheMap.insert(std::pair<std::string, Reference<ShapePairCollisionStatus>>(cacheKey, collisionStatus));
 		}
 	}
 
@@ -108,23 +102,23 @@ uint64_t CollisionCache::MakeCalculatorKey(uint32_t typeIDA, uint32_t typeIDB)
 
 void CollisionCache::Clear()
 {
-	while (this->cacheMap->size() > 0)
+	while (this->cacheMap.size() > 0)
 	{
-		ShapePairCollisionStatusMap::iterator iter = this->cacheMap->begin();
+		ShapePairCollisionStatusMap::iterator iter = this->cacheMap.begin();
 		ShapePairCollisionStatus* collisionStatus = iter->second;
 		delete collisionStatus;
-		this->cacheMap->erase(iter);
+		this->cacheMap.erase(iter);
 	}
 }
 
 void CollisionCache::ClearCalculatorMap()
 {
-	while (this->calculatorMap->size() > 0)
+	while (this->calculatorMap.size() > 0)
 	{
-		CollisionCalculatorMap::iterator iter = this->calculatorMap->begin();
+		CollisionCalculatorMap::iterator iter = this->calculatorMap.begin();
 		CollisionCalculatorInterface* calculator = iter->second;
 		delete calculator;
-		this->calculatorMap->erase(iter);
+		this->calculatorMap.erase(iter);
 	}
 }
 

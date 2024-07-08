@@ -52,7 +52,7 @@ namespace Imzadi
 			uint32_t typeIDA = ShapeTypeA::StaticTypeID();
 			uint32_t typeIDB = ShapeTypeB::StaticTypeID();
 			uint64_t calculatorKey = this->MakeCalculatorKey(typeIDA, typeIDB);
-			this->calculatorMap->insert(std::pair<uint64_t, CollisionCalculatorInterface*>(calculatorKey, calculator));
+			this->calculatorMap.insert(std::pair<uint64_t, CollisionCalculatorInterface*>(calculatorKey, calculator));
 		}
 
 		void ClearCalculatorMap();
@@ -62,10 +62,10 @@ namespace Imzadi
 		uint64_t MakeCalculatorKey(uint32_t typeIDA, uint32_t typeIDB);
 
 		typedef std::unordered_map<std::string, Reference<ShapePairCollisionStatus>> ShapePairCollisionStatusMap;
-		ShapePairCollisionStatusMap* cacheMap;
+		ShapePairCollisionStatusMap cacheMap;
 
 		typedef std::unordered_map<uint64_t, CollisionCalculatorInterface*> CollisionCalculatorMap;
-		CollisionCalculatorMap* calculatorMap;
+		CollisionCalculatorMap calculatorMap;
 	};
 
 	/**
