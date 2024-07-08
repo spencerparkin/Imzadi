@@ -42,7 +42,7 @@ namespace Imzadi
 			double lingerTimeSeconds;
 		};
 
-		const std::vector<DeltaInfo>& GetSplineDeltaArray() const { return *this->splineDeltas; }
+		const std::vector<DeltaInfo>& GetSplineDeltaArray() const { return this->splineDeltas; }
 		const std::string& GetMeshFile() const { return this->meshFile; }
 		const std::string& GetCollisionFile() const { return this->collisionFile; }
 		double GetMoveSpeed() const { return this->moveSpeedUnitsPerSecond; }
@@ -50,7 +50,7 @@ namespace Imzadi
 
 	private:
 
-		std::vector<DeltaInfo>* splineDeltas;
+		std::vector<DeltaInfo> splineDeltas;
 		SplineType splineType;
 		SplineMode splineMode;
 		std::string meshFile;

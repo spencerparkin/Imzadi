@@ -8,12 +8,10 @@ MovingPlatformData::MovingPlatformData()
 {
 	this->moveSpeedUnitsPerSecond = 0.0;
 	this->rotationSpeedDegreesPerSecond = 0.0;
-	this->splineDeltas = new std::vector<DeltaInfo>();
 }
 
 /*virtual*/ MovingPlatformData::~MovingPlatformData()
 {
-	delete this->splineDeltas;
 }
 
 /*virtual*/ bool MovingPlatformData::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
@@ -40,7 +38,7 @@ MovingPlatformData::MovingPlatformData()
 		return false;
 	}
 
-	this->splineDeltas->clear();
+	this->splineDeltas.clear();
 	for (int i = 0; i < jsonDoc["spline_deltas"].Size(); i++)
 	{
 		const rapidjson::Value& splineDeltaValue = jsonDoc["spline_deltas"][i];
@@ -61,7 +59,7 @@ MovingPlatformData::MovingPlatformData()
 		if (splineDeltaValue.HasMember("linger") && splineDeltaValue["linger"].IsFloat())
 			deltaInfo.lingerTimeSeconds = splineDeltaValue["linger"].GetFloat();
 
-		this->splineDeltas->push_back(deltaInfo);
+		this->splineDeltas.push_back(deltaInfo);
 	}
 
 	if (!jsonDoc.HasMember("spline_type") || !jsonDoc["spline_type"].IsString())
