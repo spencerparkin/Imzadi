@@ -420,7 +420,8 @@ double AxisAlignedBoundingBox::GetVolume() const
 
 void AxisAlignedBoundingBox::GetSphere(Vector3& center, double& radius) const
 {
-	// TODO: Write this.
+	center = this->GetCenter();
+	radius = (this->maxCorner - center).Length();
 }
 
 void AxisAlignedBoundingBox::Dump(std::ostream& stream) const

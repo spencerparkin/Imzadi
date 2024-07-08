@@ -543,6 +543,7 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitBox(const LineSegment& capsuleSpine, double capsuleRadius, const AxisAlignedBoundingBox& axisAlignedBox)
 {
 	static double borderThickness = 1e-4;
+	static double epsilon = 1e-6;
 
 	//
 	// Case #1: Both vertices of the spine are interior to the box.
@@ -584,6 +585,26 @@ Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitB
 	// Case #3: Both vertices are outside or on the border of the box.
 	//
 
+	struct EdgeData
+	{
+		LineSegment connector;
+		const LineSegment* edge;
+	};
+
+	std::vector<EdgeData> edgeDataArray;
+	std::vector<LineSegment> edgeSegmentArray;
+	axisAlignedBox.GetEdgeSegments(edgeSegmentArray);
+	for (const auto& edgeSegment : edgeSegmentArray)
+	{
+		LineSegment connector;
+		if (connector.SetAsShortestConnector(capsuleSpine, edgeSegment))
+			edgeDataArray.push_back({ connector, &edgeSegment });
+	}
+
+	std::sort(edgeDataArray.begin(), edgeDataArray.end(), [](const EdgeData& edgeDataA, const EdgeData& edgeDataB) -> bool {
+		return edgeDataA.connector.SquareLength() < edgeDataB.connector.SquareLength();
+	});
+
 	//
 	// Case #3A: The vertices are on or beyond the same face plane of the box.
 	//
@@ -596,23 +617,27 @@ Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitB
 		Plane::Side sideB = sidePlane.GetSide(capsuleSpine.point[1], borderThickness);
 		if (sideA != Plane::Side::BACK && sideB != Plane::Side::BACK)
 		{
-			double distanceA = sidePlane.SignedDistanceTo(capsuleSpine.point[0]);
-			double distanceB = sidePlane.SignedDistanceTo(capsuleSpine.point[1]);
-			
-			Vector3 delta;
-
-			if (distanceA < distanceB)
+			const LineSegment* shortestConnector = (edgeDataArray.size() > 0) ? &edgeDataArray[0].connector : nullptr;
+			if (!shortestConnector || fabs(shortestConnector->Length() - capsuleRadius) > epsilon)
 			{
-				if (distanceA < capsuleRadius)
-					delta = sidePlane.unitNormal * (capsuleRadius - distanceA);
-			}
-			else
-			{
-				if (distanceB < capsuleRadius)
-					delta = sidePlane.unitNormal * (capsuleRadius - distanceB);
-			}
+				double distanceA = sidePlane.SignedDistanceTo(capsuleSpine.point[0]);
+				double distanceB = sidePlane.SignedDistanceTo(capsuleSpine.point[1]);
 
-			return delta;
+				Vector3 delta;
+
+				if (distanceA < distanceB)
+				{
+					if (distanceA < capsuleRadius)
+						delta = sidePlane.unitNormal * (capsuleRadius - distanceA);
+				}
+				else
+				{
+					if (distanceB < capsuleRadius)
+						delta = sidePlane.unitNormal * (capsuleRadius - distanceB);
+				}
+
+				return delta;
+			}
 		}
 	}
 
@@ -620,22 +645,9 @@ Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitB
 	// Case #3B: The vertices are on or beyond different face planes of the box.
 	//
 
-	std::vector<LineSegment> connectorArray;
-	std::vector<LineSegment> edgeSegmentArray;
-	axisAlignedBox.GetEdgeSegments(edgeSegmentArray);
-	for (const auto& edgeSegment : edgeSegmentArray)
+	for (const auto& edgeData : edgeDataArray)
 	{
-		LineSegment connector;
-		if (connector.SetAsShortestConnector(capsuleSpine, edgeSegment))
-			connectorArray.push_back(connector);
-	}
-
-	std::sort(connectorArray.begin(), connectorArray.end(), [](const LineSegment& connectorA, const LineSegment& connectorB) -> bool {
-		return connectorA.SquareLength() < connectorB.SquareLength();
-	});
-
-	for (const auto& connector : connectorArray)
-	{
+		const LineSegment& connector = edgeData.connector;
 		const Vector3& capsuleSpinePoint = connector.point[0];
 		if (axisAlignedBox.ContainsInteriorPoint(capsuleSpinePoint))
 		{
@@ -646,7 +658,7 @@ Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitB
 		}
 		else if (axisAlignedBox.ContainsPointOnSurface(capsuleSpinePoint))
 		{
-			Vector3 vector = connector.GetDelta().Cross(capsuleSpine.GetDelta());
+			Vector3 vector = edgeData.edge->GetDelta().Cross(capsuleSpine.GetDelta());
 			double distanceA = (capsuleSpinePoint + vector - axisAlignedBox.GetCenter()).Length();
 			double distanceB = (capsuleSpinePoint - vector - axisAlignedBox.GetCenter()).Length();
 			if (distanceB > distanceA)
@@ -661,6 +673,9 @@ Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitB
 			if (distance < capsuleRadius)
 			{
 				Vector3 delta = vector * (capsuleRadius - distance) / distance;
+				double length = delta.Length();
+				if (length < epsilon)
+					delta.SetComponents(0.0, 0.0, 0.0);
 				return delta;
 			}
 		}
