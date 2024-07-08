@@ -128,6 +128,11 @@ namespace Imzadi
 		 */
 		ShapeID GetOtherShape(ShapeID shapeID) const;
 
+		/**
+		 * Get the user flags for the shape in this pair having the given shape ID.
+		 */
+		uint64_t GetUserFlags(ShapeID shapeID) const;
+
 	public:
 		/**
 		 * This is used internally so that we can re-use code comparing A against B in the case of B against A.

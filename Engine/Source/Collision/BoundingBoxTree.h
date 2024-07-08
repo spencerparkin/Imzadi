@@ -114,10 +114,11 @@ namespace Imzadi
 		 * Determine the collision status of the given shape.
 		 * 
 		 * @param[in] shape This is the shape in question.
+		 * @param[in] userFlagsMask The given shape is only tested against shapes with user flags that make it through this mask filter.
 		 * @param[out] collisionResult The collision status is returned in this instance of the CollisionQueryResult class.
 		 * @return True is returned on success; false, otherwise.
 		 */
-		bool CalculateCollision(const Shape* shape, CollisionQueryResult* collisionResult) const;
+		bool CalculateCollision(const Shape* shape, uint64_t userFlagsMask, CollisionQueryResult* collisionResult) const;
 
 	private:
 		std::unordered_map<ShapeID, Shape*> shapeMap;		///< We keep a map here of all shapes stored in the tree.

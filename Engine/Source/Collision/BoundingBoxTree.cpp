@@ -192,7 +192,7 @@ void BoundingBoxTree::RayCast(const Ray& ray, RayCastResult* rayCastResult) cons
 	rayCastResult->SetHitData(hitData);
 }
 
-bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResult* collisionResult) const
+bool BoundingBoxTree::CalculateCollision(const Shape* shape, uint64_t userFlagsMask, CollisionQueryResult* collisionResult) const
 {
 	const BoundingBoxNode* node = shape->node;
 	if (!node)
@@ -220,6 +220,9 @@ bool BoundingBoxTree::CalculateCollision(const Shape* shape, CollisionQueryResul
 		{
 			const Shape* otherShape = pair.second;
 			if (shape == otherShape)
+				continue;
+
+			if ((otherShape->GetUserFlags() & userFlagsMask) == 0)
 				continue;
 
 			AxisAlignedBoundingBox intersection;

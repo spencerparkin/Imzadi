@@ -114,6 +114,7 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 
 CollisionQuery::CollisionQuery()
 {
+	this->userFlagsMask = 0xFFFFFFFFFFFFFFFF;
 }
 
 /*virtual*/ CollisionQuery::~CollisionQuery()
@@ -134,7 +135,7 @@ CollisionQuery::CollisionQuery()
 	collisionResult->SetObjectToWorldTransform(shape->GetObjectToWorldTransform());
 
 	BoundingBoxTree& tree = thread->GetBoundingBoxTree();
-	if (!tree.CalculateCollision(shape, collisionResult))
+	if (!tree.CalculateCollision(shape, this->userFlagsMask, collisionResult))
 	{
 		CollisionQueryResult::Free(collisionResult);
 

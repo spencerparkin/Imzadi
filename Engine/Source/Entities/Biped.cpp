@@ -10,7 +10,6 @@
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "Collision/Command.h"
 #include "Collision/Query.h"
-#include "Collision/Result.h"
 #include "Collision/CollisionCache.h"
 #include "Log.h"
 
@@ -21,7 +20,7 @@ Biped::Biped()
 	this->collisionShapeID = 0;
 	this->groundShapeID = 0;
 	this->boundsQueryTaskID = 0;
-	this->collisionQueryTaskID = 0;
+	this->worldSurfaceCollisionQueryTaskID = 0;
 	this->groundQueryTaskID = 0;
 	this->inContactWithGround = false;
 	this->canRestart = true;
@@ -44,6 +43,7 @@ Biped::Biped()
 	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(1.0);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 	this->collisionShapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
 	if (this->collisionShapeID == 0)
 		return false;
@@ -106,9 +106,10 @@ Biped::Biped()
 			boundsQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
 
-			auto collisionQuery = CollisionQuery::Create();
-			collisionQuery->SetShapeID(this->collisionShapeID);
-			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
+			auto worldSurfaceCollisionQuery = CollisionQuery::Create();
+			worldSurfaceCollisionQuery->SetShapeID(this->collisionShapeID);
+			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
 
 			if (this->groundShapeID != 0)
 			{
@@ -167,36 +168,14 @@ Biped::Biped()
 				}
 			}
 
-			if (this->collisionQueryTaskID)
+			if (this->worldSurfaceCollisionQueryTaskID)
 			{
-				Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
+				Result* result = collisionSystem->ObtainQueryResult(this->worldSurfaceCollisionQueryTaskID);
 				if (result)
 				{
 					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
 					if (collisionResult)
-					{
-						const ShapePairCollisionStatus* status = collisionResult->GetMostEgregiousCollision();
-						if (!status)
-						{
-							this->inContactWithGround = false;
-							this->groundShapeID = 0;
-						}
-						else
-						{
-							Vector3 separationDelta = status->GetSeparationDelta(this->collisionShapeID);
-							Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-							objectToWorld.translation += separationDelta;
-							this->renderMesh->SetObjectToWorldTransform(objectToWorld);
-							this->velocity = this->velocity.RejectedFrom(separationDelta.Normalized());
-
-							// TODO: How do we know it's the ground we're colliding with?  What if it's something else?
-							//       For now, we're going to assume it's the ground.  I'll find a way when that assumption starts to fail.
-							//       We probably need to narrow the query to only certain kinds of collisions shapes, such as those marked as the ground somehow.
-							//       This would be a useful feature of the collision system, because we may want to support attack collisions, for example.
-							this->inContactWithGround = true;
-							this->groundShapeID = status->GetOtherShape(this->collisionShapeID);
-						}
-					}
+						this->HandleWorldSurfaceCollisionResult(collisionResult);
 
 					collisionSystem->Free(result);
 				}
@@ -226,6 +205,44 @@ Biped::Biped()
 	}
 
 	return true;
+}
+
+void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult)
+{
+	this->inContactWithGround = false;
+	this->groundShapeID = 0;
+
+	if (collisionResult->GetCollisionStatusArray().size() == 0)
+		return;
+
+	Vector3 averageSeperationDelta(0.0, 0.0, 0.0);
+	Vector3 approximateGroundNormal;
+	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
+	{
+		ShapeID otherShapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
+		
+		Vector3 separationDelta = collisionStatus->GetSeparationDelta(this->collisionShapeID);
+		averageSeperationDelta += separationDelta;
+
+		// We really need a contact normal here, but do this for now.
+		Vector3 upVector(0.0, 1.0, 0.0);
+		double angle = upVector.AngleBetween(separationDelta.Normalized());
+		if (angle < M_PI / 4.0)
+		{
+			this->inContactWithGround = true;
+			this->groundShapeID = otherShapeID;
+			approximateGroundNormal = separationDelta.Normalized();
+		}
+	}
+
+	averageSeperationDelta /= float(collisionResult->GetCollisionStatusArray().size());
+
+	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+	objectToWorld.translation += averageSeperationDelta;
+	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+
+	if (this->groundShapeID != 0)
+		this->velocity = this->velocity.RejectedFrom(approximateGroundNormal);
 }
 
 /*virtual*/ bool Biped::GetTransform(Transform& transform)

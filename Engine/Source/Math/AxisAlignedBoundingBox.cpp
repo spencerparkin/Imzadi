@@ -1,6 +1,7 @@
 #include "AxisAlignedBoundingBox.h"
 #include "LineSegment.h"
 #include "Plane.h"
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -372,43 +373,55 @@ void AxisAlignedBoundingBox::GetEdgeSegments(std::vector<LineSegment>& edgeSegme
 	);
 }
 
-Vector3 AxisAlignedBoundingBox::ClosestPointTo(const Vector3& point) const
+Vector3 AxisAlignedBoundingBox::ClosestPointTo(const Vector3& point, double borderThickness /*= 0.0*/) const
 {
 	Vector3 closestPoint;
 	double smallestSquareDistance = std::numeric_limits<double>::max();
+	std::vector<Vector3> closestPointsArray;
+	this->GatherClosestPointsTo(point, closestPointsArray, borderThickness);
+	for (const Vector3& boxPoint : closestPointsArray)
+	{
+		Vector3 delta = point - boxPoint;
+		double squareDistance = delta.Dot(delta);
+		if (squareDistance < smallestSquareDistance)
+		{
+			smallestSquareDistance = squareDistance;
+			closestPoint = boxPoint;
+		}
+	}
 
+	return closestPoint;
+}
+
+void AxisAlignedBoundingBox::GatherClosestPointsTo(const Vector3& point, std::vector<Vector3>& closestPointsArray, double borderThickness /*= 0.0*/, bool returnListSorted /*= false*/) const
+{
 	std::vector<LineSegment> edgeSegmentArray;
 	this->GetEdgeSegments(edgeSegmentArray);
 	for (const LineSegment& edge : edgeSegmentArray)
 	{
 		Vector3 edgePoint = edge.ClosestPointTo(point);
-		Vector3 delta = point - edgePoint;
-		double squareDistance = delta.Dot(delta);
-		if (squareDistance < smallestSquareDistance)
-		{
-			smallestSquareDistance = squareDistance;
-			closestPoint = edgePoint;
-		}
+		closestPointsArray.push_back(edgePoint);
 	}
 
 	std::vector<Plane> sidePlaneArray;
 	this->GetSidePlanes(sidePlaneArray);
 	for (const Plane& sidePlane : sidePlaneArray)
 	{
-		Vector3 planePoint = sidePlane.ClosestPointTo(point);
-		if (this->ContainsPoint(planePoint, 1e-5))
-		{
-			Vector3 delta = point - planePoint;
-			double squareDistance = delta.Dot(delta);
-			if (squareDistance < smallestSquareDistance)
-			{
-				smallestSquareDistance = squareDistance;
-				closestPoint = planePoint;
-			}
-		}
+		Vector3 facePoint = sidePlane.ClosestPointTo(point);
+		if (this->ContainsPoint(facePoint, borderThickness))
+			closestPointsArray.push_back(facePoint);
 	}
 
-	return closestPoint;
+	if (returnListSorted)
+	{
+		std::sort(closestPointsArray.begin(), closestPointsArray.end(), [&point](const Vector3& boxPointA, const Vector3& boxPointB) -> bool {
+			Vector3 deltaA = point - boxPointA;
+			Vector3 deltaB = point - boxPointB;
+			double squareDistanceA = deltaA.SquareLength();
+			double squareDistanceB = deltaB.SquareLength();
+			return squareDistanceA < squareDistanceB;
+		});
+	}
 }
 
 double AxisAlignedBoundingBox::GetVolume() const

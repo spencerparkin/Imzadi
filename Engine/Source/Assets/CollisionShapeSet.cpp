@@ -87,7 +87,10 @@ CollisionShapeSet::CollisionShapeSet()
 	}
 
 	for (Imzadi::Shape* shape : this->collisionShapeArray)
+	{
 		shape->SetObjectToWorldTransform(objectToWorld);
+		shape->SetUserFlags(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+	}
 
 	return true;
 }

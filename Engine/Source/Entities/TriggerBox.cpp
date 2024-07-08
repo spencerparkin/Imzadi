@@ -44,6 +44,7 @@ TriggerBox::TriggerBox()
 	auto boxShape = BoxShape::Create();
 	boxShape->SetExtents(extents);
 	boxShape->SetObjectToWorldTransform(objectToWorld);
+	boxShape->SetUserFlags(IMZADI_SHAPE_FLAG_TRIGGER_BOX);
 	this->collisionShapeID = collisionSystem->AddShape(boxShape, 0);
 
 	return true;

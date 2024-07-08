@@ -6,6 +6,7 @@
 #include "RenderObjects/RenderMeshInstance.h"
 #include "Collision/Shape.h"
 #include "Collision/Task.h"
+#include "Collision/Result.h"
 
 namespace Imzadi
 {
@@ -33,6 +34,8 @@ namespace Imzadi
 		bool GetCanRestart() const { return this->canRestart; }
 
 	protected:
+		void HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult);
+
 		Vector3 restartLocation;
 		Quaternion restartOrientation;
 		bool canRestart;
@@ -41,7 +44,7 @@ namespace Imzadi
 		Reference<RenderMeshInstance> renderMesh;
 		bool inContactWithGround;
 		TaskID boundsQueryTaskID;
-		TaskID collisionQueryTaskID;
+		TaskID worldSurfaceCollisionQueryTaskID;
 		TaskID groundQueryTaskID;
 	};
 }

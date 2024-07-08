@@ -575,9 +575,22 @@ Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitB
 	{
 		if (axisAlignedBox.ContainsInteriorPoint(capsuleSpine.point[i]))
 		{
-			Vector3 point = axisAlignedBox.ClosestPointTo(capsuleSpine.point[i]);
-			Vector3 delta = point - capsuleSpine.point[i];
-			return delta;
+			std::vector<Vector3> closestPointsArray;
+			axisAlignedBox.GatherClosestPointsTo(capsuleSpine.point[i], closestPointsArray, borderThickness, true);
+
+			for (const Vector3& boxPoint : closestPointsArray)
+			{
+				// This delta moves the interior point to the border, but does
+				// it also keep the other spine point on our outside the box?
+				Vector3 delta = boxPoint - capsuleSpine.point[i];
+				if (axisAlignedBox.ContainsInteriorPoint(capsuleSpine.point[1 - i] + delta, borderThickness))
+					continue;
+
+				return delta;
+			}
+
+			// If we get here, then our algorithm won't terminate.  Might as well assert.
+			IMZADI_ASSERT(false);
 		}
 	}
 

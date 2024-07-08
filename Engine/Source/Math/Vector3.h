@@ -165,6 +165,14 @@ namespace Imzadi
 		}
 
 		/**
+		 * Return the square length of this vector.
+		 */
+		double SquareLength() const
+		{
+			return this->Dot(*this);
+		}
+
+		/**
 		 * Return the dot-product (or inner-product) of this vector and the given vector.  Note that this operation is commutative.
 		 * Therefore, there is no loss in generality to describe the operation as follows.  Putting the vectors
 		 * tail-to-tail, the first vector is orthogonally projected down onto the second vector.  The result is

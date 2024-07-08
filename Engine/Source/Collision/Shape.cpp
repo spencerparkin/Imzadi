@@ -18,6 +18,7 @@ Shape::Shape(bool temporary)
 	this->cache = nullptr;
 	this->objectToWorld.SetIdentity();
 	this->revisionNumber = 0;
+	this->userFlags = 0;
 }
 
 /*virtual*/ Shape::~Shape()

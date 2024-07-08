@@ -264,12 +264,23 @@ namespace Imzadi
 		 */
 		bool IsBound() const { return this->node != nullptr; }
 
+		/**
+		 * Get a copy of the user flags associated with this shape.
+		 */
+		uint64_t GetUserFlags() const { return this->userFlags; }
+
+		/**
+		 * Overwrite this shape's current set of user flags.
+		 */
+		void SetUserFlags(uint64_t userFlags) { this->userFlags = userFlags; }
+
 	private:
 
 		ShapeID shapeID;							///< This is a unique identifier that can be used to safely refer to this node on any thread.
 		static std::atomic<ShapeID> nextShapeID;	///< This is the ID of the next shape to be allocated by the system.
 		BoundingBoxNode* node;						///< This is the node of the bounding-box tree that contains this shape.
 		mutable ShapeCache* cache;					///< This pointer should never be accessed directly by methods of this class or any of its derivatives.  Rather, the GetCache method should always be used.
+		uint64_t userFlags;							///< These are flags the user can use to categorize collision shapes.
 
 	protected:
 

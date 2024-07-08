@@ -225,7 +225,13 @@ namespace Imzadi
 		 * Calculate and return the point on this box's boundary that is closest
 		 * to the given point.
 		 */
-		Vector3 ClosestPointTo(const Vector3& point) const;
+		Vector3 ClosestPointTo(const Vector3& point, double borderThickness = 0.0) const;
+
+		/**
+		 * Find and return the points on each face and edge that are closest
+		 * to the given point.
+		 */
+		void GatherClosestPointsTo(const Vector3& point, std::vector<Vector3>& closestPointsArray, double borderThickness = 0.0, bool returnListSorted = false) const;
 
 		/**
 		 * Write this AABB to the given stream in binary form.
