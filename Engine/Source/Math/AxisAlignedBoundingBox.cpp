@@ -54,16 +54,55 @@ bool AxisAlignedBoundingBox::IsValid() const
 
 bool AxisAlignedBoundingBox::ContainsPoint(const Vector3& point, double borderThickness /*= 0.0*/) const
 {
-	if (!(-borderThickness + this->minCorner.x <= point.x && point.x <= this->maxCorner.x + borderThickness))
+	if (!(-borderThickness / 2.0 + this->minCorner.x <= point.x && point.x <= this->maxCorner.x + borderThickness / 2.0))
 		return false;
 
-	if (!(-borderThickness + this->minCorner.y <= point.y && point.y <= this->maxCorner.y + borderThickness))
+	if (!(-borderThickness / 2.0 + this->minCorner.y <= point.y && point.y <= this->maxCorner.y + borderThickness / 2.0))
 		return false;
 
-	if (!(-borderThickness + this->minCorner.z <= point.z && point.z <= this->maxCorner.z + borderThickness))
+	if (!(-borderThickness / 2.0 + this->minCorner.z <= point.z && point.z <= this->maxCorner.z + borderThickness / 2.0))
 		return false;
 
 	return true;
+}
+
+bool AxisAlignedBoundingBox::ContainsPointOnSurface(const Vector3& point, double borderThickness /*= 0.0*/) const
+{
+	if (!ContainsPoint(point, borderThickness))
+		return false;
+
+	return this->PointOnFacePlane(point, borderThickness);
+}
+
+bool AxisAlignedBoundingBox::ContainsInteriorPoint(const Vector3& point, double borderThickness /*= 0.0*/) const
+{
+	if (!ContainsPoint(point, borderThickness))
+		return false;
+
+	return !this->PointOnFacePlane(point, borderThickness);
+}
+
+bool AxisAlignedBoundingBox::PointOnFacePlane(const Vector3& point, double borderThickness /*= 0.0*/) const
+{
+	if ((-borderThickness / 2.0 + this->minCorner.x <= point.x && point.x <= this->minCorner.x + borderThickness / 2.0) ||
+		(-borderThickness / 2.0 + this->maxCorner.x <= point.x && point.x <= this->maxCorner.x + borderThickness / 2.0))
+	{
+		return true;
+	}
+
+	if ((-borderThickness / 2.0 + this->minCorner.y <= point.y && point.y <= this->minCorner.y + borderThickness / 2.0) ||
+		(-borderThickness / 2.0 + this->maxCorner.y <= point.y && point.y <= this->maxCorner.y + borderThickness / 2.0))
+	{
+		return true;
+	}
+
+	if ((-borderThickness / 2.0 + this->minCorner.z <= point.z && point.z <= this->minCorner.z + borderThickness / 2.0) ||
+		(-borderThickness / 2.0 + this->maxCorner.z <= point.z && point.z <= this->maxCorner.z + borderThickness / 2.0))
+	{
+		return true;
+	}
+
+	return false;
 }
 
 bool AxisAlignedBoundingBox::ContainsBox(const AxisAlignedBoundingBox& box) const
@@ -91,13 +130,18 @@ void AxisAlignedBoundingBox::Scale(double scale)
 
 void AxisAlignedBoundingBox::Scale(double scaleX, double scaleY, double scaleZ)
 {
-	Vector3 center = (this->minCorner + this->maxCorner) / 2.0;
+	Vector3 center = this->GetCenter();
 	Vector3 vector = this->maxCorner - center;
 	vector.x *= scaleX;
 	vector.y *= scaleY;
 	vector.z *= scaleZ;
 	this->minCorner = center - vector;
 	this->maxCorner = center + vector;
+}
+
+Vector3 AxisAlignedBoundingBox::GetCenter() const
+{
+	return (this->minCorner + this->maxCorner) / 2.0;
 }
 
 void AxisAlignedBoundingBox::MakeReadyForExpansion()

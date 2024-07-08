@@ -41,6 +41,12 @@ double LineSegment::Length() const
 	return this->GetDelta().Length();
 }
 
+double LineSegment::SquareLength() const
+{
+	Vector3 delta = this->GetDelta();
+	return delta.Dot(delta);
+}
+
 Vector3 LineSegment::ClosestPointTo(const Vector3& point) const
 {
 	Vector3 lineVector = this->GetDelta();

@@ -29,6 +29,13 @@ namespace Imzadi
 		double Length() const;
 
 		/**
+		 * Calculate and return the square length of this line segment.
+		 * It is faster to compare square lengths instead of lengths, because
+		 * we forgo a square root.
+		 */
+		double SquareLength() const;
+
+		/**
 		 * Calculate and return the point on this line segment that is closest
 		 * to the given point.
 		 */

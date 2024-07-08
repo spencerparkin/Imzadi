@@ -65,6 +65,28 @@ namespace Imzadi
 		bool ContainsPoint(const Vector3& point, double borderThickness = 0.0) const;
 
 		/**
+		 * Return true if and only if the given point is on this box's border.
+		 * 
+		 * @param[in] borderThickness This is used to define the approximate border of the box.  It's a radius about the zero-width border in reality.
+		 */
+		bool ContainsPointOnSurface(const Vector3& point, double borderThickness = 0.0) const;
+
+		/**
+		 * Return true if and only if the given point is in this box, but not
+		 * on its border.
+		 * 
+		 * @param[in] borderThickness This is used to define the approximate border of the box.  It's a radius about the zero-width border in reality.
+		 */
+		bool ContainsInteriorPoint(const Vector3& point, double borderThickness = 0.0) const;
+
+		/**
+		 * Return true if and only if the given point is contained in a plane containing one of the faces of this box.
+		 * 
+		 * @param[in] borderThickness This is the thickness of the face plane.
+		 */
+		bool PointOnFacePlane(const Vector3& point, double borderThickness = 0.0) const;
+
+		/**
 		 * Tell the caller if the given AABB is contained within this AABB.
 		 * 
 		 * @return True is returned if the given box is a sub-box of this box; false, otherwise.
@@ -123,6 +145,11 @@ namespace Imzadi
 		 * @param[in] scaleZ This box is scaled by this factor in the Z dimension.
 		 */
 		void Scale(double scaleX, double scaleY, double scaleZ);
+
+		/**
+		 * Return the center point of the box.
+		 */
+		Vector3 GetCenter() const;
 
 		/**
 		 * Cut this AABB exactly in half along a plane such that the resulting two

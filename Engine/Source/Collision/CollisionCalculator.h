@@ -204,6 +204,9 @@ namespace Imzadi
 	{
 	public:
 		virtual ShapePairCollisionStatus* Calculate(const Shape* shapeA, const Shape* shapeB) override;
+
+	private:
+		Vector3 CalcCapsuleDeltaToHelpExitBox(const LineSegment& capsuleSpine, double capsuleRadius, const AxisAlignedBoundingBox& axisAlignedBox);
 	};
 
 	/**

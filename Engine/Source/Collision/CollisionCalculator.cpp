@@ -9,6 +9,7 @@
 #include "Math/Plane.h"
 #include "Math/Ray.h"
 #include "Math/Interval.h"
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -145,7 +146,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 		double boxBorderThickness = 1e-4;
 		if (distance < boxBorderThickness)
 		{
-			Vector3 unitDirection = closestBoxPoint.Normalized();
+			Vector3 unitDirection = (closestBoxPoint - objectSpaceBox.GetCenter()).Normalized();
 			double angleX = unitDirection.AngleBetween(Vector3(1.0, 0.0, 0.0));
 			double angleY = unitDirection.AngleBetween(Vector3(0.0, 1.0, 0.0));
 			double angleZ = unitDirection.AngleBetween(Vector3(0.0, 0.0, 1.0));
@@ -510,14 +511,162 @@ bool CollisionCalculator<BoxShape, BoxShape>::GatherInfo(const BoxShape* homeBox
 	Transform capsuleToWorld = capsule->GetObjectToWorldTransform();
 	Transform capsuleToBox = worldToBox * capsuleToWorld;
 
-	LineSegment spine = capsuleToBox.TransformLineSegment(capsule->GetSpine());
+	LineSegment capsuleSpine = capsuleToBox.TransformLineSegment(capsule->GetSpine());
+	LineSegment movingCapsuleSpine = capsuleSpine;
 
-	AxisAlignedBoundingBox aabb;
-	box->GetAxisAlignedBox(aabb);
+	AxisAlignedBoundingBox axisAlignedBox;
+	box->GetAxisAlignedBox(axisAlignedBox);
 
-	
+	while (true)
+	{
+		Vector3 delta = this->CalcCapsuleDeltaToHelpExitBox(movingCapsuleSpine, capsule->GetRadius(), axisAlignedBox);
+		if (delta.Dot(delta) == 0.0)
+			break;
+
+		movingCapsuleSpine.point[0] += delta;
+		movingCapsuleSpine.point[1] += delta;
+	}
+
+	collisionStatus->separationDelta = capsuleSpine.point[0] - movingCapsuleSpine.point[0];
+	if (collisionStatus->separationDelta.Length() > 0.0)
+	{
+		Transform boxToWorld = box->GetObjectToWorldTransform();
+		collisionStatus->separationDelta = boxToWorld.TransformVector(collisionStatus->separationDelta);
+
+		collisionStatus->inCollision = true;
+		collisionStatus->collisionCenter = Vector3(0.0, 0.0, 0.0);	// TODO: Punt on this for now.
+	}
 
 	return collisionStatus;
+}
+
+Vector3 CollisionCalculator<BoxShape, CapsuleShape>::CalcCapsuleDeltaToHelpExitBox(const LineSegment& capsuleSpine, double capsuleRadius, const AxisAlignedBoundingBox& axisAlignedBox)
+{
+	static double borderThickness = 1e-4;
+
+	//
+	// Case #1: Both vertices of the spine are interior to the box.
+	//
+
+	if (axisAlignedBox.ContainsInteriorPoint(capsuleSpine.point[0], borderThickness) &&
+		axisAlignedBox.ContainsInteriorPoint(capsuleSpine.point[1], borderThickness))
+	{
+		Vector3 pointA = axisAlignedBox.ClosestPointTo(capsuleSpine.point[0]);
+		Vector3 pointB = axisAlignedBox.ClosestPointTo(capsuleSpine.point[1]);
+
+		Vector3 deltaA = pointA - capsuleSpine.point[0];
+		Vector3 deltaB = pointB - capsuleSpine.point[1];
+
+		double distanceA = deltaA.Length();
+		double distanceB = deltaB.Length();
+
+		if (distanceA < distanceB)
+			return deltaA;
+		else
+			return deltaB;
+	}
+
+	//
+	// Case #2: Exactly one of the two vertices is interior to the box.
+	//
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (axisAlignedBox.ContainsInteriorPoint(capsuleSpine.point[i]))
+		{
+			Vector3 point = axisAlignedBox.ClosestPointTo(capsuleSpine.point[i]);
+			Vector3 delta = point - capsuleSpine.point[i];
+			return delta;
+		}
+	}
+
+	//
+	// Case #3: Both vertices are outside or on the border of the box.
+	//
+
+	//
+	// Case #3A: The vertices are on or beyond the same face plane of the box.
+	//
+
+	std::vector<Plane> sidePlaneArray;
+	axisAlignedBox.GetSidePlanes(sidePlaneArray);
+	for (const auto& sidePlane : sidePlaneArray)
+	{
+		Plane::Side sideA = sidePlane.GetSide(capsuleSpine.point[0], borderThickness);
+		Plane::Side sideB = sidePlane.GetSide(capsuleSpine.point[1], borderThickness);
+		if (sideA != Plane::Side::BACK && sideB != Plane::Side::BACK)
+		{
+			double distanceA = sidePlane.SignedDistanceTo(capsuleSpine.point[0]);
+			double distanceB = sidePlane.SignedDistanceTo(capsuleSpine.point[1]);
+			
+			Vector3 delta;
+
+			if (distanceA < distanceB)
+			{
+				if (distanceA < capsuleRadius)
+					delta = sidePlane.unitNormal * (capsuleRadius - distanceA);
+			}
+			else
+			{
+				if (distanceB < capsuleRadius)
+					delta = sidePlane.unitNormal * (capsuleRadius - distanceB);
+			}
+
+			return delta;
+		}
+	}
+
+	//
+	// Case #3B: The vertices are on or beyond different face planes of the box.
+	//
+
+	std::vector<LineSegment> connectorArray;
+	std::vector<LineSegment> edgeSegmentArray;
+	axisAlignedBox.GetEdgeSegments(edgeSegmentArray);
+	for (const auto& edgeSegment : edgeSegmentArray)
+	{
+		LineSegment connector;
+		if (connector.SetAsShortestConnector(capsuleSpine, edgeSegment))
+			connectorArray.push_back(connector);
+	}
+
+	std::sort(connectorArray.begin(), connectorArray.end(), [](const LineSegment& connectorA, const LineSegment& connectorB) -> bool {
+		return connectorA.SquareLength() < connectorB.SquareLength();
+	});
+
+	for (const auto& connector : connectorArray)
+	{
+		const Vector3& capsuleSpinePoint = connector.point[0];
+		if (axisAlignedBox.ContainsInteriorPoint(capsuleSpinePoint))
+		{
+			Vector3 vector = connector.GetDelta();
+			double distance = vector.Length();
+			Vector3 delta = vector * (capsuleRadius + distance) / distance;
+			return delta;
+		}
+		else if (axisAlignedBox.ContainsPointOnSurface(capsuleSpinePoint))
+		{
+			Vector3 vector = connector.GetDelta().Cross(capsuleSpine.GetDelta());
+			double distanceA = (capsuleSpinePoint + vector - axisAlignedBox.GetCenter()).Length();
+			double distanceB = (capsuleSpinePoint - vector - axisAlignedBox.GetCenter()).Length();
+			if (distanceB > distanceA)
+				vector *= -1.0;
+			Vector3 delta = vector.Normalized() * capsuleRadius;
+			return delta;
+		}
+		else
+		{
+			Vector3 vector = connector.GetDelta();
+			double distance = vector.Length();
+			if (distance < capsuleRadius)
+			{
+				Vector3 delta = vector * (capsuleRadius - distance) / distance;
+				return delta;
+			}
+		}
+	}
+
+	return Vector3(0.0, 0.0, 0.0);
 }
 
 //------------------------------ CollisionCalculator<CapsuleShape, BoxShape> ------------------------------
