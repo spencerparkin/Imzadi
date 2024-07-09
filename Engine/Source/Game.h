@@ -15,6 +15,7 @@
 #include "Math/Quaternion.h"
 #include "Controller.h"
 #include "Collision/System.h"
+#include "EventSystem.h"
 #include "StateCache.h"
 
 #define IMZADI_GAME_WINDOW_CLASS_NAME		TEXT("ImzadiGameWindowClass")
@@ -163,6 +164,7 @@ namespace Imzadi
 		Camera* GetCamera();
 		void SetCamera(Reference<Camera> camera);
 		CollisionSystem* GetCollisionSystem();
+		EventSystem* GetEventSystem();
 		DebugLines* GetDebugLines();
 
 		static Game* Get();
@@ -315,6 +317,7 @@ namespace Imzadi
 		Controller controller;
 		std::vector<std::string> controllerUserStack;
 		CollisionSystem collisionSystem;
+		EventSystem eventSystem;
 		double accelerationDuetoGravity;
 		Reference<DebugLines> debugLines;
 		uint32_t collisionSystemDebugDrawFlags;

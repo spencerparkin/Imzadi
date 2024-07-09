@@ -150,6 +150,11 @@ CollisionSystem* Game::GetCollisionSystem()
 	return &this->collisionSystem;
 }
 
+EventSystem* Game::GetEventSystem()
+{
+	return &this->eventSystem;
+}
+
 DebugLines* Game::GetDebugLines()
 {
 	return this->debugLines.Get();
@@ -698,6 +703,7 @@ std::string Game::PopControllerUser()
 
 	if (tickPass == TickPass::PARALLEL_TICK)
 	{
+		this->eventSystem.DispatchAllPendingEvents();
 		this->scene->PrepareRenderObjects();
 	}
 }

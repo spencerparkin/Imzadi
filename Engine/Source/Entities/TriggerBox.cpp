@@ -3,7 +3,7 @@
 #include "Collision/System.h"
 #include "Collision/Shapes/Box.h"
 #include "Collision/Query.h"
-#include "Collision/Result.h"
+#include "Collision/CollisionCache.h"
 
 using namespace Imzadi;
 
@@ -11,6 +11,7 @@ TriggerBox::TriggerBox()
 {
 	this->collisionShapeID = 0;
 	this->collisionQueryTaskID = 0;
+	this->channelFlags = IMZADI_EVENT_FLAG_TRIGGER_BOX;
 }
 
 /*virtual*/ TriggerBox::~TriggerBox()
@@ -84,7 +85,9 @@ TriggerBox::TriggerBox()
 				Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
 				if (result)
 				{
-					// TODO: Process collision here.  Send on-enter or on-leave events as necessary.
+					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+					if (collisionResult)
+						this->UpdateCollisionState(collisionResult);
 
 					collisionSystem->Free(result);
 				}
@@ -95,4 +98,42 @@ TriggerBox::TriggerBox()
 	}
 
 	return true;
+}
+
+void TriggerBox::UpdateCollisionState(CollisionQueryResult* collisionResult)
+{
+	const std::vector<Reference<ShapePairCollisionStatus>>& collisionStatusArray = collisionResult->GetCollisionStatusArray();
+	for (const auto& collisionStatus : collisionStatusArray)
+	{
+		ShapeID shapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
+
+		if (this->shapeSet.find(shapeID) == this->shapeSet.end())
+		{
+			this->shapeSet.insert(shapeID);
+			Game::Get()->GetEventSystem()->SendEvent(this->channelFlags, new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_ENTERED, shapeID, this->GetName()));
+		}
+	}
+
+	std::vector<ShapeID> shapesToRemoveArray;
+	for (ShapeID shapeID : this->shapeSet)
+	{
+		bool found = false;
+		for (const auto& collisionStatus : collisionStatusArray)
+		{
+			if (collisionStatus->GetOtherShape(this->collisionShapeID) == shapeID)
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+			shapesToRemoveArray.push_back(shapeID);
+	}
+
+	for (ShapeID shapeID : shapesToRemoveArray)
+	{
+		this->shapeSet.erase(shapeID);
+		Game::Get()->GetEventSystem()->SendEvent(this->channelFlags, new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_EXITED, shapeID, this->GetName()));
+	}
 }
