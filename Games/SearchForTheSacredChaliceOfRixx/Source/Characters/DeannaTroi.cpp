@@ -49,18 +49,21 @@ DeannaTroi::DeannaTroi()
 
 void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
-	const std::string& triggerBoxName = event->GetName();
-	switch (event->type)
+	if (this->collisionShapeID == event->shapeID)
 	{
-		case Imzadi::TriggerBoxEvent::Type::SHAPE_ENTERED:
+		const std::string& triggerBoxName = event->GetName();
+		switch (event->type)
 		{
-			IMZADI_LOG_INFO("Entered trigger box %s.", triggerBoxName.c_str());
-			break;
-		}
-		case Imzadi::TriggerBoxEvent::Type::SHAPE_EXITED:
-		{
-			IMZADI_LOG_INFO("Exited trigger box %s.", triggerBoxName.c_str());
-			break;
+			case Imzadi::TriggerBoxEvent::Type::SHAPE_ENTERED:
+			{
+				IMZADI_LOG_INFO("Entered trigger box %s.", triggerBoxName.c_str());
+				break;
+			}
+			case Imzadi::TriggerBoxEvent::Type::SHAPE_EXITED:
+			{
+				IMZADI_LOG_INFO("Exited trigger box %s.", triggerBoxName.c_str());
+				break;
+			}
 		}
 	}
 }
