@@ -8,6 +8,7 @@ DeannaTroi::DeannaTroi()
 {
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
+	this->triggerBoxListenerHandle = 0;
 }
 
 /*virtual*/ DeannaTroi::~DeannaTroi()
@@ -31,7 +32,7 @@ DeannaTroi::DeannaTroi()
 
 	this->cameraHandle = followCam->GetHandle();
 
-	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener(new Imzadi::LambdaEventListener(IMZADI_EVENT_FLAG_TRIGGER_BOX, [=](const Imzadi::Event* event) {
+	this->triggerBoxListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("TriggerBox", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->HandleTriggerBoxEvent((const Imzadi::TriggerBoxEvent*)event);
 	}));
 
@@ -43,6 +44,12 @@ DeannaTroi::DeannaTroi()
 	Biped::Shutdown();
 
 	Imzadi::Game::Get()->PopControllerUser();
+
+	if (this->triggerBoxListenerHandle)
+	{
+		Imzadi::Game::Get()->GetEventSystem()->UnregisterEventListener(this->triggerBoxListenerHandle);
+		this->triggerBoxListenerHandle = 0;
+	}
 
 	return true;
 }

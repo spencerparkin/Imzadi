@@ -5,6 +5,7 @@ using namespace Imzadi;
 
 TriggerBoxData::TriggerBoxData()
 {
+	this->eventChannelName = "TriggerBox";
 }
 
 /*virtual*/ TriggerBoxData::~TriggerBoxData()
@@ -38,6 +39,9 @@ TriggerBoxData::TriggerBoxData()
 	}
 
 	this->name = jsonDoc["name"].GetString();
+
+	if (jsonDoc.HasMember("event_channel_name") && jsonDoc["event_channel_name"].IsString())
+		this->eventChannelName = jsonDoc["event_channel_name"].GetString();
 
 	return true;
 }

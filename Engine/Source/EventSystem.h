@@ -11,8 +11,11 @@ namespace Imzadi
 {
 	class Event;
 	class EventListener;
+	class EventChannel;
 	typedef std::function<void(const Event*)> EventListenerCallback;
-	typedef uint32_t EventListenerHandle;
+	typedef uint64_t EventListenerHandle;
+	typedef std::unordered_map<EventListenerHandle, Reference<EventListener>> EventListenerMap;
+	typedef std::unordered_map<std::string, Reference<EventChannel>> EventChannelMap;
 
 	/**
 	 * This is a simple event sending and dispatch system.  The idea here is to
@@ -20,7 +23,7 @@ namespace Imzadi
 	 * respond to events.  Neither should necessarily have knowledge of the other.
 	 * Further, a system shouldn't necessarily care who responds to events it
 	 * generates.  Conversely, a system shouldn't necessarily care where events
-	 * it processes come from.
+	 * it processes come from.  The event system is a message broker.
 	 */
 	class IMZADI_API EventSystem
 	{
@@ -30,28 +33,32 @@ namespace Imzadi
 
 		/**
 		 * This will send the given event asynchronously.  That is,
-		 * the event is queued, and will be dispatched to all listeners
-		 * at an appropriate time in the frame.  We don't dispatch here
-		 * so as to prevent re-entrancy/recursion into the event system.
+		 * the event is queued, and will be dispatched to all applicable
+		 * listeners at an appropriate time in the frame.  We don't dispatch
+		 * here so as to prevent re-entrancy/recursion into the event system.
 		 * 
-		 * @param[in] channelMask All registered listeners having channel flags not masked out by the given mask will be recipients of the event.
+		 * @param[in] channelName Listeners subscribed to this channel will receive the event.
 		 * @param[in] event This is the event to send, allocated on the heap.  The system takes ownership of the memory.
+		 * @return True is returned on success; false, otherwise.  We can fail here if a channel by the given name does not exist.
 		 */
-		void SendEvent(uint64_t channelMask, Event* event);
+		bool SendEvent(const std::string& channelName, Event* event);
 
 		/**
 		 * Register an event listener with the system.
 		 * 
-		 * @return A handle is returned that the user can pass to the UnregisterEventListener method.
+		 * @param[in] channelName The given listener will receive events from this channel.  If the channel doesn't exist, it is created.
+		 * @param[in] eventListener This is a derivative of the EventListener class which will process events on the given channel.
+		 * @return A handle is returned that the user can pass to the UnregisterEventListener method.  Note that zero is an invalid handle value.
 		 */
-		EventListenerHandle RegisterEventListener(Reference<EventListener> eventListener);
+		EventListenerHandle RegisterEventListener(const std::string& channelName, Reference<EventListener> eventListener);
 
 		/**
 		 * Unregister a previously registered event listener.
 		 * 
 		 * @param[in] eventListenerHandle This is the handle returned from the RegisterEventListener method.
+		 * @return True is returned on success; false, otherwise.
 		 */
-		void UnregisterEventListener(EventListenerHandle eventListenerHandle);
+		bool UnregisterEventListener(EventListenerHandle eventListenerHandle);
 
 		/**
 		 * This should get called once per frame to send all queued events.
@@ -65,9 +72,29 @@ namespace Imzadi
 
 	private:
 
-		typedef std::unordered_map<EventListenerHandle, Reference<EventListener>> EventListenerMap;
-		EventListenerMap eventListenerMap;
+		EventChannel* GetOrCreateChannel(const std::string& channelName, bool canCreateIfNoneExistent);
+
+		EventChannelMap eventChannelMap;
 		EventListenerHandle nextHandle;
+	};
+
+	/**
+	 * These are used internally by the EventSystem class to manage channels.
+	 */
+	class EventChannel : public ReferenceCounted
+	{
+	public:
+		EventChannel();
+		virtual ~EventChannel();
+
+		bool AddSubscriber(EventListenerHandle eventListenerHandle, Reference<EventListener>& eventListener);
+		bool RemoveSubscriber(EventListenerHandle eventListenerHandle);
+		void EnqueueEvent(Event* event);
+		void DispatchQueue();
+		void Clear();
+
+	private:
+		EventListenerMap eventListenerMap;
 		std::list<Event*> eventQueue;
 	};
 
@@ -75,7 +102,8 @@ namespace Imzadi
 	 * Events are what flow through the event system from where
 	 * they're generated to where they're processed.  They're
 	 * all just derivatives of this class.  Processors are expected
-	 * to know how to cast them or to use a dynamic cast.
+	 * to know how to cast them or to use a dynamic cast.  They
+	 * should not delete them.
 	 */
 	class IMZADI_API Event
 	{
@@ -86,12 +114,8 @@ namespace Imzadi
 		void SetName(const std::string& name) { this->name = name; }
 		const std::string& GetName() const { return this->name; }
 
-		void SetChannelMask(uint64_t channelMask) { this->channelMask = channelMask; }
-		uint64_t GetChannelMask() const { return this->channelMask; }
-
 	protected:
 		std::string name;
-		uint64_t channelMask;
 	};
 
 	/**
@@ -106,17 +130,10 @@ namespace Imzadi
 	class IMZADI_API EventListener : public ReferenceCounted
 	{
 	public:
-		EventListener(uint64_t channelFlags);
+		EventListener();
 		virtual ~EventListener();
 
 		virtual void ProcessEvent(Event* event) = 0;
-
-		void SetChannelFlags(uint64_t channelFlags) { this->channelFlags = channelFlags; }
-
-		uint64_t GetChannelFlags() const { return this->channelFlags; }
-
-	protected:
-		uint64_t channelFlags;
 	};
 
 	/**
@@ -130,7 +147,7 @@ namespace Imzadi
 	class IMZADI_API LambdaEventListener : public EventListener
 	{
 	public:
-		LambdaEventListener(uint64_t channelFlags, EventListenerCallback callback);
+		LambdaEventListener(EventListenerCallback callback);
 		virtual ~LambdaEventListener();
 
 		virtual void ProcessEvent(Event* event) override;

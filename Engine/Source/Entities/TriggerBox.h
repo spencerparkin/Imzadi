@@ -24,9 +24,6 @@ namespace Imzadi
 
 		void SetData(TriggerBoxData* data) { this->data.Set(data); }
 
-		void SetEventChannelFlags(uint64_t channelFlags) { this->channelFlags = channelFlags; }
-		uint64_t GetEventChannelFlags() const { return this->channelFlags; }
-
 	protected:
 		void UpdateCollisionState(CollisionQueryResult* collisionResult);
 
@@ -34,7 +31,6 @@ namespace Imzadi
 		TaskID collisionQueryTaskID;
 		Reference<TriggerBoxData> data;
 		std::unordered_set<ShapeID> shapeSet;
-		uint64_t channelFlags;
 	};
 
 	/**

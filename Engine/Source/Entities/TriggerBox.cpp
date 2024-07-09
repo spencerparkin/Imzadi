@@ -11,7 +11,6 @@ TriggerBox::TriggerBox()
 {
 	this->collisionShapeID = 0;
 	this->collisionQueryTaskID = 0;
-	this->channelFlags = IMZADI_EVENT_FLAG_TRIGGER_BOX;
 }
 
 /*virtual*/ TriggerBox::~TriggerBox()
@@ -110,7 +109,7 @@ void TriggerBox::UpdateCollisionState(CollisionQueryResult* collisionResult)
 		if (this->shapeSet.find(shapeID) == this->shapeSet.end())
 		{
 			this->shapeSet.insert(shapeID);
-			Game::Get()->GetEventSystem()->SendEvent(this->channelFlags, new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_ENTERED, shapeID, this->GetName()));
+			Game::Get()->GetEventSystem()->SendEvent(this->data->GetEventChannelName(), new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_ENTERED, shapeID, this->GetName()));
 		}
 	}
 
@@ -134,6 +133,6 @@ void TriggerBox::UpdateCollisionState(CollisionQueryResult* collisionResult)
 	for (ShapeID shapeID : shapesToRemoveArray)
 	{
 		this->shapeSet.erase(shapeID);
-		Game::Get()->GetEventSystem()->SendEvent(this->channelFlags, new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_EXITED, shapeID, this->GetName()));
+		Game::Get()->GetEventSystem()->SendEvent(this->data->GetEventChannelName(), new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_EXITED, shapeID, this->GetName()));
 	}
 }

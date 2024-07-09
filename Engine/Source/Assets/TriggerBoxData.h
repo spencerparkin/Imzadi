@@ -19,9 +19,11 @@ namespace Imzadi
 
 		const AxisAlignedBoundingBox& GetBox() const { return this->box; }
 		const std::string& GetName() const { return this->name; }
+		const std::string& GetEventChannelName() const { return this->eventChannelName; }
 
 	private:
 		AxisAlignedBoundingBox box;
 		std::string name;
+		std::string eventChannelName;
 	};
 }

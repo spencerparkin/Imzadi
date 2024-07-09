@@ -14,25 +14,105 @@ EventSystem::EventSystem()
 	this->Clear();
 }
 
-void EventSystem::SendEvent(uint64_t channelMask, Event* event)
+bool EventSystem::SendEvent(const std::string& channelName, Event* event)
 {
-	event->SetChannelMask(channelMask);
-	this->eventQueue.push_back(event);
+	EventChannel* channel = this->GetOrCreateChannel(channelName, false);
+	if (!channel)
+		return false;
+
+	channel->EnqueueEvent(event);
+	return true;
 }
 
-EventListenerHandle EventSystem::RegisterEventListener(Reference<EventListener> eventListener)
+EventListenerHandle EventSystem::RegisterEventListener(const std::string& channelName, Reference<EventListener> eventListener)
 {
 	EventListenerHandle handle = this->nextHandle++;
-	this->eventListenerMap.insert(std::pair<EventListenerHandle, Reference<EventListener>>(handle, eventListener));
+	EventChannel* channel = this->GetOrCreateChannel(channelName, true);
+	IMZADI_ASSERT(channel);
+	if (!channel->AddSubscriber(handle, eventListener))
+		handle = 0;
 	return handle;
 }
 
-void EventSystem::UnregisterEventListener(EventListenerHandle eventListenerHandle)
+bool EventSystem::UnregisterEventListener(EventListenerHandle eventListenerHandle)
 {
-	this->eventListenerMap.erase(eventListenerHandle);
+	for (auto pair : this->eventChannelMap)
+	{
+		EventChannel* channel = pair.second;
+		if (channel->RemoveSubscriber(eventListenerHandle))
+			return true;
+	}
+
+	return false;
 }
 
 void EventSystem::DispatchAllPendingEvents()
+{
+	for (auto pair : this->eventChannelMap)
+	{
+		EventChannel* channel = pair.second;
+		channel->DispatchQueue();
+	}
+}
+
+void EventSystem::Clear()
+{
+	this->eventChannelMap.clear();
+}
+
+EventChannel* EventSystem::GetOrCreateChannel(const std::string& channelName, bool canCreateIfNoneExistent)
+{
+	EventChannel* channel = nullptr;
+
+	EventChannelMap::iterator iter = this->eventChannelMap.find(channelName);
+	if (iter != this->eventChannelMap.end())
+		channel = iter->second;
+	else if (canCreateIfNoneExistent)
+	{
+		channel = new EventChannel();
+		this->eventChannelMap.insert(std::pair<std::string, Reference<EventChannel>>(channelName, channel));
+	}
+
+	return channel;
+}
+
+//-------------------------------------- EventChannel --------------------------------------
+
+EventChannel::EventChannel()
+{
+}
+
+/*virtual*/ EventChannel::~EventChannel()
+{
+	this->Clear();
+}
+
+bool EventChannel::AddSubscriber(EventListenerHandle eventListenerHandle, Reference<EventListener>& eventListener)
+{
+	EventListenerMap::iterator iter = this->eventListenerMap.find(eventListenerHandle);
+	if (iter != this->eventListenerMap.end())
+		return false;
+
+	this->eventListenerMap.insert(std::pair<EventListenerHandle, Reference<EventListener>>(eventListenerHandle, eventListener));
+	return true;
+}
+
+bool EventChannel::RemoveSubscriber(EventListenerHandle eventListenerHandle)
+{
+	EventListenerMap::iterator iter = this->eventListenerMap.find(eventListenerHandle);
+	if (iter == this->eventListenerMap.end())
+		return false;
+
+	this->eventListenerMap.erase(iter);
+	return true;
+}
+
+void EventChannel::EnqueueEvent(Event* event)
+{
+	this->eventQueue.push_back(event);
+}
+
+void EventChannel::DispatchQueue()
 {
 	while (this->eventQueue.size() > 0)
 	{
@@ -40,25 +120,18 @@ void EventSystem::DispatchAllPendingEvents()
 		Event* event = *iter;
 		this->eventQueue.erase(iter);
 
-		uint64_t channelMask = event->GetChannelMask();
-
 		for (auto pair : this->eventListenerMap)
 		{
-			Reference<EventListener>& eventListener = pair.second;
-			uint64_t channelFlags = eventListener->GetChannelFlags();
-
-			if ((channelFlags & channelMask) != 0)
-				eventListener->ProcessEvent(event);
+			EventListener* eventListener = pair.second;
+			eventListener->ProcessEvent(event);
 		}
 
 		delete event;
 	}
 }
 
-void EventSystem::Clear()
+void EventChannel::Clear()
 {
-	this->eventListenerMap.clear();
-
 	for (Event* event : this->eventQueue)
 		delete event;
 
@@ -70,7 +143,6 @@ void EventSystem::Clear()
 Event::Event()
 {
 	this->name = "?";
-	this->channelMask = 0;
 }
 
 /*virtual*/ Event::~Event()
@@ -79,9 +151,8 @@ Event::Event()
 
 //-------------------------------------- EventListener --------------------------------------
 
-EventListener::EventListener(uint64_t channelFlags)
+EventListener::EventListener()
 {
-	this->channelFlags = channelFlags;
 }
 
 /*virtual*/ EventListener::~EventListener()
@@ -90,7 +161,7 @@ EventListener::EventListener(uint64_t channelFlags)
 
 //-------------------------------------- LambdaEventListener --------------------------------------
 
-LambdaEventListener::LambdaEventListener(uint64_t channelFlags, EventListenerCallback callback) : EventListener(channelFlags)
+LambdaEventListener::LambdaEventListener(EventListenerCallback callback)
 {
 	this->callback = callback;
 }
