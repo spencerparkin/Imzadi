@@ -38,10 +38,15 @@ namespace Imzadi
 		 */
 		virtual Biped* SpawnMainCharacter();
 
-		void SetLevelNumber(int levelNumber) { this->levelNumber = levelNumber; }
-		int GetLevelNumber() { return this->levelNumber; }
+		/**
+		 * Make sure we're the last entity to get shutdown when the level goes down.
+		 */
+		virtual uint32_t ShutdownOrder() const override;
+
+		void SetLevelName(const std::string& levelName) { this->levelName = levelName; }
+		const std::string& GetLevelName() const { return this->levelName; }
 
 	private:
-		int levelNumber;
+		std::string levelName;
 	};
 }

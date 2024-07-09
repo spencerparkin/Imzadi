@@ -2,6 +2,8 @@
 
 #include "Entities/Biped.h"
 #include "Entities/TriggerBox.h"
+#include "Action.h"
+#include "RenderObjects/TextRenderObject.h"
 
 class DeannaTroi : public Imzadi::Biped
 {
@@ -19,7 +21,39 @@ public:
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);
 
+	class LabeledAction : public Imzadi::Action
+	{
+	public:
+		LabeledAction(DeannaTroi* troi);
+		virtual ~LabeledAction();
+
+		virtual void Init() override;
+		virtual void Deinit() override;
+		virtual void Tick(double deltaTime) override;
+		virtual std::string GetActionLabel() const = 0;
+
+	private:
+		void UpdateTransform();
+
+		uint32_t entityHandle;
+		Imzadi::Reference<Imzadi::TextRenderObject> textRenderObject;
+		std::string sceneObjectName;
+	};
+
+	class TeleportToLevelAction : public LabeledAction
+	{
+	public:
+		TeleportToLevelAction(DeannaTroi* troi);
+		virtual ~TeleportToLevelAction();
+
+		virtual bool Perform() override;
+		virtual std::string GetActionLabel() const override;
+
+		std::string targetLevel;
+	};
+
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
+	Imzadi::ActionManager actionManager;
 };

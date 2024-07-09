@@ -4,6 +4,8 @@
 #include "EventSystem.h"
 #include "Log.h"
 
+//------------------------------------ DeannaTroi ------------------------------------
+
 DeannaTroi::DeannaTroi()
 {
 	this->cameraHandle = 0;
@@ -24,6 +26,7 @@ DeannaTroi::DeannaTroi()
 		return false;
 
 	Imzadi::Game::Get()->PushControllerUser("DeannaTroi");
+	this->actionManager.SetControllerUser("DeannaTroi");
 
 	auto followCam = Imzadi::Game::Get()->SpawnEntity<Imzadi::FollowCam>();
 	followCam->SetSubject(this);
@@ -42,6 +45,8 @@ DeannaTroi::DeannaTroi()
 /*virtual*/ bool DeannaTroi::Shutdown()
 {
 	Biped::Shutdown();
+
+	this->actionManager.Clear();
 
 	Imzadi::Game::Get()->PopControllerUser();
 
@@ -63,12 +68,24 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		{
 			case Imzadi::TriggerBoxEvent::Type::SHAPE_ENTERED:
 			{
-				IMZADI_LOG_INFO("Entered trigger box %s.", triggerBoxName.c_str());
+				IMZADI_LOG_INFO("Entered trigger box \"%s\".", triggerBoxName.c_str());
+
+				if (triggerBoxName.find("JumpTo") == 0)
+				{
+					auto action = new TeleportToLevelAction(this);
+					action->targetLevel = triggerBoxName.substr(6);
+					this->actionManager.BindAction(XINPUT_GAMEPAD_A, action);
+				}
+
 				break;
 			}
 			case Imzadi::TriggerBoxEvent::Type::SHAPE_EXITED:
 			{
-				IMZADI_LOG_INFO("Exited trigger box %s.", triggerBoxName.c_str());
+				IMZADI_LOG_INFO("Exited trigger box \"%s\".", triggerBoxName.c_str());
+
+				if (triggerBoxName.find("JumpTo") == 0)
+					this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
+
 				break;
 			}
 		}
@@ -134,7 +151,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	if (!Biped::Tick(tickPass, deltaTime))
 		return false;
 
-	//...
+	this->actionManager.Tick(deltaTime);
 
 	return true;
 }
@@ -144,4 +161,86 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	// TODO: This is where we might incur a penalty for dying.
 
 	Biped::Reset();
+}
+
+//------------------------------------ DeannaTroi::LabeledAction ------------------------------------
+
+DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
+{
+	this->entityHandle = troi->GetHandle();
+}
+
+/*virtual*/ DeannaTroi::LabeledAction::~LabeledAction()
+{
+}
+
+/*virtual*/ void DeannaTroi::LabeledAction::Init()
+{
+	uint32_t flags =
+		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
+		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
+		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY;
+
+	this->textRenderObject = new Imzadi::TextRenderObject();
+	this->textRenderObject->SetText(this->GetActionLabel());
+	this->textRenderObject->SetFont("Roboto_Regular");
+	this->textRenderObject->SetColor(Imzadi::Vector3(1.0, 0.0, 0.0));
+	this->textRenderObject->SetFlags(flags);
+	
+	this->UpdateTransform();
+
+	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
+	this->sceneObjectName = scene->AddRenderObject(this->textRenderObject.Get());
+}
+
+/*virtual*/ void DeannaTroi::LabeledAction::Deinit()
+{
+	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
+	scene->RemoveRenderObject(this->sceneObjectName);
+	this->textRenderObject.Reset();
+}
+
+/*virtual*/ void DeannaTroi::LabeledAction::Tick(double deltaTime)
+{
+	this->textRenderObject->SetText(this->GetActionLabel());
+	this->UpdateTransform();
+}
+
+void DeannaTroi::LabeledAction::UpdateTransform()
+{
+	Imzadi::Reference<ReferenceCounted> ref;
+	if (Imzadi::HandleManager::Get()->GetObjectFromHandle(this->entityHandle, ref))
+	{
+		auto troi = dynamic_cast<DeannaTroi*>(ref.Get());
+		if (troi)
+		{
+			Imzadi::Transform transform;
+			troi->GetTransform(transform);
+			transform.matrix.SetIdentity();
+			transform.matrix.SetUniformScale(20.0);
+			this->textRenderObject->SetTransform(transform);
+		}
+	}
+}
+
+//------------------------------------ DeannaTroi::TeleportToLevelAction ------------------------------------
+
+DeannaTroi::TeleportToLevelAction::TeleportToLevelAction(DeannaTroi* troi) : LabeledAction(troi)
+{
+}
+
+/*virtual*/ DeannaTroi::TeleportToLevelAction::~TeleportToLevelAction()
+{
+}
+
+/*virtual*/ bool DeannaTroi::TeleportToLevelAction::Perform()
+{
+	Imzadi::EventSystem* eventSystem = Imzadi::Game::Get()->GetEventSystem();
+	eventSystem->SendEvent("LevelTransition", new Imzadi::Event(this->targetLevel));
+	return false;	// Return false here to unbind the action once it's been performed.
+}
+
+/*virtual*/ std::string DeannaTroi::TeleportToLevelAction::GetActionLabel() const
+{
+	return std::format("Press \"A\" to teleport to {}.", this->targetLevel.c_str());
 }

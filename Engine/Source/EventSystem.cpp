@@ -48,11 +48,20 @@ bool EventSystem::UnregisterEventListener(EventListenerHandle eventListenerHandl
 
 void EventSystem::DispatchAllPendingEvents()
 {
+	std::vector<EventDispatch> eventDispatchArray;
+
 	for (auto pair : this->eventChannelMap)
 	{
 		EventChannel* channel = pair.second;
-		channel->DispatchQueue();
+		channel->GenerateDispatches(eventDispatchArray);
 	}
+
+	// We call the listeners like this, because it should be
+	// fine for an event handler to mutate the event system,
+	// because we can't let the event system be mutated while
+	// we're trying to iterate over its data-structures.
+	for (auto& eventDispatch : eventDispatchArray)
+		eventDispatch.listener->ProcessEvent(eventDispatch.event);
 }
 
 void EventSystem::Clear()
@@ -112,21 +121,20 @@ void EventChannel::EnqueueEvent(Event* event)
 	this->eventQueue.push_back(event);
 }
 
-void EventChannel::DispatchQueue()
+void EventChannel::GenerateDispatches(std::vector<EventDispatch>& eventDispatchArray)
 {
 	while (this->eventQueue.size() > 0)
 	{
-		std::list<Event*>::iterator iter = this->eventQueue.begin();
+		std::list<Reference<Event>>::iterator iter = this->eventQueue.begin();
 		Event* event = *iter;
-		this->eventQueue.erase(iter);
 
 		for (auto pair : this->eventListenerMap)
 		{
 			EventListener* eventListener = pair.second;
-			eventListener->ProcessEvent(event);
+			eventDispatchArray.push_back({ eventListener, event });
 		}
 
-		delete event;
+		this->eventQueue.erase(iter);
 	}
 }
 
@@ -143,6 +151,11 @@ void EventChannel::Clear()
 Event::Event()
 {
 	this->name = "?";
+}
+
+Event::Event(const std::string& name)
+{
+	this->name = name;
 }
 
 /*virtual*/ Event::~Event()

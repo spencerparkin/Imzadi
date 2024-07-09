@@ -33,8 +33,12 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 	this->assetCache->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)");		// TODO: Need to not hard-code a path here.
 
-	auto level = this->SpawnEntity<GameLevel>();
-	level->SetLevelNumber(1);		// TODO: Maybe remember what level we were on at the end of the last invocation of the game?
+	Imzadi::EventSystem* eventSystem = Imzadi::Game::Get()->GetEventSystem();
+	eventSystem->RegisterEventListener("LevelTransition", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+		this->PerformLevelTransition(event->GetName());
+	}));
+
+	eventSystem->SendEvent("LevelTransition", new Imzadi::Event("Level1"));
 
 	return true;
 }
@@ -46,4 +50,21 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 	Imzadi::LoggingSystem::Get()->ClearAllRoutes();
 
 	return true;
+}
+
+void GameApp::PerformLevelTransition(const std::string& nextLevel)
+{
+	// Note that if we wanted to get fancy, we could transition
+	// from level to level using a chain-reaction of events.
+	// One event could initiate a character disolve.  Once the
+	// character fades out, another could throw up a loading screen
+	// and then start the level spawn.  Another event could trigger
+	// once a frame processes without an entity spawn (signaling
+	// the end of level load), then destroy the loading screen.
+	// For now, I'm just going to do something quick and easy.
+
+	this->ShutdownAllEntities();
+
+	auto level = this->SpawnEntity<GameLevel>();
+	level->SetLevelName(nextLevel);
 }

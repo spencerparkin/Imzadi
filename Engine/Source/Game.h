@@ -288,6 +288,7 @@ namespace Imzadi
 
 		bool RecreateViews();
 		void ToggleFPSDisplay();
+		void ShutdownAllEntities();
 
 		TCHAR windowTitle[256];
 		HINSTANCE instance;

@@ -29,3 +29,8 @@ Entity::Entity()
 {
 	return false;
 }
+
+/*virtual*/ uint32_t Entity::ShutdownOrder() const
+{
+	return 0;
+}

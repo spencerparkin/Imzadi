@@ -17,7 +17,7 @@ using namespace Imzadi;
 
 Level::Level()
 {
-	this->levelNumber = 0;
+	this->levelName = "?";
 }
 
 /*virtual*/ Level::~Level()
@@ -31,7 +31,7 @@ Level::Level()
 
 /*virtual*/ bool Level::Setup()
 {
-	std::string levelFile = std::format("Levels/Level{}.level", this->levelNumber);
+	std::string levelFile = std::format("Levels/{}.level", this->levelName.c_str());
 	Reference<Asset> asset;
 	if (!Game::Get()->GetAssetCache()->LoadAsset(levelFile, asset))
 		return false;
@@ -149,6 +149,10 @@ Level::Level()
 
 /*virtual*/ bool Level::Tick(TickPass tickPass, double deltaTime)
 {
-	// TODO: Maybe here detect when the level is complete?
 	return true;
+}
+
+/*virtual*/ uint32_t Level::ShutdownOrder() const
+{
+	return std::numeric_limits<uint32_t>::max();
 }

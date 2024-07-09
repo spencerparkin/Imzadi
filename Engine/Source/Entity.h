@@ -43,6 +43,15 @@ namespace Imzadi
 		 */
 		virtual bool GetTransform(Imzadi::Transform& transform);
 
+		/**
+		 * Typically, a level entity is spawned which, in turns, spawns other entities
+		 * into the level, and so forth.  When a level is torn down, however, this method
+		 * here gives some control over the order in which entities are shutdown.
+		 * All that may be necessary is for the level entity to get shutdown last since
+		 * it does most of the setup of the level.
+		 */
+		virtual uint32_t ShutdownOrder() const;
+
 		void SetName(const std::string& name) { this->name = name; }
 		const std::string& GetName() const { return this->name; }
 

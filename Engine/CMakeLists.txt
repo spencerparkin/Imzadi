@@ -18,6 +18,8 @@ set(GAME_ENGINE_SOURCES
     Source/Controller.h
     Source/Log.cpp
     Source/Log.h
+    Source/Action.cpp
+    Source/Action.h
     Source/EventSystem.cpp
     Source/EventSystem.h
     Source/StateCache.cpp

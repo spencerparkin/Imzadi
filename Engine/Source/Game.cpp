@@ -718,13 +718,13 @@ std::string Game::PopControllerUser()
 	return true;
 }
 
-/*virtual*/ bool Game::Shutdown()
+void Game::ShutdownAllEntities()
 {
-	this->PreShutdown();
-
-	// TODO: Do we need to wait for the GPU to finish?!
-
 	this->spawnedEntityQueue.clear();
+
+	tickingEntityList.sort([](const Entity* entityA, const Entity* entityB) -> bool {
+		return entityA->ShutdownOrder() < entityB->ShutdownOrder();
+	});
 
 	while (this->tickingEntityList.size() > 0)
 	{
@@ -733,6 +733,13 @@ std::string Game::PopControllerUser()
 		entity->Shutdown();
 		this->tickingEntityList.erase(iter);
 	}
+}
+
+/*virtual*/ bool Game::Shutdown()
+{
+	this->PreShutdown();
+
+	this->ShutdownAllEntities();
 
 	this->debugLines.Reset();
 

@@ -17,6 +17,12 @@ namespace Imzadi
 	typedef std::unordered_map<EventListenerHandle, Reference<EventListener>> EventListenerMap;
 	typedef std::unordered_map<std::string, Reference<EventChannel>> EventChannelMap;
 
+	struct EventDispatch
+	{
+		Reference<EventListener> listener;
+		Reference<Event> event;
+	};
+
 	/**
 	 * This is a simple event sending and dispatch system.  The idea here is to
 	 * decouple the systems that generate events from the systems that want to
@@ -90,25 +96,25 @@ namespace Imzadi
 		bool AddSubscriber(EventListenerHandle eventListenerHandle, Reference<EventListener>& eventListener);
 		bool RemoveSubscriber(EventListenerHandle eventListenerHandle);
 		void EnqueueEvent(Event* event);
-		void DispatchQueue();
+		void GenerateDispatches(std::vector<EventDispatch>& eventDispatchArray);
 		void Clear();
 
 	private:
 		EventListenerMap eventListenerMap;
-		std::list<Event*> eventQueue;
+		std::list<Reference<Event>> eventQueue;
 	};
 
 	/**
 	 * Events are what flow through the event system from where
 	 * they're generated to where they're processed.  They're
 	 * all just derivatives of this class.  Processors are expected
-	 * to know how to cast them or to use a dynamic cast.  They
-	 * should not delete them.
+	 * to know how to cast them or to use a dynamic cast.
 	 */
-	class IMZADI_API Event
+	class IMZADI_API Event : public ReferenceCounted
 	{
 	public:
 		Event();
+		Event(const std::string& name);
 		virtual ~Event();
 
 		void SetName(const std::string& name) { this->name = name; }
