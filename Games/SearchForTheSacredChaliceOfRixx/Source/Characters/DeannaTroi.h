@@ -52,6 +52,9 @@ private:
 		std::string targetLevel;
 	};
 
+	// TODO: Add action for being able to collect an item and put it in your inventory.
+	// TODO: Add action for initiating a conversation with another character.
+
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
