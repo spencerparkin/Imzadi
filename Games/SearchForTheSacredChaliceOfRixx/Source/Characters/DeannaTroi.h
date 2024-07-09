@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entities/Biped.h"
+#include "Entities/TriggerBox.h"
 
 class DeannaTroi : public Imzadi::Biped
 {
@@ -16,6 +17,8 @@ public:
 	virtual void Reset() override;
 
 private:
+	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);
+
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 };

@@ -1,6 +1,8 @@
 #include "DeannaTroi.h"
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
+#include "EventSystem.h"
+#include "Log.h"
 
 DeannaTroi::DeannaTroi()
 {
@@ -29,6 +31,10 @@ DeannaTroi::DeannaTroi()
 
 	this->cameraHandle = followCam->GetHandle();
 
+	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener(new Imzadi::LambdaEventListener(IMZADI_EVENT_FLAG_TRIGGER_BOX, [=](const Imzadi::Event* event) {
+		this->HandleTriggerBoxEvent((const Imzadi::TriggerBoxEvent*)event);
+	}));
+
 	return true;
 }
 
@@ -39,6 +45,24 @@ DeannaTroi::DeannaTroi()
 	Imzadi::Game::Get()->PopControllerUser();
 
 	return true;
+}
+
+void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
+{
+	const std::string& triggerBoxName = event->GetName();
+	switch (event->type)
+	{
+		case Imzadi::TriggerBoxEvent::Type::SHAPE_ENTERED:
+		{
+			IMZADI_LOG_INFO("Entered trigger box %s.", triggerBoxName.c_str());
+			break;
+		}
+		case Imzadi::TriggerBoxEvent::Type::SHAPE_EXITED:
+		{
+			IMZADI_LOG_INFO("Exited trigger box %s.", triggerBoxName.c_str());
+			break;
+		}
+	}
 }
 
 /*virtual*/ void DeannaTroi::AccumulateForces(Imzadi::Vector3& netForce)

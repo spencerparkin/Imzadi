@@ -53,7 +53,7 @@ namespace Imzadi
 		{
 			this->type = type;
 			this->shapeID = shapeID;
-			this->triggerBoxName = triggerBoxName;
+			this->name = triggerBoxName;
 		}
 
 		virtual ~TriggerBoxEvent()
@@ -61,8 +61,7 @@ namespace Imzadi
 		}
 
 	public:
-		Type type;						///< This tells us this is an enter or leave event.
-		ShapeID shapeID;				///< This is the shape ID of the collision shape that entered or exited the trigger box.
-		std::string triggerBoxName;		///< This is the name of the trigger box in question.
+		Type type;			///< Did the shape leave or enter the box?
+		ShapeID shapeID;	///< This is the shape ID of the collision shape that entered or exited the trigger box.
 	};
 }
