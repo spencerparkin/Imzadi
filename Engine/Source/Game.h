@@ -255,7 +255,7 @@ namespace Imzadi
 		void SetAssetCache(AssetCache* assetCache);
 
 		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
-		double GetDeltaTime() const { return this->deltaTimeSeconds; }
+		double GetDeltaTime() const;
 
 		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>* GetRasterStateCache() { return &this->rasterStateCache; }
 		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC>* GetDepthStencilStateCache() { return &this->depthStencilStateCache; }

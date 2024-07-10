@@ -73,7 +73,7 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 		debugLines->AddLine(zAxis);
 
 		if (this->animatedMesh)
-			this->animatedMesh->AdvanceAnimation(deltaTimeSeconds);
+			this->animatedMesh->AdvanceAnimation(this->GetDeltaTime());
 	}
 }
 

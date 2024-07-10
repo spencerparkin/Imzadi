@@ -780,3 +780,8 @@ void Game::ShutdownAllEntities()
 
 	return true;
 }
+
+double Game::GetDeltaTime() const
+{
+	return this->deltaTimeSeconds;
+}
