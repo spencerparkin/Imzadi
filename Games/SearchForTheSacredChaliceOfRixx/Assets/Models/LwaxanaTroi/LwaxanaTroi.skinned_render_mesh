@@ -1,0 +1,46 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\LwaxanaTroi\\LwaxanaTroi_Indices.buffer",
+    "vertex_buffer": "Models\\LwaxanaTroi\\LwaxanaTroi_Vertices.buffer",
+    "texture": "Models\\LwaxanaTroi\\LwaxanaTroi.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -3.6925888061523439,
+            "y": -0.00015405184240080416,
+            "z": -1.3288984298706055
+        },
+        "max": {
+            "x": 3.5307323932647707,
+            "y": 6.42559814453125,
+            "z": 0.5571908950805664
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\LwaxanaTroi\\LwaxanaTroi.skeleton",
+    "skin_weights": "Models\\LwaxanaTroi\\LwaxanaTroi.skin_weights",
+    "animations": [
+        "Animations\\LwaxanaTroiIdle.animation",
+        "Animations\\LwaxanaTroiHappy.animation"
+    ]
+}
