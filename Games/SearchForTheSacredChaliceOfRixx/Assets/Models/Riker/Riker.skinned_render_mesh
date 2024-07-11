@@ -1,0 +1,46 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Riker\\Riker_Indices.buffer",
+    "vertex_buffer": "Models\\Riker\\Riker_Vertices.buffer",
+    "texture": "Models\\Riker\\Riker.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -5.233124732971191,
+            "y": -0.010697646997869015,
+            "z": -1.970808506011963
+        },
+        "max": {
+            "x": 4.663872241973877,
+            "y": 7.604005336761475,
+            "z": -0.17105308175086976
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\Riker\\Riker.skeleton",
+    "skin_weights": "Models\\Riker\\Riker.skin_weights",
+    "animations": [
+        "Animations\\RikerIdle.animation",
+        "Animations\\RikerRun.animation"
+    ]
+}

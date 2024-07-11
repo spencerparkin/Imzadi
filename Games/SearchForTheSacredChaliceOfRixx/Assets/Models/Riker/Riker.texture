@@ -1,0 +1,8 @@
+{
+    "width": 1024,
+    "height": 1024,
+    "data": "Models\\Riker\\Riker.texture_data",
+    "num_mips": 1,
+    "format": "RGBA",
+    "compressed": true
+}
