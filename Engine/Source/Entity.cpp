@@ -25,7 +25,12 @@ Entity::Entity()
 	return true;
 }
 
-/*virtual*/ bool Entity::GetTransform(Transform& transform)
+/*virtual*/ bool Entity::GetTransform(Transform& transform) const
+{
+	return false;
+}
+
+/*virtual*/ bool Entity::SetTransform(const Imzadi::Transform& transform)
 {
 	return false;
 }

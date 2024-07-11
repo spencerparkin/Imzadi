@@ -41,7 +41,14 @@ namespace Imzadi
 		 * This concept does not apply to all entity types.  The default implimentation
 		 * just returns false.
 		 */
-		virtual bool GetTransform(Imzadi::Transform& transform);
+		virtual bool GetTransform(Imzadi::Transform& transform) const;
+
+		/**
+		 * Set the location and orientation of this entity, if applicable.
+		 * This concept does not apply to allentity types.  The default implimentation
+		 * just returns false.
+		 */
+		virtual bool SetTransform(const Imzadi::Transform& transform);
 
 		/**
 		 * Typically, a level entity is spawned which, in turns, spawns other entities

@@ -11,6 +11,8 @@ set(RIXX_SOURCES
     Source/CustomAssetCache.h
     Source/Characters/DeannaTroi.cpp
     Source/Characters/DeannaTroi.h
+    Source/Characters/LwaxanaTroi.cpp
+    Source/Characters/LwaxanaTroi.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${RIXX_SOURCES})

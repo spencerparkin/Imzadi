@@ -1,3 +1,5 @@
+#pragma once
+
 #include "PhysicsEntity.h"
 #include "Math/Vector3.h"
 #include "Math/Quaternion.h"
@@ -21,11 +23,22 @@ namespace Imzadi
 		Biped();
 		virtual ~Biped();
 
+		enum AnimType
+		{
+			IDLE,
+			RUN,
+			JUMP
+		};
+
 		virtual bool Setup() override;
 		virtual bool Shutdown() override;
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
-		virtual bool GetTransform(Transform& transform) override;
+		virtual bool GetTransform(Transform& transform) const override;
+		virtual bool SetTransform(const Transform& transform) override;
 		virtual void Reset() override;
+		virtual std::string GetAnimName(AnimType animType);
+		virtual void AdjustFacingDirection(double deltaTime);
+		virtual void IntegratePosition(double deltaTime);
 
 		void SetRestartLocation(const Vector3& restartLocation) { this->restartLocation = restartLocation; }
 		void SetRestartOrientation(const Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }

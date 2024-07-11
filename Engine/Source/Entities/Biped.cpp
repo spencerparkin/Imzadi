@@ -59,6 +59,35 @@ Biped::Biped()
 	return true;
 }
 
+/*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)
+{
+	// Make sure the render mesh faces the direction we're moving.
+	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+	Matrix3x3 targetOrientation = objectToWorld.matrix;
+
+	if (this->velocity.Length() > 0)
+	{
+		Vector3 xAxis, yAxis, zAxis;
+
+		yAxis.SetComponents(0.0, 1.0, 0.0);
+		zAxis = -this->velocity.RejectedFrom(yAxis).Normalized();
+		xAxis = yAxis.Cross(zAxis);
+
+		targetOrientation.SetColumnVectors(xAxis, yAxis, zAxis);
+	}
+
+	objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrientation, 0.2);
+
+	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+}
+
+/*virtual*/ void Biped::IntegratePosition(double deltaTime)
+{
+	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+	objectToWorld.translation += this->velocity * deltaTime;
+	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+}
+
 /*virtual*/ bool Biped::Tick(TickPass tickPass, double deltaTime)
 {
 	if (!PhysicsEntity::Tick(tickPass, deltaTime))
@@ -70,30 +99,13 @@ Biped::Biped()
 	{
 		case TickPass::COMMAND_TICK:
 		{
-			// Make sure the render mesh faces the direction we're moving.
-			Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-			Matrix3x3 targetOrientation = objectToWorld.matrix;
-
-			if (this->velocity.Length() > 0)
-			{
-				Vector3 xAxis, yAxis, zAxis;
-
-				yAxis.SetComponents(0.0, 1.0, 0.0);
-				zAxis = -this->velocity.RejectedFrom(yAxis).Normalized();
-				xAxis = yAxis.Cross(zAxis);
-
-				targetOrientation.SetColumnVectors(xAxis, yAxis, zAxis);
-			}
-
-			objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrientation, 0.2);
-			objectToWorld.translation += this->velocity * deltaTime;
-
-			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+			this->AdjustFacingDirection(deltaTime);
+			this->IntegratePosition(deltaTime);
 
 			// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
 			auto command = ObjectToWorldCommand::Create();
 			command->SetShapeID(this->collisionShapeID);
-			command->objectToWorld = objectToWorld;
+			command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			collisionSystem->IssueCommand(command);
 
 			break;
@@ -129,15 +141,18 @@ Biped::Biped()
 			{
 				Animation* animation = animatedMesh->GetAnimation();
 				if (!this->inContactWithGround)
-					animatedMesh->SetAnimation("Jumping");
+					animatedMesh->SetAnimation(this->GetAnimName(AnimType::JUMP));
 				else
 				{
 					double threshold = 1.0;
 					if (this->velocity.Length() < threshold)
-						animatedMesh->SetAnimation("Idle");
+						animatedMesh->SetAnimation(this->GetAnimName(AnimType::IDLE));
 					else
-						animatedMesh->SetAnimation("Run");
+						animatedMesh->SetAnimation(this->GetAnimName(AnimType::RUN));
 				}
+
+				// TODO: If running, make sure that animation speed matches the speed we're moving
+				//       so that we don't skate across the ground.
 
 				animatedMesh->AdvanceAnimation(deltaTime);
 			}
@@ -207,6 +222,21 @@ Biped::Biped()
 	return true;
 }
 
+/*virtual*/ std::string Biped::GetAnimName(AnimType animType)
+{
+	switch (animType)
+	{
+	case AnimType::RUN:
+		return "Run";
+	case AnimType::IDLE:
+		return "Idle";
+	case AnimType::JUMP:
+		return "Jumping";
+	}
+
+	return "?";
+}
+
 void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult)
 {
 	this->inContactWithGround = false;
@@ -245,12 +275,21 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 		this->velocity = this->velocity.RejectedFrom(approximateGroundNormal);
 }
 
-/*virtual*/ bool Biped::GetTransform(Transform& transform)
+/*virtual*/ bool Biped::GetTransform(Transform& transform) const
 {
 	if (!this->renderMesh)
 		return false;
 
 	transform = this->renderMesh->GetObjectToWorldTransform();
+	return true;
+}
+
+/*virtual*/ bool Biped::SetTransform(const Transform& transform)
+{
+	if (!this->renderMesh)
+		return false;
+
+	this->renderMesh->SetObjectToWorldTransform(transform);
 	return true;
 }
 

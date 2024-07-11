@@ -11,6 +11,7 @@ DeannaTroi::DeannaTroi()
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
 	this->triggerBoxListenerHandle = 0;
+	this->SetName("Deanna");
 }
 
 /*virtual*/ DeannaTroi::~DeannaTroi()

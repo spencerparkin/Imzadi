@@ -532,6 +532,20 @@ void Game::AddEntity(Entity* entity)
 	this->spawnedEntityQueue.push_back(entity);
 }
 
+bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEntity)
+{
+	for (auto& entity : this->tickingEntityList)
+	{
+		if (entity->GetName() == name)
+		{
+			foundEntity.Set(entity.Get());
+			return true;
+		}
+	}
+
+	return false;
+}
+
 void Game::AdvanceEntities(TickPass tickPass)
 {
 	while (this->spawnedEntityQueue.size() > 0)

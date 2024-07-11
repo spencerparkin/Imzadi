@@ -8,5 +8,6 @@ public:
 	GameLevel();
 	virtual ~GameLevel();
 
+	virtual bool Setup() override;
 	virtual Imzadi::Biped* SpawnMainCharacter() override;
 };

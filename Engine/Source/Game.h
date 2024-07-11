@@ -261,6 +261,15 @@ namespace Imzadi
 		StateCache<ID3D11DepthStencilState, D3D11_DEPTH_STENCIL_DESC>* GetDepthStencilStateCache() { return &this->depthStencilStateCache; }
 		StateCache<ID3D11BlendState, D3D11_BLEND_DESC>* GetBlendStateCache() { return &this->blendStateCache; }
 
+		/**
+		 * Return the first entity found by the given name.
+		 * 
+		 * @param[in] name An entity by this name is saught after.
+		 * @param[out] foundEntity If found, the entity is returned in this reference pointer.
+		 * @return True is returned if an entity is found; false, otherwise, and the given reference pointer is left untouched.
+		 */
+		bool FindEntityByName(const std::string& name, Reference<Entity>& foundEntity);
+
 	protected:
 
 		void AddEntity(Entity* entity);
