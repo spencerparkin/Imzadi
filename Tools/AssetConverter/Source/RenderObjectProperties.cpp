@@ -68,7 +68,7 @@ void RenderObjectProperties::PrintPropertiesOf(Imzadi::RenderObject* renderObjec
 				this->AppendText(wxString::Format("%d animation(s) associated with the skinned mesh.\n", int(animationNameSet.size())));
 				int i = 0;
 				for(const std::string& animName : animationNameSet)
-					this->AppendText(wxString::Format("%d: %s\n", ++i, animName.c_str()) + "\n");
+					this->AppendText(wxString::Format("%d: %s\n", ++i, animName.c_str()));
 			}
 
 			Imzadi::Skeleton* skeleton = skinnedMesh->GetSkeleton();

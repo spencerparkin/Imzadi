@@ -318,6 +318,7 @@ void Frame::OnClearScene(wxCommandEvent& event)
 	Imzadi::Game* game = Imzadi::Game::Get();
 	game->GetScene()->Clear();
 	game->GetScene()->AddRenderObject(game->GetDebugLines());
+	game->GetAssetCache()->Clear();
 }
 
 void Frame::OnAbout(wxCommandEvent& event)
