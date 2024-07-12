@@ -1,4 +1,5 @@
 #include "CustomAssetCache.h"
+#include "Assets/DialogData.h"
 
 CustomAssetCache::CustomAssetCache()
 {
@@ -14,7 +15,11 @@ CustomAssetCache::CustomAssetCache()
 	if (asset)
 		return asset;
 
-	// TODO: Create blank custom assets here.
+	std::filesystem::path assetPath(assetFile);
+	std::string ext = assetPath.extension().string();
+	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
+	if (ext == ".dialog")
+		return new DialogData();
 
 	return nullptr;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Game.h"
+#include "DialogSystem.h"
 
 class GameApp : public Imzadi::Game
 {
@@ -14,4 +15,6 @@ public:
 
 private:
 	void PerformLevelTransition(const std::string& nextLevel);
+
+	DialogSystem dialogSystem;
 };

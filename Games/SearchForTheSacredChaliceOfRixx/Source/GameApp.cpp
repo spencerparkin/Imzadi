@@ -40,12 +40,20 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 	eventSystem->SendEvent("LevelTransition", new Imzadi::Event("Level1"));
 
+	if (!this->dialogSystem.Initialize())
+	{
+		IMZADI_LOG_ERROR("Failed to initialize the dialog system.");
+		return false;
+	}
+
 	return true;
 }
 
 /*virtual*/ bool GameApp::PostShutdown()
 {
 	Game::PostShutdown();
+
+	this->dialogSystem.Shutdown();
 
 	Imzadi::LoggingSystem::Get()->ClearAllRoutes();
 
