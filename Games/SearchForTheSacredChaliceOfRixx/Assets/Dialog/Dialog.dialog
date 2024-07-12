@@ -1,0 +1,106 @@
+{
+    "thread_table": {
+        "lwaxana_initial_contact": {
+            "sequence": [
+                {
+                    "speaker": "Deanna",
+                    "text": "Hi, can I help you?"
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Use your mind, little one."
+                },
+                {
+                    "speaker": "Deanna",
+                    "text": "Mother, is that you?!  You look terrible!"
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Yes, well, have you looked in a mirror lately?  I think this is Q's doing."
+                },
+                {
+                    "speaker": "Deanna",
+                    "text": "What do you mean?  Is this another one of Q's strange made-up worlds, conjured to torture us and teach us some ridiculous lesson about humanity?"
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "I don't know.  Whatever it is, little one, it's more dire than being transported into a video game where the art was made by the programmer.  Much worse.  Deanna...  The challice has gone missing!"
+                },
+                {
+                    "speaker": "Deanna",
+                    "text": "Mother!  We've been capture by Q, turned into polygon soup, and you're worried about an old clay pot with mold growing it?!"
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "My dear, dear Deanna.  It's time you knew the truth behind the Challice of Rixx.  It is, and always has been, so much more than an artifact held in reverence by the 5th house of Betazed."
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Few know this, but it is time I told you.  It is a vast source of ancient power, wieldable only by those with advanced telepathic abilities.  When channeled correctly through the pot, your thoughts are magnified beyond that which any one empath could ever be capable of."
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "In the wrong hands, even the most minor of telepaths would gain the power to control the minds of every living soul in the universe!"
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "For generations, this sacred power has been kept safe and secret in our house; used only for emergencies.  You'd be surprised how many times our universe has come under imminent threat of destruction, only to be saved by our family's use of the challice."
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "The time has come, Deanna, for you to take ownership of the challice, but..."
+                },
+                {
+                    "speaker": "Deanna",
+                    "text": "But what, Mother?  Did Q take the challice?"
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "I don't know.  But seeing as how Q seems to behind our current predicament, I think it's safe to assume for the time being.",
+                    "writers_note": "Q is Lwaxana in disguise."
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Deanna, I need you to search this place.  Find the challice before it's too late!  In the hands of a telepath, the challice poses a grave threat to the universe.  In the hands of Q..."
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Deanna, I cannot help you.  I'm too old.  You're our only hope as heir to the 5th house!  Our bloodline has a unique bond with the challice.  The challice will reach out to your mind.  Will you find it and bring it here?"
+                },
+                {
+                    "speaker": "Deanna",
+                    "choice": [
+                        {
+                            "text": "Yes, mother.  You can count on me!",
+                            "thread": "deanna_will_help_lwaxana"
+                        },
+                        {
+                            "text": "No, mother.  This is insane!  We need to find a way out of here!",
+                            "thread": "deanna_will_not_help_lwaxana"
+                        }
+                    ]
+                }
+            ]
+        },
+        "deanna_will_help_lwaxana": {
+            "sequence": [
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Thank you, my little!  Now go.  I'll be here waiting for the challice.  Once I have, I can reconfigure it with your bio signature, effectively pass it down to you as your royal inheritance in our great house."
+                }
+            ]
+        },
+        "deanna_will_not_help_lwaxana": {
+            "sequence": [
+                {
+                    "speaker": "Lwaxana",
+                    "text": "Deanna, please!  The fate of the universe is at stake!  ...Sigh...  But if you're adament, looking around for an exit is still a good idea."
+                },
+                {
+                    "speaker": "Lwaxana",
+                    "text": "If you find the challice, I'll be here, waiting."
+                }
+            ]
+        }
+    }
+}
