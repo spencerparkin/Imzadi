@@ -3,6 +3,8 @@
 #include "Game.h"
 #include "DialogSystem.h"
 
+#define SHAPE_FLAG_TALKER			0x0000000100000000
+
 class GameApp : public Imzadi::Game
 {
 public:

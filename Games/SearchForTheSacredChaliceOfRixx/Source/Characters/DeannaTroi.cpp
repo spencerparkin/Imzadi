@@ -2,6 +2,7 @@
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
 #include "EventSystem.h"
+#include "Collision/Result.h"
 #include "Log.h"
 
 //------------------------------------ DeannaTroi ------------------------------------
@@ -11,6 +12,7 @@ DeannaTroi::DeannaTroi()
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
 	this->triggerBoxListenerHandle = 0;
+	this->rayCastQueryTaskID = 0;
 	this->SetName("Deanna");
 }
 
@@ -154,6 +156,80 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 	this->actionManager.Tick(deltaTime);
 
+	switch (tickPass)
+	{
+		case Imzadi::TickPass::QUERY_TICK:
+		{
+			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+
+			Imzadi::Transform transform;
+			this->GetTransform(transform);
+
+			Imzadi::Ray ray;
+			ray.unitDirection = -transform.matrix.GetColumnVector(2);
+			ray.origin = transform.translation + ray.unitDirection * 2.0;
+			ray.origin.y += 2.0;
+
+			auto rayCastQuery = Imzadi::RayCastQuery::Create();
+			rayCastQuery->SetRay(ray);
+			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
+
+#if 0
+			Imzadi::DebugLines* debugLines = Imzadi::Game::Get()->GetDebugLines();
+			Imzadi::DebugLines::Line line;
+			line.color.SetComponents(1.0, 0.0, 0.0);
+			line.segment.point[0] = ray.origin;
+			line.segment.point[1] = ray.origin + ray.unitDirection * 100.0;
+			debugLines->AddLine(line);
+#endif
+
+			break;
+		}
+		case Imzadi::TickPass::RESULT_TICK:
+		{
+			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+
+			if (this->rayCastQueryTaskID)
+			{
+				Imzadi::Result* result = collisionSystem->ObtainQueryResult(this->rayCastQueryTaskID);
+				if (result)
+				{
+					auto rayCastResult = dynamic_cast<Imzadi::RayCastResult*>(result);
+					if (rayCastResult)
+					{
+						const Imzadi::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+						if (hitData.shape)
+						{
+							uint64_t userFlags = hitData.shape->GetUserFlags();
+							if ((userFlags & SHAPE_FLAG_TALKER) != 0 && hitData.alpha < 10.0)
+							{
+								Imzadi::Reference<Imzadi::Entity> entity;
+								if (Imzadi::Game::Get()->FindEntityByShapeID(hitData.shapeID, entity))
+								{
+									if (!this->actionManager.IsBound(XINPUT_GAMEPAD_A))
+									{
+										auto action = new TalkToEntityAction(this);
+										action->targetEntity = entity->GetName();
+										this->actionManager.BindAction(XINPUT_GAMEPAD_A, action);
+									}
+								}
+							}
+							else
+							{
+								if (dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(XINPUT_GAMEPAD_A)))
+									this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
+							}
+						}
+					}
+
+					collisionSystem->Free(result);
+				}
+			}
+
+			break;
+		}
+	}
+
 	return true;
 }
 
@@ -244,4 +320,25 @@ DeannaTroi::TeleportToLevelAction::TeleportToLevelAction(DeannaTroi* troi) : Lab
 /*virtual*/ std::string DeannaTroi::TeleportToLevelAction::GetActionLabel() const
 {
 	return std::format("Press \"A\" to teleport to {}.", this->targetLevel.c_str());
+}
+
+//------------------------------------ DeannaTroi::TalkToEntityAction ------------------------------------
+
+DeannaTroi::TalkToEntityAction::TalkToEntityAction(DeannaTroi* troi) : LabeledAction(troi)
+{
+}
+
+/*virtual*/ DeannaTroi::TalkToEntityAction::~TalkToEntityAction()
+{
+}
+
+/*virtual*/ bool DeannaTroi::TalkToEntityAction::Perform()
+{
+	// TODO: Write this.
+	return false;
+}
+
+/*virtual*/ std::string DeannaTroi::TalkToEntityAction::GetActionLabel() const
+{
+	return std::format("Press \"A\" to talk to {}.", this->targetEntity.c_str());
 }

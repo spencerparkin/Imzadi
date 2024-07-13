@@ -70,9 +70,8 @@ namespace Imzadi
 
 	/**
 	 * These are the elements of the collision cache, and what are returned in a collision query result.
-	 * Note that raw shape pointers are included in this class/structure, but should not be accessed
-	 * by the collision system user.  They are made private, but don't be tempted to hack the structure,
-	 * because read/write or even just read-only access to them is not thread-safe.
+	 * Care must be taken that a shape in this pair does not go out of scope before this pair does.
+	 * References to the shapes in this pair are not kept; just raw C-pointers.
 	 */
 	class IMZADI_API ShapePairCollisionStatus : public ReferenceCounted
 	{
@@ -129,9 +128,15 @@ namespace Imzadi
 		ShapeID GetOtherShape(ShapeID shapeID) const;
 
 		/**
-		 * Get the user flags for the shape in this pair having the given shape ID.
+		 * This is a dangerous function.  You must know what you're doing.  To be thread-safe,
+		 * you may have read-only access to the shape object, provided there are no commands
+		 * or queries in-flight at the time of access.  You should not call any method on the
+		 * shape that would mutate the shape.
+		 * 
+		 * @param[in] shapeID This should be the ID of a shape in this pair.
+		 * @return The shape having the given ID is returned; null otherwise.
 		 */
-		uint64_t GetUserFlags(ShapeID shapeID) const;
+		const Shape* GetShape(ShapeID shapeID) const;
 
 	public:
 		/**

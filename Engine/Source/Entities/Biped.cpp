@@ -30,6 +30,16 @@ Biped::Biped()
 {
 }
 
+/*virtual*/ bool Biped::OwnsCollisionShape(ShapeID shapeID) const
+{
+	return shapeID == this->collisionShapeID;
+}
+
+/*virtual*/ uint64_t Biped::GetAdditionalUserFlagsForCollisionShape()
+{
+	return 0;
+}
+
 /*virtual*/ bool Biped::Setup()
 {
 	if (!this->renderMesh.Get())
@@ -43,7 +53,7 @@ Biped::Biped()
 	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(1.0);
-	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | this->GetAdditionalUserFlagsForCollisionShape());
 	this->collisionShapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
 	if (this->collisionShapeID == 0)
 		return false;

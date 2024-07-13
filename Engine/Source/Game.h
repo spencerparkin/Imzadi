@@ -270,6 +270,20 @@ namespace Imzadi
 		 */
 		bool FindEntityByName(const std::string& name, Reference<Entity>& foundEntity);
 
+		/**
+		 * Return the first entity found having the given shape.
+		 * 
+		 * @param[in] shapeID An entity owning this shape ID is saught after.
+		 * @param[out] foundEntity If found, the entity is returned in this reference pointer.
+		 * @return True is returned if an entity is found; false, otherwise, and the given reference pointer is left untouched.
+		 */
+		bool FindEntityByShapeID(ShapeID shapeID, Reference<Entity>& foundEntity);
+
+		/**
+		 * Get access to the list of entities being tracked by the game.
+		 */
+		const std::list<Reference<Entity>>& GetEntityList() { return this->tickingEntityList; }
+
 	protected:
 
 		void AddEntity(Entity* entity);

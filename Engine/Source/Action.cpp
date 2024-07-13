@@ -55,6 +55,21 @@ void ActionManager::UnbindAction(uint32_t inputKey)
 	}
 }
 
+bool ActionManager::IsBound(uint32_t inputKey)
+{
+	ActionMap::iterator iter = this->actionMap.find(inputKey);
+	return iter != this->actionMap.end();
+}
+
+Action* ActionManager::GetBoundAction(uint32_t inputKey)
+{
+	ActionMap::iterator iter = this->actionMap.find(inputKey);
+	if (iter == this->actionMap.end())
+		return nullptr;
+
+	return iter->second;
+}
+
 void ActionManager::Tick(double deltaTime)
 {
 	Imzadi::Controller* controller = Game::Get()->GetController(this->controllerUser);

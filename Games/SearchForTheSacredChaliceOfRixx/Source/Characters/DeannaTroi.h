@@ -4,6 +4,7 @@
 #include "Entities/TriggerBox.h"
 #include "Action.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "Collision/Query.h"
 
 class DeannaTroi : public Imzadi::Biped
 {
@@ -52,11 +53,23 @@ private:
 		std::string targetLevel;
 	};
 
+	class TalkToEntityAction : public LabeledAction
+	{
+	public:
+		TalkToEntityAction(DeannaTroi* troi);
+		virtual ~TalkToEntityAction();
+
+		virtual bool Perform() override;
+		virtual std::string GetActionLabel() const override;
+
+		std::string targetEntity;
+	};
+
 	// TODO: Add action for being able to collect an item and put it in your inventory.
-	// TODO: Add action for initiating a conversation with another character.
 
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
 	Imzadi::ActionManager actionManager;
+	Imzadi::TaskID rayCastQueryTaskID;
 };

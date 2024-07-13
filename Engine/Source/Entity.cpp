@@ -39,3 +39,8 @@ Entity::Entity()
 {
 	return 0;
 }
+
+/*virtual*/ bool Entity::OwnsCollisionShape(ShapeID shapeID) const
+{
+	return false;
+}

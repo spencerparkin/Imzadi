@@ -185,6 +185,7 @@ void BoundingBoxTree::RayCast(const Ray& ray, RayCastResult* rayCastResult) cons
 	RayCastResult::HitData hitData;
 	hitData.shapeID = 0;
 	hitData.alpha = std::numeric_limits<double>::max();
+	hitData.shape = nullptr;
 
 	if (this->rootNode && ray.HitsOrOriginatesIn(this->rootNode->box))
 		this->rootNode->RayCast(ray, hitData);
@@ -348,6 +349,7 @@ bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) c
 			hitData.surfaceNormal = unitSurfaceNormal;
 			hitData.surfacePoint = ray.CalculatePoint(shapeAlpha);
 			hitData.alpha = shapeAlpha;
+			hitData.shape = shape;
 		}
 	}
 

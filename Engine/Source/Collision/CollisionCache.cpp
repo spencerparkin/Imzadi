@@ -192,11 +192,11 @@ void ShapePairCollisionStatus::FlipContext()
 	this->shapeB = shape;
 }
 
-uint64_t ShapePairCollisionStatus::GetUserFlags(ShapeID shapeID) const
+const Shape* ShapePairCollisionStatus::GetShape(ShapeID shapeID) const
 {
 	if (shapeID == this->shapeA->GetShapeID())
-		return this->shapeA->GetUserFlags();
+		return this->shapeA;
 	else if (shapeID == this->shapeB->GetShapeID())
-		return this->shapeB->GetUserFlags();
-	return 0;
+		return this->shapeB;
+	return nullptr;
 }

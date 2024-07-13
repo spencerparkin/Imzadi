@@ -62,6 +62,16 @@ namespace Imzadi
 		void UnbindAction(uint32_t inputKey);
 
 		/**
+		 * Return true if and only if the given input key is already bound to an action.
+		 */
+		bool IsBound(uint32_t inputKey);
+
+		/**
+		 * Get the action, if any, bound to the given input key.
+		 */
+		Action* GetBoundAction(uint32_t inputKey);
+
+		/**
 		 * This doesn't just tick the currently bound actions.  It also
 		 * handles input from the controller to perform the bound actions,
 		 * if any.

@@ -1,5 +1,6 @@
 #include "LwaxanaTroi.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
+#include "GameApp.h"
 
 LwaxanaTroi::LwaxanaTroi()
 {
@@ -8,6 +9,11 @@ LwaxanaTroi::LwaxanaTroi()
 
 /*virtual*/ LwaxanaTroi::~LwaxanaTroi()
 {
+}
+
+/*virtual*/ uint64_t LwaxanaTroi::GetAdditionalUserFlagsForCollisionShape()
+{
+	return SHAPE_FLAG_TALKER;
 }
 
 /*virtual*/ bool LwaxanaTroi::Setup()

@@ -39,6 +39,8 @@ namespace Imzadi
 		virtual std::string GetAnimName(AnimType animType);
 		virtual void AdjustFacingDirection(double deltaTime);
 		virtual void IntegratePosition(double deltaTime);
+		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
+		virtual bool OwnsCollisionShape(ShapeID shapeID) const override;
 
 		void SetRestartLocation(const Vector3& restartLocation) { this->restartLocation = restartLocation; }
 		void SetRestartOrientation(const Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }

@@ -538,7 +538,21 @@ bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEnt
 	{
 		if (entity->GetName() == name)
 		{
-			foundEntity.Set(entity.Get());
+			foundEntity = entity;
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Game::FindEntityByShapeID(ShapeID shapeID, Reference<Entity>& foundEntity)
+{
+	for (auto& entity : this->tickingEntityList)
+	{
+		if (entity->OwnsCollisionShape(shapeID))
+		{
+			foundEntity = entity;
 			return true;
 		}
 	}

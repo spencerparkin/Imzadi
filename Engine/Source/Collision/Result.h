@@ -120,7 +120,10 @@ namespace Imzadi
 
 	/**
 	 * An instance of this class is returned as the result of a ray-cast query
-	 * using the RayCastQuery class.
+	 * using the @ref RayCastQuery class.  Care must be taken that the raw
+	 * C-pointer to the shape in the hit-data does not go out of scope before
+	 * this result class instances does, or just don't use that member of the
+	 * hit-data.
 	 */
 	class RayCastResult : public Result
 	{
@@ -137,10 +140,11 @@ namespace Imzadi
 			Vector3 surfacePoint;		///< This is the point on the surface of the shape where the ray hit it.
 			Vector3 surfaceNormal;		///< This is the normal to the surface of the shape where it was hit.
 			double alpha;				///< Mainly used for internal purposes, this is the distance from ray origin along the ray to the hit point.
+			const Shape* shape;			///< Read-only access is thread-safe here _only_ if no commands or queries are in-flight at the time of access.
 		};
 
 		/**
-		 * Get the particular of the ray-cast result in the returned structure.
+		 * Get the hit-data of the ray-cast result in the returned structure.
 		 * If the returned hit-data has zero for the shape ID, then the ray did
 		 * not hit any shape in the collision world.
 		 */
@@ -179,7 +183,7 @@ namespace Imzadi
 
 	/**
 	 * Instances of this class are results of collision queries, and simply consist
-	 * of a set of collision pairs.  See the ShapePairCollisionStatus class for
+	 * of a set of collision pairs.  See the @ref ShapePairCollisionStatus class for
 	 * more information.
 	 */
 	class IMZADI_API CollisionQueryResult : public Result
