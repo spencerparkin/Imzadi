@@ -106,6 +106,7 @@ namespace Imzadi
 		Vector3 color;
 		uint32_t flags;
 		Transform objectToTargetSpace;
+		UINT numElements;
 	};
 
 	/**

@@ -11,6 +11,7 @@ TextRenderObject::TextRenderObject()
 {
 	this->flags = 0;
 	this->vertexBuffer = nullptr;
+	this->numElements = 0;
 	this->objectToTargetSpace.SetIdentity();
 	this->color.SetComponents(1.0, 1.0, 1.0);
 }
@@ -67,6 +68,7 @@ TextRenderObject::TextRenderObject()
 	else if((this->flags & Flag::CENTER_JUSTIFY) != 0)
 		penLocation.x = -this->CalculateStringWidth() / 2.0;
 	
+	this->numElements = 0;
 	auto floatPtr = static_cast<float*>(mappedSubresource.pData);
 	for (int i = 0; this->text.c_str()[i] != '\0'; i++)
 	{
@@ -98,6 +100,8 @@ TextRenderObject::TextRenderObject()
 			*floatPtr++ = glyphLocation.y + info.height;
 			*floatPtr++ = info.minUV.x;
 			*floatPtr++ = info.minUV.y;
+
+			this->numElements += 6;	// 1 quad per character, 2 triangles per quad, 3 vertices per triangle.
 		}
 
 		penLocation.x += info.advance;
@@ -252,8 +256,7 @@ double TextRenderObject::CalculateStringWidth()
 	DXGI_FORMAT format = DXGI_FORMAT_R16_UINT;
 	deviceContext->IASetIndexBuffer(indexBuffer, format, 0);
 
-	UINT numElements = this->text.length() * 6;
-	deviceContext->DrawIndexed(numElements, 0, 0);
+	deviceContext->DrawIndexed(this->numElements, 0, 0);
 }
 
 /*virtual*/ void TextRenderObject::GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const
