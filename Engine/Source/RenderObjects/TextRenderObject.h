@@ -28,7 +28,8 @@ namespace Imzadi
 			STICK_WITH_CAMERA_PROJ		= 0x00000020,		///< This overrides the STICK_WITH_CAMERA flag, and, if used, our transform goes from object space to projection space.
 			LEFT_JUSTIFY				= 0x00000040,		///< Left-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			RIGHT_JUSTIFY				= 0x00000080,		///< Right-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
-			CENTER_JUSTIFY				= 0x00000100		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
+			CENTER_JUSTIFY				= 0x00000100,		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
+			OPAQUE_BACKGROUND			= 0x00000200		///< If given, a background color used used.  If not given, text renders with transparent background.
 		};
 
 		/**
@@ -60,14 +61,24 @@ namespace Imzadi
 		const std::string& GetText() const;
 
 		/**
-		 * Set the color used to render the text.
+		 * Set the foreground color used to render the text.
 		 */
-		void SetColor(const Vector3& color);
+		void SetForegroundColor(const Vector3& color);
 
 		/**
-		 * Get the color used to render the text.
+		 * Get the foreground color used to render the text.
 		 */
-		const Vector3& GetColor() const;
+		const Vector3& GetForegroundColor() const;
+
+		/**
+		 * Set the background color used to render the text, if an opaque background is wanted.
+		 */
+		void SetBackgroundColor(const Vector3& color);
+
+		/**
+		 * Get the background color used to render the text, if an opaque background is wanted.
+		 */
+		const Vector3& GetBackgroundColor() const;
 
 		/**
 		 * Try to load a font by the given name and then cache it on this text render
@@ -103,7 +114,8 @@ namespace Imzadi
 		Reference<Font> font;
 		ID3D11Buffer* vertexBuffer;
 		std::string text;
-		Vector3 color;
+		Vector3 foreColor;
+		Vector3 backColor;
 		uint32_t flags;
 		Transform objectToTargetSpace;
 		UINT numElements;

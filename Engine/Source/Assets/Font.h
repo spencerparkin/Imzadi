@@ -31,7 +31,7 @@ namespace Imzadi
 		};
 
 		bool GetCharInfo(char ch, CharacterInfo& info) const;
-		Shader* GetShader() { return this->textShader.Get(); }
+		Shader* GetShader(bool legible);
 		ID3D11Buffer* GetIndexBuffer() { return this->indexBuffer; }
 		Texture* GetTextureAtlas() { return this->textureAtlas.Get(); }
 		const std::string& GetName() const { return this->name; }
@@ -43,6 +43,7 @@ namespace Imzadi
 		CharacterInfoArray charInfoArray;
 		Reference<Texture> textureAtlas;
 		Reference<Shader> textShader;
+		Reference<Shader> legibleTextShader;
 		ID3D11Buffer* indexBuffer;
 		std::string name;
 	};

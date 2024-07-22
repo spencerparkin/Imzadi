@@ -111,6 +111,19 @@ Font::Font()
 		return false;
 	}
 
+	if (!assetCache->LoadAsset("Shaders/LegibleText.shader", asset))
+	{
+		IMZADI_LOG_ERROR("Failed to load legible text shader.");
+		return false;
+	}
+
+	this->legibleTextShader.SafeSet(asset.Get());
+	if (!this->legibleTextShader)
+	{
+		IMZADI_LOG_ERROR("Loaded something other than a shader for the legible text shader.");
+		return false;
+	}
+
 	uint32_t maxCharacters = 1024;
 
 	D3D11_BUFFER_DESC bufferDesc{};
@@ -160,4 +173,12 @@ bool Font::GetCharInfo(char ch, CharacterInfo& info) const
 
 	info = this->charInfoArray[ch];
 	return true;
+}
+
+Shader* Font::GetShader(bool legible)
+{
+	if (legible)
+		return this->legibleTextShader.Get();
+
+	return this->textShader.Get();
 }

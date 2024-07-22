@@ -1,4 +1,5 @@
 #include "TextRenderObject.h"
+#include "Math/AxisAlignedBoundingBox.h"
 #include "Game.h"
 #include "Log.h"
 #include "Camera.h"
@@ -13,7 +14,8 @@ TextRenderObject::TextRenderObject()
 	this->vertexBuffer = nullptr;
 	this->numElements = 0;
 	this->objectToTargetSpace.SetIdentity();
-	this->color.SetComponents(1.0, 1.0, 1.0);
+	this->foreColor.SetComponents(1.0, 1.0, 1.0);
+	this->backColor.SetComponents(0.0, 0.0, 0.0);
 }
 
 /*virtual*/ TextRenderObject::~TextRenderObject()
@@ -69,7 +71,39 @@ TextRenderObject::TextRenderObject()
 		penLocation.x = -this->CalculateStringWidth() / 2.0;
 	
 	this->numElements = 0;
+	AxisAlignedBoundingBox backgroundBox;
+	backgroundBox.MakeReadyForExpansion();
 	auto floatPtr = static_cast<float*>(mappedSubresource.pData);
+
+	if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+	{
+		Font::CharacterInfo info;
+		if (this->font->GetCharInfo(' ', info))
+		{
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = info.minUV.x;
+			*floatPtr++ = info.maxUV.y;
+
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = info.maxUV.x;
+			*floatPtr++ = info.maxUV.y;
+
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = info.maxUV.x;
+			*floatPtr++ = info.minUV.y;
+
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = 0.0f;
+			*floatPtr++ = info.minUV.x;
+			*floatPtr++ = info.minUV.y;
+
+			this->numElements += 6;	// 1 quad per character, 2 triangles per quad, 3 vertices per triangle.
+		}
+	}
+
 	for (int i = 0; this->text.c_str()[i] != '\0'; i++)
 	{
 		char ch = this->text.c_str()[i];
@@ -80,6 +114,14 @@ TextRenderObject::TextRenderObject()
 		if (info.minUV != info.maxUV)
 		{
 			Vector2 glyphLocation = penLocation + info.penOffset;
+
+			if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+			{
+				backgroundBox.Expand(Vector3(glyphLocation.x, glyphLocation.y, 0.0));
+				backgroundBox.Expand(Vector3(glyphLocation.x + info.width, glyphLocation.y, 0.0));
+				backgroundBox.Expand(Vector3(glyphLocation.x + info.width, glyphLocation.y + info.height, 0.0));
+				backgroundBox.Expand(Vector3(glyphLocation.x, glyphLocation.y + info.height, 0.0));
+			}
 
 			*floatPtr++ = glyphLocation.x;
 			*floatPtr++ = glyphLocation.y;
@@ -105,6 +147,26 @@ TextRenderObject::TextRenderObject()
 		}
 
 		penLocation.x += info.advance;
+	}
+
+	if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+	{
+		floatPtr = static_cast<float*>(mappedSubresource.pData);
+
+		static float margin = 0.005;
+		backgroundBox.minCorner.x -= margin;
+		backgroundBox.maxCorner.x += margin;
+		backgroundBox.minCorner.y -= margin;
+		backgroundBox.maxCorner.y += margin;
+
+		floatPtr[0] = backgroundBox.minCorner.x;
+		floatPtr[1] = backgroundBox.minCorner.y;
+		floatPtr[4] = backgroundBox.maxCorner.x;
+		floatPtr[5] = backgroundBox.minCorner.y;
+		floatPtr[8] = backgroundBox.maxCorner.x;
+		floatPtr[9] = backgroundBox.maxCorner.y;
+		floatPtr[12] = backgroundBox.minCorner.x;
+		floatPtr[13] = backgroundBox.maxCorner.y;
 	}
 
 	deviceContext->Unmap(this->vertexBuffer, 0);
@@ -155,7 +217,7 @@ double TextRenderObject::CalculateStringWidth()
 	Game::Get()->GetRasterStateCache()->SetState(&rasterizerDesc);
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
-	depthStencilDesc.DepthEnable = TRUE;
+	depthStencilDesc.DepthEnable = ((this->flags & Flag::OPAQUE_BACKGROUND) != 0) ? FALSE : TRUE;
 	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	depthStencilDesc.StencilEnable = FALSE;
@@ -208,7 +270,8 @@ double TextRenderObject::CalculateStringWidth()
 		}
 	}
 
-	Shader* shader = this->font->GetShader();
+	bool legible = (this->flags & Flag::OPAQUE_BACKGROUND) != 0;
+	Shader* shader = this->font->GetShader(legible);
 
 	ID3D11Buffer* constantsBuffer = shader->GetConstantsBuffer();
 	if (!constantsBuffer)
@@ -224,8 +287,19 @@ double TextRenderObject::CalculateStringWidth()
 	if (shader->GetConstantInfo("objectToProjection", constant))
 		StoreShaderConstant(&mappedSubresource, constant, &objectToProjMat);
 
-	if (shader->GetConstantInfo("textColor", constant))
-		StoreShaderConstant(&mappedSubresource, constant, &this->color);
+	if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+	{
+		if (shader->GetConstantInfo("textForeColor", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &this->foreColor);
+
+		if (shader->GetConstantInfo("textBackColor", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &this->backColor);
+	}
+	else
+	{
+		if (shader->GetConstantInfo("textColor", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &this->foreColor);
+	}
 
 	double zFactor = ((this->flags & Flag::ALWAYS_ON_TOP) != 0) ? 0.0 : 1.0;
 	if (shader->GetConstantInfo("zFactor", constant))
@@ -297,14 +371,24 @@ const std::string& TextRenderObject::GetText() const
 	return this->text;
 }
 
-void TextRenderObject::SetColor(const Vector3& color)
+void TextRenderObject::SetForegroundColor(const Vector3& color)
 {
-	this->color = color;
+	this->foreColor = color;
 }
 
-const Vector3& TextRenderObject::GetColor() const
+const Vector3& TextRenderObject::GetForegroundColor() const
 {
-	return this->color;
+	return this->foreColor;
+}
+
+void TextRenderObject::SetBackgroundColor(const Vector3& color)
+{
+	this->backColor = color;
+}
+
+const Vector3& TextRenderObject::GetBackgroundColor() const
+{
+	return this->backColor;
 }
 
 bool TextRenderObject::SetFont(const std::string& fontName)

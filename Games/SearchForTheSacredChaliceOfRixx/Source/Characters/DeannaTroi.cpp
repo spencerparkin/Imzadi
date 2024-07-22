@@ -256,12 +256,13 @@ DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
 	uint32_t flags =
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
 		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
-		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY;
+		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
+		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND;
 
 	this->textRenderObject = new Imzadi::TextRenderObject();
 	this->textRenderObject->SetText(this->GetActionLabel());
 	this->textRenderObject->SetFont("Roboto_Regular");
-	this->textRenderObject->SetColor(Imzadi::Vector3(1.0, 0.0, 0.0));
+	this->textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 0.0, 0.0));
 	this->textRenderObject->SetFlags(flags);
 	
 	this->UpdateTransform();

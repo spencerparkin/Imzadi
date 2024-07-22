@@ -285,7 +285,7 @@ void Frame::OnPreviewAsset(wxCommandEvent& event)
 				auto textRenderObject = new Imzadi::TextRenderObject();
 				textRenderObject->SetText("The quick brown fox jumped over the lazy dog.");
 				textRenderObject->SetFont((const char*)fileName.GetName());
-				textRenderObject->SetColor(Imzadi::Vector3(1.0, 1.0, 1.0));
+				textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
 				textRenderObject->SetTransform(translation * rotation * scale);
 				textRenderObject->SetFlags(Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY | Imzadi::TextRenderObject::Flag::STICK_WITH_CAMERA);
 				renderObject.Set(textRenderObject);

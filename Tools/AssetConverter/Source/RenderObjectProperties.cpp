@@ -96,8 +96,11 @@ void RenderObjectProperties::PrintPropertiesOf(Imzadi::RenderObject* renderObjec
 		this->AppendText("Text Properties\n");
 		this->AppendText("===============\n");
 
-		Imzadi::Vector3 color = textRenderObject->GetColor();
-		this->AppendText(wxString::Format("Color: %f, %f, %f\n", color.x, color.y, color.z));
+		Imzadi::Vector3 foreColor = textRenderObject->GetForegroundColor();
+		this->AppendText(wxString::Format("Fore. Color: %f, %f, %f\n", foreColor.x, foreColor.y, foreColor.z));
+
+		Imzadi::Vector3 backColor = textRenderObject->GetForegroundColor();
+		this->AppendText(wxString::Format("Back. Color: %f, %f, %f\n", backColor.x, backColor.y, backColor.z));
 
 		Imzadi::Font* font = textRenderObject->GetFont();
 		this->AppendText(wxString::Format("Font: %s\n", font->GetName().c_str()));
