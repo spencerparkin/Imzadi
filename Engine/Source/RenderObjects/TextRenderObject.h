@@ -29,7 +29,8 @@ namespace Imzadi
 			LEFT_JUSTIFY				= 0x00000040,		///< Left-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			RIGHT_JUSTIFY				= 0x00000080,		///< Right-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			CENTER_JUSTIFY				= 0x00000100,		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
-			OPAQUE_BACKGROUND			= 0x00000200		///< If given, a background color used used.  If not given, text renders with transparent background.
+			OPAQUE_BACKGROUND			= 0x00000200,		///< If given, a background color used used.  If not given, text renders with transparent background.
+			MULTI_LINE					= 0x00000400		///< If given, the text will be broken down into separate lines.  See the @ref SetMaxCharsPerLine method.
 		};
 
 		/**
@@ -108,8 +109,18 @@ namespace Imzadi
 		 */
 		const Transform& GetTransform() const;
 
+		/**
+		 * Set the maximum number of characters to appear in a single line when the MULTI_LINE flag is being used.
+		 */
+		void SetMaxCharsPerLine(uint32_t maxChars);
+
+		/**
+		 * Get the maximum number of characters to appear in a single line when the MULTI_LINE flag is being used.
+		 */
+		uint32_t GetMaxCharsPerLine() const;
+
 	private:
-		double CalculateStringWidth();
+		AxisAlignedBoundingBox CalculateStringBox(const std::string& givenString);
 
 		Reference<Font> font;
 		ID3D11Buffer* vertexBuffer;
@@ -119,6 +130,7 @@ namespace Imzadi
 		uint32_t flags;
 		Transform objectToTargetSpace;
 		UINT numElements;
+		uint32_t maxCharsPerLine;
 	};
 
 	/**
