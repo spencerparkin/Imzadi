@@ -2,6 +2,7 @@
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
 #include "EventSystem.h"
+#include "DialogSystem.h"
 #include "Collision/Result.h"
 #include "Log.h"
 
@@ -200,8 +201,9 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						const Imzadi::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 						if (hitData.shape)
 						{
+							auto gameApp = (GameApp*)Imzadi::Game::Get();
 							uint64_t userFlags = hitData.shape->GetUserFlags();
-							if ((userFlags & SHAPE_FLAG_TALKER) != 0 && hitData.alpha < 10.0)
+							if ((userFlags & SHAPE_FLAG_TALKER) != 0 && hitData.alpha < 10.0 && !gameApp->GetDialogSystem()->PresentlyEngagedInConversation())
 							{
 								Imzadi::Reference<Imzadi::Entity> entity;
 								if (Imzadi::Game::Get()->FindEntityByShapeID(hitData.shapeID, entity))
@@ -256,8 +258,7 @@ DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
 	uint32_t flags =
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
 		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
-		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
-		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND;
+		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY;
 
 	this->textRenderObject = new Imzadi::TextRenderObject();
 	this->textRenderObject->SetText(this->GetActionLabel());
@@ -335,7 +336,16 @@ DeannaTroi::TalkToEntityAction::TalkToEntityAction(DeannaTroi* troi) : LabeledAc
 
 /*virtual*/ bool DeannaTroi::TalkToEntityAction::Perform()
 {
-	// TODO: Write this.
+	Imzadi::Reference<Entity> foundEntity;
+	if (Imzadi::Game::Get()->FindEntityByName(this->targetEntity, foundEntity))
+	{
+		Imzadi::EventSystem* eventSystem = Imzadi::Game::Get()->GetEventSystem();
+		auto convoEvent = new ConversationEvent();
+		convoEvent->participantHandleArray.push_back(foundEntity->GetHandle());
+		convoEvent->participantHandleArray.push_back(this->entityHandle);
+		eventSystem->SendEvent("Conversation", convoEvent);
+	}
+
 	return false;
 }
 

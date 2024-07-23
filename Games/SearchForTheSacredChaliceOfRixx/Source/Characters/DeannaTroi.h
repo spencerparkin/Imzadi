@@ -33,7 +33,7 @@ private:
 		virtual void Tick(double deltaTime) override;
 		virtual std::string GetActionLabel() const = 0;
 
-	private:
+	protected:
 		void UpdateTransform();
 
 		uint32_t entityHandle;

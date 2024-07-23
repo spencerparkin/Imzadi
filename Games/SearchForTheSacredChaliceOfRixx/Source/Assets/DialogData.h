@@ -27,6 +27,9 @@ public:
 	virtual ~DialogElement();
 
 	virtual bool Load(const rapidjson::Value& elementValue);
+	virtual bool Setup() = 0;
+	virtual bool Shutdown() = 0;
+	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) = 0;
 
 	std::string speaker;
 };
@@ -38,8 +41,12 @@ public:
 	virtual ~DialogBasicElement();
 
 	virtual bool Load(const rapidjson::Value& elementValue) override;
+	virtual bool Setup() override;
+	virtual bool Shutdown() override;
+	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) override;
 
 	std::string text;
+	std::string sceneObjName;
 };
 
 class DialogChoiceElement : public DialogElement
@@ -49,6 +56,9 @@ public:
 	virtual ~DialogChoiceElement();
 
 	virtual bool Load(const rapidjson::Value& elementValue) override;
+	virtual bool Setup() override;
+	virtual bool Shutdown() override;
+	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) override;
 
 	struct Choice
 	{
@@ -66,6 +76,9 @@ public:
 	virtual ~DialogAcquireElement();
 
 	virtual bool Load(const rapidjson::Value& elementValue) override;
+	virtual bool Setup() override;
+	virtual bool Shutdown() override;
+	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) override;
 
 	std::string acquiredItem;
 };

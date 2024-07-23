@@ -1,4 +1,8 @@
 #include "DialogData.h"
+#include "GameApp.h"
+#include "Scene.h"
+#include "RenderObjects/TextRenderObject.h"
+#include "Entity.h"
 #include "Log.h"
 
 //------------------------------------ DialogData ------------------------------------
@@ -90,7 +94,7 @@ DialogData::DialogData()
 	return true;
 }
 
-//------------------------------------ DialogData ------------------------------------
+//------------------------------------ DialogElement ------------------------------------
 
 DialogElement::DialogElement()
 {
@@ -112,7 +116,7 @@ DialogElement::DialogElement()
 	return true;
 }
 
-//------------------------------------ DialogData ------------------------------------
+//------------------------------------ DialogBasicElement ------------------------------------
 
 DialogBasicElement::DialogBasicElement()
 {
@@ -137,7 +141,58 @@ DialogBasicElement::DialogBasicElement()
 	return true;
 }
 
-//------------------------------------ DialogData ------------------------------------
+/*virtual*/ bool DialogBasicElement::Setup()
+{
+	Imzadi::Reference<Imzadi::Entity> foundEntity;
+	if (!Imzadi::Game::Get()->FindEntityByName(this->speaker, foundEntity))
+		return false;
+
+	Imzadi::Transform transform;
+	foundEntity->GetTransform(transform);
+	transform.matrix.SetIdentity();
+	transform.matrix.SetUniformScale(20.0);
+
+	uint32_t flags =
+		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
+		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
+		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
+		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::MULTI_LINE;
+
+	auto textRenderObject = new Imzadi::TextRenderObject();
+	textRenderObject->SetFont("Roboto_Regular");
+	textRenderObject->SetFlags(flags);
+	textRenderObject->SetText(std::format("{}: {} (Press \"A\".)", this->speaker.c_str(), this->text.c_str()));
+	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
+	textRenderObject->SetTransform(transform);
+	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+
+	return true;
+}
+
+/*virtual*/ bool DialogBasicElement::Shutdown()
+{
+	Imzadi::Game::Get()->GetScene()->RemoveRenderObject(this->sceneObjName);
+	return true;
+}
+
+/*virtual*/ bool DialogBasicElement::Tick(std::string& nextSequence, int& nextSequencePosition)
+{
+	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DialogSystem");
+	if (!controller)
+		return false;
+
+	if (controller->ButtonPressed(XINPUT_GAMEPAD_A, true))
+	{
+		nextSequencePosition++;
+		return false;
+	}
+
+	return true;
+}
+
+//------------------------------------ DialogChoiceElement ------------------------------------
 
 DialogChoiceElement::DialogChoiceElement()
 {
@@ -185,7 +240,22 @@ DialogChoiceElement::DialogChoiceElement()
 	return true;
 }
 
-//------------------------------------ DialogData ------------------------------------
+/*virtual*/ bool DialogChoiceElement::Setup()
+{
+	return false;
+}
+
+/*virtual*/ bool DialogChoiceElement::Shutdown()
+{
+	return false;
+}
+
+/*virtual*/ bool DialogChoiceElement::Tick(std::string& nextSequence, int& nextSequencePosition)
+{
+	return false;
+}
+
+//------------------------------------ DialogAcquireElement ------------------------------------
 
 DialogAcquireElement::DialogAcquireElement()
 {
@@ -210,7 +280,22 @@ DialogAcquireElement::DialogAcquireElement()
 	return true;
 }
 
-//------------------------------------ DialogData ------------------------------------
+/*virtual*/ bool DialogAcquireElement::Setup()
+{
+	return false;
+}
+
+/*virtual*/ bool DialogAcquireElement::Shutdown()
+{
+	return false;
+}
+
+/*virtual*/ bool DialogAcquireElement::Tick(std::string& nextSequence, int& nextSequencePosition)
+{
+	return false;
+}
+
+//------------------------------------ DialogSequence ------------------------------------
 
 DialogSequence::DialogSequence()
 {

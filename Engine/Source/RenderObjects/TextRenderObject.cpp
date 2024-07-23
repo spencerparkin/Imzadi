@@ -13,7 +13,7 @@ TextRenderObject::TextRenderObject()
 	this->flags = 0;
 	this->vertexBuffer = nullptr;
 	this->numElements = 0;
-	this->maxCharsPerLine = 16;
+	this->maxCharsPerLine = 32;
 	this->objectToTargetSpace.SetIdentity();
 	this->foreColor.SetComponents(1.0, 1.0, 1.0);
 	this->backColor.SetComponents(0.0, 0.0, 0.0);
@@ -74,8 +74,8 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 	{
 		// Get an array of words in the text.
 		std::vector<std::string> wordArray;
-		char* buffer = new char[this->text.length()];
-		::strcpy_s(buffer, this->text.length(), this->text.c_str());
+		char* buffer = new char[this->text.length() + 1];
+		::strcpy_s(buffer, this->text.length() + 1, this->text.c_str());
 		char* context = nullptr;
 		char* tokenBuffer = ::strtok_s(buffer, " ", &context);
 		while (tokenBuffer)
@@ -94,7 +94,7 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 			const std::string& word = wordArray[i];
 			if (j + word.length() <= this->maxCharsPerLine)
 			{
-				line += " " + word;
+				line += (line.length() > 0 ? " " : "") + word;
 				j += word.length();
 			}
 			else

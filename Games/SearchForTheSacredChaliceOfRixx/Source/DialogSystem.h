@@ -1,8 +1,11 @@
 #pragma once
 
 #include "Reference.h"
+#include "EventSystem.h"
 
 class DialogData;
+class DialogSequence;
+class ConversationEvent;
 
 /**
  * One of the basic functions of this system is simply to facilitate the
@@ -21,7 +24,24 @@ public:
 
 	bool Initialize();
 	bool Shutdown();
+	void Tick();
+	bool InitiateConversation(const ConversationEvent* convoEvent);
+	bool PresentlyEngagedInConversation();
 
 private:
 	Imzadi::Reference<DialogData> dialogData;
+	Imzadi::Reference<DialogSequence> currentDialogSequence;
+	int currentDialogSequencePosition;
+};
+
+/**
+ * These types of events are sent to initiate conversations in the dialog system.
+ */
+class ConversationEvent : public Imzadi::Event
+{
+public:
+	ConversationEvent();
+	virtual ~ConversationEvent();
+
+	std::vector<uint32_t> participantHandleArray;
 };

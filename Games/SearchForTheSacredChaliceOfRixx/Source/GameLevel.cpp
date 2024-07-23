@@ -1,4 +1,5 @@
 #include "GameLevel.h"
+#include "GameApp.h"
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
 
@@ -27,5 +28,15 @@ GameLevel::GameLevel()
 		lwaxana->SetRestartOrientation(Imzadi::Quaternion());
 	}
 
+	return true;
+}
+
+/*virtual*/ bool GameLevel::Tick(Imzadi::TickPass tickPass, double deltaTime)
+{
+	if (!Level::Tick(tickPass, deltaTime))
+		return false;
+
+	auto game = (GameApp*)Imzadi::Game::Get();
+	game->GetDialogSystem()->Tick();
 	return true;
 }

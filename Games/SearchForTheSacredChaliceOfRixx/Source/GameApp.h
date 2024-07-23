@@ -15,6 +15,8 @@ public:
 	virtual bool PostInit() override;
 	virtual bool PostShutdown() override;
 
+	DialogSystem* GetDialogSystem() { return &this->dialogSystem; }
+
 private:
 	void PerformLevelTransition(const std::string& nextLevel);
 
