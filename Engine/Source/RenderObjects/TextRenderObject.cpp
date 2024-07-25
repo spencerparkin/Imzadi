@@ -158,39 +158,49 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 		penStartLocationArray.push_back(Vector2(0.0, 0.0));
 	}
 
+	// Get some metrics on the boxes.
+	double maxBoxWidth = 0.0, maxBoxHeight = 0.0;
+	for (uint32_t i = 0; i < (uint32_t)lineBoxArray.size(); i++)
+	{
+		AxisAlignedBoundingBox& lineBox = lineBoxArray[i];
+		double boxWidth = 0.0, boxHeight = 0.0, boxDepth = 0.0;
+		lineBox.GetDimensions(boxWidth, boxHeight, boxDepth);
+		maxBoxWidth = IMZADI_MAX(maxBoxWidth, boxWidth);
+		maxBoxHeight = IMZADI_MAX(maxBoxHeight, boxHeight);
+	}
+
 	// Lay the boxes on top of one another.
-	double yDelta = 0.0, maxBoxWidth = 0.0;
 	for (uint32_t i = 0; i < (uint32_t)lineBoxArray.size(); i++)
 	{
 		uint32_t j = lineBoxArray.size() - 1 - i;
 		AxisAlignedBoundingBox& lineBox = lineBoxArray[j];
 		Vector2& penStartLocation = penStartLocationArray[j];
-		lineBox.minCorner.y += yDelta;
-		lineBox.maxCorner.y += yDelta;
-		penStartLocation.y += yDelta;
-		double xSize = 0.0, ySize = 0.0, zSize = 0.0;
-		lineBox.GetDimensions(xSize, ySize, zSize);
-		yDelta += ySize;
-		maxBoxWidth = IMZADI_MAX(maxBoxWidth, xSize);
+		lineBox.minCorner.y += i * maxBoxHeight;
+		lineBox.maxCorner.y += i * maxBoxHeight;
+		penStartLocation.y += i * maxBoxHeight;
 	}
 
-	// Align/justify the boxes left/center/right.  Note: The text is left-justified if we do nothing to it.
+	// Align/justify the boxes left/center/right.
 	for (uint32_t i = 0; i < (uint32_t)lineBoxArray.size(); i++)
 	{
 		AxisAlignedBoundingBox& lineBox = lineBoxArray[i];
 		Vector2& penStartLocation = penStartLocationArray[i];
+		lineBox.minCorner.x -= maxBoxWidth / 2.0;
+		lineBox.maxCorner.x -= maxBoxWidth / 2.0;
+		penStartLocation.x -= maxBoxWidth / 2.0;
+
+		double boxWidth = 0.0, boxHeight = 0.0, boxDepth = 0.0;
+		lineBox.GetDimensions(boxWidth, boxHeight, boxDepth);
+
+		double justificationDelta = 0.0;
 		if ((this->flags & Flag::RIGHT_JUSTIFY) != 0)
-		{
-			lineBox.minCorner.x -= maxBoxWidth;
-			lineBox.maxCorner.x -= maxBoxWidth;
-			penStartLocation.x -= maxBoxWidth;
-		}
+			justificationDelta = maxBoxWidth - boxWidth;
 		else if ((this->flags & Flag::CENTER_JUSTIFY) != 0)
-		{
-			lineBox.minCorner.x -= maxBoxWidth / 2.0;
-			lineBox.maxCorner.x -= maxBoxWidth / 2.0;
-			penStartLocation.x -= maxBoxWidth / 2.0;
-		}
+			justificationDelta = (maxBoxWidth - boxWidth) / 2;
+
+		lineBox.minCorner.x += justificationDelta;
+		lineBox.maxCorner.x += justificationDelta;
+		penStartLocation.x += justificationDelta;
 	}
 
 	// Finally, render the lines of text.

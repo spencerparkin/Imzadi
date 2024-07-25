@@ -242,17 +242,88 @@ DialogChoiceElement::DialogChoiceElement()
 
 /*virtual*/ bool DialogChoiceElement::Setup()
 {
-	return false;
+	Imzadi::Reference<Imzadi::Entity> foundEntity;
+	if (!Imzadi::Game::Get()->FindEntityByName(this->speaker, foundEntity))
+		return false;
+
+	if (this->choiceArray.size() < 2 || this->choiceArray.size() > 4)
+		return false;
+
+	Imzadi::Transform transform;
+	foundEntity->GetTransform(transform);
+	transform.matrix.SetIdentity();
+	transform.matrix.SetUniformScale(20.0);
+
+	uint32_t flags =
+		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
+		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
+		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
+		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::MULTI_LINE;
+
+	std::string text = this->speaker + ": ";
+	if (this->choiceArray.size() > 0)
+		text += "Press \"A\": " + this->choiceArray[0].text;
+	if (this->choiceArray.size() > 1)
+		text += " | Press \"B\": " + this->choiceArray[1].text;
+	if (this->choiceArray.size() > 2)
+		text += " | Press \"X\": " + this->choiceArray[2].text;
+	if (this->choiceArray.size() > 3)
+		text += " | Press \"Y\": " + this->choiceArray[3].text;
+
+	auto textRenderObject = new Imzadi::TextRenderObject();
+	textRenderObject->SetFont("Roboto_Regular");
+	textRenderObject->SetFlags(flags);
+	textRenderObject->SetText(text);
+	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
+	textRenderObject->SetTransform(transform);
+	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+
+	return true;
 }
 
 /*virtual*/ bool DialogChoiceElement::Shutdown()
 {
-	return false;
+	Imzadi::Game::Get()->GetScene()->RemoveRenderObject(this->sceneObjName);
+	return true;
 }
 
 /*virtual*/ bool DialogChoiceElement::Tick(std::string& nextSequence, int& nextSequencePosition)
 {
-	return false;
+	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DialogSystem");
+	if (!controller)
+		return false;
+
+	if (this->choiceArray.size() > 0 && controller->ButtonPressed(XINPUT_GAMEPAD_A, true))
+	{
+		nextSequence = this->choiceArray[0].sequenceName;
+		nextSequencePosition = 0;
+		return false;
+	}
+
+	if (this->choiceArray.size() > 1 && controller->ButtonPressed(XINPUT_GAMEPAD_B, true))
+	{
+		nextSequence = this->choiceArray[1].sequenceName;
+		nextSequencePosition = 0;
+		return false;
+	}
+
+	if (this->choiceArray.size() > 2 && controller->ButtonPressed(XINPUT_GAMEPAD_X, true))
+	{
+		nextSequence = this->choiceArray[2].sequenceName;
+		nextSequencePosition = 0;
+		return false;
+	}
+
+	if (this->choiceArray.size() > 3 && controller->ButtonPressed(XINPUT_GAMEPAD_Y, true))
+	{
+		nextSequence = this->choiceArray[3].sequenceName;
+		nextSequencePosition = 0;
+		return false;
+	}
+
+	return true;
 }
 
 //------------------------------------ DialogAcquireElement ------------------------------------

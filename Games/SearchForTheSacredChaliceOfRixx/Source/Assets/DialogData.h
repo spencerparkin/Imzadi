@@ -67,6 +67,7 @@ public:
 	};
 
 	std::vector<Choice> choiceArray;
+	std::string sceneObjName;
 };
 
 class DialogAcquireElement : public DialogBasicElement
