@@ -24,7 +24,7 @@ DeannaTroi::DeannaTroi()
 /*virtual*/ bool DeannaTroi::Setup()
 {
 	std::string modelFile = "Models/DeannaTroi/Troi.skinned_render_mesh";
-	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile, &this->restartLocation, &this->restartOrientation));
+	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Biped::Setup())
 		return false;

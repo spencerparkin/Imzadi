@@ -58,7 +58,10 @@ Biped::Biped()
 	if (this->collisionShapeID == 0)
 		return false;
 
+	this->platformToWorld.SetIdentity();
+	this->objectToPlatform = this->restartTransformObjectToWorld;
 	this->inContactWithGround = false;
+	this->groundShapeID = 0;
 	return true;
 }
 
@@ -72,8 +75,7 @@ Biped::Biped()
 /*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)
 {
 	// Make sure the render mesh faces the direction we're moving.
-	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-	Matrix3x3 targetOrientation = objectToWorld.matrix;
+	Matrix3x3 targetOrientation = this->objectToPlatform.matrix;
 
 	if (this->velocity.Length() > 0)
 	{
@@ -86,16 +88,12 @@ Biped::Biped()
 		targetOrientation.SetColumnVectors(xAxis, yAxis, zAxis);
 	}
 
-	objectToWorld.matrix.InterpolateOrientations(objectToWorld.matrix, targetOrientation, 0.2);
-
-	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+	this->objectToPlatform.matrix.InterpolateOrientations(this->objectToPlatform.matrix, targetOrientation, 0.2);
 }
 
 /*virtual*/ void Biped::IntegratePosition(double deltaTime)
 {
-	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-	objectToWorld.translation += this->velocity * deltaTime;
-	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+	this->objectToPlatform.translation += this->velocity * deltaTime;
 }
 
 /*virtual*/ bool Biped::Tick(TickPass tickPass, double deltaTime)
@@ -109,13 +107,16 @@ Biped::Biped()
 	{
 		case TickPass::COMMAND_TICK:
 		{
-			this->AdjustFacingDirection(deltaTime);
 			this->IntegratePosition(deltaTime);
+			this->AdjustFacingDirection(deltaTime);
+
+			Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
+			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 
 			// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
 			auto command = ObjectToWorldCommand::Create();
 			command->SetShapeID(this->collisionShapeID);
-			command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+			command->objectToWorld = objectToWorld;
 			collisionSystem->IssueCommand(command);
 
 			break;
@@ -171,6 +172,32 @@ Biped::Biped()
 		}
 		case TickPass::RESULT_TICK:
 		{
+			if (this->worldSurfaceCollisionQueryTaskID)
+			{
+				Result* result = collisionSystem->ObtainQueryResult(this->worldSurfaceCollisionQueryTaskID);
+				if (result)
+				{
+					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+					if (collisionResult)
+						this->HandleWorldSurfaceCollisionResult(collisionResult);
+
+					collisionSystem->Free(result);
+				}
+			}
+
+			if (this->groundQueryTaskID)
+			{
+				Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
+				if (result)
+				{
+					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+					if (objectToWorldResult)
+						this->platformToWorld = objectToWorldResult->objectToWorld;
+
+					collisionSystem->Free(result);
+				}
+			}
+
 			if (this->boundsQueryTaskID)
 			{
 				bool characterDied = false;
@@ -193,43 +220,21 @@ Biped::Biped()
 				}
 			}
 
-			if (this->worldSurfaceCollisionQueryTaskID)
-			{
-				Result* result = collisionSystem->ObtainQueryResult(this->worldSurfaceCollisionQueryTaskID);
-				if (result)
-				{
-					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
-					if (collisionResult)
-						this->HandleWorldSurfaceCollisionResult(collisionResult);
-
-					collisionSystem->Free(result);
-				}
-			}
-
-			if (this->groundQueryTaskID)
-			{
-				Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
-				if (result)
-				{
-					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
-					if (objectToWorldResult)
-					{
-						// TODO: I think we'll need this to update a reference frame.
-						//       Can we have our character always move relative to the
-						//       ground's reference frame, and can we know how to switch
-						//       between reference frames?
-						//objectToWorldResult->objectToWorld
-					}
-
-					collisionSystem->Free(result);
-				}
-			}
-
 			break;
 		}
 	}
 
 	return true;
+}
+
+void Biped::SetRestartLocation(const Vector3& restartLocation)
+{
+	this->restartTransformObjectToWorld.translation = restartLocation;
+}
+
+void Biped::SetRestartOrientation(const Quaternion& restartOrientation)
+{
+	this->restartTransformObjectToWorld.matrix.SetFromQuat(restartOrientation);
 }
 
 /*virtual*/ std::string Biped::GetAnimName(AnimType animType)
@@ -250,13 +255,14 @@ Biped::Biped()
 void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult)
 {
 	this->inContactWithGround = false;
-	this->groundShapeID = 0;
 
 	if (collisionResult->GetCollisionStatusArray().size() == 0)
 		return;
 
 	Vector3 averageSeperationDelta(0.0, 0.0, 0.0);
 	Vector3 approximateGroundNormal;
+	ShapeID newGroundShapeID = 0;
+	Transform newGroundObjectToWorld;
 	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
 	{
 		ShapeID otherShapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
@@ -267,21 +273,42 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 		// We really need a contact normal here, but do this for now.
 		Vector3 upVector(0.0, 1.0, 0.0);
 		double angle = upVector.AngleBetween(separationDelta.Normalized());
-		if (angle < M_PI / 4.0)
+		if (angle < M_PI / 3.0)
 		{
 			this->inContactWithGround = true;
-			this->groundShapeID = otherShapeID;
+			newGroundShapeID = otherShapeID;
+			newGroundObjectToWorld = collisionStatus->GetShape(otherShapeID)->GetObjectToWorldTransform();
 			approximateGroundNormal = separationDelta.Normalized();
 		}
 	}
 
 	averageSeperationDelta /= float(collisionResult->GetCollisionStatusArray().size());
 
-	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-	objectToWorld.translation += averageSeperationDelta;
-	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+	Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
 
-	if (this->groundShapeID != 0)
+	if (newGroundShapeID != 0 && newGroundShapeID != this->groundShapeID)
+	{
+		this->groundShapeID = newGroundShapeID;
+
+		// Update our object-to-platform and platform-to-world transforms based on the new ground shape.
+
+		this->platformToWorld = newGroundObjectToWorld;
+
+		Transform worldToPlatform;
+		worldToPlatform.Invert(this->platformToWorld);
+		this->objectToPlatform = worldToPlatform * objectToWorld;
+
+		objectToWorld = this->platformToWorld * this->objectToPlatform;
+	}
+
+	Transform worldToObject;
+	worldToObject.Invert(objectToWorld);
+	averageSeperationDelta = worldToObject.TransformVector(averageSeperationDelta);
+	approximateGroundNormal = worldToObject.TransformVector(approximateGroundNormal);
+
+	this->objectToPlatform.translation += averageSeperationDelta;
+
+	if (this->inContactWithGround)
 		this->velocity = this->velocity.RejectedFrom(approximateGroundNormal);
 }
 
@@ -307,8 +334,8 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 {
 	PhysicsEntity::Reset();
 
-	Transform objectToWorld;
-	objectToWorld.translation = this->restartLocation;
-	objectToWorld.matrix.SetFromQuat(this->restartOrientation);
-	this->renderMesh->SetObjectToWorldTransform(objectToWorld);
+	this->platformToWorld.SetIdentity();
+	this->objectToPlatform = this->restartTransformObjectToWorld;
+	this->inContactWithGround = false;
+	this->groundShapeID = 0;
 }

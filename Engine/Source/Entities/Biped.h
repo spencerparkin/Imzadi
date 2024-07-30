@@ -17,11 +17,6 @@ namespace Imzadi
 	 * whether they be the main protagonist, an antogonist, or just some
 	 * sort of NPC.
 	 */
-	// TODO: I want to rework this so that we maintain two transforms: objectToPlatform and platformToWorld.
-	//       The objectToWorld transform for the render object and the collision object is simply the concatination
-	//       of these two transforms.  The controller moves the platformToWorld transform while the platform we're
-	//       standing on (or jumping from) determines the objectToPlatform transform.  That's the idea, anyway.
-	//       Maybe I'll find some problems with this when I get into it.
 	class IMZADI_API Biped : public PhysicsEntity
 	{
 	public:
@@ -47,8 +42,8 @@ namespace Imzadi
 		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
 		virtual bool OwnsCollisionShape(ShapeID shapeID) const override;
 
-		void SetRestartLocation(const Vector3& restartLocation) { this->restartLocation = restartLocation; }
-		void SetRestartOrientation(const Quaternion& restartOrientation) { this->restartOrientation = restartOrientation; }
+		void SetRestartLocation(const Vector3& restartLocation);
+		void SetRestartOrientation(const Quaternion& restartOrientation);
 
 		void SetCanRestart(bool canRestart) { this->canRestart = canRestart; }
 		bool GetCanRestart() const { return this->canRestart; }
@@ -56,8 +51,6 @@ namespace Imzadi
 	protected:
 		void HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult);
 
-		Vector3 restartLocation;
-		Quaternion restartOrientation;
 		bool canRestart;
 		ShapeID collisionShapeID;
 		ShapeID groundShapeID;
@@ -66,5 +59,8 @@ namespace Imzadi
 		TaskID boundsQueryTaskID;
 		TaskID worldSurfaceCollisionQueryTaskID;
 		TaskID groundQueryTaskID;
+		Transform objectToPlatform;
+		Transform platformToWorld;
+		Transform restartTransformObjectToWorld;
 	};
 }

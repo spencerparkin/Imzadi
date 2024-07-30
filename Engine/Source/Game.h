@@ -196,10 +196,15 @@ namespace Imzadi
 			return entity;
 		}
 
-		Reference<RenderObject> LoadAndPlaceRenderMesh(
-			const std::string& renderMeshFile,
-			const Vector3* position = nullptr,
-			const Quaternion* orientation = nullptr);
+		/**
+		 * This is a convenience function for loading a mesh asset and then
+		 * creating and instance of it that is added to the scene.
+		 * 
+		 * @param[in] renderMeshFile This is the mesh to load on disk.
+		 * @param[in] objectToWorld This is an optional, initial object-to-world transform for the instanced mesh.  If not given, the asset's object-to-world transform is used.
+		 * @return The instanced render object for the loaded mesh is returned.
+		 */
+		Reference<RenderObject> LoadAndPlaceRenderMesh(const std::string& renderMeshFile, const Transform* objectToWorld = nullptr);
 
 		/**
 		 * This doesn't seem like a terribly clever way to manage the controller

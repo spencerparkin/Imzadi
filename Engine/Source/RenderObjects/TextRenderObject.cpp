@@ -579,7 +579,7 @@ FPSRenderObject::FPSRenderObject()
 
 	Transform translate;
 	translate.SetIdentity();
-	translate.translation.SetComponents(0.9, 0.9, -0.5);
+	translate.translation.SetComponents(0.8, 0.9, -0.5);
 
 	this->SetTransform(translate * scale);
 
