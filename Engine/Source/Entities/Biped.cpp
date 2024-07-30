@@ -189,6 +189,8 @@ Biped::Biped()
 		}
 		case TickPass::RESULT_TICK:
 		{
+			this->inContactWithGround = false;
+
 			if (this->worldSurfaceCollisionQueryTaskID)
 			{
 				Result* result = collisionSystem->ObtainQueryResult(this->worldSurfaceCollisionQueryTaskID);
@@ -237,6 +239,15 @@ Biped::Biped()
 				}
 			}
 
+			if (!this->inContactWithGround)
+			{
+				// TODO: If we're standing on a platform that moves up and down and
+				//       we're just standing there doing nothing, then we should never
+				//       leave the ground!  (Of course, we're assuming here that the
+				//       platform is not moving too fast.)
+				IMZADI_LOG_INFO("Not on ground!");
+			}
+
 			break;
 		}
 	}
@@ -271,8 +282,6 @@ void Biped::SetRestartOrientation(const Quaternion& restartOrientation)
 
 void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult)
 {
-	this->inContactWithGround = false;
-
 	if (collisionResult->GetCollisionStatusArray().size() == 0)
 		return;
 
