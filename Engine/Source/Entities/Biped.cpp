@@ -58,6 +58,8 @@ Biped::Biped()
 	if (this->collisionShapeID == 0)
 		return false;
 
+	this->velocity.SetComponents(0.0, 0.0, 0.0);
+	this->mass = 1.0;
 	this->platformToWorld.SetIdentity();
 	this->objectToPlatform = this->restartTransformObjectToWorld;
 	this->inContactWithGround = false;
@@ -67,8 +69,7 @@ Biped::Biped()
 
 /*virtual*/ bool Biped::Shutdown()
 {
-	PhysicsEntity::Shutdown();
-
+	Entity::Shutdown();
 	return true;
 }
 
@@ -91,6 +92,18 @@ Biped::Biped()
 	this->objectToPlatform.matrix.InterpolateOrientations(this->objectToPlatform.matrix, targetOrientation, 0.2);
 }
 
+/*virtual*/ void Biped::AccumulateForces(Vector3& netForce)
+{
+	Vector3 downVector(0.0, -1.0, 0.0);
+	Vector3 gravityForce = downVector * this->mass * Game::Get()->GetGravity();
+	netForce += gravityForce;
+}
+
+/*virtual*/ void Biped::IntegrateVelocity(const Vector3& acceleration, double deltaTime)
+{
+	this->velocity += acceleration * deltaTime;
+}
+
 /*virtual*/ void Biped::IntegratePosition(double deltaTime)
 {
 	this->objectToPlatform.translation += this->velocity * deltaTime;
@@ -98,7 +111,7 @@ Biped::Biped()
 
 /*virtual*/ bool Biped::Tick(TickPass tickPass, double deltaTime)
 {
-	if (!PhysicsEntity::Tick(tickPass, deltaTime))
+	if (!Entity::Tick(tickPass, deltaTime))
 		return false;
 
 	CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
@@ -107,6 +120,10 @@ Biped::Biped()
 	{
 		case TickPass::COMMAND_TICK:
 		{
+			Vector3 netForce(0.0, 0.0, 0.0);
+			this->AccumulateForces(netForce);
+			Vector3 acceleration = netForce / this->mass;
+			this->IntegrateVelocity(acceleration, deltaTime);
 			this->IntegratePosition(deltaTime);
 			this->AdjustFacingDirection(deltaTime);
 
@@ -332,8 +349,8 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 
 /*virtual*/ void Biped::Reset()
 {
-	PhysicsEntity::Reset();
-
+	this->velocity.SetComponents(0.0, 0.0, 0.0);
+	this->mass = 1.0;
 	this->platformToWorld.SetIdentity();
 	this->objectToPlatform = this->restartTransformObjectToWorld;
 	this->inContactWithGround = false;

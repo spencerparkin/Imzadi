@@ -34,8 +34,6 @@ set(GAME_ENGINE_SOURCES
     Source/Entities/Level.h
     Source/Entities/MovingPlatform.cpp
     Source/Entities/MovingPlatform.h
-    Source/Entities/PhysicsEntity.cpp
-    Source/Entities/PhysicsEntity.h
     Source/Entities/TriggerBox.cpp
     Source/Entities/TriggerBox.h
     Source/Collision/System.cpp

@@ -98,7 +98,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 /*virtual*/ void DeannaTroi::AccumulateForces(Imzadi::Vector3& netForce)
 {
-	PhysicsEntity::AccumulateForces(netForce);
+	Biped::AccumulateForces(netForce);
 
 	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 	if (!controller)
