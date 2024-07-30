@@ -112,7 +112,25 @@ DialogElement::DialogElement()
 		return false;
 	}
 
+	if (elementValue.HasMember("mile_stone") && elementValue["mile_stone"].IsString())
+		this->mileStone = elementValue["mile_stone"].GetString();
+	else
+		this->mileStone = "";
+
 	this->speaker = elementValue["speaker"].GetString();
+	return true;
+}
+
+/*virtual*/ bool DialogElement::Setup()
+{
+	return true;
+}
+
+/*virtual*/ bool DialogElement::Shutdown()
+{
+	if (this->mileStone.length() > 0)
+		((GameApp*)Imzadi::Game::Get())->GetGameProgress()->SetMileStoneReached(this->mileStone);
+
 	return true;
 }
 
@@ -143,6 +161,9 @@ DialogBasicElement::DialogBasicElement()
 
 /*virtual*/ bool DialogBasicElement::Setup()
 {
+	if (!DialogElement::Setup())
+		return false;
+
 	Imzadi::Reference<Imzadi::Entity> foundEntity;
 	if (!Imzadi::Game::Get()->FindEntityByName(this->speaker, foundEntity))
 		return false;
@@ -173,6 +194,8 @@ DialogBasicElement::DialogBasicElement()
 
 /*virtual*/ bool DialogBasicElement::Shutdown()
 {
+	DialogElement::Shutdown();
+
 	Imzadi::Game::Get()->GetScene()->RemoveRenderObject(this->sceneObjName);
 	return true;
 }
@@ -242,6 +265,9 @@ DialogChoiceElement::DialogChoiceElement()
 
 /*virtual*/ bool DialogChoiceElement::Setup()
 {
+	if (!DialogElement::Setup())
+		return false;
+
 	Imzadi::Reference<Imzadi::Entity> foundEntity;
 	if (!Imzadi::Game::Get()->FindEntityByName(this->speaker, foundEntity))
 		return false;
@@ -285,6 +311,8 @@ DialogChoiceElement::DialogChoiceElement()
 
 /*virtual*/ bool DialogChoiceElement::Shutdown()
 {
+	DialogElement::Shutdown();
+
 	Imzadi::Game::Get()->GetScene()->RemoveRenderObject(this->sceneObjName);
 	return true;
 }

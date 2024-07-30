@@ -27,11 +27,12 @@ public:
 	virtual ~DialogElement();
 
 	virtual bool Load(const rapidjson::Value& elementValue);
-	virtual bool Setup() = 0;
-	virtual bool Shutdown() = 0;
+	virtual bool Setup();
+	virtual bool Shutdown();
 	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) = 0;
 
 	std::string speaker;
+	std::string mileStone;
 };
 
 class DialogBasicElement : public DialogElement

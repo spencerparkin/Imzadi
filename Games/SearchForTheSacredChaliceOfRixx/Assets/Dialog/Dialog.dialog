@@ -5,7 +5,8 @@
                 {
                     "type": "basic",
                     "speaker": "Deanna",
-                    "text": "Hi, can I help you?"
+                    "text": "Hi, can I help you?",
+                    "mile_stone": "initial_contact_with_lwaxana_made"
                 },
                 {
                     "type": "basic",
@@ -60,7 +61,7 @@
                 {
                     "type": "basic",
                     "speaker": "Lwaxana",
-                    "text": "The time has come, Deanna, for you to take ownership of the challice, but..."
+                    "text": "The time has come for you, Deanna, to take your rightful place in our great house and heir to the sacred challice, but..."
                 },
                 {
                     "type": "basic",
@@ -70,7 +71,7 @@
                 {
                     "type": "basic",
                     "speaker": "Lwaxana",
-                    "text": "I don't know.  But seeing as how Q seems to behind our current predicament, I think it's safe to assume for the time being.",
+                    "text": "I don't know.  But seeing as how Q seems to behind our current predicament, I think it's safe to assume that for the time being.",
                     "writers_note": "Q is Lwaxana in disguise."
                 },
                 {
@@ -119,6 +120,15 @@
                     "type": "basic",
                     "speaker": "Lwaxana",
                     "text": "If you find the challice, I'll be here, waiting."
+                }
+            ]
+        },
+        "lwaxana_encourage_deanna": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Lwaxana",
+                    "text": "Little one, Deanna...  I'll be here.  Bring the challice to me once you've found it."
                 }
             ]
         }

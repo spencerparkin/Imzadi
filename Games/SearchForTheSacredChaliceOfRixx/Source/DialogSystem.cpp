@@ -2,6 +2,7 @@
 #include "Assets/DialogData.h"
 #include "CustomAssetCache.h"
 #include "GameApp.h"
+#include "Entity.h"
 #include "Log.h"
 
 //--------------------------------- DialogSystem ---------------------------------
@@ -62,13 +63,11 @@ bool DialogSystem::InitiateConversation(const ConversationEvent* convoEvent)
 	if (this->PresentlyEngagedInConversation())
 		return false;
 
-	// This is where we know what people all want to talk to one another, and where
-	// we then decide, based on that and the progress of the game, what dialog sequence
-	// they are going to play out.  The details of how to do this are still a bit in
-	// the air, so just do something simple for now.
+	std::string sequenceName;
+	if (!this->DetermineDialogSequenceForConversation(convoEvent, sequenceName))
+		return false;
 
-	// TODO: Right now, this is the only authored dialog sequence, so just do this one.  But of course, this will need to change.
-	DialogData::SequenceMap::iterator iter = this->dialogData->sequenceMap.find("lwaxana_initial_contact");
+	DialogData::SequenceMap::iterator iter = this->dialogData->sequenceMap.find(sequenceName);
 	if (iter == this->dialogData->sequenceMap.end())
 		return false;
 
@@ -92,6 +91,49 @@ bool DialogSystem::InitiateConversation(const ConversationEvent* convoEvent)
 
 	Imzadi::Game::Get()->PushControllerUser("DialogSystem");
 	return true;
+}
+
+bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEvent* convoEvent, std::string& sequenceName)
+{
+	sequenceName = "";
+
+	GameApp* game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* progress = game->GetGameProgress();
+
+	std::vector<Imzadi::Reference<Imzadi::Entity>> entityArray;
+
+	for (uint32_t handle : convoEvent->participantHandleArray)
+	{
+		Imzadi::Reference<Imzadi::ReferenceCounted> ref;
+		Imzadi::HandleManager::Get()->GetObjectFromHandle(handle, ref);
+		Imzadi::Reference<Imzadi::Entity> entity;
+		entity.SafeSet(ref.Get());
+		if (!entity)
+			return false;
+
+		entityArray.push_back(entity);
+	}
+
+	if (entityArray.size() == 2)
+	{
+		std::string otherEntityName;
+		if (entityArray[0]->GetName() == "Deanna")
+			otherEntityName = entityArray[1]->GetName();
+		else if (entityArray[1]->GetName() == "Deanna")
+			otherEntityName = entityArray[0]->GetName();
+		else
+			return false;
+
+		if (otherEntityName == "Lwaxana")
+		{
+			if (!progress->WasMileStoneReached("initial_contact_with_lwaxana_made"))
+				sequenceName = "lwaxana_initial_contact";
+			else
+				sequenceName = "lwaxana_encourage_deanna";
+		}
+	}
+
+	return sequenceName.size() > 0;
 }
 
 void DialogSystem::Tick()

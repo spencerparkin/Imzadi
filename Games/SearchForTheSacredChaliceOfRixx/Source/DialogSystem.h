@@ -29,6 +29,8 @@ public:
 	bool PresentlyEngagedInConversation();
 
 private:
+	bool DetermineDialogSequenceForConversation(const ConversationEvent* convoEvent, std::string& sequenceName);
+
 	Imzadi::Reference<DialogData> dialogData;
 	Imzadi::Reference<DialogSequence> currentDialogSequence;
 	int currentDialogSequencePosition;

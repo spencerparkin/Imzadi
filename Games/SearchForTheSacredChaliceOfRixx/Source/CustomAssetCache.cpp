@@ -1,5 +1,6 @@
 #include "CustomAssetCache.h"
 #include "Assets/DialogData.h"
+#include "Assets/GameProgress.h"
 
 CustomAssetCache::CustomAssetCache()
 {
@@ -20,6 +21,8 @@ CustomAssetCache::CustomAssetCache()
 	std::transform(ext.begin(), ext.end(), ext.begin(), [](unsigned char c) { return std::tolower(c); });
 	if (ext == ".dialog")
 		return new DialogData();
+	else if (ext == ".progress")
+		return new GameProgress();
 
 	return nullptr;
 }

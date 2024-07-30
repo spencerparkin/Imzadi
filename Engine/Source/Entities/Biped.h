@@ -17,6 +17,11 @@ namespace Imzadi
 	 * whether they be the main protagonist, an antogonist, or just some
 	 * sort of NPC.
 	 */
+	// TODO: I want to rework this so that we maintain two transforms: objectToPlatform and platformToWorld.
+	//       The objectToWorld transform for the render object and the collision object is simply the concatination
+	//       of these two transforms.  The controller moves the platformToWorld transform while the platform we're
+	//       standing on (or jumping from) determines the objectToPlatform transform.  That's the idea, anyway.
+	//       Maybe I'll find some problems with this when I get into it.
 	class IMZADI_API Biped : public PhysicsEntity
 	{
 	public:
