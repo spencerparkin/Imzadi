@@ -109,6 +109,11 @@ Biped::Biped()
 	this->objectToPlatform.translation += this->velocity * deltaTime;
 }
 
+/*virtual*/ uint32_t Biped::TickOrder() const
+{
+	return std::numeric_limits<uint32_t>::max();
+}
+
 /*virtual*/ bool Biped::Tick(TickPass tickPass, double deltaTime)
 {
 	if (!Entity::Tick(tickPass, deltaTime))
@@ -126,6 +131,23 @@ Biped::Biped()
 			this->IntegrateVelocity(acceleration, deltaTime);
 			this->IntegratePosition(deltaTime);
 			this->AdjustFacingDirection(deltaTime);
+
+			if (this->groundShapeID != 0)
+			{
+				auto objectToWorldQuery = ObjectToWorldQuery::Create();
+				objectToWorldQuery->SetShapeID(this->groundShapeID);
+				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
+				collisionSystem->FlushAllTasks();
+				Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
+				if (result)
+				{
+					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+					if (objectToWorldResult)
+						this->platformToWorld = objectToWorldResult->objectToWorld;
+
+					collisionSystem->Free(result);
+				}
+			}
 
 			Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
 			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
@@ -150,13 +172,6 @@ Biped::Biped()
 			worldSurfaceCollisionQuery->SetShapeID(this->collisionShapeID);
 			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
-
-			if (this->groundShapeID != 0)
-			{
-				auto objectToWorldQuery = ObjectToWorldQuery::Create();
-				objectToWorldQuery->SetShapeID(this->groundShapeID);
-				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
-			}
 
 			break;
 		}
@@ -199,19 +214,6 @@ Biped::Biped()
 					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
 					if (collisionResult)
 						this->HandleWorldSurfaceCollisionResult(collisionResult);
-
-					collisionSystem->Free(result);
-				}
-			}
-
-			if (this->groundQueryTaskID)
-			{
-				Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
-				if (result)
-				{
-					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
-					if (objectToWorldResult)
-						this->platformToWorld = objectToWorldResult->objectToWorld;
 
 					collisionSystem->Free(result);
 				}

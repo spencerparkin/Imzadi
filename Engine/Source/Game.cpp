@@ -522,6 +522,10 @@ void Game::SetAssetCache(AssetCache* assetCache)
 void Game::AddEntity(Entity* entity)
 {
 	this->spawnedEntityQueue.push_back(entity);
+
+	tickingEntityList.sort([](const Entity* entityA, const Entity* entityB) -> bool {
+		return entityA->TickOrder() < entityB->TickOrder();
+	});
 }
 
 bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEntity)

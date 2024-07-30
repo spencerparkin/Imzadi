@@ -43,6 +43,7 @@ namespace Imzadi
 		virtual void IntegratePosition(double deltaTime);
 		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
 		virtual bool OwnsCollisionShape(ShapeID shapeID) const override;
+		virtual uint32_t TickOrder() const override;
 
 		void SetRestartLocation(const Vector3& restartLocation);
 		void SetRestartOrientation(const Quaternion& restartOrientation);

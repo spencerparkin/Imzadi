@@ -60,6 +60,12 @@ namespace Imzadi
 		virtual uint32_t ShutdownOrder() const;
 
 		/**
+		 * This gives us some control over tick order.  For example, we need platforms
+		 * to tick before entities.
+		 */
+		virtual uint32_t TickOrder() const;
+
+		/**
 		 * Again, this may not be applicable to all entities, but if it does, this is
 		 * where the entity can say whether or not it owns the given collision shape ID.
 		 * By default, we just return false here.

@@ -40,6 +40,11 @@ Entity::Entity()
 	return 0;
 }
 
+/*virtual*/ uint32_t Entity::TickOrder() const
+{
+	return 0;
+}
+
 /*virtual*/ bool Entity::OwnsCollisionShape(ShapeID shapeID) const
 {
 	return false;
