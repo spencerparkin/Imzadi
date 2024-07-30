@@ -159,7 +159,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 	switch (tickPass)
 	{
-		case Imzadi::TickPass::QUERY_TICK:
+		case Imzadi::TickPass::SUBMIT_COLLISION_QUERIES:
 		{
 			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
@@ -186,7 +186,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 			break;
 		}
-		case Imzadi::TickPass::RESULT_TICK:
+		case Imzadi::TickPass::RESOLVE_COLLISIONS:
 		{
 			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 

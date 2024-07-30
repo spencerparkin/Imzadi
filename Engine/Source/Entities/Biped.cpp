@@ -123,7 +123,7 @@ Biped::Biped()
 
 	switch (tickPass)
 	{
-		case TickPass::COMMAND_TICK:
+		case TickPass::MOVE_UNCONSTRAINTED:
 		{
 			Vector3 netForce(0.0, 0.0, 0.0);
 			this->AccumulateForces(netForce);
@@ -160,7 +160,7 @@ Biped::Biped()
 
 			break;
 		}
-		case TickPass::QUERY_TICK:
+		case TickPass::SUBMIT_COLLISION_QUERIES:
 		{
 			// Kick-off the queries we'll need later to resolve collision constraints.
 
@@ -175,7 +175,7 @@ Biped::Biped()
 
 			break;
 		}
-		case TickPass::PARALLEL_TICK:
+		case TickPass::PARALLEL_WORK:
 		{
 			// Make sure we're playing an appropriate animation and pump the animation system.
 
@@ -202,7 +202,7 @@ Biped::Biped()
 
 			break;
 		}
-		case TickPass::RESULT_TICK:
+		case TickPass::RESOLVE_COLLISIONS:
 		{
 			this->inContactWithGround = false;
 
@@ -337,7 +337,7 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 	this->objectToPlatform.translation += averageSeperationDelta;
 
 	if (this->inContactWithGround)
-		this->velocity = this->velocity.RejectedFrom(approximateGroundNormal);
+		this->velocity.y = 0.0;
 }
 
 /*virtual*/ bool Biped::GetTransform(Transform& transform) const

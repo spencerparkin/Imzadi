@@ -29,43 +29,14 @@ namespace Imzadi
 	class Entity;
 
 	/**
-	 * A tick pass for each of the following enumerations is performed once
-	 * per frame in the order given.  The tick passes are so named with regard
-	 * to the collision system; the idea being that the name suggests what is
-	 * appriopriate to do in that tick as it relates to the collision system so
-	 * as to get correct results and maximize efficiency.
+	 * ...
 	 */
 	enum TickPass
 	{
-		/**
-		 * Collision commands can be issued in this tick to mutate the state of
-		 * of the collision system.  This is where unconstrained motion may
-		 * occur.
-		 */
-		COMMAND_TICK,
-
-		/**
-		 * Collision queries can be made in this tick for the purpose of later
-		 * inspecting the state of the collision system.  Since all commands
-		 * have already been issued, no command will execute before a query.
-		 */
-		QUERY_TICK,
-
-		/**
-		 * Work should be done in this tick pass that is either not related to
-		 * the collision system or does not require interacting with it.  This is
-		 * the time when the main thread can work in parallel with the collision
-		 * thread.
-		 */
-		PARALLEL_TICK,
-
-		/**
-		 * A stall on the collision system is performed by the game engine before
-		 * calling this tick pass.  At this point, any query that was made earlier
-		 * in the frame will now have a result.  This is where motion constraints
-		 * might get solved before we go to render.
-		 */
-		RESULT_TICK
+		MOVE_UNCONSTRAINTED,
+		SUBMIT_COLLISION_QUERIES,
+		PARALLEL_WORK,
+		RESOLVE_COLLISIONS
 	};
 
 	/**

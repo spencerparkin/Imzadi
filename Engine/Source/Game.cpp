@@ -467,11 +467,12 @@ bool Game::RecreateViews()
 
 	this->controller.Update();
 
-	this->Tick(TickPass::COMMAND_TICK);
-	this->Tick(TickPass::QUERY_TICK);
-	this->Tick(TickPass::PARALLEL_TICK);
+	this->Tick(TickPass::MOVE_UNCONSTRAINTED);
 	this->collisionSystem.FlushAllTasks();
-	this->Tick(TickPass::RESULT_TICK);
+	this->Tick(TickPass::SUBMIT_COLLISION_QUERIES);
+	this->Tick(TickPass::PARALLEL_WORK);
+	this->collisionSystem.FlushAllTasks();
+	this->Tick(TickPass::RESOLVE_COLLISIONS);
 
 	if (this->windowResized)
 	{
@@ -725,7 +726,7 @@ std::string Game::PopControllerUser()
 {
 	this->AdvanceEntities(tickPass);
 
-	if (tickPass == TickPass::PARALLEL_TICK)
+	if (tickPass == TickPass::PARALLEL_WORK)
 	{
 		this->eventSystem.DispatchAllPendingEvents();
 		this->scene->PrepareRenderObjects();

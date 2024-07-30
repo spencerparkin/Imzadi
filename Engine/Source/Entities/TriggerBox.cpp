@@ -69,7 +69,7 @@ TriggerBox::TriggerBox()
 
 	switch (tickPass)
 	{
-		case TickPass::QUERY_TICK:
+		case TickPass::SUBMIT_COLLISION_QUERIES:
 		{
 			auto collisionQuery = CollisionQuery::Create();
 			collisionQuery->SetShapeID(this->collisionShapeID);
@@ -77,7 +77,7 @@ TriggerBox::TriggerBox()
 
 			break;
 		}
-		case TickPass::RESULT_TICK:
+		case TickPass::RESOLVE_COLLISIONS:
 		{
 			if (this->collisionQueryTaskID)
 			{

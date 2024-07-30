@@ -44,7 +44,7 @@ void FreeCam::SetCamera(Camera* camera)
 
 /*virtual*/ bool FreeCam::Tick(TickPass tickPass, double deltaTime)
 {
-	if (tickPass != TickPass::PARALLEL_TICK)
+	if (tickPass != TickPass::PARALLEL_WORK)
 		return true;
 
 	Controller* controller = Game::Get()->GetController("FreeCam");
