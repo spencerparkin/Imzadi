@@ -173,6 +173,8 @@ Biped::Biped()
 			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
 
+			// TODO: Maybe do a ray-cast at the ground to get the normal for the ground.  We could then use this in the movement code.
+
 			break;
 		}
 		case TickPass::PARALLEL_WORK:
@@ -288,7 +290,6 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 		return;
 
 	Vector3 averageSeperationDelta(0.0, 0.0, 0.0);
-	Vector3 approximateGroundNormal;
 	ShapeID newGroundShapeID = 0;
 	Transform newGroundObjectToWorld;
 	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
@@ -298,7 +299,6 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 		Vector3 separationDelta = collisionStatus->GetSeparationDelta(this->collisionShapeID);
 		averageSeperationDelta += separationDelta;
 
-		// We really need a contact normal here, but do this for now.
 		Vector3 upVector(0.0, 1.0, 0.0);
 		double angle = upVector.AngleBetween(separationDelta.Normalized());
 		if (angle < M_PI / 3.0)
@@ -306,7 +306,6 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 			this->inContactWithGround = true;
 			newGroundShapeID = otherShapeID;
 			newGroundObjectToWorld = collisionStatus->GetShape(otherShapeID)->GetObjectToWorldTransform();
-			approximateGroundNormal = separationDelta.Normalized();
 		}
 	}
 
@@ -317,24 +316,22 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 	if (newGroundShapeID != 0 && newGroundShapeID != this->groundShapeID)
 	{
 		this->groundShapeID = newGroundShapeID;
-
-		// Update our object-to-platform and platform-to-world transforms based on the new ground shape.
-
 		this->platformToWorld = newGroundObjectToWorld;
 
 		Transform worldToPlatform;
 		worldToPlatform.Invert(this->platformToWorld);
 		this->objectToPlatform = worldToPlatform * objectToWorld;
-
 		objectToWorld = this->platformToWorld * this->objectToPlatform;
 	}
 
-	Transform worldToObject;
-	worldToObject.Invert(objectToWorld);
-	averageSeperationDelta = worldToObject.TransformVector(averageSeperationDelta);
-	approximateGroundNormal = worldToObject.TransformVector(approximateGroundNormal);
+	if (averageSeperationDelta.Length() > 0.0)
+	{
+		objectToWorld.translation += averageSeperationDelta;
 
-	this->objectToPlatform.translation += averageSeperationDelta;
+		Transform worldToPlatform;
+		worldToPlatform.Invert(this->platformToWorld);
+		this->objectToPlatform = worldToPlatform * objectToWorld;
+	}
 
 	if (this->inContactWithGround)
 		this->velocity.y = 0.0;
