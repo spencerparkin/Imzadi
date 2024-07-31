@@ -317,6 +317,8 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 	Vector3 averageSeperationDelta(0.0, 0.0, 0.0);
 	ShapeID newGroundShapeID = 0;
 	Transform newGroundObjectToWorld;
+	newGroundObjectToWorld.SetIdentity();
+
 	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
 	{
 		ShapeID otherShapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
@@ -338,7 +340,7 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 
 	Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
 
-	if (newGroundShapeID != 0 && newGroundShapeID != this->groundShapeID)
+	if (newGroundShapeID != this->groundShapeID)
 	{
 		this->groundShapeID = newGroundShapeID;
 		this->platformToWorld = newGroundObjectToWorld;
