@@ -62,6 +62,7 @@ DebugRenderQuery::DebugRenderQuery()
 
 RayCastQuery::RayCastQuery()
 {
+	this->userFlagsMask = 0xFFFFFFFFFFFFFFFF;
 }
 
 /*virtual*/ RayCastQuery::~RayCastQuery()
@@ -72,7 +73,7 @@ RayCastQuery::RayCastQuery()
 {
 	const BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
 	RayCastResult* result = RayCastResult::Create();
-	boxTree.RayCast(this->GetRay(), result);
+	boxTree.RayCast(this->ray, this->userFlagsMask, result);
 	return result;
 }
 

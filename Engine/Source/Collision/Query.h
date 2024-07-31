@@ -121,8 +121,19 @@ namespace Imzadi
 		 */
 		static RayCastQuery* Create();
 
+		/**
+		 * Set flags that are used to limit which collision shapes to test against.
+		 */
+		void SetUserFlagsMask(uint64_t userFlagsMask) { this->userFlagsMask = userFlagsMask; }
+
+		/**
+		 * Get flags that are used to limit which collision shapes to test against.
+		 */
+		uint64_t GetUserFlagsMask() const { return this->userFlagsMask; }
+
 	private:
 		Ray ray;
+		uint64_t userFlagsMask;
 	};
 
 	/**
@@ -185,8 +196,14 @@ namespace Imzadi
 		 */
 		static CollisionQuery* Create();
 
+		/**
+		 * Set flags that are used to limit which collision shapes to test against.
+		 */
 		void SetUserFlagsMask(uint64_t userFlagsMask) { this->userFlagsMask = userFlagsMask; }
 
+		/**
+		 * Get flags that are used to limit which collision shapes to test against.
+		 */
 		uint64_t GetUserFlagsMask() const { return this->userFlagsMask; }
 
 	private:

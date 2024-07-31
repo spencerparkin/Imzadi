@@ -180,7 +180,7 @@ void BoundingBoxTree::DebugRender(DebugRenderResult* renderResult) const
 		this->rootNode->DebugRender(renderResult);
 }
 
-void BoundingBoxTree::RayCast(const Ray& ray, RayCastResult* rayCastResult) const
+void BoundingBoxTree::RayCast(const Ray& ray, uint64_t userFlagsMask, RayCastResult* rayCastResult) const
 {
 	RayCastResult::HitData hitData;
 	hitData.shapeID = 0;
@@ -188,7 +188,7 @@ void BoundingBoxTree::RayCast(const Ray& ray, RayCastResult* rayCastResult) cons
 	hitData.shape = nullptr;
 
 	if (this->rootNode && ray.HitsOrOriginatesIn(this->rootNode->box))
-		this->rootNode->RayCast(ray, hitData);
+		this->rootNode->RayCast(ray, userFlagsMask, hitData);
 
 	rayCastResult->SetHitData(hitData);
 }
@@ -301,7 +301,7 @@ void BoundingBoxNode::DebugRender(DebugRenderResult* renderResult) const
 		childNode->DebugRender(renderResult);
 }
 
-bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) const
+bool BoundingBoxNode::RayCast(const Ray& ray, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const
 {
 	struct ChildHit
 	{
@@ -330,7 +330,7 @@ bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) c
 	for (const ChildHit& childHit : childHitArray)
 	{
 		const BoundingBoxNode* childNode = childHit.childNode;
-		if (childNode->RayCast(ray, hitData))
+		if (childNode->RayCast(ray, userFlagsMask, hitData))
 			break;
 	}
 
@@ -339,6 +339,9 @@ bool BoundingBoxNode::RayCast(const Ray& ray, RayCastResult::HitData& hitData) c
 	for (auto pair : this->shapeMap)
 	{
 		const Shape* shape = pair.second;
+		uint64_t userFlags = shape->GetUserFlags();
+		if ((userFlags & userFlagsMask) == 0)
+			continue;
 
 		double shapeAlpha = 0.0;
 		Vector3 unitSurfaceNormal;

@@ -106,9 +106,10 @@ namespace Imzadi
 		 * Perform a ray-cast against all collision shapes within the tree.
 		 * 
 		 * @param[in] ray This is the ray with which to perform the cast.
+		 * @param[in] userFlagsMask The given ray is only tested against shapes with user flags that make it through this mask filter.
 		 * @param[out] rayCastResult The hit result, if any, is put into the given RayCastResult instance.  If no hit, then the result will indicate as much.
 		 */
-		void RayCast(const Ray& ray, RayCastResult* rayCastResult) const;
+		void RayCast(const Ray& ray, uint64_t userFlagsMask, RayCastResult* rayCastResult) const;
 
 		/**
 		 * Determine the collision status of the given shape.
@@ -170,7 +171,7 @@ namespace Imzadi
 		 * @param[out] hitData This will contain info about what shape was hit and how, if any.
 		 * @return True is returned if and only if a hit ocurred in this node of the tree.
 		 */
-		bool RayCast(const Ray& ray, RayCastResult::HitData& hitData) const;
+		bool RayCast(const Ray& ray, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const;
 
 	private:
 		AxisAlignedBoundingBox box;							///< This is the space represented by this node.

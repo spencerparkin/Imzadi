@@ -22,8 +22,10 @@ Biped::Biped()
 	this->boundsQueryTaskID = 0;
 	this->worldSurfaceCollisionQueryTaskID = 0;
 	this->groundQueryTaskID = 0;
+	this->groundSurfaceNormalTaskID = 0;
 	this->inContactWithGround = false;
 	this->canRestart = true;
+	this->mass = 1.0;
 }
 
 /*virtual*/ Biped::~Biped()
@@ -94,6 +96,7 @@ Biped::Biped()
 
 /*virtual*/ void Biped::AccumulateForces(Vector3& netForce)
 {
+	// TODO: Since we're working in platform space, this may not be the proper down-vector.
 	Vector3 downVector(0.0, -1.0, 0.0);
 	Vector3 gravityForce = downVector * this->mass * Game::Get()->GetGravity();
 	netForce += gravityForce;
@@ -134,6 +137,8 @@ Biped::Biped()
 
 			if (this->groundShapeID != 0)
 			{
+				// Stalling for a minor query like this isn't so bad.  It's the big queries
+				// where I'm hoping to get some sort of speed-up by doing them asynchronously.
 				auto objectToWorldQuery = ObjectToWorldQuery::Create();
 				objectToWorldQuery->SetShapeID(this->groundShapeID);
 				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
@@ -173,7 +178,11 @@ Biped::Biped()
 			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
 
-			// TODO: Maybe do a ray-cast at the ground to get the normal for the ground.  We could then use this in the movement code.
+			const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+			auto groundSurfaceNormalQuery = RayCastQuery::Create();
+			groundSurfaceNormalQuery->SetRay(Ray(objectToWorld.translation, Vector3(0.0, -1.0, 0.0)));
+			groundSurfaceNormalQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+			collisionSystem->MakeQuery(groundSurfaceNormalQuery, this->groundSurfaceNormalTaskID);
 
 			break;
 		}
@@ -240,6 +249,22 @@ Biped::Biped()
 						this->Reset();
 					else
 						return false;
+				}
+			}
+
+			if (this->groundSurfaceNormalTaskID)
+			{
+				Result* result = collisionSystem->ObtainQueryResult(this->groundSurfaceNormalTaskID);
+				if (result)
+				{
+					auto rayCastResult = dynamic_cast<RayCastResult*>(result);
+					if (rayCastResult)
+					{
+						const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+						groundSurfaceNormal = hitData.surfaceNormal;
+					}
+
+					collisionSystem->Free(result);
 				}
 			}
 
