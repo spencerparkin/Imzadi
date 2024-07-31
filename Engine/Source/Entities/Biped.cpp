@@ -135,7 +135,11 @@ Biped::Biped()
 			this->IntegratePosition(deltaTime);
 			this->AdjustFacingDirection(deltaTime);
 
-			if (this->groundShapeID != 0)
+			// If we're touching the ground, we want our character to move with the ground.
+			// The moment we jump off the ground, we should be moving on our own, by the way,
+			// and not influenced by the moving ground at all.  Hmmm, when we jump off a moving
+			// platform, though, shouldn't we inherit some momentum from the platform?
+			if (this->groundShapeID != 0 && this->inContactWithGround)
 			{
 				// Stalling for a minor query like this isn't so bad.  It's the big queries
 				// where I'm hoping to get some sort of speed-up by doing them asynchronously.
@@ -340,16 +344,13 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 
 	Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
 
-	if (newGroundShapeID != this->groundShapeID)
-	{
-		this->groundShapeID = newGroundShapeID;
-		this->platformToWorld = newGroundObjectToWorld;
+	this->groundShapeID = newGroundShapeID;
+	this->platformToWorld = newGroundObjectToWorld;
 
-		Transform worldToPlatform;
-		worldToPlatform.Invert(this->platformToWorld);
-		this->objectToPlatform = worldToPlatform * objectToWorld;
-		objectToWorld = this->platformToWorld * this->objectToPlatform;
-	}
+	Transform worldToPlatform;
+	worldToPlatform.Invert(this->platformToWorld);
+	this->objectToPlatform = worldToPlatform * objectToWorld;
+	objectToWorld = this->platformToWorld * this->objectToPlatform;
 
 	if (averageSeperationDelta.Length() > 0.0)
 	{
