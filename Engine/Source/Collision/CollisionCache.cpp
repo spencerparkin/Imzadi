@@ -102,13 +102,7 @@ uint64_t CollisionCache::MakeCalculatorKey(uint32_t typeIDA, uint32_t typeIDB)
 
 void CollisionCache::Clear()
 {
-	while (this->cacheMap.size() > 0)
-	{
-		ShapePairCollisionStatusMap::iterator iter = this->cacheMap.begin();
-		ShapePairCollisionStatus* collisionStatus = iter->second;
-		delete collisionStatus;
-		this->cacheMap.erase(iter);
-	}
+	this->cacheMap.clear();
 }
 
 void CollisionCache::ClearCalculatorMap()
