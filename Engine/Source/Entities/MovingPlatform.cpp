@@ -68,6 +68,13 @@ MovingPlatform::MovingPlatform()
 	const MovingPlatformData::DeltaInfo& targetDelta = this->data->GetSplineDeltaArray()[this->targetDeltaIndex];
 	this->remainingLingerTimeSeconds = targetDelta.lingerTimeSeconds;
 	this->state = State::LINGERING;
+
+	Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+	Transform initialObjectToWorld;
+	initialObjectToWorld.translation = objectToWorld.translation + targetDelta.transform.translation;
+	initialObjectToWorld.matrix = targetDelta.transform.matrix * objectToWorld.matrix;
+	this->renderMesh->SetObjectToWorldTransform(initialObjectToWorld);
+
 	return true;
 }
 
