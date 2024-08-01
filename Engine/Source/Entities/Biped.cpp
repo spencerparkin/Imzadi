@@ -22,7 +22,7 @@ Biped::Biped()
 	this->boundsQueryTaskID = 0;
 	this->worldSurfaceCollisionQueryTaskID = 0;
 	this->groundQueryTaskID = 0;
-	this->groundSurfaceNormalTaskID = 0;
+	this->groundSurfaceQueryTaskID = 0;
 	this->inContactWithGround = false;
 	this->canRestart = true;
 	this->mass = 1.0;
@@ -183,10 +183,10 @@ Biped::Biped()
 			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
 
 			const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-			auto groundSurfaceNormalQuery = RayCastQuery::Create();
-			groundSurfaceNormalQuery->SetRay(Ray(objectToWorld.translation, Vector3(0.0, -1.0, 0.0)));
-			groundSurfaceNormalQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
-			collisionSystem->MakeQuery(groundSurfaceNormalQuery, this->groundSurfaceNormalTaskID);
+			auto groundSurfaceQuery = RayCastQuery::Create();
+			groundSurfaceQuery->SetRay(Ray(objectToWorld.translation + Vector3(0.0, 3.0, 0.0), Vector3(0.0, -1.0, 0.0)));
+			groundSurfaceQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+			collisionSystem->MakeQuery(groundSurfaceQuery, this->groundSurfaceQueryTaskID);
 
 			break;
 		}
@@ -256,30 +256,25 @@ Biped::Biped()
 				}
 			}
 
-			if (this->groundSurfaceNormalTaskID)
+			if (this->groundSurfaceQueryTaskID)
 			{
-				Result* result = collisionSystem->ObtainQueryResult(this->groundSurfaceNormalTaskID);
+				Result* result = collisionSystem->ObtainQueryResult(this->groundSurfaceQueryTaskID);
 				if (result)
 				{
 					auto rayCastResult = dynamic_cast<RayCastResult*>(result);
 					if (rayCastResult)
 					{
 						const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
-						groundSurfaceNormal = hitData.surfaceNormal;
+						this->groundSurfacePoint = hitData.surfacePoint;
+						this->groundSurfaceNormal = hitData.surfaceNormal;
 					}
 
 					collisionSystem->Free(result);
 				}
 			}
 
-			if (!this->inContactWithGround)
-			{
-				// TODO: If we're standing on a platform that moves up and down and
-				//       we're just standing there doing nothing, then we should never
-				//       leave the ground!  (Of course, we're assuming here that the
-				//       platform is not moving too fast.)
-				IMZADI_LOG_INFO("Not on ground!");
-			}
+			if (this->inContactWithGround)
+				this->velocity.y = 0.0;		// TODO: Maybe reject from ground surface normal?
 
 			break;
 		}
@@ -360,9 +355,6 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 		worldToPlatform.Invert(this->platformToWorld);
 		this->objectToPlatform = worldToPlatform * objectToWorld;
 	}
-
-	if (this->inContactWithGround)
-		this->velocity.y = 0.0;
 }
 
 /*virtual*/ bool Biped::GetTransform(Transform& transform) const

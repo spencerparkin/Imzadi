@@ -113,8 +113,6 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 /*virtual*/ void DeannaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
-	Biped::IntegrateVelocity(acceleration, deltaTime);
-
 	if (this->inContactWithGround)
 	{
 		Imzadi::Reference<ReferenceCounted> followCamRef;
@@ -143,11 +141,11 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 		Imzadi::Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
 
-		// We don't stomp the Y-component here, because we still want
-		// the effects of gravity applied on our character continuously.
-		this->velocity.x = moveDelta.x;
-		this->velocity.z = moveDelta.z;
+		// We can stomp this when we're on the ground, because no "physics" is happening.
+		this->velocity = moveDelta.RejectedFrom(this->groundSurfaceNormal);
 	}
+
+	Biped::IntegrateVelocity(acceleration, deltaTime);
 }
 
 /*virtual*/ bool DeannaTroi::Tick(Imzadi::TickPass tickPass, double deltaTime)

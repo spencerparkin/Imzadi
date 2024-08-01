@@ -62,12 +62,13 @@ namespace Imzadi
 		TaskID boundsQueryTaskID;
 		TaskID worldSurfaceCollisionQueryTaskID;
 		TaskID groundQueryTaskID;
-		TaskID groundSurfaceNormalTaskID;
+		TaskID groundSurfaceQueryTaskID;
 		Transform objectToPlatform;
 		Transform platformToWorld;
 		Transform restartTransformObjectToWorld;
 		Vector3 velocity;
 		double mass;
 		Vector3 groundSurfaceNormal;
+		Vector3 groundSurfacePoint;
 	};
 }
