@@ -24,6 +24,7 @@
     "animations": [
         "Animations\\Idle.animation",
         "Animations\\Jumping.animation",
-        "Animations\\Run.animation"
+        "Animations\\Run.animation",
+        "Animations\\DeannaZipLine.animation"
     ]
 }
