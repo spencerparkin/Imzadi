@@ -10,7 +10,8 @@ using namespace Imzadi;
 // TODO: Extra challenge: Adjust the radius of our camera's orbit so that no
 //       collision object obstructs our view of the subject.  But don't really
 //       change the orbit, just the effective orbit until the camera can
-//       swivel out of the way.
+//       swivel out of the way.  Shoot a ray from the subject to the camera
+//       location to get the adjustment point.
 FollowCam::FollowCam()
 {
 	this->followParams.maxRotationRate = M_PI / 1.5;
