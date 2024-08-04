@@ -54,8 +54,10 @@ FollowCam::FollowCam()
 	Controller* controller = Game::Get()->GetController(this->cameraUser);
 	if (controller)
 	{
+#if defined _DEBUG
 		if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
 			this->freeCam->SetEnabled(true);
+#endif
 
 		if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
 			this->MoveCameraOrbitBehindSubject(false);

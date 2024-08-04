@@ -2,6 +2,7 @@
 
 #include "Entity.h"
 #include "Camera.h"
+#include "EventSystem.h"
 
 namespace Imzadi
 {
@@ -39,5 +40,14 @@ namespace Imzadi
 		Reference<Camera> camera;
 		Speed speed;
 		StrafeMode strafeMode;
+	};
+
+	class FreeCamTeleportEvent : public Event
+	{
+	public:
+		FreeCamTeleportEvent();
+		virtual ~FreeCamTeleportEvent();
+
+		Transform transform;
 	};
 }

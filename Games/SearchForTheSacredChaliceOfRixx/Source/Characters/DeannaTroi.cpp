@@ -43,6 +43,12 @@ DeannaTroi::DeannaTroi()
 		this->HandleTriggerBoxEvent((const Imzadi::TriggerBoxEvent*)event);
 	}));
 
+#if defined _DEBUG
+	this->freeCamListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("FreeCam", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+		this->HandleFreeCamEvent(event);
+	}));
+#endif
+
 	return true;
 }
 
@@ -239,6 +245,21 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 	Biped::Reset();
 }
+
+#if defined _DEBUG
+void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
+{
+	auto teleportEvent = dynamic_cast<const Imzadi::FreeCamTeleportEvent*>(event);
+	if (teleportEvent)
+	{
+		this->inContactWithGround = false;
+		this->objectToPlatform.SetIdentity();
+		this->platformToWorld = teleportEvent->transform;
+		this->platformToWorld.matrix.SetIdentity();
+		this->velocity.SetComponents(0.0, 0.0, 0.0);
+	}
+}
+#endif //_DEBUG
 
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------
 

@@ -5,6 +5,7 @@
 #include "Action.h"
 #include "RenderObjects/TextRenderObject.h"
 #include "Collision/Query.h"
+#include "Entities/FreeCam.h"
 
 class DeannaTroi : public Imzadi::Biped
 {
@@ -21,6 +22,9 @@ public:
 
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);
+#if defined _DEBUG
+	void HandleFreeCamEvent(const Imzadi::Event* event);
+#endif
 
 	class LabeledAction : public Imzadi::Action
 	{
@@ -70,6 +74,7 @@ private:
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
+	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;
 	Imzadi::TaskID rayCastQueryTaskID;
 };

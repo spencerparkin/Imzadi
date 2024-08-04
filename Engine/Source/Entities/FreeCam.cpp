@@ -51,13 +51,20 @@ void FreeCam::SetCamera(Camera* camera)
 	if (!controller)
 		return true;
 
-	Transform cameraToWorld = camera->GetCameraToWorldTransform();
+	Transform cameraToWorld = this->camera->GetCameraToWorldTransform();
 
 	Vector3 xAxis, yAxis, zAxis;
 	cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
 	
 	if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
 		this->SetEnabled(false);
+
+	if (controller->ButtonPressed(XINPUT_GAMEPAD_RIGHT_THUMB))
+	{
+		auto event = new FreeCamTeleportEvent();
+		event->transform = cameraToWorld;
+		Game::Get()->GetEventSystem()->SendEvent("FreeCam", event);
+	}
 
 	if (controller->ButtonPressed(XINPUT_GAMEPAD_RIGHT_SHOULDER))
 	{
@@ -155,4 +162,12 @@ double FreeCam::GetRotationRate()
 	}
 
 	return 0.0;
+}
+
+FreeCamTeleportEvent::FreeCamTeleportEvent()
+{
+}
+
+/*virtual*/ FreeCamTeleportEvent::~FreeCamTeleportEvent()
+{
 }
