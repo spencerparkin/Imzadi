@@ -261,6 +261,17 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 }
 #endif //_DEBUG
 
+/*virtual*/ bool DeannaTroi::HangingOnToZipLine()
+{
+	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	if (!controller)
+		return false;
+
+	// A player jumps to grab a zip-line and then remains attached
+	// to it until they let go of the jump button.
+	return controller->ButtonDown(XINPUT_GAMEPAD_Y);		// TODO: Create a bindings system where we use the "jump" button instead of a controller-specitic button?
+}
+
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------
 
 DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)

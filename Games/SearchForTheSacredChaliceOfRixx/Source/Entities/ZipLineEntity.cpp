@@ -117,6 +117,12 @@ void ZipLineEntity::HandleCollisionResult(Imzadi::CollisionQueryResult* collisio
 
 		IMZADI_LOG_INFO("Zip line point %d hit by %s.", i, foundEntity->GetName().c_str());
 
+		// TODO: This is where we add the character to a list of such that are zipping along the zip-line.
+		//       We process this list in our tick function to zip them along until they either let go of
+		//       the zip-line or they reach the end of it.  Before adding them to the list, we want to
+		//       switch them over to externally-controlled mode.  They must be returned to interally-controlled
+		//       mode when they leave the zip-line.
+
 		// TODO: Recall that the zip-line force is the component of the gravity force in the direction of the zip-line.
 	}
 }

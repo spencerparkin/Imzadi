@@ -19,6 +19,7 @@ public:
 	virtual void AccumulateForces(Imzadi::Vector3& netForce) override;
 	virtual void IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime) override;
 	virtual void Reset() override;
+	virtual bool HangingOnToZipLine() override;
 
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);

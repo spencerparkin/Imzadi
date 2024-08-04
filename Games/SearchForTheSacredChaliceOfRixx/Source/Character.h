@@ -17,6 +17,7 @@ public:
 	void SetControlMode(ControlMode controlMode);
 	ControlMode GetControlMode() const;
 
+	virtual bool HangingOnToZipLine();
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 
 protected:

@@ -21,6 +21,11 @@ Character::ControlMode Character::GetControlMode() const
 	return this->controlMode;
 }
 
+/*virtual*/ bool Character::HangingOnToZipLine()
+{
+	return false;
+}
+
 /*virtual*/ bool Character::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (this->controlMode == ControlMode::INTERNAL)
