@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Entities/Biped.h"
+#include "Character.h"
 #include "Entities/TriggerBox.h"
 #include "Action.h"
 #include "RenderObjects/TextRenderObject.h"
 #include "Collision/Query.h"
 #include "Entities/FreeCam.h"
 
-class DeannaTroi : public Imzadi::Biped
+class DeannaTroi : public Character
 {
 public:
 	DeannaTroi();

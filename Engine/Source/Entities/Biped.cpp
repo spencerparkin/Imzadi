@@ -159,13 +159,7 @@ Biped::Biped()
 			}
 
 			Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
-			this->renderMesh->SetObjectToWorldTransform(objectToWorld);
-
-			// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
-			auto command = ObjectToWorldCommand::Create();
-			command->SetShapeID(this->collisionShapeID);
-			command->objectToWorld = objectToWorld;
-			collisionSystem->IssueCommand(command);
+			this->SetTransform(objectToWorld);
 
 			break;
 		}
@@ -372,6 +366,18 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 		return false;
 
 	this->renderMesh->SetObjectToWorldTransform(transform);
+
+	if (this->collisionShapeID)
+	{
+		CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+
+		// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
+		auto command = ObjectToWorldCommand::Create();
+		command->SetShapeID(this->collisionShapeID);
+		command->objectToWorld = transform;
+		collisionSystem->IssueCommand(command);
+	}
+
 	return true;
 }
 

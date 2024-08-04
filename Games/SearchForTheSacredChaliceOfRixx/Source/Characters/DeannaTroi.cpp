@@ -26,7 +26,7 @@ DeannaTroi::DeannaTroi()
 	std::string modelFile = "Models/DeannaTroi/Troi.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
-	if (!Biped::Setup())
+	if (!Character::Setup())
 		return false;
 
 	Imzadi::Game::Get()->PushControllerUser("DeannaTroi");
@@ -54,7 +54,7 @@ DeannaTroi::DeannaTroi()
 
 /*virtual*/ bool DeannaTroi::Shutdown()
 {
-	Biped::Shutdown();
+	Character::Shutdown();
 
 	this->actionManager.Clear();
 
@@ -104,7 +104,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 /*virtual*/ void DeannaTroi::AccumulateForces(Imzadi::Vector3& netForce)
 {
-	Biped::AccumulateForces(netForce);
+	Character::AccumulateForces(netForce);
 
 	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 	if (!controller)
@@ -151,12 +151,12 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		this->velocity = moveDelta.RejectedFrom(this->groundSurfaceNormal);
 	}
 
-	Biped::IntegrateVelocity(acceleration, deltaTime);
+	Character::IntegrateVelocity(acceleration, deltaTime);
 }
 
 /*virtual*/ bool DeannaTroi::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
-	if (!Biped::Tick(tickPass, deltaTime))
+	if (!Character::Tick(tickPass, deltaTime))
 		return false;
 
 	this->actionManager.Tick(deltaTime);
@@ -243,7 +243,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
 	// TODO: This is where we might incur a penalty for dying.
 
-	Biped::Reset();
+	Character::Reset();
 }
 
 #if defined _DEBUG

@@ -9,6 +9,8 @@ set(RIXX_SOURCES
     Source/GameLevel.h
     Source/DialogSystem.cpp
     Source/DialogSystem.h
+    Source/Character.cpp
+    Source/Character.h
     Source/CustomAssetCache.cpp
     Source/CustomAssetCache.h
     Source/Characters/DeannaTroi.cpp

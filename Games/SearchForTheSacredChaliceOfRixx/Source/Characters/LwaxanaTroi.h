@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Entities/Biped.h"
+#include "Character.h"
 
-class LwaxanaTroi : public Imzadi::Biped
+class LwaxanaTroi : public Character
 {
 public:
 	LwaxanaTroi();

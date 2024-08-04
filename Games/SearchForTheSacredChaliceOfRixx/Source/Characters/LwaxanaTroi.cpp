@@ -21,7 +21,7 @@ LwaxanaTroi::LwaxanaTroi()
 	std::string modelFile = "Models/LwaxanaTroi/LwaxanaTroi.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
-	if (!Biped::Setup())
+	if (!Character::Setup())
 		return false;
 
 	return true;
@@ -29,7 +29,7 @@ LwaxanaTroi::LwaxanaTroi()
 
 /*virtual*/ bool LwaxanaTroi::Shutdown()
 {
-	Biped::Shutdown();
+	Character::Shutdown();
 	return true;
 }
 
@@ -49,15 +49,16 @@ LwaxanaTroi::LwaxanaTroi()
 		yAxis.SetComponents(0.0, 1.0, 0.0);
 		zAxis = (-direction).RejectedFrom(yAxis).Normalized();
 		xAxis = yAxis.Cross(zAxis);
-		lwaxanaTransform.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
-
-		this->SetTransform(lwaxanaTransform);
+		Imzadi::Matrix3x3 matrix;
+		matrix.SetColumnVectors(xAxis, yAxis, zAxis);
+		if (matrix.IsValid())
+			this->objectToPlatform.matrix = matrix;		// This assumes the platform-to-world matrix is identity.
 	}
 }
 
 /*virtual*/ bool LwaxanaTroi::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
-	if (!Biped::Tick(tickPass, deltaTime))
+	if (!Character::Tick(tickPass, deltaTime))
 		return false;
 
 	return true;
@@ -65,7 +66,7 @@ LwaxanaTroi::LwaxanaTroi()
 
 /*virtual*/ void LwaxanaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
-	Biped::IntegrateVelocity(acceleration, deltaTime);
+	Character::IntegrateVelocity(acceleration, deltaTime);
 
 	this->velocity.x = 0.0;
 	this->velocity.z = 0.0;
