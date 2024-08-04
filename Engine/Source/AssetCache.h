@@ -7,6 +7,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 #include "Math/Transform.h"
 #include "Math/AnimTransform.h"
+#include "Math/LineSegment.h"
 #include <string>
 #include <unordered_map>
 #include <filesystem>
@@ -172,6 +173,7 @@ namespace Imzadi
 		static bool LoadTransform(const rapidjson::Value& transformValue, Transform& transform);
 		static bool LoadMatrix(const rapidjson::Value& matrixValue, Matrix3x3& matrix);
 		static bool LoadAnimTransform(const rapidjson::Value& transformValue, AnimTransform& transform);
+		static bool LoadLineSegment(const rapidjson::Value& lineSegmentValue, LineSegment& lineSegment);
 
 		static void SaveVector(rapidjson::Value& vectorValue, const Vector3& vector, rapidjson::Document* doc);
 		static void SaveEulerAngles(rapidjson::Value& eulerAnglesValue, const Quaternion& quat, rapidjson::Document* doc);
@@ -181,5 +183,6 @@ namespace Imzadi
 		static void SaveTransform(rapidjson::Value& transformValue, const Transform& transform, rapidjson::Document* doc);
 		static void SaveMatrix(rapidjson::Value& matrixValue, const Matrix3x3& matrix, rapidjson::Document* doc);
 		static void SaveAnimTransform(rapidjson::Value& transformValue, const AnimTransform& transform, rapidjson::Document* doc);
+		static void SaveLineSegment(rapidjson::Value& lineSegmentValue, const LineSegment& lineSegment, rapidjson::Document* doc);
 	};
 }

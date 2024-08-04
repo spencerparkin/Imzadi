@@ -420,6 +420,23 @@ Asset::Asset()
 	return true;
 }
 
+/*static*/ bool Asset::LoadLineSegment(const rapidjson::Value& lineSegmentValue, LineSegment& lineSegment)
+{
+	if (!lineSegmentValue.IsObject())
+		return false;
+
+	if (!lineSegmentValue.HasMember("point_a") || !lineSegmentValue.HasMember("point_b"))
+		return false;
+
+	if (!LoadVector(lineSegmentValue["point_a"], lineSegment.point[0]))
+		return false;
+
+	if (!LoadVector(lineSegmentValue["point_b"], lineSegment.point[1]))
+		return false;
+
+	return true;
+}
+
 /*static*/ void Asset::SaveVector(rapidjson::Value& vectorValue, const Vector3& vector, rapidjson::Document* doc)
 {
 	vectorValue.SetObject();
@@ -502,4 +519,16 @@ Asset::Asset()
 	transformValue.AddMember("scale", scaleValue, doc->GetAllocator());
 	transformValue.AddMember("rotation", rotationValue, doc->GetAllocator());
 	transformValue.AddMember("translation", translationValue, doc->GetAllocator());
+}
+
+/*static*/ void Asset::SaveLineSegment(rapidjson::Value& lineSegmentValue, const LineSegment& lineSegment, rapidjson::Document* doc)
+{
+	rapidjson::Value pointAValue, pointBValue;
+
+	SaveVector(pointAValue, lineSegment.point[0], doc);
+	SaveVector(pointBValue, lineSegment.point[1], doc);
+
+	lineSegmentValue.SetObject();
+	lineSegmentValue.AddMember("point_a", pointAValue, doc->GetAllocator());
+	lineSegmentValue.AddMember("point_b", pointBValue, doc->GetAllocator());
 }

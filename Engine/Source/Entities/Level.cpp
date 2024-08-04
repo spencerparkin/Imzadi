@@ -41,8 +41,18 @@ Level::Level()
 	if (!levelData)
 		return false;
 
+	if (!this->SetupWithLevelData(levelData.Get()))
+		return false;
+
+	return true;
+}
+
+/*virtual*/ bool Level::SetupWithLevelData(LevelData* levelData)
+{
 	for (const std::string& modelFile : levelData->GetModelFilesArray())
 		Game::Get()->LoadAndPlaceRenderMesh(modelFile);
+
+	Reference<Asset> asset;
 
 	std::string skyDomeFile = levelData->GetSkyDomeFile();
 	if (skyDomeFile.length() > 0)
@@ -100,7 +110,7 @@ Level::Level()
 	if (!Game::Get()->GetCollisionSystem()->Initialize(collisionWorldBox))
 		return false;
 
-	for(auto collisionShapeSet : collisionShapeSetArray)
+	for (auto collisionShapeSet : collisionShapeSetArray)
 	{
 		for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
 			Game::Get()->GetCollisionSystem()->AddShape(shape, 0 /*IMZADI_ADD_FLAG_ALLOW_SPLIT*/);	// TODO: Figure out why splitting fails.

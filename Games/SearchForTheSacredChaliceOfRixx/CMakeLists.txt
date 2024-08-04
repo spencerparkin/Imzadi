@@ -15,10 +15,16 @@ set(RIXX_SOURCES
     Source/Characters/DeannaTroi.h
     Source/Characters/LwaxanaTroi.cpp
     Source/Characters/LwaxanaTroi.h
+    Source/Entities/ZipLineEntity.cpp
+    Source/Entities/ZipLineEntity.h
     Source/Assets/DialogData.cpp
     Source/Assets/DialogData.h
     Source/Assets/GameProgress.cpp
     Source/Assets/GameProgress.h
+    Source/Assets/ZipLine.cpp
+    Source/Assets/ZipLine.h
+    Source/Assets/GameLevelData.cpp
+    Source/Assets/GameLevelData.h
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${RIXX_SOURCES})

@@ -35,5 +35,8 @@
         "Levels/Level2_Box004.mov_plat",
         "Levels/Level2_Box005.mov_plat",
         "Levels/Level2_Cylinder003.mov_plat"
+    ],
+    "zip_lines": [
+        "Levels/Level2_ZL1.zip_line"
     ]
 }

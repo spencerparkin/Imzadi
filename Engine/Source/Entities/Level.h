@@ -5,6 +5,7 @@
 namespace Imzadi
 {
 	class Biped;
+	class LevelData;
 
 	/**
 	 * An instance of this class represents the level being played in the game.
@@ -42,6 +43,10 @@ namespace Imzadi
 		 * Make sure we're the last entity to get shutdown when the level goes down.
 		 */
 		virtual uint32_t ShutdownOrder() const override;
+
+		/**
+		 */
+		virtual bool SetupWithLevelData(LevelData* levelData);
 
 		void SetLevelName(const std::string& levelName) { this->levelName = levelName; }
 		const std::string& GetLevelName() const { return this->levelName; }

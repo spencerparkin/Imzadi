@@ -2,6 +2,8 @@
 #include "GameApp.h"
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
+#include "Assets/GameLevelData.h"
+#include "Entities/ZipLineEntity.h"
 
 GameLevel::GameLevel()
 {
@@ -26,6 +28,25 @@ GameLevel::GameLevel()
 		auto lwaxana = Imzadi::Game::Get()->SpawnEntity<LwaxanaTroi>();
 		lwaxana->SetRestartLocation(Imzadi::Vector3(-6.814, 1.6, -105.338));
 		lwaxana->SetRestartOrientation(Imzadi::Quaternion());
+	}
+
+	return true;
+}
+
+/*virtual*/ bool GameLevel::SetupWithLevelData(Imzadi::LevelData* levelData)
+{
+	if (!Level::SetupWithLevelData(levelData))
+		return false;
+
+	auto gameLevelData = dynamic_cast<GameLevelData*>(levelData);
+	if (!gameLevelData)
+		return false;
+
+	for (int i = 0; i < (signed)gameLevelData->GetZipLineArray().size(); i++)
+	{
+		ZipLine* zipLine = const_cast<ZipLine*>(gameLevelData->GetZipLineArray()[i].Get());
+		ZipLineEntity* zipLineEntity = Imzadi::Game::Get()->SpawnEntity<ZipLineEntity>();
+		zipLineEntity->SetZipLine(zipLine);
 	}
 
 	return true;
