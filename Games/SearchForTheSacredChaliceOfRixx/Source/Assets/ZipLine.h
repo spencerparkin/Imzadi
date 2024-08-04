@@ -12,6 +12,9 @@ public:
 	virtual bool Load(const rapidjson::Document& jsonDoc, Imzadi::AssetCache* assetCache) override;
 	virtual bool Unload() override;
 
+	const Imzadi::LineSegment& GetLineSegment() const { return this->lineSegment; }
+	double GetRadius() const { return this->radius; }
+
 private:
 	Imzadi::LineSegment lineSegment;	///< This is the zip-line geometry.
 	double radius;						///< We imagine a sphere with this radius at each end of the line-segment.
