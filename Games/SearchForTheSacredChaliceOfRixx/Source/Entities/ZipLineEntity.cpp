@@ -116,5 +116,7 @@ void ZipLineEntity::HandleCollisionResult(Imzadi::CollisionQueryResult* collisio
 			continue;
 
 		IMZADI_LOG_INFO("Zip line point %d hit by %s.", i, foundEntity->GetName().c_str());
+
+		// TODO: Recall that the zip-line force is the component of the gravity force in the direction of the zip-line.
 	}
 }
