@@ -62,6 +62,12 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 		return false;
 	}
 
+	if (!Imzadi::Game::Get()->GetAudioSystem()->LoadAudioDirectory("Audio", true))
+	{
+		IMZADI_LOG_ERROR("Failed to load audio directory.");
+		return false;
+	}
+
 	return true;
 }
 

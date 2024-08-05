@@ -150,6 +150,11 @@ CollisionSystem* Game::GetCollisionSystem()
 	return &this->collisionSystem;
 }
 
+AudioSystem* Game::GetAudioSystem()
+{
+	return &this->audioSystem;
+}
+
 EventSystem* Game::GetEventSystem()
 {
 	return &this->eventSystem;

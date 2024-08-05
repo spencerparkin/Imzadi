@@ -14,6 +14,7 @@
 #include "Assets/CubeTexture.h"
 #include "Assets/SkyDome.h"
 #include "Assets/TriggerBoxData.h"
+#include "Assets/Audio.h"
 #include "Math/Angle.h"
 #include "Log.h"
 #include "Game.h"
@@ -150,6 +151,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new SkyDome();
 	else if (ext == ".trigger_box")
 		return new TriggerBoxData();
+	else if (ext == ".audio")
+		return new Audio();
 
 	return nullptr;
 }

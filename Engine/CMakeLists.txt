@@ -148,12 +148,18 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/SkyDome.h
     Source/Assets/TriggerBoxData.cpp
     Source/Assets/TriggerBoxData.h
+    Source/Assets/Audio.cpp
+    Source/Assets/Audio.h
 )
     
 source_group("Source" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_ENGINE_SOURCES})
 
 add_library(ImzadiGameEngine SHARED
     ${GAME_ENGINE_SOURCES}
+)
+
+target_link_libraries(ImzadiGameEngine PUBLIC
+    AudioDataLib
 )
 
 target_compile_definitions(ImzadiGameEngine PRIVATE

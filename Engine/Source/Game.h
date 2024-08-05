@@ -136,6 +136,7 @@ namespace Imzadi
 		Camera* GetCamera();
 		void SetCamera(Reference<Camera> camera);
 		CollisionSystem* GetCollisionSystem();
+		AudioSystem* GetAudioSystem();
 		EventSystem* GetEventSystem();
 		DebugLines* GetDebugLines();
 

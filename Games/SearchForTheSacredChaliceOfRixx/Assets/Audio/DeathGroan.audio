@@ -1,4 +1,5 @@
 {
-    "audio_data_file": "Audio/DeathGroan.audio",
-    "looped": false
+    "audio_data_file": "Audio/DeathGroan.wav",
+    "looped": false,
+    "name": "DeathGroan"
 }
