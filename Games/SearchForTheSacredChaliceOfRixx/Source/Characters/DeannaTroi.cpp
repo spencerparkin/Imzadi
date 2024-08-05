@@ -272,6 +272,11 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 	return controller->ButtonDown(XINPUT_GAMEPAD_Y);		// TODO: Create a bindings system where we use the "jump" button instead of a controller-specitic button?
 }
 
+/*virtual*/ std::string DeannaTroi::GetZipLineAnimationName()
+{
+	return "DeannaZipLine";
+}
+
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------
 
 DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)

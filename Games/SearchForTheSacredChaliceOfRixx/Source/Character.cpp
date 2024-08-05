@@ -36,6 +36,11 @@ Character::ControlMode Character::GetControlMode() const
 	this->inContactWithGround = false;
 }
 
+/*virtual*/ std::string Character::GetZipLineAnimationName()
+{
+	return "";
+}
+
 /*virtual*/ bool Character::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (this->controlMode == ControlMode::INTERNAL)

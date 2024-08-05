@@ -19,6 +19,7 @@ public:
 
 	virtual bool HangingOnToZipLine();
 	virtual void OnReleasedFromZipLine();
+	virtual std::string GetZipLineAnimationName();
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 
 protected:

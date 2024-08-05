@@ -27,3 +27,4 @@ TODO:
 [ ] Add ladders, kind of like zip-lines?
 [ ] Add a level with a simple twisty puzzle in it?  A need for buttons or levers would be in order.
 [ ] Add chests the player can open?  Keys and locked doors?
+[ ] When you respawn after falling off into the void, it would be nice if you could respawn on the last platform you were on, at least until you die too many times.

@@ -1,5 +1,6 @@
 #include "ZipLineRider.h"
 #include "Character.h"
+#include "RenderObjects/AnimatedMeshInstance.h"
 
 ZipLineRider::ZipLineRider()
 {
@@ -36,35 +37,52 @@ ZipLineRider::ZipLineRider()
 
 /*virtual*/ bool ZipLineRider::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
-	Imzadi::Transform objectToWorld;
-	this->character->GetTransform(objectToWorld);
-
-	double distanceTraveled = (objectToWorld.translation - this->startingPoint).Length();
-
-	if (distanceTraveled >= this->zipLine->GetLineSegment().Length() || !this->character->HangingOnToZipLine())
+	switch (tickPass)
 	{
-		// Note that the character inherits velocity gained while having zipped along the zip-line.
-		this->character->SetControlMode(Character::ControlMode::INTERNAL);
-		this->character->OnReleasedFromZipLine();
-		return false;
-	}
+		case Imzadi::TickPass::MOVE_UNCONSTRAINTED:
+		{
+			Imzadi::Transform objectToWorld;
+			this->character->GetTransform(objectToWorld);
 
-	// TODO: My math might be wrong here, because I swear that the character is going
-	//       faster while zip-lining than how fast they go once they're released from
-	//       the zip-line.  I'm not sure what I'm doing wrong.
-	Imzadi::Vector3 downVector(0.0, -1.0, 0.0);
-	Imzadi::Vector3 gravityForce = downVector * this->character->GetMass() * Imzadi::Game::Get()->GetGravity();
-	Imzadi::Vector3 zipLineForce = gravityForce.ProjectedOnto(this->zipLine->GetLineSegment().GetDelta().Normalized());
-	Imzadi::Vector3 velocity = this->character->GetVelocity();
-	Imzadi::Vector3 frictionForce = -velocity * this->zipLine->GetFrictionFactor();
-	Imzadi::Vector3 netForce = zipLineForce + frictionForce;
-	Imzadi::Vector3 acceleration = netForce / this->character->GetMass();
-	
-	velocity += acceleration * deltaTime;
-	this->character->SetVelocity(velocity);
-	
-	objectToWorld.translation += velocity * deltaTime;
-	this->character->SetTransform(objectToWorld);
+			double distanceTraveled = (objectToWorld.translation - this->startingPoint).Length();
+
+			if (distanceTraveled >= this->zipLine->GetLineSegment().Length() || !this->character->HangingOnToZipLine())
+			{
+				// Note that the character inherits velocity gained while having zipped along the zip-line.
+				this->character->SetControlMode(Character::ControlMode::INTERNAL);
+				this->character->OnReleasedFromZipLine();
+				return false;
+			}
+
+			Imzadi::Vector3 downVector(0.0, -1.0, 0.0);
+			Imzadi::Vector3 gravityForce = downVector * this->character->GetMass() * Imzadi::Game::Get()->GetGravity();
+			Imzadi::Vector3 zipLineForce = gravityForce.ProjectedOnto(this->zipLine->GetLineSegment().GetDelta().Normalized());
+			Imzadi::Vector3 velocity = this->character->GetVelocity();
+			Imzadi::Vector3 frictionForce = -velocity * this->zipLine->GetFrictionFactor();
+			Imzadi::Vector3 netForce = zipLineForce + frictionForce;
+			Imzadi::Vector3 acceleration = netForce / this->character->GetMass();
+
+			velocity += acceleration * deltaTime;
+			this->character->SetVelocity(velocity);
+
+			objectToWorld.translation += velocity * deltaTime;
+			this->character->SetTransform(objectToWorld);
+
+			break;
+		}
+		case Imzadi::TickPass::PARALLEL_WORK:
+		{
+			auto animatedMesh = dynamic_cast<Imzadi::AnimatedMeshInstance*>(this->character->GetRenderMesh());
+			if (animatedMesh)
+			{
+				std::string animationName = this->character->GetZipLineAnimationName();
+				animatedMesh->SetAnimation(animationName);
+				animatedMesh->AdvanceAnimation(deltaTime);
+			}
+
+			break;
+		}
+	}
 
 	return true;
 }

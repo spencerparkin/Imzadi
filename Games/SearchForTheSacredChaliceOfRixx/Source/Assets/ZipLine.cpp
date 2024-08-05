@@ -3,7 +3,7 @@
 ZipLine::ZipLine()
 {
 	this->radius = 0.0;
-	this->frictionFactor = 0.5;
+	this->frictionFactor = 0.0;
 }
 
 /*virtual*/ ZipLine::~ZipLine()

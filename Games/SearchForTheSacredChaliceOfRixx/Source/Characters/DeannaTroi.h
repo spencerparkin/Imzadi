@@ -20,6 +20,7 @@ public:
 	virtual void IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime) override;
 	virtual void Reset() override;
 	virtual bool HangingOnToZipLine() override;
+	virtual std::string GetZipLineAnimationName() override;
 
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);

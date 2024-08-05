@@ -58,6 +58,8 @@ namespace Imzadi
 		void SetMass(double mass) { this->mass = mass; }
 		double GetMass() const { return this->mass; }
 
+		RenderMeshInstance* GetRenderMesh() { return this->renderMesh.Get(); }
+
 	protected:
 		void HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult);
 
