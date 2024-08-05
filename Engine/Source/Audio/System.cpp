@@ -59,6 +59,24 @@ bool AudioSystem::Shutdown()
 	return true;
 }
 
+bool AudioSystem::PlayAmbientSounds(const std::set<std::string>& ambientSoundsSet)
+{
+	// TODO: Write this.
+	return false;
+}
+
+bool AudioSystem::PlayAmbientSoundOccationally(const std::string& ambientSound, double minFrequency, double maxFrequency)
+{
+	// TODO: Write this.
+	return false;
+}
+
+bool AudioSystem::PlaySound(const std::string& sound)
+{
+	// TODO: Write this.
+	return false;
+}
+
 bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool recursive)
 {
 	AssetCache* assetCache = Game::Get()->GetAssetCache();

@@ -5,6 +5,7 @@
 #include <xaudio2.h>
 #include <string>
 #include <map>
+#include <set>
 
 namespace Imzadi
 {
@@ -34,6 +35,36 @@ namespace Imzadi
 		 * @return True is returned on success; false, otherwise.
 		 */
 		bool LoadAudioDirectory(const std::string& audioDirectory, bool recursive);
+
+		/**
+		 * This will kick-off the playing of all sounds in the given set,
+		 * not at the same time, but one after another, randomly, with the
+		 * sounds fading in and out, never letting there be a moment of
+		 * of silence between sounds.
+		 * 
+		 * @param[in] ambientSoundsSet This should be a set of pre-loaded sounds from which the system chooses at random.  If the set is empty, all ambient sounds stop.
+		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
+		 */
+		bool PlayAmbientSounds(const std::set<std::string>& ambientSoundsSet);
+
+		/**
+		 * This will kick-off the playing of the given sound at random times
+		 * governed by the given frequency range.  You might, for example,
+		 * use this to play an owl sound.
+		 * 
+		 * @param[in] ambientSound This is the sound to play.  If the frequency range given is [0,0], then the sound stops playing.
+		 * @param[in] minFrequency In units of plays per minute, this is the soonest the sound will play after it's previous ending.
+		 * @param[in] maxFrequency In units of plays per minute, this is the latest the sound will play after it's previous ending.
+		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
+		 */
+		bool PlayAmbientSoundOccationally(const std::string& ambientSound, double minFrequency, double maxFrequency);
+
+		/**
+		 * Simply play the given sound until it terminates.
+		 * 
+		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
+		 */
+		bool PlaySound(const std::string& sound);
 
 	private:
 		IXAudio2* audio;
