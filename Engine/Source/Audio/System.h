@@ -7,6 +7,20 @@
 #include <map>
 #include <set>
 
+template<>
+struct std::hash<WAVEFORMATEX>
+{
+	std::size_t operator()(const WAVEFORMATEX& waveFormat) const
+	{
+		return Imzadi::HashBuffer((const char*)&waveFormat, sizeof(waveFormat));
+	}
+};
+
+inline bool operator==(const WAVEFORMATEX& waveFormatA, const WAVEFORMATEX& waveFormatB)
+{
+	return 0 == ::memcmp(&waveFormatA, &waveFormatB, sizeof(WAVEFORMATEX));
+}
+
 namespace Imzadi
 {
 	/**
@@ -71,5 +85,44 @@ namespace Imzadi
 		IXAudio2MasteringVoice* masteringVoice;
 		typedef std::map<std::string, Reference<Audio>> AudioMap;
 		AudioMap audioMap;
+
+		class AudioSource : public IXAudio2VoiceCallback
+		{
+		public:
+			AudioSource();
+			virtual ~AudioSource();
+
+			virtual void OnVoiceProcessingPassStart(UINT32 bytesRequired) override;
+			virtual void OnVoiceProcessingPassEnd() override;
+			virtual void OnStreamEnd() override;
+			virtual void OnBufferStart(void* bufferContext) override;
+			virtual void OnBufferEnd(void* bufferContext) override;
+			virtual void OnLoopEnd(void* bufferContext) override;
+			virtual void OnVoiceError(void* bufferContext, HRESULT Error) override;
+
+		public:
+			WAVEFORMATEX waveFormat;
+			IXAudio2SourceVoice* sourceVoice;
+			bool inUse;
+		};
+
+		class AudioSourceList : public ReferenceCounted
+		{
+		public:
+			AudioSourceList();
+			virtual ~AudioSourceList();
+
+			void Clear();
+			AudioSource* GetOrCreateUnusedAudioSource(const WAVEFORMATEX& waveFormat);
+
+		public:
+			std::list<AudioSource*> audioSourceList;
+		};
+
+		typedef std::unordered_map<WAVEFORMATEX, Reference<AudioSourceList>> AudioSourceCache;
+		AudioSourceCache audioSourceCache;
+
+		void ClearSourceCache();
+		AudioSourceList* GetOrCreateAudioSourceList(const WAVEFORMATEX& waveFormat);
 	};
 }

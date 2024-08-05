@@ -5,6 +5,8 @@
 
 using namespace Imzadi;
 
+//------------------------------------- AudioSystem -------------------------------------
+
 AudioSystem::AudioSystem()
 {
 	this->audio = nullptr;
@@ -39,10 +41,9 @@ bool AudioSystem::Initialize()
 
 bool AudioSystem::Shutdown()
 {
-	this->audioMap.clear();
+	this->ClearSourceCache();
 
-	// TODO: Delete source voices here before submixes.
-	// TODO: Delete submix voices here before master.
+	this->audioMap.clear();
 
 	if (this->masteringVoice)
 	{
@@ -73,8 +74,47 @@ bool AudioSystem::PlayAmbientSoundOccationally(const std::string& ambientSound, 
 
 bool AudioSystem::PlaySound(const std::string& sound)
 {
-	// TODO: Write this.
-	return false;
+	AudioMap::iterator iter = this->audioMap.find(sound);
+	if (iter == this->audioMap.end())
+	{
+		IMZADI_LOG_ERROR("Did not find sound with name \"%s\".", sound.c_str());
+		return false;
+	}
+
+	const Audio* audioAsset = iter->second.Get();
+
+	AudioSourceList* audioSourceList = this->GetOrCreateAudioSourceList(audioAsset->GetWaveFormat());
+	if (!audioSourceList)
+	{
+		IMZADI_LOG_ERROR("Failed to get or create audio source list.");
+		return false;
+	}
+
+	AudioSource* audioSource = audioSourceList->GetOrCreateUnusedAudioSource(audioAsset->GetWaveFormat());
+	if (!audioSource)
+	{
+		IMZADI_LOG_ERROR("Failed to get or create audio source.");
+		return false;
+	}
+
+	const AudioDataLib::AudioData* audioData = audioAsset->GetAudioData();
+
+	XAUDIO2_BUFFER audioBuffer{};
+	audioBuffer.Flags = XAUDIO2_END_OF_STREAM;
+	audioBuffer.AudioBytes = audioData->GetAudioBufferSize();
+	audioBuffer.pAudioData = audioData->GetAudioBuffer();
+
+	audioSource->inUse = true;
+
+	HRESULT result = audioSource->sourceVoice->SubmitSourceBuffer(&audioBuffer);
+	if (FAILED(result))
+	{
+		IMZADI_LOG_ERROR("Failed to submit audio buffer to source voice.");
+		audioSource->inUse = false;
+		return false;
+	}
+
+	return true;
 }
 
 bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool recursive)
@@ -129,4 +169,110 @@ bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool rec
 	}
 
 	return true;
+}
+
+void AudioSystem::ClearSourceCache()
+{
+	this->audioSourceCache.clear();
+}
+
+AudioSystem::AudioSourceList* AudioSystem::GetOrCreateAudioSourceList(const WAVEFORMATEX& waveFormat)
+{
+	AudioSourceList* audioSourceList = nullptr;
+
+	AudioSourceCache::iterator iter = this->audioSourceCache.find(waveFormat);
+	if (iter != this->audioSourceCache.end())
+		audioSourceList = iter->second.Get();
+	else
+	{
+		audioSourceList = new AudioSourceList();
+		this->audioSourceCache.insert(std::pair<WAVEFORMATEX, AudioSourceList*>(waveFormat, audioSourceList));
+	}
+
+	return audioSourceList;
+}
+
+//------------------------------------- AudioSystem::AudioSource -------------------------------------
+
+AudioSystem::AudioSource::AudioSource()
+{
+	this->inUse = false;
+}
+
+/*virtual*/ AudioSystem::AudioSource::~AudioSource()
+{
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnVoiceProcessingPassStart(UINT32 bytesRequired)
+{
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnVoiceProcessingPassEnd()
+{
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnStreamEnd()
+{
+	this->inUse = false;
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnBufferStart(void* bufferContext)
+{
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnBufferEnd(void* bufferContext)
+{
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnLoopEnd(void* bufferContext)
+{
+}
+
+/*virtual*/ void AudioSystem::AudioSource::OnVoiceError(void* bufferContext, HRESULT Error)
+{
+}
+
+//------------------------------------- AudioSystem::AudioSourceList -------------------------------------
+
+AudioSystem::AudioSourceList::AudioSourceList()
+{
+}
+
+/*virtual*/ AudioSystem::AudioSourceList::~AudioSourceList()
+{
+	this->Clear();
+}
+
+void AudioSystem::AudioSourceList::Clear()
+{
+	for (AudioSource* audioSource : this->audioSourceList)
+	{
+		audioSource->sourceVoice->Stop();
+		audioSource->sourceVoice->DestroyVoice();
+	}
+
+	this->audioSourceList.clear();
+}
+
+AudioSystem::AudioSource* AudioSystem::AudioSourceList::GetOrCreateUnusedAudioSource(const WAVEFORMATEX& waveFormat)
+{
+	for (AudioSource* audioSource : this->audioSourceList)
+		if (!audioSource->inUse)
+			return audioSource;
+
+	AudioSource* audioSource = new AudioSource();
+	audioSource->waveFormat = waveFormat;
+	
+	AudioSystem* audioSystem = Game::Get()->GetAudioSystem();
+
+	HRESULT result = audioSystem->audio->CreateSourceVoice(&audioSource->sourceVoice, &waveFormat, 0, 2.0f, audioSource);
+	if (FAILED(result))
+	{
+		delete audioSource;
+		return nullptr;
+	}
+
+	this->audioSourceList.push_back(audioSource);
+
+	return audioSource;
 }

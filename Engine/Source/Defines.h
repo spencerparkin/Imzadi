@@ -1,6 +1,8 @@
 #pragma once
 
 #include <assert.h>
+#include <stdint.h>
+#include <unordered_map>
 
 #if defined IMZADI_EXPORT
 #	define IMZADI_API		__declspec(dllexport)
@@ -44,5 +46,30 @@ void IMZADI_API SafeRelease(T*& thing)
 	{
 		thing->Release();
 		thing = nullptr;
+	}
+}
+
+namespace Imzadi
+{
+	inline std::size_t HashBuffer(const char* buffer, unsigned int bufferSize)
+	{
+		std::size_t hash = 0;
+
+		uint64_t chunk = 0;
+		for (int i = 0; i < bufferSize; i++)
+		{
+			if (i % 4 == 0)
+			{
+				hash ^= std::hash<uint64_t>{}(chunk);
+				chunk = 0;
+			}
+
+			chunk |= uint64_t(buffer[i]) << (i * 8);
+		}
+
+		if (chunk != 0)
+			hash ^= std::hash<uint64_t>{}(chunk);
+
+		return hash;
 	}
 }

@@ -10,6 +10,7 @@ Audio::Audio()
 {
 	this->looped = false;
 	this->audioData = nullptr;
+	::memset(&this->waveFormat, 0, sizeof(this->waveFormat));
 }
 
 /*virtual*/ Audio::~Audio()
@@ -79,6 +80,34 @@ Audio::Audio()
 		std::filesystem::path path(audioDataFile);
 		this->name = path.filename().string();
 	}
+
+	AudioDataLib::AudioData::Format& format = this->audioData->GetFormat();
+	
+	switch (format.sampleType)
+	{
+		case AudioDataLib::AudioData::Format::FLOAT:
+		{
+			this->waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+			break;
+		}
+		case AudioDataLib::AudioData::Format::SIGNED_INTEGER:
+		{
+			this->waveFormat.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
+			break;
+		}
+		default:
+		{
+			IMZADI_LOG_ERROR("Format %d not yet supported.", format.sampleType);
+			return false;
+		}
+	}
+
+	this->waveFormat.nChannels = format.numChannels;
+	this->waveFormat.nSamplesPerSec = format.SamplesPerSecondPerChannel();
+	this->waveFormat.nAvgBytesPerSec = 0;
+	this->waveFormat.nBlockAlign = format.BytesPerFrame();
+	this->waveFormat.wBitsPerSample = format.bitsPerSample;
+	this->waveFormat.cbSize = 0;
 
 	return true;
 }

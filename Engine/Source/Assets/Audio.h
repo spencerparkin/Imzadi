@@ -3,6 +3,7 @@
 #include "AssetCache.h"
 #include "FileDatas/AudioData.h"
 #include "FileFormat.h"
+#include <xaudio2.h>
 
 namespace Imzadi
 {
@@ -20,10 +21,13 @@ namespace Imzadi
 		virtual bool Unload() override;
 
 		const std::string& GetName() const { return this->name; }
+		const WAVEFORMATEX& GetWaveFormat() const { return this->waveFormat; }
+		const AudioDataLib::AudioData* GetAudioData() const { return this->audioData; }
 
 	protected:
 		AudioDataLib::AudioData* audioData;
 		bool looped;
 		std::string name;
+		WAVEFORMATEX waveFormat;
 	};
 }
