@@ -5,6 +5,9 @@
 #include "Collision/Query.h"
 #include "Collision/Result.h"
 
+class ZipLineRider;
+class Character;
+
 class ZipLineEntity : public Imzadi::Entity
 {
 public:
@@ -18,9 +21,10 @@ public:
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 
 private:
-	void HandleCollisionResult(Imzadi::CollisionQueryResult* collisionResult, int i);
+	void HandleCollisionResult(Imzadi::CollisionQueryResult* collisionResult);
+	ZipLineRider* FindZipLineRider(Character* character);
 
 	Imzadi::Reference<ZipLine> zipLine;
-	Imzadi::TaskID collisionQueryTaskID[2];
-	Imzadi::ShapeID sphereShapeID[2];
+	Imzadi::TaskID collisionQueryTaskID;
+	Imzadi::ShapeID sphereShapeID;
 };

@@ -260,6 +260,24 @@ namespace Imzadi
 		 */
 		const std::list<Reference<Entity>>& GetEntityList() { return this->tickingEntityList; }
 
+		/**
+		 * This is a convenience function for grabbing all entities of a desired type.
+		 */
+		template<typename T>
+		bool CollectEntities(std::vector<T*>& collectedEntityList)
+		{
+			collectedEntityList.clear();
+
+			for (Reference<Entity>& entity : this->tickingEntityList)
+			{
+				T* castedEntity = dynamic_cast<T*>(entity.Get());
+				if (castedEntity)
+					collectedEntityList.push_back(castedEntity);
+			}
+
+			return collectedEntityList.size() > 0;
+		}
+
 	protected:
 
 		void AddEntity(Entity* entity);

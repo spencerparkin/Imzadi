@@ -1,26 +1,29 @@
 TODO:
 ====
 [x] Fix moving platform frictionlessness bug.
-[ ] Fix jumping bug where sometimes you jump higher than usual.
-[ ] Fix bug where character doesn't always land smoothly from a jump.  Need to constrain velocity as well as position?
+[x] Fix jumping bug where sometimes you jump higher than usual.
+[x] Fix bug where character doesn't always land smoothly from a jump.  Need to constrain velocity as well as position?
 [x] Fix falling through platform randomly bug.
 [x] Fix render glitch bugs on character.
 [x] Get character animation working (even if it's mediocre like everything else.)
 [x] Refactor entire repository into a game engine and game app.  Rename the repo "GameEngine" or something like that.
 [x] Refine the asset tools/pipeline, because it's a bit of a mess.  Can we actually get a rigged/animated character flowing into the engine?  Look at the AssImp library.
 [-] Port engine to DX12.  (I started to do this, then decided it wasn't a good idea.  It's too much work.)
-[ ] Add audio support with direct sound or XAudio2?  Can we do spatial-awareness/3D sounds?
+[ ] Add audio support with direct sound or XAudio2?  Can we do spatial-awareness/3D sounds?  Add ombionce with wind and nature sounds.
 [ ] The run animation should be sped-up/slowed-down based on the character's velocity.
-[ ] Add another character, but this time an NPC that you can interact with.  May need to refactor some code for this.  Can we do path-following?
+[x] Add another character, but this time an NPC that you can interact with.  May need to refactor some code for this.  Can we do path-following?
 [x] Add another level.  How do we handle smooth level transition?
 [/] Would be neat to add cube-mapping with dynamic reflections.  (I added a sky-box, but am not yet doing any environment/reflection mapping.)
 [x] Need to add MIP-mapping.  All textures have just one MIP right now.
 [ ] Networking support with proxy entities?
-[ ] Add trigger-boxes for teleports and level transitions.  I'm thinking levels should be connected in a graph, non-linearly.  That is, you can go from level X to level Y wherever they're connected.  Ultimately, you're trying to bring the chalice back to Luwaxana.
+[x] Add trigger-boxes for teleports and level transitions.  I'm thinking levels should be connected in a graph, non-linearly.  That is, you can go from level X to level Y wherever they're connected.  Ultimately, you're trying to bring the chalice back to Luwaxana.
 [ ] Add zip-lines.  Must hold down a button to hang on and release the button to let go.  Need to add zip-line hanging animation.
 [ ] Landing with too much velocity should kill you.  Need to add fatal-fall-death animation.
-[ ] Lots of bugs with regards to trying to stand and run and jump on a moving platform.  Maybe we need to track the player's reference frame and all physics are relative to that reference frame.  Of course, the reference frame can be moving.
+[x] Lots of bugs with regards to trying to stand and run and jump on a moving platform.  Maybe we need to track the player's reference frame and all physics are relative to that reference frame.  Of course, the reference frame can be moving.
 [x] Looks like I broke something when I added non-identity object-to-world transforms for collision shape sets.
 [ ] Add autonomous borg drones that can rome around and use collision queries to keep from going over the edge.  If they see you, they come after you.  If they touch you, do die.
 [ ] Add an inventory.  You'll need it to collect the chalice and horgones and whatever else.  Maybe some teleports or doors need keys.
 [ ] Cull render objects against the view frustum.
+[ ] Add ladders, kind of like zip-lines?
+[ ] Add a level with a simple twisty puzzle in it?  A need for buttons or levers would be in order.
+[ ] Add chests the player can open?  Keys and locked doors?

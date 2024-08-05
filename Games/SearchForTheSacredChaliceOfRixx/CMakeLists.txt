@@ -19,6 +19,8 @@ set(RIXX_SOURCES
     Source/Characters/LwaxanaTroi.h
     Source/Entities/ZipLineEntity.cpp
     Source/Entities/ZipLineEntity.h
+    Source/Entities/ZipLineRider.cpp
+    Source/Entities/ZipLineRider.h
     Source/Assets/DialogData.cpp
     Source/Assets/DialogData.h
     Source/Assets/GameProgress.cpp

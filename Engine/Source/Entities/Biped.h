@@ -50,6 +50,13 @@ namespace Imzadi
 
 		void SetCanRestart(bool canRestart) { this->canRestart = canRestart; }
 		bool GetCanRestart() const { return this->canRestart; }
+		bool IsInContactWithGround() const { return this->inContactWithGround; }
+
+		void SetVelocity(const Vector3& velocity) { this->velocity = velocity; }
+		const Vector3& GetVelocity() const { return this->velocity; }
+
+		void SetMass(double mass) { this->mass = mass; }
+		double GetMass() const { return this->mass; }
 
 	protected:
 		void HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult);

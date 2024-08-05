@@ -3,6 +3,7 @@
 ZipLine::ZipLine()
 {
 	this->radius = 0.0;
+	this->frictionFactor = 0.5;
 }
 
 /*virtual*/ ZipLine::~ZipLine()
@@ -26,6 +27,9 @@ ZipLine::ZipLine()
 
 	this->radius = jsonDoc["radius"].GetFloat();
 
+	if (jsonDoc.HasMember("friction_factor") && jsonDoc["friction_factor"].IsFloat())
+		this->frictionFactor = jsonDoc["friction_factor"].GetFloat();
+
 	if (this->lineSegment.Length() == 0.0)
 		return false;
 
@@ -33,6 +37,9 @@ ZipLine::ZipLine()
 		return false;
 
 	if (this->radius <= 0.0)
+		return false;
+
+	if (this->frictionFactor < 0.0)
 		return false;
 
 	return true;

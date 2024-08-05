@@ -3,15 +3,13 @@
 #include "Characters/DeannaTroi.h"
 #include "Collision/Shapes/Sphere.h"
 #include "Collision/CollisionCache.h"
+#include "Entities/ZipLineRider.h"
 #include "Log.h"
 
 ZipLineEntity::ZipLineEntity()
 {
-	for (int i = 0; i < 2; i++)
-	{
-		this->collisionQueryTaskID[i] = 0;
-		this->sphereShapeID[i] = 0;
-	}
+	this->collisionQueryTaskID = 0;
+	this->sphereShapeID = 0;
 }
 
 /*virtual*/ ZipLineEntity::~ZipLineEntity()
@@ -32,18 +30,15 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	if (!collisionSystem)
 		return false;
 
-	for (int i = 0; i < 2; i++)
-	{
-		Imzadi::Transform objectToWorld;
-		objectToWorld.SetIdentity();
-		objectToWorld.translation = this->zipLine->GetLineSegment().point[i];
+	Imzadi::Transform objectToWorld;
+	objectToWorld.SetIdentity();
+	objectToWorld.translation = this->zipLine->GetLineSegment().point[0];
 
-		auto sphereShape = Imzadi::SphereShape::Create();
-		sphereShape->SetObjectToWorldTransform(objectToWorld);
-		sphereShape->SetCenter(Imzadi::Vector3(0.0, 0.0, 0.0));
-		sphereShape->SetRadius(this->zipLine->GetRadius());
-		this->sphereShapeID[i] = collisionSystem->AddShape(sphereShape, 0);
-	}
+	auto sphereShape = Imzadi::SphereShape::Create();
+	sphereShape->SetObjectToWorldTransform(objectToWorld);
+	sphereShape->SetCenter(Imzadi::Vector3(0.0, 0.0, 0.0));
+	sphereShape->SetRadius(this->zipLine->GetRadius());
+	this->sphereShapeID = collisionSystem->AddShape(sphereShape, 0);
 
 	return true;
 }
@@ -52,11 +47,8 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 {
 	Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
-	for (int i = 0; i < 2; i++)
-	{
-		collisionSystem->RemoveShape(this->sphereShapeID[i]);
-		this->sphereShapeID[i] = 0;
-	}
+	collisionSystem->RemoveShape(this->sphereShapeID);
+	this->sphereShapeID = 0;
 
 	return true;
 }
@@ -69,31 +61,25 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 		{
 			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
-			for (int i = 0; i < 2; i++)
-			{
-				auto query = Imzadi::CollisionQuery::Create();
-				query->SetShapeID(this->sphereShapeID[i]);
-				query->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
-				collisionSystem->MakeQuery(query, this->collisionQueryTaskID[i]);
-			}
+			auto query = Imzadi::CollisionQuery::Create();
+			query->SetShapeID(this->sphereShapeID);
+			query->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
+			collisionSystem->MakeQuery(query, this->collisionQueryTaskID);
 
 			break;
 		}
 		case Imzadi::TickPass::RESOLVE_COLLISIONS:
 		{
-			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
-
-			for (int i = 0; i < 2; i++)
+			if (this->collisionQueryTaskID)
 			{
-				if (!this->collisionQueryTaskID[i])
-					continue;
+				Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
-				Imzadi::Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID[i]);
+				Imzadi::Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
 				if (result)
 				{
 					auto collisionResult = dynamic_cast<Imzadi::CollisionQueryResult*>(result);
 					if (collisionResult)
-						this->HandleCollisionResult(collisionResult, i);
+						this->HandleCollisionResult(collisionResult);
 
 					collisionSystem->Free<Imzadi::Result>(result);
 				}
@@ -106,23 +92,42 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	return true;
 }
 
-void ZipLineEntity::HandleCollisionResult(Imzadi::CollisionQueryResult* collisionResult, int i)
+void ZipLineEntity::HandleCollisionResult(Imzadi::CollisionQueryResult* collisionResult)
 {
 	for (const Imzadi::Reference<Imzadi::ShapePairCollisionStatus>& collisionPair : collisionResult->GetCollisionStatusArray())
 	{
-		Imzadi::ShapeID shapeID = collisionPair->GetOtherShape(this->sphereShapeID[i]);
+		Imzadi::ShapeID shapeID = collisionPair->GetOtherShape(this->sphereShapeID);
 		Imzadi::Reference<Imzadi::Entity> foundEntity;
 		if (!Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
 			continue;
 
-		IMZADI_LOG_INFO("Zip line point %d hit by %s.", i, foundEntity->GetName().c_str());
+		auto character = dynamic_cast<Character*>(foundEntity.Get());
 
-		// TODO: This is where we add the character to a list of such that are zipping along the zip-line.
-		//       We process this list in our tick function to zip them along until they either let go of
-		//       the zip-line or they reach the end of it.  Before adding them to the list, we want to
-		//       switch them over to externally-controlled mode.  They must be returned to interally-controlled
-		//       mode when they leave the zip-line.
-
-		// TODO: Recall that the zip-line force is the component of the gravity force in the direction of the zip-line.
+		if (!this->FindZipLineRider(character) && !character->IsInContactWithGround() && character->HangingOnToZipLine())
+		{
+			auto rider = Imzadi::Game::Get()->SpawnEntity<ZipLineRider>();
+			rider->SetZipLine(this->zipLine);
+			rider->SetCharacter(character);
+		}
 	}
+}
+
+ZipLineRider* ZipLineEntity::FindZipLineRider(Character* character)
+{
+	ZipLineRider* foundZipLineRider = nullptr;
+
+	std::vector<ZipLineRider*> zipLineRiderArray;
+	Imzadi::Game::Get()->CollectEntities<ZipLineRider>(zipLineRiderArray);
+		
+	for (int i = 0; i < (signed)zipLineRiderArray.size(); i++)
+	{
+		ZipLineRider* zipLineRider = zipLineRiderArray[i];
+		if (zipLineRider->GetCharacter() == character)
+		{
+			foundZipLineRider = zipLineRider;
+			break;
+		}
+	}
+
+	return foundZipLineRider;
 }
