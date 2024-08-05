@@ -76,7 +76,7 @@ bool AudioSystem::PlayAmbientSounds(const std::set<std::string>& ambientSoundsSe
 
 bool AudioSystem::PlayAmbientSoundOccationally(const std::string& ambientSound, double minFrequency, double maxFrequency)
 {
-	// TODO: Write this.
+	// TODO: Write this.  Use the event system to schedual delayed events?
 	return false;
 }
 

@@ -41,6 +41,8 @@ namespace Imzadi
 		virtual void AccumulateForces(Vector3& netForce);
 		virtual void IntegrateVelocity(const Vector3& acceleration, double deltaTime);
 		virtual void IntegratePosition(double deltaTime);
+		virtual bool ConstraintVelocityWithGround();
+		virtual bool OnBipedDied();
 		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
 		virtual bool OwnsCollisionShape(ShapeID shapeID) const override;
 		virtual uint32_t TickOrder() const override;

@@ -7,6 +7,8 @@
 #include "Collision/Query.h"
 #include "Entities/FreeCam.h"
 
+#define MAX_PLATFORM_LANDING_SPEED		50.0
+
 class DeannaTroi : public Character
 {
 public:
@@ -18,6 +20,7 @@ public:
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 	virtual void AccumulateForces(Imzadi::Vector3& netForce) override;
 	virtual void IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime) override;
+	virtual bool ConstraintVelocityWithGround() override;
 	virtual void Reset() override;
 	virtual bool HangingOnToZipLine() override;
 	virtual std::string GetZipLineAnimationName() override;

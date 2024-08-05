@@ -5,6 +5,7 @@
 #include "DialogSystem.h"
 #include "Collision/Result.h"
 #include "Log.h"
+#include "Audio/System.h"
 
 //------------------------------------ DeannaTroi ------------------------------------
 
@@ -275,6 +276,19 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 /*virtual*/ std::string DeannaTroi::GetZipLineAnimationName()
 {
 	return "DeannaZipLine";
+}
+
+/*virtual*/ bool DeannaTroi::ConstraintVelocityWithGround()
+{
+	double platformLandingSpeed = this->velocity.Length();
+
+	if (platformLandingSpeed > MAX_PLATFORM_LANDING_SPEED)
+	{
+		Imzadi::Game::Get()->GetAudioSystem()->PlaySound("DeathGroan");
+		return false;
+	}
+
+	return Biped::ConstraintVelocityWithGround();
 }
 
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------

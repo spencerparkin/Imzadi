@@ -214,6 +214,7 @@ Biped::Biped()
 		case TickPass::RESOLVE_COLLISIONS:
 		{
 			this->inContactWithGround = false;
+			bool bipedDied = false;
 
 			if (this->worldSurfaceCollisionQueryTaskID)
 			{
@@ -230,23 +231,14 @@ Biped::Biped()
 
 			if (this->boundsQueryTaskID)
 			{
-				bool characterDied = false;
 				Result* result = collisionSystem->ObtainQueryResult(this->boundsQueryTaskID);
 				if (result)
 				{
 					auto boolResult = dynamic_cast<BoolResult*>(result);
 					if (boolResult && !boolResult->GetAnswer())
-						characterDied = true;
+						bipedDied = true;
 
 					collisionSystem->Free(result);
-				}
-
-				if (characterDied)
-				{
-					if (this->canRestart)
-						this->Reset();
-					else
-						return false;
 				}
 			}
 
@@ -268,12 +260,35 @@ Biped::Biped()
 			}
 
 			if (this->inContactWithGround)
-				this->velocity.y = 0.0;		// TODO: Maybe reject from ground surface normal?
+			{
+				if (!this->ConstraintVelocityWithGround())
+					bipedDied = true;
+			}
+
+			if (bipedDied && !this->OnBipedDied())
+				return false;
 
 			break;
 		}
 	}
 
+	return true;
+}
+
+/*virtual*/ bool Biped::OnBipedDied()
+{
+	if (this->canRestart)
+	{
+		this->Reset();
+		return true;
+	}
+	
+	return false;
+}
+
+/*virtual*/ bool Biped::ConstraintVelocityWithGround()
+{
+	this->velocity.y = 0.0;		// TODO: Maybe reject from ground surface normal?
 	return true;
 }
 
