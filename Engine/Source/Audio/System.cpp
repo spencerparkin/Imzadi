@@ -36,6 +36,14 @@ bool AudioSystem::Initialize()
 		return false;
 	}
 
+#if defined _DEBUG
+	XAUDIO2_DEBUG_CONFIGURATION debugConfig{};
+	debugConfig.TraceMask = XAUDIO2_LOG_ERRORS;
+	debugConfig.BreakMask = XAUDIO2_LOG_ERRORS;
+	debugConfig.LogFunctionName = TRUE;
+	this->audio->SetDebugConfiguration(&debugConfig);
+#endif _DEBUG
+
 	return true;
 }
 
@@ -113,6 +121,8 @@ bool AudioSystem::PlaySound(const std::string& sound)
 		audioSource->inUse = false;
 		return false;
 	}
+
+	audioSource->sourceVoice->Start();
 
 	return true;
 }
@@ -197,6 +207,8 @@ AudioSystem::AudioSourceList* AudioSystem::GetOrCreateAudioSourceList(const WAVE
 AudioSystem::AudioSource::AudioSource()
 {
 	this->inUse = false;
+	this->sourceVoice = nullptr;
+	::memset(&this->waveFormat, 0, sizeof(this->waveFormat));
 }
 
 /*virtual*/ AudioSystem::AudioSource::~AudioSource()

@@ -87,12 +87,12 @@ Audio::Audio()
 	{
 		case AudioDataLib::AudioData::Format::FLOAT:
 		{
-			this->waveFormat.wFormatTag = WAVE_FORMAT_PCM;
+			this->waveFormat.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
 			break;
 		}
 		case AudioDataLib::AudioData::Format::SIGNED_INTEGER:
 		{
-			this->waveFormat.wFormatTag = WAVE_FORMAT_IEEE_FLOAT;
+			this->waveFormat.wFormatTag = WAVE_FORMAT_PCM;
 			break;
 		}
 		default:
@@ -104,7 +104,7 @@ Audio::Audio()
 
 	this->waveFormat.nChannels = format.numChannels;
 	this->waveFormat.nSamplesPerSec = format.SamplesPerSecondPerChannel();
-	this->waveFormat.nAvgBytesPerSec = 0;
+	this->waveFormat.nAvgBytesPerSec = (format.framesPerSecond * format.bitsPerSample * format.numChannels) / 8;
 	this->waveFormat.nBlockAlign = format.BytesPerFrame();
 	this->waveFormat.wBitsPerSample = format.bitsPerSample;
 	this->waveFormat.cbSize = 0;
