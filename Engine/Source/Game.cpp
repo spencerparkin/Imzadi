@@ -315,6 +315,12 @@ DebugLines* Game::GetDebugLines()
 		return false;
 	}
 
+	if (!this->audioSystem.Initialize())
+	{
+		IMZADI_LOG_ERROR("Failed to initialize the audio sub-system.");
+		return false;
+	}
+
 	if (!this->PostInit())
 	{
 		IMZADI_LOG_ERROR("Post initialization failed.");
@@ -763,6 +769,9 @@ void Game::ShutdownAllEntities()
 /*virtual*/ bool Game::Shutdown()
 {
 	this->PreShutdown();
+
+	// Make sure audio stops before all audio assets are freed.
+	this->audioSystem.Shutdown();
 
 	this->ShutdownAllEntities();
 

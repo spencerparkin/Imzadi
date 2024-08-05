@@ -15,6 +15,7 @@
 #include "Math/Quaternion.h"
 #include "Controller.h"
 #include "Collision/System.h"
+#include "Audio/System.h"
 #include "EventSystem.h"
 #include "StateCache.h"
 
@@ -335,6 +336,7 @@ namespace Imzadi
 		Controller controller;
 		std::vector<std::string> controllerUserStack;
 		CollisionSystem collisionSystem;
+		AudioSystem audioSystem;
 		EventSystem eventSystem;
 		double accelerationDuetoGravity;
 		Reference<DebugLines> debugLines;

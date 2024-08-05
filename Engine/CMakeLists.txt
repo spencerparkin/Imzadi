@@ -168,6 +168,7 @@ target_link_libraries(ImzadiGameEngine PRIVATE
     d3dcompiler.lib    
     Xinput9_1_0.lib
     cabinet.lib
+    Xaudio2.lib
 )
 
 target_include_directories(ImzadiGameEngine PUBLIC

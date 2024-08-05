@@ -23,8 +23,10 @@ TODO:
 [x] Looks like I broke something when I added non-identity object-to-world transforms for collision shape sets.
 [ ] Add autonomous borg drones that can rome around and use collision queries to keep from going over the edge.  If they see you, they come after you.  If they touch you, do die.
 [ ] Add an inventory.  You'll need it to collect the chalice and horgones and whatever else.  Maybe some teleports or doors need keys.
-[ ] Cull render objects against the view frustum.
+[ ] Cull render objects against the view frustum.  Kinda silly that I haven't gotten around to this yet.  Haven't really needed it yet.
 [ ] Add ladders, kind of like zip-lines?
 [ ] Add a level with a simple twisty puzzle in it?  A need for buttons or levers would be in order.
 [ ] Add chests the player can open?  Keys and locked doors?
 [ ] When you respawn after falling off into the void, it would be nice if you could respawn on the last platform you were on, at least until you die too many times.
+[ ] Add an indoor environment after getting the camera obscurance bug fixed.  Show that you can go up stairs and such inside the structure and that the viewing still seems reasonable.
+[ ] Provide ability to use keyboard instead of XBox controller.  You'll need to abstract the input system and creating a bindings system.
