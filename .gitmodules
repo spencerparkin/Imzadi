@@ -1,0 +1,3 @@
+[submodule "ThirdParty/AudioDataLib"]
+	path = ThirdParty/AudioDataLib
+	url = https://github.com/spencerparkin/AudioDataLib
