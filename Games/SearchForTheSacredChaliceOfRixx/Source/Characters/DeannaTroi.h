@@ -7,7 +7,7 @@
 #include "Collision/Query.h"
 #include "Entities/FreeCam.h"
 
-#define MAX_PLATFORM_LANDING_SPEED		50.0
+#define MAX_PLATFORM_LANDING_SPEED		60.0
 
 class DeannaTroi : public Character
 {
