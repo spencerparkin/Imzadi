@@ -32,3 +32,4 @@ TODO:
 [ ] Provide ability to use keyboard instead of XBox controller.  You'll need to abstract the input system and creating a bindings system.
 [ ] Can we add footsteps sound FX?  Note that these don't have to be in perfect sync with the walking animation, but the walking animation rate should match the foot-step rate, which still needs to be adjusted to get rid of skating, BTW.
 [ ] Need to figure out why I can't cut polygons before they go into the BVH since this is becoming, I believe, a needed optimization.
+[ ] Looks like the character can tunnel through walls...not so good.  Fix it.
