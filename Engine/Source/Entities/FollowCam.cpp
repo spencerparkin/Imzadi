@@ -4,16 +4,13 @@
 #include "Game.h"
 #include "FreeCam.h"
 #include "Math/Angle.h"
+#include "Collision/Result.h"
 
 using namespace Imzadi;
 
-// TODO: Extra challenge: Adjust the radius of our camera's orbit so that no
-//       collision object obstructs our view of the subject.  But don't really
-//       change the orbit, just the effective orbit until the camera can
-//       swivel out of the way.  Shoot a ray from the subject to the camera
-//       location to get the adjustment point.
 FollowCam::FollowCam()
 {
+	this->rayCastQueryTaskID = 0;
 	this->followParams.maxRotationRate = M_PI / 1.5;
 	this->followParams.objectSpaceFocalPoint.SetComponents(0.0, 5.0, 0.0);
 	this->orbitLocation.radius = 20.0;
@@ -31,7 +28,9 @@ FollowCam::FollowCam()
 		return false;
 
 	this->MoveCameraOrbitBehindSubject(true);
-	this->CalculateCameraPositionAndOrientation();
+	this->CalculateDesiredCameraPositionAndOrientation();
+
+	this->camera->SetCameraToWorldTransform(this->desiredCameraObjectToWorld);
 
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
 	this->freeCam->SetCamera(this->camera);
@@ -46,34 +45,103 @@ FollowCam::FollowCam()
 	return true;
 }
 
+/*virtual*/ uint32_t FollowCam::TickOrder() const
+{
+	return 2;
+}
+
 /*virtual*/ bool FollowCam::Tick(TickPass tickPass, double deltaTime)
 {
-	if (tickPass != TickPass::PARALLEL_WORK)
-		return true;
-
-	Controller* controller = Game::Get()->GetController(this->cameraUser);
-	if (controller)
+	switch (tickPass)
 	{
+		case TickPass::MOVE_UNCONSTRAINTED:
+		{
+			Controller* controller = Game::Get()->GetController(this->cameraUser);
+			if (controller)
+			{
 #if defined _DEBUG
-		if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
-			this->freeCam->SetEnabled(true);
+				if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
+					this->freeCam->SetEnabled(true);
 #endif
 
-		if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
-			this->MoveCameraOrbitBehindSubject(false);
+				if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+					this->MoveCameraOrbitBehindSubject(false);
 
-		Vector2 rightStick;
-		controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
+				Vector2 rightStick;
+				controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
 
-		double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
-		double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;
+				double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
+				double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;
 
-		this->targetOrbitLocation.longitudeAngle += longitudeAngleDelta;
-		this->targetOrbitLocation.latitudeAngle += latitudeAngleDelta;
+				this->targetOrbitLocation.longitudeAngle += longitudeAngleDelta;
+				this->targetOrbitLocation.latitudeAngle += latitudeAngleDelta;
 
-		this->orbitLocation.Lerp(this->orbitLocation, this->targetOrbitLocation, 0.3);
+				this->orbitLocation.Lerp(this->orbitLocation, this->targetOrbitLocation, 0.3);
 
-		this->CalculateCameraPositionAndOrientation();
+				this->CalculateDesiredCameraPositionAndOrientation();
+			}
+
+			break;
+		}
+		case TickPass::SUBMIT_COLLISION_QUERIES:
+		{
+			CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+			
+			Ray ray;
+			ray.origin = this->worldSpaceFocalPoint;
+			ray.unitDirection = (this->desiredCameraObjectToWorld.translation - this->worldSpaceFocalPoint).Normalized();
+
+			auto rayCastQuery = RayCastQuery::Create();
+			rayCastQuery->SetRay(ray);
+			rayCastQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
+
+			break;
+		}
+		case TickPass::PARALLEL_WORK:
+		{
+			break;
+		}
+		case TickPass::RESOLVE_COLLISIONS:
+		{
+			Transform cameraObjectToWorld = this->desiredCameraObjectToWorld;
+
+			if (this->rayCastQueryTaskID)
+			{
+				CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+
+				Result* result = collisionSystem->ObtainQueryResult(this->rayCastQueryTaskID);
+				if (result)
+				{
+					auto rayCastResult = dynamic_cast<RayCastResult*>(result);
+					if (rayCastResult)
+					{
+						const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+						if (hitData.shapeID != 0)
+						{
+							// Is something obscurring the view of the camera?
+							Vector3 sightVector = this->desiredCameraObjectToWorld.translation - this->worldSpaceFocalPoint;
+							double hitDistance = (hitData.surfacePoint - this->worldSpaceFocalPoint).Length();
+							double eyeDistance = 0.0;
+							sightVector.Normalize(&eyeDistance);
+							if (hitDistance < eyeDistance)
+							{
+								// Yes.  Adjust our eye-point so that our view is not obscurred.
+								double margin = 1e-2;
+								eyeDistance = hitDistance - margin;
+								cameraObjectToWorld.translation = this->worldSpaceFocalPoint + sightVector * eyeDistance;
+							}
+						}
+					}
+
+					collisionSystem->Free(result);
+				}
+			}
+
+			this->camera->SetCameraToWorldTransform(cameraObjectToWorld);
+
+			break;
+		}
 	}
 
 	return true;
@@ -102,17 +170,16 @@ void FollowCam::MoveCameraOrbitBehindSubject(bool immediate)
 		this->orbitLocation = this->targetOrbitLocation;
 }
 
-void FollowCam::CalculateCameraPositionAndOrientation()
+void FollowCam::CalculateDesiredCameraPositionAndOrientation()
 {
 	Transform subjectObjectToWorld;
 	this->subject->GetTransform(subjectObjectToWorld);
 
-	Vector3 worldSpaceFocalPoint = subjectObjectToWorld.TransformPoint(this->followParams.objectSpaceFocalPoint);
+	this->worldSpaceFocalPoint = subjectObjectToWorld.TransformPoint(this->followParams.objectSpaceFocalPoint);
 
 	Vector3 cameraOffset = this->orbitLocation.GetToVector();
 
-	Transform cameraToWorld;
-	cameraToWorld.translation = worldSpaceFocalPoint + cameraOffset;
+	this->desiredCameraObjectToWorld.translation = this->worldSpaceFocalPoint + cameraOffset;
 
 	Vector3 xAxis, yAxis, zAxis;
 	Vector3 upAxis(0.0, 1.0, 0.0);
@@ -121,7 +188,5 @@ void FollowCam::CalculateCameraPositionAndOrientation()
 	yAxis = upAxis.RejectedFrom(zAxis);
 	xAxis = yAxis.Cross(zAxis);
 
-	cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
-
-	this->camera->SetCameraToWorldTransform(cameraToWorld);
+	this->desiredCameraObjectToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
 }

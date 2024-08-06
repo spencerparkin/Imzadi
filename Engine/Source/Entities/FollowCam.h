@@ -3,6 +3,8 @@
 #include "Entity.h"
 #include "Camera.h"
 #include "Math/SphericalCoords.h"
+#include "Collision/System.h"
+#include "Collision/Query.h"
 
 namespace Imzadi
 {
@@ -20,6 +22,7 @@ namespace Imzadi
 		virtual bool Setup() override;
 		virtual bool Shutdown() override;
 		virtual bool Tick(TickPass tickPass, double deltaTime) override;
+		virtual uint32_t TickOrder() const override;
 
 		void SetSubject(Entity* entity) { this->subject.SafeSet(entity); }
 		Entity* GetSubject() { return this->subject.Get(); }
@@ -40,7 +43,7 @@ namespace Imzadi
 		const std::string& GetCameraUser() const { return this->cameraUser; }
 
 	private:
-		void CalculateCameraPositionAndOrientation();
+		void CalculateDesiredCameraPositionAndOrientation();
 		void MoveCameraOrbitBehindSubject(bool immediate);
 
 		Reference<Entity> subject;
@@ -50,5 +53,8 @@ namespace Imzadi
 		SphericalCoords orbitLocation;
 		SphericalCoords targetOrbitLocation;
 		std::string cameraUser;
+		Vector3 worldSpaceFocalPoint;
+		Transform desiredCameraObjectToWorld;
+		TaskID rayCastQueryTaskID;
 	};
 }
