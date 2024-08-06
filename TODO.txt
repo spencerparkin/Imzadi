@@ -30,3 +30,4 @@ TODO:
 [ ] When you respawn after falling off into the void, it would be nice if you could respawn on the last platform you were on, at least until you die too many times.
 [ ] Add an indoor environment after getting the camera obscurance bug fixed.  Show that you can go up stairs and such inside the structure and that the viewing still seems reasonable.
 [ ] Provide ability to use keyboard instead of XBox controller.  You'll need to abstract the input system and creating a bindings system.
+[ ] Can we add footsteps sound FX?  Note that these don't have to be in perfect sync with the walking animation, but the walking animation rate should match the foot-step rate, which still needs to be adjusted to get rid of skating, BTW.
