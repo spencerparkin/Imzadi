@@ -33,8 +33,8 @@ GameLevel::GameLevel()
 	}
 
 	Imzadi::AudioSystem* audioSystem = Imzadi::Game::Get()->GetAudioSystem();
-	audioSystem->AddAmbientSound({ "BlowingWind", "HowlingWind" }, Imzadi::Interval(25, 29), true);
-	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false);
+	audioSystem->AddAmbientSound({ "BlowingWind", "HowlingWind" }, Imzadi::Interval(25, 29), true, 0.1f);
+	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false, 1.0f);
 
 	return true;
 }

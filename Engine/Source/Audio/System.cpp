@@ -68,7 +68,7 @@ bool AudioSystem::Shutdown()
 	return true;
 }
 
-bool AudioSystem::AddAmbientSound(const std::set<std::string>& soundSet, const Interval& delayRange, bool startNow)
+bool AudioSystem::AddAmbientSound(const std::set<std::string>& soundSet, const Interval& delayRange, bool startNow, float volume)
 {
 	if (!delayRange.IsValid())
 		return false;
@@ -85,6 +85,7 @@ bool AudioSystem::AddAmbientSound(const std::set<std::string>& soundSet, const I
 	ambientSound.delayRangeSeconds = delayRange;
 	ambientSound.waitTimeSeconds = startNow ? 0.0 : delayRange.Random();
 	ambientSound.elapsedTimeSeconds = 0.0;
+	ambientSound.volume = volume;
 
 	this->ambientSoundArray.push_back(ambientSound);
 	return true;
@@ -112,12 +113,12 @@ void AudioSystem::Tick(double deltaTimeSeconds)
 				iter++;
 
 			const std::string& sound = *iter;
-			this->PlaySound(sound);
+			this->PlaySound(sound, ambientSound.volume);
 		}
 	}
 }
 
-bool AudioSystem::PlaySound(const std::string& sound)
+bool AudioSystem::PlaySound(const std::string& sound, float volume /*= 1.0f*/)
 {
 	AudioMap::iterator iter = this->audioMap.find(sound);
 	if (iter == this->audioMap.end())
@@ -159,6 +160,7 @@ bool AudioSystem::PlaySound(const std::string& sound)
 		return false;
 	}
 
+	audioSource->sourceVoice->SetVolume(volume);
 	audioSource->sourceVoice->Start();
 
 	return true;

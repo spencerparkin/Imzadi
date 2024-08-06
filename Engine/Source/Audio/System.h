@@ -60,7 +60,7 @@ namespace Imzadi
 		 * @param[in] startNow If true, a sound plays immediately.  If false, a initial delay is enforced before a sound plays.
 		 * @return True is returned on success; false, otherwise.
 		 */
-		bool AddAmbientSound(const std::set<std::string>& soundSet, const Interval& delayRange, bool startNow);
+		bool AddAmbientSound(const std::set<std::string>& soundSet, const Interval& delayRange, bool startNow, float volume);
 
 		/**
 		 * Stop playing ambient sounds.  They don't die immediately upon invocation of this call.
@@ -72,7 +72,7 @@ namespace Imzadi
 		 * 
 		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
 		 */
-		bool PlaySound(const std::string& sound);
+		bool PlaySound(const std::string& sound, float volume = 1.0f);
 
 	private:
 		IXAudio2* audio;
@@ -86,6 +86,7 @@ namespace Imzadi
 			Interval delayRangeSeconds;
 			double waitTimeSeconds;
 			double elapsedTimeSeconds;
+			float volume;
 		};
 
 		std::vector<AmbientSound> ambientSoundArray;
