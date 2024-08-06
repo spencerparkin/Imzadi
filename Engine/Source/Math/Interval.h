@@ -143,6 +143,11 @@ namespace Imzadi
 		bool Split(double alpha, Interval& intervalA, Interval& intervalB) const;
 
 		/**
+		 * Pick a random value within this interval and return it.
+		 */
+		double Random() const;
+
+		/**
 		 * Write this interval to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;

@@ -49,8 +49,8 @@ bool AudioSystem::Initialize()
 
 bool AudioSystem::Shutdown()
 {
+	this->ClearAllAmbientSounds();
 	this->ClearSourceCache();
-
 	this->audioMap.clear();
 
 	if (this->masteringVoice)
@@ -68,19 +68,57 @@ bool AudioSystem::Shutdown()
 	return true;
 }
 
-bool AudioSystem::PlayAmbientSounds(const std::set<std::string>& ambientSoundsSet)
+bool AudioSystem::AddAmbientSound(const std::set<std::string>& soundSet, const Interval& delayRange, bool startNow, float volume)
 {
-	// TODO: Write this.
-	return false;
+	if (!delayRange.IsValid())
+		return false;
+
+	if (soundSet.size() == 0)
+		return false;
+
+	for (const std::string& sound : soundSet)
+		if (this->audioMap.find(sound) == this->audioMap.end())
+			return false;
+
+	AmbientSound ambientSound;
+	ambientSound.soundSet = soundSet;
+	ambientSound.delayRangeSeconds = delayRange;
+	ambientSound.waitTimeSeconds = startNow ? 0.0 : delayRange.Random();
+	ambientSound.elapsedTimeSeconds = 0.0;
+	ambientSound.volume = volume;
+
+	this->ambientSoundArray.push_back(ambientSound);
+	return true;
 }
 
-bool AudioSystem::PlayAmbientSoundOccationally(const std::string& ambientSound, double minFrequency, double maxFrequency)
+void AudioSystem::ClearAllAmbientSounds()
 {
-	// TODO: Write this.  Use the event system to schedual delayed events?
-	return false;
+	this->ambientSoundArray.clear();
 }
 
-bool AudioSystem::PlaySound(const std::string& sound)
+void AudioSystem::Tick(double deltaTimeSeconds)
+{
+	for (AmbientSound& ambientSound : this->ambientSoundArray)
+	{
+		ambientSound.elapsedTimeSeconds += deltaTimeSeconds;
+
+		if (ambientSound.elapsedTimeSeconds >= ambientSound.waitTimeSeconds)
+		{
+			ambientSound.elapsedTimeSeconds -= ambientSound.waitTimeSeconds;
+			ambientSound.waitTimeSeconds = ambientSound.delayRangeSeconds.Random();
+
+			int j = (int)::round(Interval(0.0, double(ambientSound.soundSet.size() - 1)).Random());
+			std::set<std::string>::iterator iter = ambientSound.soundSet.begin();
+			for (int i = 0; i < j; i++)
+				iter++;
+
+			const std::string& sound = *iter;
+			this->PlaySound(sound, ambientSound.volume);
+		}
+	}
+}
+
+bool AudioSystem::PlaySound(const std::string& sound, float volume /*= 1.0f*/)
 {
 	AudioMap::iterator iter = this->audioMap.find(sound);
 	if (iter == this->audioMap.end())
@@ -122,6 +160,7 @@ bool AudioSystem::PlaySound(const std::string& sound)
 		return false;
 	}
 
+	audioSource->sourceVoice->SetVolume(volume);
 	audioSource->sourceVoice->Start();
 
 	return true;

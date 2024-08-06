@@ -477,6 +477,7 @@ bool Game::RecreateViews()
 	this->PumpWindowsMessages();
 
 	this->controller.Update();
+	this->audioSystem.Tick(this->deltaTimeSeconds);
 
 	this->Tick(TickPass::MOVE_UNCONSTRAINTED);
 	this->collisionSystem.FlushAllTasks();
