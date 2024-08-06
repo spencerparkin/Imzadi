@@ -78,7 +78,7 @@ Audio::Audio()
 	else
 	{
 		std::filesystem::path path(audioDataFile);
-		this->name = path.filename().string();
+		this->name = path.stem().string();
 	}
 
 	AudioDataLib::AudioData::Format& format = this->audioData->GetFormat();

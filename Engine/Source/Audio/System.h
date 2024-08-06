@@ -2,6 +2,7 @@
 
 #include "Defines.h"
 #include "Assets/Audio.h"
+#include "Math/Interval.h"
 #include <xaudio2.h>
 #include <string>
 #include <map>
@@ -37,6 +38,7 @@ namespace Imzadi
 
 		bool Initialize();
 		bool Shutdown();
+		void Tick(double deltaTimeSeconds);
 
 		/**
 		 * Load all audio assets found in the given directory.
@@ -51,27 +53,19 @@ namespace Imzadi
 		bool LoadAudioDirectory(const std::string& audioDirectory, bool recursive);
 
 		/**
-		 * This will kick-off the playing of all sounds in the given set,
-		 * not at the same time, but one after another, randomly, with the
-		 * sounds fading in and out, never letting there be a moment of
-		 * of silence between sounds.
+		 * Add a sound that will be occationally played in the given frequency range.
 		 * 
-		 * @param[in] ambientSoundsSet This should be a set of pre-loaded sounds from which the system chooses at random.  If the set is empty, all ambient sounds stop.
-		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
+		 * @param[in] sound This is the set of sounds to occationally play.  After each delay, a single sound is selected from this set at random.
+		 * @param[in] delayRange The delay, in seconds, between occational plays is randomly selected from within this range.
+		 * @param[in] startNow If true, a sound plays immediately.  If false, a initial delay is enforced before a sound plays.
+		 * @return True is returned on success; false, otherwise.
 		 */
-		bool PlayAmbientSounds(const std::set<std::string>& ambientSoundsSet);
+		bool AddAmbientSound(const std::set<std::string>& soundSet, const Interval& delayRange, bool startNow);
 
 		/**
-		 * This will kick-off the playing of the given sound at random times
-		 * governed by the given frequency range.  You might, for example,
-		 * use this to play an owl sound.
-		 * 
-		 * @param[in] ambientSound This is the sound to play.  If the frequency range given is [0,0], then the sound stops playing.
-		 * @param[in] minFrequency In units of plays per minute, this is the soonest the sound will play after it's previous ending.
-		 * @param[in] maxFrequency In units of plays per minute, this is the latest the sound will play after it's previous ending.
-		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
+		 * Stop playing ambient sounds.  They don't die immediately upon invocation of this call.
 		 */
-		bool PlayAmbientSoundOccationally(const std::string& ambientSound, double minFrequency, double maxFrequency);
+		void ClearAllAmbientSounds();
 
 		/**
 		 * Simply play the given sound until it terminates.
@@ -85,6 +79,16 @@ namespace Imzadi
 		IXAudio2MasteringVoice* masteringVoice;
 		typedef std::map<std::string, Reference<Audio>> AudioMap;
 		AudioMap audioMap;
+
+		struct AmbientSound
+		{
+			std::set<std::string> soundSet;
+			Interval delayRangeSeconds;
+			double waitTimeSeconds;
+			double elapsedTimeSeconds;
+		};
+
+		std::vector<AmbientSound> ambientSoundArray;
 
 		class AudioSource : public IXAudio2VoiceCallback
 		{

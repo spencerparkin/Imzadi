@@ -163,6 +163,12 @@ bool Interval::Split(double alpha, Interval& intervalA, Interval& intervalB) con
 	return intervalA.IsValid() && intervalB.IsValid();
 }
 
+double Interval::Random() const
+{
+	double alpha = double(rand()) / double(RAND_MAX);
+	return this->Lerp(alpha);
+}
+
 void Interval::Dump(std::ostream& stream) const
 {
 	stream.write((char*)&this->A, sizeof(this->A));

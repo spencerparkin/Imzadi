@@ -4,6 +4,8 @@
 #include "Characters/LwaxanaTroi.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
+#include "Audio/System.h"
+#include "Math/Interval.h"
 
 GameLevel::GameLevel()
 {
@@ -29,6 +31,10 @@ GameLevel::GameLevel()
 		lwaxana->SetRestartLocation(Imzadi::Vector3(-6.814, 1.6, -105.338));
 		lwaxana->SetRestartOrientation(Imzadi::Quaternion());
 	}
+
+	Imzadi::AudioSystem* audioSystem = Imzadi::Game::Get()->GetAudioSystem();
+	audioSystem->AddAmbientSound({ "BlowingWind", "HowlingWind" }, Imzadi::Interval(25, 29), true);
+	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false);
 
 	return true;
 }
