@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level5\\Roof_Indices.buffer",
+    "vertex_buffer": "Models\\Level5\\Roof_Vertices.buffer",
+    "texture": "Textures\\BrickWall.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 0.36247244477272036,
+            "y": 76.7297134399414,
+            "z": 2.3077969551086427
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -66.3367919921875,
+            "y": -7.0485920906066898,
+            "z": -59.385868072509769
+        },
+        "max": {
+            "x": 90.52306365966797,
+            "y": 86.71673583984375,
+            "z": 113.04708862304688
+        }
+    }
+}

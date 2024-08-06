@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level5\\TargetZone_Indices.buffer",
+    "vertex_buffer": "Models\\Level5\\TargetZone_Vertices.buffer",
+    "texture": "Textures\\JuliaFractal.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 85.52532196044922,
+            "y": 27.514556884765626,
+            "z": 598.1661376953125
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -73.8376693725586,
+            "y": -15.514403343200684,
+            "z": -73.83766174316406
+        },
+        "max": {
+            "x": 73.83768463134766,
+            "y": 15.514404296875,
+            "z": 73.83769226074219
+        }
+    }
+}
