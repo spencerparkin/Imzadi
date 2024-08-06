@@ -1,0 +1,29 @@
+{
+    "mesh": "Models/Level5/Floater1.render_mesh",
+    "collision": "Models/Level5/Floater1.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 4.8,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 4.8,
+            "y": 0.0,
+            "z": 7.9
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 7.9
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "cycle",
+    "move_speed": 2.0
+}

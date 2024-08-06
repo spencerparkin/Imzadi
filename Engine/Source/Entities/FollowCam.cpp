@@ -52,34 +52,34 @@ FollowCam::FollowCam()
 
 /*virtual*/ bool FollowCam::Tick(TickPass tickPass, double deltaTime)
 {
+	Controller* controller = Game::Get()->GetController(this->cameraUser);
+	if (!controller)
+		return true;
+
 	switch (tickPass)
 	{
 		case TickPass::MOVE_UNCONSTRAINTED:
 		{
-			Controller* controller = Game::Get()->GetController(this->cameraUser);
-			if (controller)
-			{
 #if defined _DEBUG
-				if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
-					this->freeCam->SetEnabled(true);
+			if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
+				this->freeCam->SetEnabled(true);
 #endif
 
-				if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
-					this->MoveCameraOrbitBehindSubject(false);
+			if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+				this->MoveCameraOrbitBehindSubject(false);
 
-				Vector2 rightStick;
-				controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
+			Vector2 rightStick;
+			controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
 
-				double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
-				double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;
+			double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
+			double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;
 
-				this->targetOrbitLocation.longitudeAngle += longitudeAngleDelta;
-				this->targetOrbitLocation.latitudeAngle += latitudeAngleDelta;
+			this->targetOrbitLocation.longitudeAngle += longitudeAngleDelta;
+			this->targetOrbitLocation.latitudeAngle += latitudeAngleDelta;
 
-				this->orbitLocation.Lerp(this->orbitLocation, this->targetOrbitLocation, 0.3);
+			this->orbitLocation.Lerp(this->orbitLocation, this->targetOrbitLocation, 0.3);
 
-				this->CalculateDesiredCameraPositionAndOrientation();
-			}
+			this->CalculateDesiredCameraPositionAndOrientation();
 
 			break;
 		}
