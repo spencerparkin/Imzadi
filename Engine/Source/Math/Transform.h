@@ -9,6 +9,7 @@ namespace Imzadi
 	class Ray;
 	class LineSegment;
 	class Matrix4x4;
+	class Polygon;
 
 	/**
 	 * These are affine transformations and can be considered vector-valued functions of a vector variable.
@@ -104,6 +105,15 @@ namespace Imzadi
 		 * @return The transformed plane is returned.
 		 */
 		Plane TransformPlane(const Plane& plane) const;
+
+		/**
+		 * Transform the given input-polygon as the given output-polygon.
+		 * These should not point to the same polygon.
+		 * 
+		 * @param[in] polygonIn This is the polygon to transform.
+		 * @param[out] polygonOut This polygon holds the result.
+		 */
+		void TransformPolygon(const Polygon& polygonIn, Polygon& polygonOut) const;
 
 		/**
 		 * Transform the origin and direction of the given ray using TransformPoint and TransformVector, respectively.

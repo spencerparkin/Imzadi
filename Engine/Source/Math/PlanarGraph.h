@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Vector3.h"
+#include "Polygon.h"
 #include "Plane.h"
 #include "LineSegment.h"
 #include <vector>
@@ -65,11 +65,11 @@ namespace Imzadi
 
 		void Clear();
 
-		bool AddPolygon(const std::vector<Vector3>& vertexArray, double epsilon = 1e-6);
+		bool AddPolygon(const Polygon& polygon, double epsilon = 1e-6);
 		bool AddEdge(const Vector3& vertexA, const Vector3& vertexB, double epsilon = 1e-6);
 		bool AddVertex(const Vector3& vertex, double epsilon = 1e-6);
 
-		void ExtractAllPolygons(std::vector<std::vector<Vector3>*>& polygonArray) const;
+		void ExtractAllPolygons(std::vector<Polygon>& polygonArray) const;
 
 	private:
 

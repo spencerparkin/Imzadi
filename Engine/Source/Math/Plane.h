@@ -53,6 +53,26 @@ namespace Imzadi
 		bool IsValid(double tolerance = 1e-7) const;
 
 		/**
+		 * Return true if and only if this plane is the same as the given plane
+		 * up to the given tolerance.  Note that the result here is left undefined
+		 * if this plane and the given one are not both normalized.
+		 * 
+		 * @param[in] plane This is the plane compared with this class instance.
+		 * @param[in] epsilon The plane centers (points on the planes closest to origin) must be within this distance, and the normals within this angle of one another.
+		 * @return True is returned if the given plane and this one are the same.
+		 */
+		bool IsPlane(const Plane& plane, double epsilon = 1e-6);
+
+		/**
+		 * Without changing the plane represented by this class instance, make
+		 * sure the normal is of unit-length and that the plane center is the
+		 * point on the plane closest to origin.
+		 * 
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool Normalize();
+
+		/**
 		 * Calculate and return the shortest signed distance of the given point
 		 * to this plane.  The absolute value of the result is the distance of
 		 * the given point to the plane.  The sign of the result indicates which

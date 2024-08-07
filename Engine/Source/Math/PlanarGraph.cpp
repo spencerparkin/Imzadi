@@ -33,22 +33,17 @@ void PlanarGraph::Clear()
 	this->edgeSet.clear();
 }
 
-bool PlanarGraph::AddPolygon(const std::vector<Vector3>& vertexArray, double epsilon /*= 1e-6*/)
+bool PlanarGraph::AddPolygon(const Polygon& polygon, double epsilon /*= 1e-6*/)
 {
-	for (const Vector3& vertex : vertexArray)
+	for (const Vector3& vertex : polygon.vertexArray)
 		if (!this->AddVertex(vertex))
 			return false;
 
-	for (int i = 0; i < (signed)vertexArray.size(); i++)
-	{
-		int j = (i + 1) % vertexArray.size();
-
-		const Vector3& vertexA = vertexArray[i];
-		const Vector3& vertexB = vertexArray[j];
-
-		if (!this->AddEdge(vertexA, vertexB))
+	std::vector<LineSegment> edgeArray;
+	polygon.GetEdges(edgeArray);
+	for (const LineSegment& lineSeg : edgeArray)
+		if (!this->AddEdge(lineSeg.point[0], lineSeg.point[1]))
 			return false;
-	}
 
 	return true;
 }
@@ -220,7 +215,7 @@ LineSegment PlanarGraph::MakeLineSegment(const PlanarGraphEdge& edge) const
 	return lineSeg;
 }
 
-void PlanarGraph::ExtractAllPolygons(std::vector<std::vector<Vector3>*>& polygonArray) const
+void PlanarGraph::ExtractAllPolygons(std::vector<Polygon>& polygonArray) const
 {
 	this->RegenerateNodeAdjacencies();
 
@@ -255,11 +250,11 @@ void PlanarGraph::ExtractAllPolygons(std::vector<std::vector<Vector3>*>& polygon
 
 		if (addCycle)
 		{
-			auto polygonVertexArray = new std::vector<Vector3>();
+			Polygon polygon;
 			for (const Node* node : cycleArray)
-				polygonVertexArray->push_back(node->vertex);
+				polygon.vertexArray.push_back(node->vertex);
 
-			polygonArray.push_back(polygonVertexArray);
+			polygonArray.push_back(polygon);
 		}
 	}
 }

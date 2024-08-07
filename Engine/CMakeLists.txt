@@ -110,6 +110,8 @@ set(GAME_ENGINE_SOURCES
     Source/Math/Angle.h
     Source/Math/PlanarGraph.cpp
     Source/Math/PlanarGraph.h
+    Source/Math/Polygon.cpp
+    Source/Math/Polygon.h
     Source/RenderObjects/AnimatedMeshInstance.cpp
     Source/RenderObjects/AnimatedMeshInstance.h
     Source/RenderObjects/DebugLines.cpp

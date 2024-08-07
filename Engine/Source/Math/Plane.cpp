@@ -46,6 +46,24 @@ bool Plane::IsValid(double tolerance /*= 1e-7*/) const
 	return true;
 }
 
+bool Plane::IsPlane(const Plane& plane, double epsilon /*= 1e-6*/)
+{
+	if (!plane.center.IsPoint(this->center, epsilon))
+		return false;
+
+	double angle = plane.unitNormal.AngleBetween(this->unitNormal);
+	return angle < epsilon;
+}
+
+bool Plane::Normalize()
+{
+	if (!this->unitNormal.Normalize())
+		return false;
+
+	this->center = this->center.ProjectedOnto(this->unitNormal);
+	return true;
+}
+
 double Plane::SignedDistanceTo(const Vector3& point) const
 {
 	return (point - this->center).Dot(this->unitNormal);
