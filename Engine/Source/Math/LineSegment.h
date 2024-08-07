@@ -64,10 +64,19 @@ namespace Imzadi
 		 * the given amount.  Of course, the order of the points in this case
 		 * matters.
 		 * 
-		 * @param[in] lambda This is the interpolation parameter.
+		 * @param[in] alpha This is the interpolation parameter.
 		 * @return If the interpolation parameter is in [0,1], we return here a point on the line-segment.  A point on the line containing this line-segment is returned.
 		 */
-		Vector3 Lerp(double lambda) const;
+		Vector3 Lerp(double alpha) const;
+
+		/**
+		 * This method is meant to be the inverse of the @ref Lerp method.
+		 * 
+		 * @param[in] point This is a point thought to be on the line segment (which isn't necessarily the case.)
+		 * @param[out] alpha If the given point is on this line-segment (within the given tolerance), then this is its interpolation parameter, which can be outside [0,1].
+		 * @return True is returned here if the given point is on the line of this line-segment; false, otherwise.
+		 */
+		bool Alpha(const Vector3& point, double& alpha, double tolerance = 1e-6) const;
 
 		/**
 		 * Set this line segment as the shortest line segment connecting the two given line segments.

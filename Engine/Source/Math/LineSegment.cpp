@@ -91,9 +91,21 @@ double LineSegment::ShortestDistanceTo(const Plane& plane) const
 	return IMZADI_MIN(::fabs(distanceA), ::fabs(distanceB));
 }
 
-Vector3 LineSegment::Lerp(double lambda) const
+Vector3 LineSegment::Lerp(double alpha) const
 {
-	return this->point[0] + lambda * this->GetDelta();
+	return this->point[0] + alpha * this->GetDelta();
+}
+
+bool LineSegment::Alpha(const Vector3& point, double& alpha, double tolerance /*= 1e-6*/) const
+{
+	Vector3 delta = this->GetDelta();
+	Vector3 vector = point - this->point[0];
+	double distanceToLine = vector.RejectedFrom(delta.Normalized()).Length();
+	if (distanceToLine > tolerance)
+		return false;
+
+	alpha = vector.Dot(delta) / delta.Dot(delta);
+	return true;
 }
 
 bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB)
