@@ -9,13 +9,15 @@ namespace Imzadi
 	class Ray;
 
 	/**
-	 * These are polygons represented as a sequence of vertices, each one
+	 * These are polygons represented as a sequence of 3D vertices, each one
 	 * adjacent to the vertex preceeding or following it in the sequence.
 	 * (Modular arithmetic is used on sequence locations to determine these.)
 	 * All points must be co-planar, and no edge should touch another edge
 	 * in a non-trivial way.  There also shouldn't be any redundant vertices.
-	 * The interior area of the polygon should be non-zero.  If these conditions
-	 * are not met, we leave the results of any method here as undefined.
+	 * Further, a polygon should never repeat a vertex in its sequence, even if
+	 * doing so does not constitute a redundancy.  The interior area of the
+	 * polygon should be non-zero.  If these conditions are not met, we leave
+	 * the results of any method here as undefined.
 	 * 
 	 * These polygons can be convex or concave in all cases except where specified.
 	 * Some methods work with both convex and concave polygons.  If a method assumes
@@ -197,6 +199,21 @@ namespace Imzadi
 		 * to the original polygon as described.
 		 */
 		bool Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool assumeConvex = false) const;
+
+		/**
+		 * Set this polygon to be a reduced version of the given polygon.
+		 * A polygon is reduced, in this sense, when all redundant vertices
+		 * are removed.  These are any vertices that, if removed, don't change
+		 * the shape of the polygon.
+		 */
+		void ReduceVerticesOf(const Polygon& polygon, double tolerance = 1e-7);
+
+		/**
+		 * Return true if and only if the given vertex is, up
+		 * to a distance of the given epsilon, equal to one of
+		 * the vertices of this polygon.
+		 */
+		bool HasVertex(const Vector3& givenVertex, double epsilon = 1e-5) const;
 
 		/**
 		 * Write an array of polygons to the given stream in binary form.

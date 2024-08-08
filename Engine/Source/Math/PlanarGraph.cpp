@@ -254,7 +254,10 @@ void PlanarGraph::ExtractAllPolygons(std::vector<Polygon>& polygonArray) const
 			for (const Node* node : cycleArray)
 				polygon.vertexArray.push_back(node->vertex);
 
-			polygonArray.push_back(polygon);
+			Polygon reducedPolygon;
+			reducedPolygon.ReduceVerticesOf(polygon);
+
+			polygonArray.push_back(reducedPolygon);
 		}
 	}
 }

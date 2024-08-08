@@ -925,6 +925,40 @@ int Polygon::Mod(int i) const
 	return i;
 }
 
+void Polygon::ReduceVerticesOf(const Polygon& polygon, double tolerance /*= 1e-7*/)
+{
+	Polygon intermediatePolygon;
+	for (const Vector3& vertex : polygon.vertexArray)
+		if (!intermediatePolygon.HasVertex(vertex, tolerance))
+			intermediatePolygon.vertexArray.push_back(vertex);
+	
+	this->vertexArray.clear();
+
+	for (int i = 0; i < (signed)intermediatePolygon.vertexArray.size(); i++)
+	{
+		const Vector3& vertexPrev = intermediatePolygon.vertexArray[intermediatePolygon.Mod(i - 1)];
+		const Vector3& vertex = intermediatePolygon.vertexArray[i];
+		const Vector3& vertexNext = intermediatePolygon.vertexArray[intermediatePolygon.Mod(i + 1)];
+
+		LineSegment lineSeg;
+		lineSeg.point[0] = vertexPrev;
+		lineSeg.point[1] = vertexNext;
+
+		double distance = lineSeg.ShortestDistanceTo(vertex);
+		if (distance >= tolerance)
+			this->vertexArray.push_back(vertex);
+	}
+}
+
+bool Polygon::HasVertex(const Vector3& givenVertex, double epsilon /*= 1e-5*/) const
+{
+	for (const Vector3& vertex : this->vertexArray)
+		if (vertex.IsPoint(givenVertex, epsilon))
+			return true;
+
+	return false;
+}
+
 /*static*/ void Polygon::DumpArray(const std::vector<Polygon>& polygonArray, std::ostream& stream)
 {
 	uint32_t numPolygons = uint32_t(polygonArray.size());
