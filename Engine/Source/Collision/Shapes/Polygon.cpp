@@ -185,10 +185,7 @@ const Vector3& PolygonShape::GetWorldCenter() const
 
 int PolygonShape::ModIndex(int i) const
 {
-	int j = i % this->localPolygon.vertexArray.size();
-	if (j < 0)
-		j += this->localPolygon.vertexArray.size();
-	return j;
+	return this->localPolygon.Mod(i);
 }
 
 void PolygonShape::GetWorldEdges(std::vector<LineSegment>& edgeArray) const

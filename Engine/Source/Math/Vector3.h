@@ -325,6 +325,19 @@ namespace Imzadi
 		}
 
 		/**
+		 * Calculate and return the angle between this vector and the given vector,
+		 * but in the range [0,2pi], not just [0,pi].  This is done using the given
+		 * normal, which is assumed to be a vector mutual perpendicular to this vector
+		 * (assumed to be of unit-length) and the given unit vector (also assumed to
+		 * be of unit-length.)  See the return value description.
+		 * 
+		 * @param[in] unitVector The angle between this instances vector and this given vector is returned.
+		 * @param[in] unitNormal The two vectors we're comparing are thought to be in a plane having this normal.
+		 * @return The angle (in radians) needed to rotate this vector CCW in the plane of the given unit-normal to the other given unit-vector is returned.
+		 */
+		double AngleBetween(const Vector3& unitVector, const Vector3& unitNormal) const;
+
+		/**
 		 * Set this vector as the linear interpolation of the two given vectors by the given amount.
 		 * 
 		 * @param[in] vectorA This is the result when alpha is zero.

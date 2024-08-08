@@ -333,12 +333,7 @@ const PlanarGraph::Node* PlanarGraph::Node::FindOutGoingNode(const Node* inComin
 	for (const Node* adjacentNode : this->adjacentNodeArray)
 	{
 		Vector3 vectorB = (adjacentNode->vertex - this->vertex).Normalized();
-
-		double angle = vectorA.AngleBetween(vectorB);
-
-		if (vectorA.Cross(vectorB).Dot(planeNormal) > 0.0)
-			angle = 2.0 * M_PI - angle;
-
+		double angle = vectorB.AngleBetween(vectorA, planeNormal);
 		if (angle > maxAngle)
 		{
 			maxAngle = angle;

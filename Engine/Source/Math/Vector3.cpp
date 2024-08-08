@@ -101,6 +101,15 @@ void Vector3::Restore(std::istream& stream)
 	stream.read((char*)&this->z, sizeof(this->z));
 }
 
+double Vector3::AngleBetween(const Vector3& unitVector, const Vector3& unitNormal) const
+{
+	double angle = this->AngleBetween(unitVector);
+	double determinant = this->Cross(unitVector).Dot(unitNormal);
+	if (determinant < 0.0)
+		angle = 2.0 * M_PI - angle;
+	return angle;
+}
+
 Vector3& Vector3::Lerp(const Vector3& vectorA, const Vector3& vectorB, double alpha)
 {
 	*this = vectorA + alpha * (vectorB - vectorA);

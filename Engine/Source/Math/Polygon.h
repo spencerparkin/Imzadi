@@ -9,15 +9,21 @@ namespace Imzadi
 	class Ray;
 
 	/**
-	 * These are polygons represented as a sequence of vertices.
-	 * All points must be co-planar, and no edge should cross another edge.
-	 * There also shouldn't be any redundant vertices.  If these conditions
-	 * are not met, we leave the results of any method here as undefined.
+	 * These are polygons represented as a sequence of vertices, each one
+	 * adjacent to the vertex preceeding or following it in the sequence.
+	 * (Modular arithmetic is used on sequence locations to determine these.)
+	 * All points must be co-planar, and no edge should touch another edge
+	 * in a non-trivial way.  There also shouldn't be any redundant vertices.
+	 * If these conditions are not met, we leave the results of any method
+	 * here as undefined.
 	 * 
 	 * These polygons can be convex or concave in all cases except where specified.
 	 * Some methods work with both convex and concave polygons.  If a method assumes
 	 * a polygon is convex, then I tried to remember to specify that in the
 	 * documentation for the method.
+	 * 
+	 * We consider the front face of a polygon to be the face that, when viewed,
+	 * has its vertices wound CCW (counter-clock-wise) in the plane of the polygon.
 	 */
 	class IMZADI_API Polygon
 	{
@@ -63,12 +69,13 @@ namespace Imzadi
 		bool ContainsPoint(const Vector3& point, double tolerance = 1e-5, bool* isInterior = nullptr) const;
 
 		/**
-		 * 
+		 * This method does not assume the polygon is convex.
 		 */
 		bool ContainsPointOnEdge(const Vector3& point, double tolerance = 1e-5) const;
 
 		/**
-		 * 
+		 * Return an array of line-segments, each an edge of this polygon.
+		 * The edges are returned in CCW order.
 		 */
 		void GetEdges(std::vector<LineSegment>& edgeArray) const;
 
@@ -140,14 +147,40 @@ namespace Imzadi
 
 		/**
 		 * Generate a set of pair-wise disjoint and convex polygons
-		 * whose union is this polygon.
+		 * whose union is this polygon.  Of course, there can be more
+		 * than one answer to this problem.  We try here to come up
+		 * with a reasonable tessellation based on some heuristics.
 		 */
-		void TessellateUntilConvex(std::vector<Polygon>& polygonArray) const;
+		bool TessellateUntilConvex(std::vector<Polygon>& polygonArray) const;
 
 		/**
-		 * This method assumes the polygon is convex.
+		 * Generate a set of pair-wise disjoint triangles whose union
+		 * is this polygon.  Of course, there can be more than one
+		 * answer to this problem.  We try here to come up with a
+		 * reasonable tessellation based on some hueristics.
+		 * 
+		 * This method assumes the polygon is convex.  If you need to tessellate
+		 * a concave polygon, see then @ref TessellateUntilConvex method.
 		 */
-		void TessellateUntilTriangular(std::vector<Polygon>& polygonArray) const;
+		bool TessellateUntilTriangular(std::vector<Polygon>& polygonArray) const;
+
+		/**
+		 * Return the given integer in the range [0,N-1], where N is the number
+		 * of vertices in this polygon (or N-gon, if you will.)
+		 * 
+		 * @param i This can be any integer.
+		 * @return Return i mod N for this N-gon.
+		 */
+		int Mod(int i) const;
+
+		/**
+		 * Split this polygon into two disjoint/adjacent polygons whose union
+		 * would be this polygon by cutting this polygon at vertex i to vertex j.
+		 * By default, we do not assume the polygon is convex here, and we fail
+		 * if the resulting polygons would be degenerate or if they would not sum
+		 * to the original polygon as described.
+		 */
+		bool Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool assumeConvex = false) const;
 
 		/**
 		 * Write this polygon to the given stream in binary form.

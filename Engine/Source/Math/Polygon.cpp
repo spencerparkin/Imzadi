@@ -4,6 +4,7 @@
 #include "LineSegment.h"
 #include "Matrix3x3.h"
 #include "PlanarGraph.h"
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -618,18 +619,265 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	}
 }
 
-void Polygon::TessellateUntilConvex(std::vector<Polygon>& polygonArray) const
+bool Polygon::TessellateUntilConvex(std::vector<Polygon>& polygonArray) const
 {
-	// TODO: Do this recursively.  If a polygon is convex, we're done.  If not, we recurse with two sub-polygons.
-	//       To choose those, look for "odd vertices" being the ones that turn the wrong way as we go CCW in the sequence.
-	//       Join the two closest odd vertices.  Be careful, though, because we must make sure a ray-cast between the
-	//       joined vertices is clear of any hits.
+	if (this->vertexArray.size() < 3)
+		return false;
+
+	if (this->IsConvex())
+	{
+		polygonArray.push_back(*this);
+		return true;
+	}
+
+	Polygon polygonA, polygonB;
+
+	Plane plane = this->CalcPlane();
+
+	std::vector<int> strangeVerticesArray;
+	std::vector<int> normalVerticesArray;
+
+	for (int i = 0; i < (signed)polygonArray.size(); i++)
+	{
+		const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
+		const Vector3& vertex = this->vertexArray[i];
+		const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
+
+		Vector3 vectorPrev = (vertexPrev - vertex).Normalized();
+		Vector3 vectorNext = (vertexNext - vertex).Normalized();
+
+		double angle = vectorPrev.AngleBetween(vectorNext, plane.unitNormal);
+		if (angle < M_PI)
+			strangeVerticesArray.push_back(i);
+		else
+			normalVerticesArray.push_back(i);
+	}
+
+	IMZADI_ASSERT(strangeVerticesArray.size() > 0);
+
+	struct Pair
+	{
+		int i, j;
+		double distance;
+	};
+
+	std::vector<Pair> strangeVertexPairsArray;
+	for (int i = 0; i < (signed)strangeVerticesArray.size(); i++)
+	{
+		for (int j = i + 1; j < (signed)strangeVerticesArray.size(); j++)
+		{
+			Pair pair;
+			pair.i = strangeVerticesArray[i];
+			pair.j = strangeVerticesArray[j];
+			pair.distance = (this->vertexArray[pair.i] - this->vertexArray[pair.j]).Length();
+			strangeVertexPairsArray.push_back(pair);
+		}
+	}
+
+	std::sort(strangeVertexPairsArray.begin(), strangeVertexPairsArray.end(), [](const Pair& pairA, const Pair& pairB) -> bool {
+		return pairA.distance < pairB.distance;
+	});
+
+	std::vector<Pair> otherVertexPairsArray;
+	for (int i = 0; i < (signed)strangeVerticesArray.size(); i++)
+	{
+		for (int j = 0; j < (signed)normalVerticesArray.size(); j++)
+		{
+			Pair pair;
+			pair.i = strangeVerticesArray[i];
+			pair.j = normalVerticesArray[j];
+			pair.distance = (this->vertexArray[pair.i] - this->vertexArray[pair.j]).Length();
+			otherVertexPairsArray.push_back(pair);
+		}
+	}
+
+	std::sort(otherVertexPairsArray.begin(), otherVertexPairsArray.end(), [](const Pair& pairA, const Pair& pairB) -> bool {
+		return pairA.distance < pairB.distance;
+	});
+
+	std::vector<Pair> allVertexPairsArray;
+	for (const Pair& pair : strangeVertexPairsArray)
+		allVertexPairsArray.push_back(pair);
+	for (const Pair& pair : otherVertexPairsArray)
+		allVertexPairsArray.push_back(pair);
+
+	bool splitFound = false;
+	for (const Pair& pair : allVertexPairsArray)
+	{
+		if (this->Split(pair.i, pair.j, polygonA, polygonB))
+		{
+			splitFound = true;
+			break;
+		}
+	}
+
+	if (!splitFound)
+		return false;
+
+	if (!polygonA.TessellateUntilConvex(polygonArray))
+		return false;
+
+	if (!polygonB.TessellateUntilConvex(polygonArray))
+		return false;
+
+	return true;
 }
 
-void Polygon::TessellateUntilTriangular(std::vector<Polygon>& polygonArray) const
+bool Polygon::TessellateUntilTriangular(std::vector<Polygon>& polygonArray) const
 {
-	// TODO: Do this recursively.  If a polygon is triangular, we're done.  Recursive with the best possible
-	//       split of the polygon...but based on what?
+	if (this->vertexArray.size() < 3)
+		return false;
+
+	if (this->vertexArray.size() == 3)
+	{
+		polygonArray.push_back(*this);
+		return true;
+	}
+
+	double bestAreaRatio = 0.0;
+	int chosen_i = -1;
+	int chosen_j = -1;
+
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	{
+		for (int j = i + 1; j < (signed)this->vertexArray.size(); j++)
+		{
+			Polygon polygonA, polygonB;
+
+			if (this->Split(i, j, polygonA, polygonB, true))
+			{
+				double areaRatio = polygonA.Area() / polygonB.Area();
+				if (::abs(areaRatio - 0.5) < ::abs(bestAreaRatio - 0.5))
+				{
+					chosen_i = i;
+					chosen_j = j;
+					bestAreaRatio = areaRatio;
+				}
+			}
+		}
+	}
+
+	if (chosen_i == -1 || chosen_j == -1)
+		return false;
+
+	Polygon polygonA, polygonB;
+	if (!this->Split(chosen_i, chosen_j, polygonA, polygonB, true))
+		return false;
+
+	if (!polygonA.TessellateUntilTriangular(polygonArray))
+		return false;
+
+	if (!polygonB.TessellateUntilTriangular(polygonArray))
+		return false;
+
+	return true;
+}
+
+bool Polygon::Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool assumeConvex /*= false*/) const
+{
+	// You can't split a triangle down any further without producing a degenerate polygon.
+	if (this->vertexArray.size() <= 3)
+		return false;
+
+	i = this->Mod(i);
+	j = this->Mod(j);
+
+	// A split along an edge (or at a vertex) would result in one polygon being the original and the other being degenerate.
+	if (i == j || this->Mod(i + 1) == j || this->Mod(i - 1) == j)
+		return false;
+
+	// At this point, if we can assume that the polygon is convex, then there is nothing left to vet about the purposed cut.
+	if (!assumeConvex)
+	{
+		LineSegment cuttingSeg;
+		cuttingSeg.point[0] = this->vertexArray[i];
+		cuttingSeg.point[1] = this->vertexArray[j];
+
+		Plane plane = this->CalcPlane();
+
+		Vector3 cuttingVector = cuttingSeg.GetDelta().Normalized();
+		Vector3 edgeVectorA, edgeVectorB;
+		double angleA = 0.0, angleB = 0.0;
+
+		// Does the cutting edge at i to j travel into the interior of the polygon?
+		edgeVectorA = (this->vertexArray[this->Mod(i + 1)] - this->vertexArray[i]).Normalized();
+		edgeVectorB = (this->vertexArray[this->Mod(i - 1)] - this->vertexArray[i]).Normalized();
+		angleA = edgeVectorA.AngleBetween(cuttingVector, plane.unitNormal);
+		angleB = edgeVectorB.AngleBetween(edgeVectorA, plane.unitNormal);
+		if (angleA == 0.0 || angleA > angleB)
+			return false;	// No.  It won't work.
+
+		// Does the cutting edge at j to i travel into the interior of the polygon?
+		edgeVectorA = (this->vertexArray[this->Mod(j + 1)] - this->vertexArray[j]).Normalized();
+		edgeVectorB = (this->vertexArray[this->Mod(j - 1)] - this->vertexArray[j]).Normalized();
+		angleA = edgeVectorA.AngleBetween(-cuttingVector, plane.unitNormal);
+		angleB = edgeVectorB.AngleBetween(edgeVectorA, plane.unitNormal);
+		if (angleA == 0.0 || angleA > angleB)
+			return false;	// No.  It won't work.
+
+		constexpr double epsilon = 1e-5;
+
+		std::vector<LineSegment> edgeArray;
+		this->GetEdges(edgeArray);
+
+		// The last check is to make sure that the purposed cut is unobstructed in its path
+		// from one vertex of the polygon, though the interior, to another vertex.
+		bool lineSegUnobstructed = true;
+		for (const LineSegment& edgeSeg : edgeArray)
+		{
+			if (edgeSeg.point[0].IsPoint(cuttingSeg.point[0]) ||
+				edgeSeg.point[0].IsPoint(cuttingSeg.point[1]) ||
+				edgeSeg.point[1].IsPoint(cuttingSeg.point[0]) ||
+				edgeSeg.point[1].IsPoint(cuttingSeg.point[1]))
+			{
+				continue;
+			}
+
+			LineSegment connector;
+			if (connector.SetAsShortestConnector(edgeSeg, cuttingSeg) && connector.Length() < epsilon)
+			{
+				lineSegUnobstructed = false;
+				break;
+			}
+		}
+
+		if (!lineSegUnobstructed)
+			return false;
+	}
+
+	// Perform the cut.
+
+	polygonA.vertexArray.clear();
+	polygonB.vertexArray.clear();
+
+	int k = i;
+	while (true)
+	{
+		polygonA.vertexArray.push_back(this->vertexArray[k]);
+		if (k == j)
+			break;
+		k = this->Mod(k + 1);
+	}
+
+	k = j;
+	while (true)
+	{
+		polygonB.vertexArray.push_back(this->vertexArray[k]);
+		if (k == i)
+			break;
+		k = this->Mod(k + 1);
+	}
+
+	return true;
+}
+
+int Polygon::Mod(int i) const
+{
+	IMZADI_ASSERT(this->vertexArray.size() > 0);
+	i = i % this->vertexArray.size();
+	if (i < 0)
+		i += this->vertexArray.size();
+	return i;
 }
 
 void Polygon::Dump(std::ostream& stream) const
