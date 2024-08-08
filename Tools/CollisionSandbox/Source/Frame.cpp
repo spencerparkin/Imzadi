@@ -144,6 +144,7 @@ void Frame::OnClearWorld(wxCommandEvent& event)
 {
 	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 	system->Clear();
+	wxGetApp().GetPolygonArray().clear();
 	this->canvas->Refresh();
 }
 
