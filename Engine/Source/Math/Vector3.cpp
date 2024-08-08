@@ -101,6 +101,13 @@ void Vector3::Restore(std::istream& stream)
 	stream.read((char*)&this->z, sizeof(this->z));
 }
 
+double Vector3::AngleBetween(const Vector3& unitVector) const
+{
+	double dot = this->Dot(unitVector);
+	dot = IMZADI_CLAMP(dot, -1.0, 1.0);
+	return ::acos(dot);
+}
+
 double Vector3::AngleBetween(const Vector3& unitVector, const Vector3& unitNormal) const
 {
 	double angle = this->AngleBetween(unitVector);

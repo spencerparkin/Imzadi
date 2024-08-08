@@ -186,6 +186,16 @@ namespace Imzadi
 		bool Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool assumeConvex = false) const;
 
 		/**
+		 * Write an array of polygons to the given stream in binary form.
+		 */
+		static void DumpArray(const std::vector<Polygon>& polygonArray, std::ostream& stream);
+
+		/**
+		 * Read an array of polygons from the stream in binary form.
+		 */
+		static void RestoreArray(std::vector<Polygon>& polygonArray, std::istream& stream);
+
+		/**
 		 * Write this polygon to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;

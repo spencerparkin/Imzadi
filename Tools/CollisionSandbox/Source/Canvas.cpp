@@ -95,6 +95,26 @@ void Canvas::OnPaint(wxPaintEvent& event)
 
 	glEnd();
 
+	const std::vector<Imzadi::Polygon>& polygonArray = wxGetApp().GetPolygonArray();
+	GLfloat red = 0.0;
+	GLfloat green = 0.5;
+	GLfloat blue = 0.2;
+	for (const Imzadi::Polygon& polygon : polygonArray)
+	{
+		glLineWidth(1.0);
+		glBegin(GL_POLYGON);
+
+		glColor3d(red, green, blue);
+		for (const Imzadi::Vector3& vertex : polygon.vertexArray)
+			glVertex3dv(&vertex.x);
+
+		glEnd();
+
+		red = fmodf(red + 0.2f, 1.0f);
+		green = fmodf(green * 2.0f + 0.3f, 1.0f);
+		blue = fmodf(blue * 0.2 + 0.7f, 1.0f);
+	}
+
 	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 
 	auto renderQuery = system->Create<DebugRenderQuery>();

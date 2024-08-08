@@ -569,6 +569,9 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	return true;
 }
 
+//#include <fstream>
+//#include <filesystem>
+
 /*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex)
 {
 	std::list<Polygon> polygonQueue;
@@ -605,11 +608,22 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 		PlanarGraph graph;
 		graph.SetPlane(plane);
 
+		//std::vector<Polygon> debugArray;
+
 		for (Polygon& polygon : coplanarPolygonList)
 		{
 			bool addedPolygon = graph.AddPolygon(polygon);
 			IMZADI_ASSERT(addedPolygon);
+
+			//debugArray.push_back(polygon);
 		}
+
+		/*std::string debugFile = "E:\\ENG_DEV\\Imzadi\\debug.bin";
+		std::filesystem::remove(debugFile);
+		std::ofstream stream;
+		stream.open(debugFile, std::ios::binary);
+		Polygon::DumpArray(debugArray, stream);
+		stream.close();*/
 
 		std::vector<Polygon> compressedPolygonArray;
 		graph.ExtractAllPolygons(compressedPolygonArray);
@@ -888,9 +902,31 @@ int Polygon::Mod(int i) const
 	return i;
 }
 
+/*static*/ void Polygon::DumpArray(const std::vector<Polygon>& polygonArray, std::ostream& stream)
+{
+	uint32_t numPolygons = uint32_t(polygonArray.size());
+	stream.write((char*)&numPolygons, sizeof(numPolygons));
+	for (const Polygon& polygon : polygonArray)
+		polygon.Dump(stream);
+}
+
+/*static*/ void Polygon::RestoreArray(std::vector<Polygon>& polygonArray, std::istream& stream)
+{
+	uint32_t numPolygons = 0;
+	stream.read((char*)&numPolygons, sizeof(numPolygons));
+	polygonArray.clear();
+	for (uint32_t i = 0; i < numPolygons; i++)
+	{
+		Polygon polygon;
+		polygon.Restore(stream);
+		polygonArray.push_back(polygon);
+	}
+}
+
 void Polygon::Dump(std::ostream& stream) const
 {
-	stream << uint32_t(this->vertexArray.size());
+	uint32_t numVertices = uint32_t(this->vertexArray.size());
+	stream.write((char*)&numVertices, sizeof(numVertices));
 	for (const Vector3& vertex : this->vertexArray)
 		vertex.Dump(stream);
 }
@@ -898,7 +934,7 @@ void Polygon::Dump(std::ostream& stream) const
 void Polygon::Restore(std::istream& stream)
 {
 	uint32_t numVertices = 0;
-	stream >> numVertices;
+	stream.read((char*)&numVertices, sizeof(numVertices));
 	this->vertexArray.clear();
 	for (uint32_t i = 0; i < numVertices; i++)
 	{

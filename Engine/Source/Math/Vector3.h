@@ -319,10 +319,7 @@ namespace Imzadi
 		 * @param[in] unitVector This is a unit-length vector against which this vector is measured.
 		 * @return The angle between this vector and the given vector is returned in radians.
 		 */
-		double AngleBetween(const Vector3& unitVector) const
-		{
-			return ::acos(this->Dot(unitVector));
-		}
+		double AngleBetween(const Vector3& unitVector) const;
 
 		/**
 		 * Calculate and return the angle between this vector and the given vector,

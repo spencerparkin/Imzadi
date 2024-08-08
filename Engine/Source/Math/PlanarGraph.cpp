@@ -287,6 +287,8 @@ bool PlanarGraph::FindOuterCycle(const Node* node, std::vector<const Node*>& cyc
 		node = outGoingNode;
 	}
 
+	IMZADI_ASSERT(i != -1);
+
 	cycleArray.clear();
 	for (int j = i; j < (signed)pathArray.size(); j++)
 		cycleArray.push_back(pathArray[j]);

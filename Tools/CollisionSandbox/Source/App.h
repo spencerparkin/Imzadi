@@ -2,6 +2,7 @@
 
 #include <wx/app.h>
 #include "Collision/System.h"
+#include "Math/Polygon.h"
 
 class Frame;
 
@@ -15,10 +16,12 @@ public:
 	virtual int OnExit(void) override;
 
 	Imzadi::CollisionSystem* GetCollisionSystem() { return this->collisionSystem; }
+	std::vector<Imzadi::Polygon>& GetPolygonArray() { return this->polygonArray; }
 
 private:
 	Frame* frame;
 	Imzadi::CollisionSystem* collisionSystem;
+	std::vector<Imzadi::Polygon> polygonArray;
 };
 
 wxDECLARE_APP(App);
