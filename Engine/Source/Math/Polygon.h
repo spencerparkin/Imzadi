@@ -14,8 +14,8 @@ namespace Imzadi
 	 * (Modular arithmetic is used on sequence locations to determine these.)
 	 * All points must be co-planar, and no edge should touch another edge
 	 * in a non-trivial way.  There also shouldn't be any redundant vertices.
-	 * If these conditions are not met, we leave the results of any method
-	 * here as undefined.
+	 * The interior area of the polygon should be non-zero.  If these conditions
+	 * are not met, we leave the results of any method here as undefined.
 	 * 
 	 * These polygons can be convex or concave in all cases except where specified.
 	 * Some methods work with both convex and concave polygons.  If a method assumes
@@ -42,14 +42,27 @@ namespace Imzadi
 		bool IsValid(double tolerance = 1e-4) const;
 
 		/**
+		 * If passed to the @ref IsConvex method, you can get further information
+		 * about how convex or how concave the polygon is.
+		 */
+		struct ConvexityInfo
+		{
+			std::vector<int> convexVertexArray;
+			std::vector<int> concaveVertexArray;
+		};
+
+		/**
 		 * Return true if and only if this polygon is a convex polygon.
 		 */
-		bool IsConvex(double tolerance = 1e-4) const;
+		bool IsConvex(ConvexityInfo* convexityInfo = nullptr, double tolerance = 1e-4) const;
 
 		/**
 		 * Calculate and return the plane containing this polygon.
+		 * This assumes that the vertices of the polygon are co-planar,
+		 * but does not assume the polygon is convex unless told that
+		 * the polygon is convex.
 		 */
-		Plane CalcPlane() const;
+		Plane CalcPlane(bool assumeConvex = false) const;
 
 		/**
 		 * Calculate and return the average of all the vertices of this polygon.

@@ -48,41 +48,88 @@ bool Polygon::IsValid(double tolerance /*= 1e-4*/) const
 	return true;
 }
 
-bool Polygon::IsConvex(double tolerance /*= 1e-4*/) const
+bool Polygon::IsConvex(ConvexityInfo* convexityInfo /*= nullptr*/, double tolerance /*= 1e-4*/) const
 {
-	Plane plane = this->CalcPlane();
+	ConvexityInfo convexityInfoStorage;
+	if (!convexityInfo)
+		convexityInfo = &convexityInfoStorage;
+
+	convexityInfo->convexVertexArray.clear();
+	convexityInfo->concaveVertexArray.clear();
+
+	Plane plane = this->CalcPlane(false);
+
 	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
 	{
-		const Vector3& vertexA = this->vertexArray[i];
-		const Vector3& vertexB = this->vertexArray[(i + 1) % this->vertexArray.size()];
-		Plane edgePlane(vertexA, (vertexB - vertexA).Cross(plane.unitNormal).Normalized());
-		for (int j = 0; j < (signed)this->vertexArray.size(); j++)
+		const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
+		const Vector3& vertex = this->vertexArray[i];
+		const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
+
+		Vector3 vectorPrev = (vertexPrev - vertex).Normalized();
+		Vector3 vectorNext = (vertexNext - vertex).Normalized();
+
+		double angle = vectorPrev.AngleBetween(vectorNext, plane.unitNormal);
+		if (angle < M_PI)
+			convexityInfo->concaveVertexArray.push_back(i);
+		else
+			convexityInfo->convexVertexArray.push_back(i);
+	}
+
+	return convexityInfo->concaveVertexArray.size() == 0;
+}
+
+Plane Polygon::CalcPlane(bool assumeConvex /*= false*/) const
+{
+	IMZADI_ASSERT(this->vertexArray.size() > 0);
+
+	// Calculate the most numerically stable normal we can find.
+	Vector3 bestNormal;
+	double maxLength = 0.0;
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	{
+		const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
+		const Vector3& vertex = this->vertexArray[i];
+		const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
+
+		Vector3 vectorPrev = vertexPrev - vertex;
+		Vector3 vectorNext = vertexNext - vertex;
+
+		Vector3 normal = vectorNext.Cross(vectorPrev);
+		double length = normal.Length();
+		if (length > maxLength)
 		{
-			double distance = edgePlane.SignedDistanceTo(vertexArray[j]);
-			if (distance >= tolerance)
-				return false;
+			maxLength = length;
+			bestNormal = normal;
 		}
 	}
 
-	return true;
-}
-
-Plane Polygon::CalcPlane() const
-{
-	Vector3 center = this->CalcCenter();
-	Vector3 normal(0.0, 0.0, 0.0);
-
-	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	// At this point we have the correct normal, up to sign.
+	// What remains is to determine the sign of the normal.
+	bestNormal.Normalize();
+	if (!assumeConvex)
 	{
-		int j = (i + 1) % this->vertexArray.size();
+		double netAngle = 0.0;
+		for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+		{
+			const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
+			const Vector3& vertex = this->vertexArray[i];
+			const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
 
-		const Vector3& vertexA = this->vertexArray[i];
-		const Vector3& vertexB = this->vertexArray[j];
+			Vector3 vectorPrev = (vertex - vertexPrev).Normalized();
+			Vector3 vectorNext = (vertexNext - vertex).Normalized();
 
-		normal += (vertexA - center).Cross(vertexB - center).Normalized();
+			double turnAngle = vectorPrev.AngleBetween(vectorNext, bestNormal);
+			if (turnAngle > M_PI)
+				turnAngle -= 2.0 * M_PI;
+
+			netAngle += turnAngle;
+		}
+
+		if (netAngle < 0.0)
+			bestNormal = -bestNormal;
 	}
 
-	return Plane(center, normal.Normalized());
+	return Plane(this->vertexArray[0], bestNormal);
 }
 
 Vector3 Polygon::CalcCenter() const
@@ -646,7 +693,8 @@ bool Polygon::TessellateUntilConvex(std::vector<Polygon>& polygonArray) const
 	if (this->vertexArray.size() < 3)
 		return false;
 
-	if (this->IsConvex())
+	ConvexityInfo convexityInfo;
+	if (this->IsConvex(&convexityInfo))
 	{
 		polygonArray.push_back(*this);
 		return true;
@@ -656,75 +704,44 @@ bool Polygon::TessellateUntilConvex(std::vector<Polygon>& polygonArray) const
 
 	Plane plane = this->CalcPlane();
 
-	std::vector<int> strangeVerticesArray;
-	std::vector<int> normalVerticesArray;
-
-	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
-	{
-		const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
-		const Vector3& vertex = this->vertexArray[i];
-		const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
-
-		Vector3 vectorPrev = (vertexPrev - vertex).Normalized();
-		Vector3 vectorNext = (vertexNext - vertex).Normalized();
-
-		double angle = vectorPrev.AngleBetween(vectorNext, plane.unitNormal);
-		if (angle < M_PI)
-			strangeVerticesArray.push_back(i);
-		else
-			normalVerticesArray.push_back(i);
-	}
-
-	IMZADI_ASSERT(strangeVerticesArray.size() > 0);
-
 	struct Pair
 	{
 		int i, j;
 		double distance;
 	};
 
-	std::vector<Pair> strangeVertexPairsArray;
-	for (int i = 0; i < (signed)strangeVerticesArray.size(); i++)
+	std::vector<Pair> vertexPairsArray;
+
+	for (int i = 0; i < (signed)convexityInfo.concaveVertexArray.size(); i++)
 	{
-		for (int j = i + 1; j < (signed)strangeVerticesArray.size(); j++)
+		for (int j = i + 1; j < (signed)convexityInfo.concaveVertexArray.size(); j++)
 		{
 			Pair pair;
-			pair.i = strangeVerticesArray[i];
-			pair.j = strangeVerticesArray[j];
+			pair.i = convexityInfo.concaveVertexArray[i];
+			pair.j = convexityInfo.concaveVertexArray[j];
 			pair.distance = (this->vertexArray[pair.i] - this->vertexArray[pair.j]).Length();
-			strangeVertexPairsArray.push_back(pair);
+			vertexPairsArray.push_back(pair);
 		}
 	}
 
-	std::sort(strangeVertexPairsArray.begin(), strangeVertexPairsArray.end(), [](const Pair& pairA, const Pair& pairB) -> bool {
-		return pairA.distance < pairB.distance;
-	});
-
-	std::vector<Pair> otherVertexPairsArray;
-	for (int i = 0; i < (signed)strangeVerticesArray.size(); i++)
+	for (int i = 0; i < (signed)convexityInfo.concaveVertexArray.size(); i++)
 	{
-		for (int j = 0; j < (signed)normalVerticesArray.size(); j++)
+		for (int j = 0; j < (signed)convexityInfo.convexVertexArray.size(); j++)
 		{
 			Pair pair;
-			pair.i = strangeVerticesArray[i];
-			pair.j = normalVerticesArray[j];
+			pair.i = convexityInfo.concaveVertexArray[i];
+			pair.j = convexityInfo.convexVertexArray[j];
 			pair.distance = (this->vertexArray[pair.i] - this->vertexArray[pair.j]).Length();
-			otherVertexPairsArray.push_back(pair);
+			vertexPairsArray.push_back(pair);
 		}
 	}
 
-	std::sort(otherVertexPairsArray.begin(), otherVertexPairsArray.end(), [](const Pair& pairA, const Pair& pairB) -> bool {
+	std::sort(vertexPairsArray.begin(), vertexPairsArray.end(), [](const Pair& pairA, const Pair& pairB) -> bool {
 		return pairA.distance < pairB.distance;
 	});
-
-	std::vector<Pair> allVertexPairsArray;
-	for (const Pair& pair : strangeVertexPairsArray)
-		allVertexPairsArray.push_back(pair);
-	for (const Pair& pair : otherVertexPairsArray)
-		allVertexPairsArray.push_back(pair);
 
 	bool splitFound = false;
-	for (const Pair& pair : allVertexPairsArray)
+	for (const Pair& pair : vertexPairsArray)
 	{
 		if (this->Split(pair.i, pair.j, polygonA, polygonB))
 		{
@@ -896,9 +913,15 @@ bool Polygon::Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool ass
 int Polygon::Mod(int i) const
 {
 	IMZADI_ASSERT(this->vertexArray.size() > 0);
-	i = i % this->vertexArray.size();
 	if (i < 0)
-		i += this->vertexArray.size();
+	{
+		int j = -i / int(this->vertexArray.size()) + 1;
+		i += j * this->vertexArray.size();
+	}
+	else
+	{
+		i = i % int(this->vertexArray.size());
+	}
 	return i;
 }
 

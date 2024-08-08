@@ -99,15 +99,21 @@ void Canvas::OnPaint(wxPaintEvent& event)
 	GLfloat red = 0.0;
 	GLfloat green = 0.5;
 	GLfloat blue = 0.2;
-	for (const Imzadi::Polygon& polygon : polygonArray)
+	for (int i = 0; i < (signed)polygonArray.size(); i++)
 	{
-		glLineWidth(1.0);
-		glBegin(GL_POLYGON);
+		static int debug_i = -1;
+		if (debug_i != -1 && debug_i != i)
+			continue;
 
+		const Imzadi::Polygon& polygon = polygonArray[i];
+#if 0
+		glBegin(GL_POLYGON);
+#else
+		glBegin(GL_LINE_LOOP);
+#endif
 		glColor3d(red, green, blue);
 		for (const Imzadi::Vector3& vertex : polygon.vertexArray)
 			glVertex3dv(&vertex.x);
-
 		glEnd();
 
 		red = fmodf(red + 0.2f, 1.0f);
