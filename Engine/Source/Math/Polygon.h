@@ -142,8 +142,11 @@ namespace Imzadi
 		 * as far as possible.  Polygons that are purely nested within
 		 * others are not caught by this, but this is the only case I'm
 		 * not yet handling, as far as I'm aware.
+		 * 
+		 * @param[in,out] polygonArray These are the polygons to compress.  This array is modified, hopefully reduced in size.
+		 * @param[in] mustBeConvex If true, polygons returned will all be convex.  I false, this is not necessarily the case.
 		 */
-		static void Compress(std::vector<Polygon>& polygonArray);
+		static void Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex);
 
 		/**
 		 * Generate a set of pair-wise disjoint and convex polygons

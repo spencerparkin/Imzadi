@@ -569,7 +569,7 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	return true;
 }
 
-/*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray)
+/*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex)
 {
 	std::list<Polygon> polygonQueue;
 	for (Polygon& polygon : polygonArray)
@@ -614,8 +614,16 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 		std::vector<Polygon> compressedPolygonArray;
 		graph.ExtractAllPolygons(compressedPolygonArray);
 
-		for (Polygon& polygon : compressedPolygonArray)
-			polygonArray.push_back(polygon);
+		if (!mustBeConvex)
+		{
+			for (Polygon& polygon : compressedPolygonArray)
+				polygonArray.push_back(polygon);
+		}
+		else
+		{
+			for (Polygon& polygon : compressedPolygonArray)
+				polygon.TessellateUntilConvex(polygonArray);
+		}
 	}
 }
 
@@ -637,7 +645,7 @@ bool Polygon::TessellateUntilConvex(std::vector<Polygon>& polygonArray) const
 	std::vector<int> strangeVerticesArray;
 	std::vector<int> normalVerticesArray;
 
-	for (int i = 0; i < (signed)polygonArray.size(); i++)
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
 	{
 		const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
 		const Vector3& vertex = this->vertexArray[i];
