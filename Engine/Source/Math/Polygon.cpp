@@ -697,7 +697,7 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	}
 }
 
-void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j)
+void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j, bool includeI /*= true*/, bool includeJ /*= true*/)
 {
 	i = polygon.Mod(i);
 	j = polygon.Mod(j);
@@ -705,7 +705,8 @@ void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j)
 	int k = i;
 	while (true)
 	{
-		this->vertexArray.push_back(polygon.vertexArray[k]);
+		if ((k != i || includeI) && (k != j || includeJ))
+			this->vertexArray.push_back(polygon.vertexArray[k]);
 
 		if (k == j)
 			break;
@@ -718,6 +719,11 @@ bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& p
 {
 	constexpr double epsilon = 1e-7;
 
+	this->vertexArray.clear();
+
+	// We just merge here at the first touching edges we find, but there
+	// could be multiple such edge-pairs, and so we're not necessarily
+	// finding the best pair at which to merge the two polygons.
 	for (int i = 0; i < (signed)polygonA.vertexArray.size(); i++)
 	{
 		LineSegment edgeSegA;
@@ -737,20 +743,45 @@ bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& p
 			double angle = unitEdgeADirection.AngleBetween(unitEdgeBDirection);
 			if (::fabs(angle - M_PI) < epsilon)
 			{
-				if (edgeSegA.ContainsInteriorPoint(edgeSegB.point[0]) ||
-					edgeSegA.ContainsInteriorPoint(edgeSegB.point[1]) ||
-					edgeSegB.ContainsInteriorPoint(edgeSegA.point[0]) ||
-					edgeSegB.ContainsInteriorPoint(edgeSegA.point[1]))
-				{
-					this->vertexArray.clear();
+				bool edgeSegA0InteriorToB = edgeSegB.ContainsInteriorPoint(edgeSegA.point[0]);
+				bool edgeSegA1InteriorToB = edgeSegB.ContainsInteriorPoint(edgeSegA.point[1]);
+				bool edgeSegB0InteriorToA = edgeSegA.ContainsInteriorPoint(edgeSegB.point[0]);
+				bool edgeSegB1InteriorToA = edgeSegA.ContainsInteriorPoint(edgeSegB.point[1]);
+				
+				bool edgeSegA0IsEdgeSegB1 = edgeSegA.point[0].IsPoint(edgeSegB.point[1], epsilon);
+				bool edgeSegB0IsEdgeSegA1 = edgeSegB.point[0].IsPoint(edgeSegA.point[1], epsilon);
 
+				if ((edgeSegA0InteriorToB && edgeSegB0InteriorToA) ||
+					(edgeSegA1InteriorToB && edgeSegB1InteriorToA) ||
+					(edgeSegA0InteriorToB && edgeSegA1InteriorToB) ||
+					(edgeSegB0InteriorToA && edgeSegB1InteriorToA))
+				{
 					this->AddVerticesFrom(polygonA, i + 1, i);
 					this->AddVerticesFrom(polygonB, j + 1, j);
 
 					return true;
 				}
+				else if (edgeSegA0IsEdgeSegB1 && (edgeSegA1InteriorToB || edgeSegB0InteriorToA))
+				{
+					this->AddVerticesFrom(polygonA, i + 1, i, true, false);
+					this->AddVerticesFrom(polygonB, j + 1, j);
 
-				// TODO: There are more cases!
+					return true;
+				}
+				else if (edgeSegB0IsEdgeSegA1 && (edgeSegA0InteriorToB || edgeSegB1InteriorToA))
+				{
+					this->AddVerticesFrom(polygonA, i + 1, i, false, true);
+					this->AddVerticesFrom(polygonB, j + 1, j);
+
+					return true;
+				}
+				else if (edgeSegA0IsEdgeSegB1 && edgeSegB0IsEdgeSegA1)
+				{
+					this->AddVerticesFrom(polygonA, i + i, i, false, true);
+					this->AddVerticesFrom(polygonB, j + 1, j, false, true);
+
+					return true;
+				}
 			}
 		}
 	}

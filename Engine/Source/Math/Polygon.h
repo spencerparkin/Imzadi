@@ -254,10 +254,10 @@ namespace Imzadi
 		/**
 		 * Add vertices to this polygon from another polygon.  The given
 		 * polygon should not point to this polygon.  All vertices from
-		 * vertex i to vertex j of the given polygon, inclusive, are added
-		 * to this polygon.
+		 * vertex i to vertex j of the given polygon are added to this
+		 * polygon.
 		 */
-		void AddVerticesFrom(const Polygon& polygon, int i, int j);
+		void AddVerticesFrom(const Polygon& polygon, int i, int j, bool includeI = true, bool includeJ = true);
 
 	private:
 		/**
