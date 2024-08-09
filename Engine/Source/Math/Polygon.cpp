@@ -616,9 +616,6 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	return true;
 }
 
-//#include <fstream>
-//#include <filesystem>
-
 /*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex)
 {
 	std::list<Polygon> polygonQueue;
@@ -630,12 +627,12 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	while (polygonQueue.size() > 0)
 	{
 		std::list<Polygon>::iterator iter = polygonQueue.begin();
-		Polygon polygon = *iter;
+		std::list<Polygon> coplanarPolygonList;
+		coplanarPolygonList.push_back(*iter);
 		polygonQueue.erase(iter);
 
-		Plane plane = polygon.CalcPlane();
+		Plane plane = (*coplanarPolygonList.begin()).CalcPlane();
 
-		std::list<Polygon> coplanarPolygonList;
 		iter = polygonQueue.begin();
 		while (iter != polygonQueue.end())
 		{
@@ -655,22 +652,11 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 		PlanarGraph graph;
 		graph.SetPlane(plane);
 
-		//std::vector<Polygon> debugArray;
-
 		for (Polygon& polygon : coplanarPolygonList)
 		{
 			bool addedPolygon = graph.AddPolygon(polygon);
 			IMZADI_ASSERT(addedPolygon);
-
-			//debugArray.push_back(polygon);
 		}
-
-		/*std::string debugFile = "E:\\ENG_DEV\\Imzadi\\debug.bin";
-		std::filesystem::remove(debugFile);
-		std::ofstream stream;
-		stream.open(debugFile, std::ios::binary);
-		Polygon::DumpArray(debugArray, stream);
-		stream.close();*/
 
 		std::vector<Polygon> compressedPolygonArray;
 		graph.ExtractAllPolygons(compressedPolygonArray);
