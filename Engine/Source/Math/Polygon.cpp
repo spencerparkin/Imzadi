@@ -946,16 +946,16 @@ bool Polygon::Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool ass
 		edgeVectorA = (this->vertexArray[this->Mod(i + 1)] - this->vertexArray[i]).Normalized();
 		edgeVectorB = (this->vertexArray[this->Mod(i - 1)] - this->vertexArray[i]).Normalized();
 		angleA = edgeVectorA.AngleBetween(cuttingVector, plane.unitNormal);
-		angleB = edgeVectorB.AngleBetween(edgeVectorA, plane.unitNormal);
-		if (angleA == 0.0 || angleA > angleB)
+		angleB = edgeVectorA.AngleBetween(edgeVectorB, plane.unitNormal);
+		if (!(0.0 < angleA && angleA < angleB))
 			return false;	// No.  It won't work.
 
 		// Does the cutting edge at j to i travel into the interior of the polygon?
 		edgeVectorA = (this->vertexArray[this->Mod(j + 1)] - this->vertexArray[j]).Normalized();
 		edgeVectorB = (this->vertexArray[this->Mod(j - 1)] - this->vertexArray[j]).Normalized();
 		angleA = edgeVectorA.AngleBetween(-cuttingVector, plane.unitNormal);
-		angleB = edgeVectorB.AngleBetween(edgeVectorA, plane.unitNormal);
-		if (angleA == 0.0 || angleA > angleB)
+		angleB = edgeVectorA.AngleBetween(edgeVectorB, plane.unitNormal);
+		if (!(0.0 < angleA && angleA < angleB))
 			return false;	// No.  It won't work.
 
 		constexpr double epsilon = 1e-5;
