@@ -336,6 +336,7 @@ bool PlanarGraph::FindOuterCycle(const Node* node, std::vector<const Node*>& cyc
 	std::unordered_set<PlanarGraphEdge> edgeSet;
 
 	const Node* inComingNode = nullptr;
+	const Node* terminalNode = nullptr;
 
 	while (node)
 	{
@@ -349,6 +350,7 @@ bool PlanarGraph::FindOuterCycle(const Node* node, std::vector<const Node*>& cyc
 		PlanarGraphEdge edge{ node->i, outGoingNode->i };
 		if (edgeSet.find(edge) != edgeSet.end())
 		{
+			terminalNode = pathArray.back();
 			pathArray.pop_back();
 			break;
 		}
@@ -359,13 +361,16 @@ bool PlanarGraph::FindOuterCycle(const Node* node, std::vector<const Node*>& cyc
 		node = outGoingNode;
 	}
 
+	bool foundTerminal = false;
 	cycleArray.clear();
 	for (int j = 0; j < (signed)pathArray.size(); j++)
-		cycleArray.push_back(pathArray[j]);
+	{
+		if (pathArray[j] == terminalNode)
+			foundTerminal = true;
 
-	// TODO: I don't think we're done here.  In general, we've made
-	//       a balloon with a string length of zero or more.  If the
-	//       string length is greater than zero, we need to cut it off.
+		if (foundTerminal)
+			cycleArray.push_back(pathArray[j]);
+	}
 
 	return true;
 }
