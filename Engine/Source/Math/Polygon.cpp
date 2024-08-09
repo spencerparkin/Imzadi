@@ -749,6 +749,8 @@ bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& p
 
 					return true;
 				}
+
+				// TODO: There are more cases!
 			}
 		}
 	}
