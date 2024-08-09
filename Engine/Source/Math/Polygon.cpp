@@ -3,7 +3,6 @@
 #include "Interval.h"
 #include "LineSegment.h"
 #include "Matrix3x3.h"
-#include "PlanarGraph.h"
 #include <algorithm>
 
 using namespace Imzadi;
@@ -627,11 +626,11 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	while (polygonQueue.size() > 0)
 	{
 		std::list<Polygon>::iterator iter = polygonQueue.begin();
-		std::list<Polygon> coplanarPolygonList;
-		coplanarPolygonList.push_back(*iter);
+		std::vector<Polygon> coplanarPolygonArray;
+		coplanarPolygonArray.push_back(*iter);
 		polygonQueue.erase(iter);
 
-		Plane plane = (*coplanarPolygonList.begin()).CalcPlane();
+		Plane plane = coplanarPolygonArray[0].CalcPlane();
 
 		iter = polygonQueue.begin();
 		while (iter != polygonQueue.end())
@@ -642,36 +641,119 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 			Imzadi::Plane otherPlane = (*iter).CalcPlane();
 			if (otherPlane.IsPlane(plane))
 			{
-				coplanarPolygonList.push_back(*iter);
+				coplanarPolygonArray.push_back(*iter);
 				polygonQueue.erase(iter);
 			}
 
 			iter = nextIter;
 		}
 
-		PlanarGraph graph;
-		graph.SetPlane(plane);
-
-		for (Polygon& polygon : coplanarPolygonList)
-		{
-			bool addedPolygon = graph.AddPolygon(polygon);
-			IMZADI_ASSERT(addedPolygon);
-		}
-
-		std::vector<Polygon> compressedPolygonArray;
-		graph.ExtractAllPolygons(compressedPolygonArray);
+		MergeCoplanarPolygons(coplanarPolygonArray);
 
 		if (!mustBeConvex)
 		{
-			for (Polygon& polygon : compressedPolygonArray)
+			for (Polygon& polygon : coplanarPolygonArray)
 				polygonArray.push_back(polygon);
 		}
 		else
 		{
-			for (Polygon& polygon : compressedPolygonArray)
+			for (Polygon& polygon : coplanarPolygonArray)
 				polygon.TessellateUntilConvex(polygonArray);
 		}
 	}
+}
+
+/*static*/ void Polygon::MergeCoplanarPolygons(std::vector<Polygon>& coplanarPolygonArray)
+{
+	std::list<Polygon> polygonQueue;
+	for (Polygon& polygon : coplanarPolygonArray)
+		polygonQueue.push_back(polygon);
+
+	coplanarPolygonArray.clear();
+
+	while (polygonQueue.size() > 0)
+	{
+		std::list<Polygon>::iterator iter = polygonQueue.begin();
+		Polygon polygonA = *iter;
+		polygonQueue.erase(iter);
+
+		bool merged = false;
+		for (iter = polygonQueue.begin(); iter != polygonQueue.end(); iter++)
+		{
+			Polygon polygonB = *iter;
+
+			Polygon mergedPolygon;
+			if (mergedPolygon.MergeCoplanarPolygonPair(polygonA, polygonB))
+			{
+				polygonQueue.erase(iter);
+				polygonQueue.push_back(mergedPolygon);
+				merged = true;
+				break;
+			}
+		}
+
+		if (!merged)
+			coplanarPolygonArray.push_back(polygonA);
+	}
+}
+
+void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j)
+{
+	i = polygon.Mod(i);
+	j = polygon.Mod(j);
+
+	int k = i;
+	while (true)
+	{
+		this->vertexArray.push_back(polygon.vertexArray[k]);
+
+		if (k == j)
+			break;
+
+		k = polygon.Mod(k + 1);
+	}
+}
+
+bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& polygonB)
+{
+	constexpr double epsilon = 1e-7;
+
+	for (int i = 0; i < (signed)polygonA.vertexArray.size(); i++)
+	{
+		LineSegment edgeSegA;
+		edgeSegA.point[0] = polygonA.vertexArray[i];
+		edgeSegA.point[1] = polygonA.vertexArray[polygonA.Mod(i + 1)];
+
+		Vector3 unitEdgeADirection = edgeSegA.GetDelta().Normalized();
+
+		for (int j = 0; j < (signed)polygonB.vertexArray.size(); j++)
+		{
+			LineSegment edgeSegB;
+			edgeSegB.point[0] = polygonB.vertexArray[j];
+			edgeSegB.point[1] = polygonB.vertexArray[polygonB.Mod(j + 1)];
+
+			Vector3 unitEdgeBDirection = edgeSegB.GetDelta().Normalized();
+
+			double angle = unitEdgeADirection.AngleBetween(unitEdgeBDirection);
+			if (::fabs(angle - M_PI) < epsilon)
+			{
+				if (edgeSegA.ContainsInteriorPoint(edgeSegB.point[0]) ||
+					edgeSegA.ContainsInteriorPoint(edgeSegB.point[1]) ||
+					edgeSegB.ContainsInteriorPoint(edgeSegA.point[0]) ||
+					edgeSegB.ContainsInteriorPoint(edgeSegA.point[1]))
+				{
+					this->vertexArray.clear();
+
+					this->AddVerticesFrom(polygonA, i + 1, i);
+					this->AddVerticesFrom(polygonB, j + 1, j);
+
+					return true;
+				}
+			}
+		}
+	}
+
+	return false;
 }
 
 bool Polygon::TessellateUntilConvex(std::vector<Polygon>& polygonArray) const
@@ -875,23 +957,8 @@ bool Polygon::Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool ass
 	polygonA.vertexArray.clear();
 	polygonB.vertexArray.clear();
 
-	int k = i;
-	while (true)
-	{
-		polygonA.vertexArray.push_back(this->vertexArray[k]);
-		if (k == j)
-			break;
-		k = this->Mod(k + 1);
-	}
-
-	k = j;
-	while (true)
-	{
-		polygonB.vertexArray.push_back(this->vertexArray[k]);
-		if (k == i)
-			break;
-		k = this->Mod(k + 1);
-	}
+	polygonA.AddVerticesFrom(*this, i, j);
+	polygonB.AddVerticesFrom(*this, j, i);
 
 	return true;
 }

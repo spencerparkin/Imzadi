@@ -108,6 +108,31 @@ bool LineSegment::Alpha(const Vector3& point, double& alpha, double tolerance /*
 	return true;
 }
 
+bool LineSegment::ContainsPoint(const Vector3& point, bool* isInterior /*= nullptr*/, double tolerance /*= 1e-6*/) const
+{
+	if (isInterior)
+		*isInterior = false;
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (this->point[i].IsPoint(point, tolerance))
+		{
+			if (isInterior)
+				*isInterior = false;
+
+			return true;
+		}
+	}
+
+	return this->ShortestDistanceTo(point) < tolerance;
+}
+
+bool LineSegment::ContainsInteriorPoint(const Vector3& point, double tolerance /*= 1e-6*/) const
+{
+	bool isInterior = false;
+	return this->ContainsPoint(point, &isInterior, tolerance) && isInterior;
+}
+
 bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB)
 {
 	Vector3 a = lineSegmentA.point[0];

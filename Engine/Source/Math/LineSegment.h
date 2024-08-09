@@ -79,6 +79,20 @@ namespace Imzadi
 		bool Alpha(const Vector3& point, double& alpha, double tolerance = 1e-6) const;
 
 		/**
+		 * Tell the caller if the given point is on this line segment.
+		 * 
+		 * @param[in] point This is the point to test against this line segment.
+		 * @param[out] isInterior If given, this is populated with a boolean value indicating whether the given point is interior to the line-segment, or is one of the terminal points.
+		 * @param[in] tolerance We're looking to see if the given point is within at most this distance from the line-segment.
+		 */
+		bool ContainsPoint(const Vector3& point, bool* isInterior = nullptr, double tolerance = 1e-6) const;
+
+		/**
+		 * Tell the caller if the given point is interior to this line segment.
+		 */
+		bool ContainsInteriorPoint(const Vector3& point, double tolerance = 1e-6) const;
+
+		/**
 		 * Set this line segment as the shortest line segment connecting the two given line segments.
 		 * Note that we can fail here in cases where there is no single shortest connector.
 		 * 

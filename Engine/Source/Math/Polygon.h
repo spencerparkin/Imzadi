@@ -41,7 +41,8 @@ namespace Imzadi
 		/**
 		 * Here we make sure that the polygon vertices are all valid and coplanar.
 		 * If we were being more therough, we would also check for more things, but
-		 * this is as far as I'm going to go for now.
+		 * this is as far as I'm going to go for now.  (E.g., we could check to
+		 * make sure that the polygon doesn't self-intersect itself, but we don't.)
 		 */
 		bool IsValid(double tolerance = 1e-4) const;
 
@@ -157,8 +158,9 @@ namespace Imzadi
 		/**
 		 * Merge co-planar and overlapping polygons into single polygons
 		 * as far as possible.  Polygons that are purely nested within
-		 * others are not caught by this, but this is the only case I'm
-		 * not yet handling, as far as I'm aware.
+		 * others are not caught by this, as are other cases too numerable
+		 * to state here.  In general, if polygons are "well behaved" and
+		 * just "thouching" one another, we can get a desirable result here.
 		 * 
 		 * @param[in,out] polygonArray These are the polygons to compress.  This array is modified, hopefully reduced in size.
 		 * @param[in] mustBeConvex If true, polygons returned will all be convex.  I false, this is not necessarily the case.
@@ -183,6 +185,18 @@ namespace Imzadi
 		 * a concave polygon, see then @ref TessellateUntilConvex method.
 		 */
 		bool TessellateUntilTriangular(std::vector<Polygon>& polygonArray) const;
+
+		/**
+		 * Here we try to merge the two given polygons into a single polygon.
+		 * Neither polygon is assumed to be convex.  Both are assumed to reside
+		 * in the same plane.  Note that this is a very non-trivial problem, and
+		 * not all conceivable cases are accounted for here.  Rather, what we're
+		 * looking for is an edge from A and an edge from B that touch in a non-
+		 * trivial way.  No check is made to ensure that the polygons don't
+		 * overlap with non-zero area, in which case, we would produce an invalid
+		 * polygon here.
+		 */
+		bool MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& polygonB);
 
 		/**
 		 * Return the given integer in the range [0,N-1], where N is the number
@@ -237,6 +251,14 @@ namespace Imzadi
 		 */
 		void Restore(std::istream& stream);
 
+		/**
+		 * Add vertices to this polygon from another polygon.  The given
+		 * polygon should not point to this polygon.  All vertices from
+		 * vertex i to vertex j of the given polygon, inclusive, are added
+		 * to this polygon.
+		 */
+		void AddVerticesFrom(const Polygon& polygon, int i, int j);
+
 	private:
 		/**
 		 * This function is used internally and exclusively by the SetAsConvexHull function.
@@ -252,6 +274,11 @@ namespace Imzadi
 		 * making an acute angle with the given normal.
 		 */
 		void FixWindingOfTriangle(const Vector3& desiredNormal);
+
+		/**
+		 * This function is used internally by the @ref Compress static method.
+		 */
+		static void MergeCoplanarPolygons(std::vector<Polygon>& coplanarPolygonArray);
 
 	public:
 		std::vector<Vector3> vertexArray;

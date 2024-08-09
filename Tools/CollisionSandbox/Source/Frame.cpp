@@ -12,7 +12,6 @@
 #include "Collision/Shapes/Polygon.h"
 #include "Collision/Shapes/Sphere.h"
 #include "Collision/Command.h"
-#include "Math/PlanarGraph.h"
 #include <fstream>
 
 using namespace Imzadi;
@@ -169,24 +168,8 @@ void Frame::OnLoadPolygons(wxCommandEvent& event)
 
 void Frame::OnMergePolygons(wxCommandEvent& event)
 {
-	std::vector<Imzadi::Polygon>& polygonArray = wxGetApp().GetPolygonArray();
-
-	Imzadi::PlanarGraph graph;
-	for (const auto& polygon : polygonArray)
-	{
-		if (!graph.AddPolygon(polygon))
-		{
-			wxMessageBox("Failed to add polygon to graph.", "Error!", wxICON_ERROR | wxOK, this);
-			return;
-		}
-	}
-
-	std::vector<Imzadi::Polygon> mergedPolygonsArray;
-	graph.ExtractAllPolygons(mergedPolygonsArray);
-
-	polygonArray.clear();
-	for (const auto& polygon : mergedPolygonsArray)
-		polygon.TessellateUntilConvex(polygonArray);	// TODO: I have a test-case where this fails.  Fix it.
+	// TODO: Test this.
+	Imzadi::Polygon::Compress(wxGetApp().GetPolygonArray(), false);
 
 	this->Refresh();
 }
