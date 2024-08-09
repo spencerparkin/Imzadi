@@ -111,7 +111,7 @@ bool LineSegment::Alpha(const Vector3& point, double& alpha, double tolerance /*
 bool LineSegment::ContainsPoint(const Vector3& point, bool* isInterior /*= nullptr*/, double tolerance /*= 1e-6*/) const
 {
 	if (isInterior)
-		*isInterior = false;
+		*isInterior = true;
 
 	for (int i = 0; i < 2; i++)
 	{

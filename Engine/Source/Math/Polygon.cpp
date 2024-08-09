@@ -4,6 +4,7 @@
 #include "LineSegment.h"
 #include "Matrix3x3.h"
 #include <algorithm>
+#include <unordered_set>
 
 using namespace Imzadi;
 
@@ -685,8 +686,10 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 			Polygon mergedPolygon;
 			if (mergedPolygon.MergeCoplanarPolygonPair(polygonA, polygonB))
 			{
+				Polygon reducedPolygon;
+				reducedPolygon.ReduceVerticesOf(mergedPolygon);
 				polygonQueue.erase(iter);
-				polygonQueue.push_back(mergedPolygon);
+				polygonQueue.push_back(reducedPolygon);
 				merged = true;
 				break;
 			}
@@ -1013,11 +1016,23 @@ int Polygon::Mod(int i) const
 
 void Polygon::ReduceVerticesOf(const Polygon& polygon, double tolerance /*= 1e-7*/)
 {
-	Polygon intermediatePolygon;
-	for (const Vector3& vertex : polygon.vertexArray)
-		if (!intermediatePolygon.HasVertex(vertex, tolerance))
-			intermediatePolygon.vertexArray.push_back(vertex);
+	std::unordered_set<int> redundantVerticesSet;
+	for (int i = 0; i < (signed)polygon.vertexArray.size(); i++)
+	{
+		int j = polygon.Mod(i + 1);
+
+		const Vector3& vertexA = polygon.vertexArray[i];
+		const Vector3& vertexB = polygon.vertexArray[j];
+
+		if (vertexA.IsPoint(vertexB, tolerance))
+			redundantVerticesSet.insert(j);
+	}
 	
+	Polygon intermediatePolygon;
+	for (int i = 0; i < (signed)polygon.vertexArray.size(); i++)
+		if (redundantVerticesSet.find(i) == redundantVerticesSet.end())
+			intermediatePolygon.vertexArray.push_back(polygon.vertexArray[i]);
+
 	this->vertexArray.clear();
 
 	for (int i = 0; i < (signed)intermediatePolygon.vertexArray.size(); i++)
