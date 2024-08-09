@@ -14,10 +14,12 @@ namespace Imzadi
 	 * (Modular arithmetic is used on sequence locations to determine these.)
 	 * All points must be co-planar, and no edge should touch another edge
 	 * in a non-trivial way.  There also shouldn't be any redundant vertices.
-	 * Further, a polygon should never repeat a vertex in its sequence, even if
-	 * doing so does not constitute a redundancy.  The interior area of the
-	 * polygon should be non-zero.  If these conditions are not met, we leave
-	 * the results of any method here as undefined.
+	 * (To make matters even more complicated, sometimes a polygon should not
+	 * repeat a vertex in its sequence, even if doing so does not constitute a
+	 * redundancy; but then again, sometimes it's both okay and desired.)  The
+	 * interior area of the polygon should be non-zero.  If these conditions (or
+	 * some subset of them depending on the case) are not met, then we leave the
+	 * results of a method undefined.
 	 * 
 	 * These polygons can be convex or concave in all cases except where specified.
 	 * Some methods work with both convex and concave polygons.  If a method assumes

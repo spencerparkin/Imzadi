@@ -186,7 +186,7 @@ void Frame::OnMergePolygons(wxCommandEvent& event)
 
 	polygonArray.clear();
 	for (const auto& polygon : mergedPolygonsArray)
-		polygon.TessellateUntilConvex(polygonArray);
+		polygon.TessellateUntilConvex(polygonArray);	// TODO: I have a test-case where this fails.  Fix it.
 
 	this->Refresh();
 }

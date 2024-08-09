@@ -1,5 +1,6 @@
 #include "PlanarGraph.h"
 #include "LineSegment.h"
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -35,10 +36,6 @@ void PlanarGraph::Clear()
 
 bool PlanarGraph::AddPolygon(const Polygon& polygon, double epsilon /*= 1e-6*/)
 {
-	for (const Vector3& vertex : polygon.vertexArray)
-		if (!this->AddVertex(vertex))
-			return false;
-
 	std::vector<LineSegment> edgeArray;
 	polygon.GetEdges(edgeArray);
 	for (const LineSegment& lineSeg : edgeArray)
@@ -125,11 +122,7 @@ bool PlanarGraph::AddEdge(const Vector3& vertexA, const Vector3& vertexB, double
 			}
 
 			if (existingEdge.i == newEdge.j && existingEdge.j == newEdge.i)
-			{
-				this->edgeSet.erase(existingEdge);
-				addNewEdge = false;
 				break;
-			}
 
 			if (existingEdge.i == newEdge.i || existingEdge.i == newEdge.j ||
 				existingEdge.j == newEdge.i || existingEdge.j == newEdge.j)
@@ -207,6 +200,54 @@ int PlanarGraph::FindVertex(const Vector3& vertex, double epsilon /*= 1e-6*/) co
 	return -1;
 }
 
+int PlanarGraph::CountConnectedComponents() const
+{
+	this->RegenerateNodeAdjacencies();
+
+	std::unordered_set<const Node*> nodeSet;
+	int count = 0;
+	for (const Node* node : this->nodeArray)
+	{
+		if (nodeSet.find(node) != nodeSet.end())
+			continue;
+
+		count++;
+		std::vector<const Node*> nodeArray;
+		this->FindComponent(node, nodeArray);
+		for (const Node* node : nodeArray)
+			nodeSet.insert(node);
+	}
+
+	return count;
+}
+
+void PlanarGraph::FindComponent(const Node* node, std::vector<const Node*>& nodeArray) const
+{
+	nodeArray.clear();
+
+	std::list<const Node*> nodeQueue;
+	std::unordered_set<const Node*> nodeSet;
+	nodeQueue.push_back(node);
+	nodeSet.insert(node);
+
+	while (nodeQueue.size() > 0)
+	{
+		std::list<const Node*>::iterator iter = nodeQueue.begin();
+		const Node* node = *iter;
+		nodeQueue.erase(iter);
+		nodeArray.push_back(node);
+
+		for (const Node* adjacentNode : node->adjacentNodeArray)
+		{
+			if (nodeSet.find(adjacentNode) == nodeSet.end())
+			{
+				nodeQueue.push_back(adjacentNode);
+				nodeSet.insert(adjacentNode);
+			}
+		}
+	}
+}
+
 LineSegment PlanarGraph::MakeLineSegment(const PlanarGraphEdge& edge) const
 {
 	LineSegment lineSeg;
@@ -215,41 +256,66 @@ LineSegment PlanarGraph::MakeLineSegment(const PlanarGraphEdge& edge) const
 	return lineSeg;
 }
 
-void PlanarGraph::ExtractAllPolygons(std::vector<Polygon>& polygonArray) const
+bool PlanarGraph::ExtractAllPolygons(std::vector<Polygon>& polygonArray)
 {
+	int initialCount = this->CountConnectedComponents();
+	
+	std::unordered_set<PlanarGraphEdge> bidirectionalEdgeSet;
+
+	for (const PlanarGraphEdge& edge : this->edgeSet)
+	{
+		PlanarGraphEdge otherEdge = edge;
+		otherEdge.Swap();
+
+		if (this->edgeSet.find(otherEdge) != this->edgeSet.end())
+		{
+			if (otherEdge.i > otherEdge.j)
+				otherEdge.Swap();
+
+			bidirectionalEdgeSet.insert(otherEdge);
+		}
+	}
+
+	// Cancel as many edges as we can without increasing the number of connected components.
+	for (const PlanarGraphEdge& bidirectionalEdge : bidirectionalEdgeSet)
+	{
+		PlanarGraphEdge edgeA = bidirectionalEdge;
+		PlanarGraphEdge edgeB = bidirectionalEdge;
+
+		edgeB.Swap();
+
+		this->edgeSet.erase(edgeA);
+		this->edgeSet.erase(edgeB);
+
+		int count = this->CountConnectedComponents();
+		if (count > initialCount)
+		{
+			this->edgeSet.insert(edgeA);
+			this->edgeSet.insert(edgeB);
+		}
+	}
+	
 	this->RegenerateNodeAdjacencies();
 
 	std::unordered_set<const Node*> pendingNodesSet;
 	for (const Node* node : this->nodeArray)
 		pendingNodesSet.insert(node);
 
-	std::unordered_set<const Node*> usedNodeSet;
-
 	// I can see this failing to give me exactly what I want in
 	// the case of nested polygons, but this may be good enough.
 	// Nested polygons shouldn't show up in my particular use-case.
+	// TODO: Oops, are we going to find the same cycle more than once?  Just destroy the graph as we go?
 	while (pendingNodesSet.size() > 0)
 	{
 		const Node* node = *pendingNodesSet.begin();
 		pendingNodesSet.erase(node);
 
-		bool addCycle = true;
 		std::vector<const Node*> cycleArray;
 		if (this->FindOuterCycle(node, cycleArray))
 		{
 			for (const Node* cycleNode : cycleArray)
-			{
 				pendingNodesSet.erase(cycleNode);
 
-				if (usedNodeSet.find(cycleNode) != usedNodeSet.end())
-					addCycle = false;
-				else
-					usedNodeSet.insert(cycleNode);
-			}
-		}
-
-		if (addCycle)
-		{
 			Polygon polygon;
 			for (const Node* node : cycleArray)
 				polygon.vertexArray.push_back(node->vertex);
@@ -260,47 +326,55 @@ void PlanarGraph::ExtractAllPolygons(std::vector<Polygon>& polygonArray) const
 			polygonArray.push_back(reducedPolygon);
 		}
 	}
+
+	return true;
 }
 
 bool PlanarGraph::FindOuterCycle(const Node* node, std::vector<const Node*>& cycleArray) const
 {
-	std::unordered_set<const Node*> visitedNodesSet;
 	std::vector<const Node*> pathArray;
+	std::unordered_set<PlanarGraphEdge> edgeSet;
 
 	const Node* inComingNode = nullptr;
-	int i = -1;
 
 	while (node)
 	{
-		if (visitedNodesSet.find(node) != visitedNodesSet.end())
-		{
-			for (i = 0; i < (signed)pathArray.size(); i++)
-				if (pathArray[i] == node)
-					break;
+		pathArray.push_back(node);
 
-			IMZADI_ASSERT(i != (signed)pathArray.size());
+		if (pathArray.size() > 2 * this->nodeArray.size())
+			return false;
+
+		const Node* outGoingNode = node->FindOutGoingNode(inComingNode, this->plane.unitNormal);
+
+		PlanarGraphEdge edge{ node->i, outGoingNode->i };
+		if (edgeSet.find(edge) != edgeSet.end())
+		{
+			pathArray.pop_back();
 			break;
 		}
 
-		visitedNodesSet.insert(node);
-		pathArray.push_back(node);
+		edgeSet.insert(edge);
 
-		const Node* outGoingNode = node->FindOutGoingNode(inComingNode, this->plane.unitNormal);
 		inComingNode = node;
 		node = outGoingNode;
 	}
 
-	IMZADI_ASSERT(i != -1);
-
 	cycleArray.clear();
-	for (int j = i; j < (signed)pathArray.size(); j++)
+	for (int j = 0; j < (signed)pathArray.size(); j++)
 		cycleArray.push_back(pathArray[j]);
+
+	// TODO: I don't think we're done here.  In general, we've made
+	//       a balloon with a string length of zero or more.  If the
+	//       string length is greater than zero, we need to cut it off.
 
 	return true;
 }
 
 void PlanarGraph::RegenerateNodeAdjacencies() const
 {
+	for (int i = 0; i < (signed)this->nodeArray.size(); i++)
+		this->nodeArray[i]->i = i;
+
 	for (const Node* node : this->nodeArray)
 		node->adjacentNodeArray.clear();
 
@@ -317,10 +391,20 @@ void PlanarGraph::RegenerateNodeAdjacencies() const
 
 PlanarGraph::Node::Node()
 {
+	this->i = -1;
 }
 
 /*virtual*/ PlanarGraph::Node::~Node()
 {
+}
+
+bool PlanarGraph::Node::HasAdjacency(const Node* node) const
+{
+	for (const Node* adjacentNode : this->adjacentNodeArray)
+		if (adjacentNode == node)
+			return true;
+
+	return false;
 }
 
 const PlanarGraph::Node* PlanarGraph::Node::FindOutGoingNode(const Node* inComingNode, const Vector3& planeNormal) const
@@ -333,17 +417,40 @@ const PlanarGraph::Node* PlanarGraph::Node::FindOutGoingNode(const Node* inComin
 
 	Vector3 vectorA = (inComingNode->vertex - this->vertex).Normalized();
 
+	struct Choice
+	{
+		const Node* node;
+		double angle;
+		bool bidirectional;
+	};
+
+	std::vector<Choice> choiceArray;
+
 	const PlanarGraph::Node* outGoingNode = nullptr;
 	double maxAngle = 0.0;
 	for (const Node* adjacentNode : this->adjacentNodeArray)
 	{
+		if (adjacentNode == inComingNode)
+			continue;
+
 		Vector3 vectorB = (adjacentNode->vertex - this->vertex).Normalized();
-		double angle = vectorB.AngleBetween(vectorA, planeNormal);
-		if (angle > maxAngle)
-		{
-			maxAngle = angle;
-			outGoingNode = adjacentNode;
-		}
+
+		Choice choice;
+		choice.node = adjacentNode;
+		choice.angle = vectorB.AngleBetween(vectorA, planeNormal);
+		choice.bidirectional = adjacentNode->HasAdjacency(this);
+		choiceArray.push_back(choice);
+	}
+
+	std::sort(choiceArray.begin(), choiceArray.end(), [](const Choice& choiceA, const Choice& choiceB) -> bool {
+		return choiceA.angle < choiceB.angle;
+	});
+
+	for (const Choice& choice : choiceArray)
+	{
+		outGoingNode = choice.node;
+		if (choice.bidirectional)
+			break;
 	}
 
 	return outGoingNode;

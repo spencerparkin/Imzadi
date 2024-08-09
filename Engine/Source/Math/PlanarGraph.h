@@ -11,6 +11,13 @@ namespace Imzadi
 	struct PlanarGraphEdge
 	{
 		int i, j;
+
+		void Swap()
+		{
+			int k = this->i;
+			this->i = this->j;
+			this->j = k;
+		}
 	};
 }
 
@@ -36,8 +43,6 @@ namespace Imzadi
 	 * only at the end-points.  Further, vertices are points in 3D space, but are all
 	 * coplanar, and edges are always line-segments (not curved or anything like that.)
 	 * Lastly, these are directed graphs in that each edge is an ordered pair of vertices.
-	 * We add the special property, however, that at most one edge can exist between any
-	 * two pairs of vertices.
 	 * 
 	 * The idea here is that you can put polygons (convex or concave) into the graph, and
 	 * then pull polygons (convex or concave) out of the graph as a means of merging a
@@ -45,14 +50,6 @@ namespace Imzadi
 	 * for tessellation, if convex polygons are desired.)  We require all polygons to be
 	 * wound CCW when viewed from the front-side of the plane (the side to which the normal
 	 * to the plane points.)
-	 * 
-	 * Adding a polygon to the graph is just a matter of adding its edges.  Adding an edge to
-	 * the graph may create or destroy edges in the graph.  It may also create vertices, or
-	 * re-use existing vertices.
-	 * 
-	 * Reading a polygon out of the graph is a matter of finding a cycle in the graph along
-	 * directed edges with the property that at each vertex of the cycle, it is not possible
-	 * to make an alternative right-turn.
 	 */
 	class IMZADI_API PlanarGraph
 	{
@@ -69,7 +66,7 @@ namespace Imzadi
 		bool AddEdge(const Vector3& vertexA, const Vector3& vertexB, double epsilon = 1e-6);
 		bool AddVertex(const Vector3& vertex, double epsilon = 1e-6);
 
-		void ExtractAllPolygons(std::vector<Polygon>& polygonArray) const;
+		bool ExtractAllPolygons(std::vector<Polygon>& polygonArray);
 
 	private:
 
@@ -80,7 +77,9 @@ namespace Imzadi
 			virtual ~Node();
 
 			const Node* FindOutGoingNode(const Node* inComingNode, const Vector3& planeNormal) const;
+			bool HasAdjacency(const Node* node) const;
 
+			int i;
 			Vector3 vertex;
 			mutable std::vector<const Node*> adjacentNodeArray;
 		};
@@ -89,6 +88,8 @@ namespace Imzadi
 		int FindVertex(const Vector3& vertex, double epsilon = 1e-6) const;
 		LineSegment MakeLineSegment(const PlanarGraphEdge& edge) const;
 		bool FindOuterCycle(const Node* node, std::vector<const Node*>& cycleArray) const;
+		int CountConnectedComponents() const;
+		void FindComponent(const Node* node, std::vector<const Node*>& nodeArray) const;
 
 		std::vector<Node*> nodeArray;
 		std::unordered_set<PlanarGraphEdge> edgeSet;
