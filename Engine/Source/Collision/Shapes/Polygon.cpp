@@ -246,7 +246,7 @@ PolygonShapeCache::PolygonShapeCache()
 	{
 		this->center = polygon->localPolygon.CalcCenter();
 		this->worldCenter = polygon->objectToWorld.TransformPoint(this->center);
-		this->plane = polygon->localPolygon.CalcPlane();
+		this->plane = polygon->localPolygon.CalcPlane(true);
 		this->worldPlane = polygon->objectToWorld.TransformPlane(this->plane);
 	}
 
