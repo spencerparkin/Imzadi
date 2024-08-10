@@ -232,4 +232,19 @@ namespace Imzadi
 		 */
 		static ShapeInBoundsQuery* Create();
 	};
+
+	/**
+	 * This would typically be the last query made in a frame to capture
+	 * that frame's profiling data.
+	 */
+	class IMZADI_API ProfileStatsQuery : public Query
+	{
+	public:
+		ProfileStatsQuery();
+		virtual ~ProfileStatsQuery();
+
+		virtual Result* ExecuteQuery(Thread* thread) override;
+
+		static ProfileStatsQuery* Create();
+	};
 }

@@ -30,7 +30,8 @@ namespace Imzadi
 			RIGHT_JUSTIFY				= 0x00000080,		///< Right-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			CENTER_JUSTIFY				= 0x00000100,		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			OPAQUE_BACKGROUND			= 0x00000200,		///< If given, a background color used used.  If not given, text renders with transparent background.
-			MULTI_LINE					= 0x00000400		///< If given, the text will be broken down into separate lines.  See the @ref SetMaxCharsPerLine method.
+			MULTI_LINE					= 0x00000400,		///< If given, the text will be broken down into separate lines.  See the @ref SetMaxCharsPerLine method.
+			USE_NEWLINE_CHARS			= 0x00000800		///< If given, multi-line text is split by new-lines, not by max words (the default.)
 		};
 
 		/**

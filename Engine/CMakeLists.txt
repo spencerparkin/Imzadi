@@ -24,6 +24,10 @@ set(GAME_ENGINE_SOURCES
     Source/EventSystem.h
     Source/StateCache.cpp
     Source/StateCache.h
+    Source/Profile.cpp
+    Source/Profile.h
+    Source/Clock.cpp
+    Source/Clock.h
     Source/Entities/FollowCam.cpp
     Source/Entities/FollowCam.h
     Source/Entities/FreeCam.cpp
@@ -118,6 +122,8 @@ set(GAME_ENGINE_SOURCES
     Source/RenderObjects/RenderMeshInstance.h
     Source/RenderObjects/TextRenderObject.cpp
     Source/RenderObjects/TextRenderObject.h
+    Source/RenderObjects/CollisionStatsRenderObject.cpp
+    Source/RenderObjects/CollisionStatsRenderObject.h
     Source/RenderObjects/SkyDomeRenderObject.cpp
     Source/RenderObjects/SkyDomeRenderObject.h
     Source/Assets/Animation.cpp
@@ -169,6 +175,7 @@ target_compile_definitions(ImzadiGameEngine PRIVATE
     _USE_MATH_DEFINES
     WIN32_LEAN_AND_MEAN
     NOMINMAX
+    IMZADI_COLLISION_PROFILING_ENABLED
 )
 
 target_link_libraries(ImzadiGameEngine PRIVATE

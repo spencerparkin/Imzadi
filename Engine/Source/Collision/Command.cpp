@@ -165,6 +165,26 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 	return new ObjectToWorldCommand();
 }
 
+//------------------------------- ResetProfileDataCommand -------------------------------
+
+ResetProfileDataCommand::ResetProfileDataCommand()
+{
+}
+
+/*virtual*/ ResetProfileDataCommand::~ResetProfileDataCommand()
+{
+}
+
+/*virtual*/ void ResetProfileDataCommand::Execute(Thread* thread)
+{
+	collisionProfileData.Reset();
+}
+
+/*static*/ ResetProfileDataCommand* ResetProfileDataCommand::Create()
+{
+	return new ResetProfileDataCommand();
+}
+
 //------------------------------- FileCommand -------------------------------
 
 FileCommand::FileCommand()

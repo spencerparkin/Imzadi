@@ -8,6 +8,7 @@
 #include <string>
 #include <list>
 #include <time.h>
+#include <functional>
 #include "Reference.h"
 #include "RenderObjects/DebugLines.h"
 #include "Math/Vector3.h"
@@ -18,6 +19,7 @@
 #include "Audio/System.h"
 #include "EventSystem.h"
 #include "StateCache.h"
+#include "Clock.h"
 
 #define IMZADI_GAME_WINDOW_CLASS_NAME		TEXT("ImzadiGameWindowClass")
 
@@ -307,6 +309,8 @@ namespace Imzadi
 
 		bool RecreateViews();
 		void ToggleFPSDisplay();
+		void ToggleCollisionStats();
+		void ToggleRenderObject(const std::string& name, std::function<RenderObject*()> renderObjectCreatorFunc);
 		void ShutdownAllEntities();
 
 		TCHAR windowTitle[256];
@@ -343,7 +347,7 @@ namespace Imzadi
 		Reference<DebugLines> debugLines;
 		uint32_t collisionSystemDebugDrawFlags;
 		double deltaTimeSeconds;
-		clock_t lastTickTime;
+		Clock frameClock;
 		static Game* gameSingleton;
 	};
 }

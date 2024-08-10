@@ -4,6 +4,7 @@
 #include "RenderObjects/RenderMeshInstance.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "RenderObjects/CollisionStatsRenderObject.h"
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
@@ -22,7 +23,6 @@ Game::Game(HINSTANCE instance) : controller(0)
 	this->accelerationDuetoGravity = 40.0;
 	this->collisionSystemDebugDrawFlags = 0;
 	this->deltaTimeSeconds = 0.0;
-	this->lastTickTime = 0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
 	this->keepRunning = false;
@@ -457,19 +457,11 @@ bool Game::RecreateViews()
 
 /*virtual*/ bool Game::Run()
 {
-	if (this->lastTickTime == 0)
-		this->lastTickTime = ::clock();
-
-	clock_t currentTickTime = ::clock();
-	clock_t deltaTickTime = currentTickTime - this->lastTickTime;
-	this->deltaTimeSeconds = double(deltaTickTime) / double(CLOCKS_PER_SEC);
-	this->lastTickTime = currentTickTime;
-
-	// This can be useful while debugging, but I'm also doing this because
-	// I'm seeing the first frame's delta-time be way too big and this can
-	// cause the character to move too far in the first frame and then tunnel
-	// through the ground.
-	if (this->deltaTimeSeconds >= 0.1)
+	if (this->frameClock.NeverBeenReset())
+		this->frameClock.Reset();
+	this->deltaTimeSeconds = this->frameClock.GetCurrentTimeSeconds();
+	this->frameClock.Reset();
+	if (this->deltaTimeSeconds >= 0.1)	// This is useful for being paused in the debugger.
 		return true;
 
 	this->debugLines->Clear();
@@ -600,6 +592,8 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 /*virtual*/ void Game::Render()
 {
+	this->scene->PreRender();
+
 	Vector3 lightCameraPosition = this->camera->GetEyePoint() - this->lightParams.lightCameraDistance * this->lightParams.lightDirection;
 	if (!this->lightSourceCamera->LookAt(lightCameraPosition, this->camera->GetEyePoint(), Vector3(0.0, 1.0, 0.0)))
 	{
@@ -658,6 +652,8 @@ void Game::AdvanceEntities(TickPass tickPass)
 				AnimatedMeshInstance::SetRenderSkeletons(!AnimatedMeshInstance::GetRenderSkeletons());
 			else if (wParam == VK_F5)
 				this->ToggleFPSDisplay();
+			else if (wParam == VK_F6)
+				this->ToggleCollisionStats();
 			break;
 		}
 		case WM_DESTROY:
@@ -690,17 +686,36 @@ void Game::AdvanceEntities(TickPass tickPass)
 
 void Game::ToggleFPSDisplay()
 {
+	this->ToggleRenderObject("fps", []() -> RenderObject*
+	{
+		auto fpsText = new FPSRenderObject();
+		fpsText->SetFont("UbuntuMono_R");
+		return fpsText;
+	});
+}
+
+void Game::ToggleCollisionStats()
+{
+	this->ToggleRenderObject("collision_stats", []() -> RenderObject*
+	{
+		auto collisionStats = new CollisionStatsRenderObject();
+		collisionStats->SetFont("UbuntuMono_R");
+		return collisionStats;
+	});
+}
+
+void Game::ToggleRenderObject(const std::string& name, std::function<RenderObject*()> renderObjectCreatorFunc)
+{
 	if (!this->scene)
 		return;
 
 	Reference<RenderObject> renderObj;
-	if (this->scene->FindRenderObject("fps", renderObj))
-		this->scene->RemoveRenderObject("fps");
+	if (this->scene->FindRenderObject(name, renderObj))
+		this->scene->RemoveRenderObject(name);
 	else
 	{
-		auto fpsText = new FPSRenderObject();
-		fpsText->SetFont("UbuntuMono_R");
-		this->scene->AddRenderObject("fps", fpsText);
+		renderObj = renderObjectCreatorFunc();
+		this->scene->AddRenderObject(name, renderObj);
 	}
 }
 

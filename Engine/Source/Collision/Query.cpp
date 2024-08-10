@@ -48,6 +48,7 @@ DebugRenderQuery::DebugRenderQuery()
 
 /*virtual*/ Result* DebugRenderQuery::ExecuteQuery(Thread* thread)
 {
+	IMZADI_COLLISION_PROFILE("Debug Render Query");
 	auto renderResult = DebugRenderResult::Create();
 	thread->DebugVisualize(renderResult, this->drawFlags);
 	return renderResult;
@@ -71,6 +72,7 @@ RayCastQuery::RayCastQuery()
 
 /*virtual*/ Result* RayCastQuery::ExecuteQuery(Thread* thread)
 {
+	IMZADI_COLLISION_PROFILE("Ray Cast Query");
 	const BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
 	RayCastResult* result = RayCastResult::Create();
 	boxTree.RayCast(this->ray, this->userFlagsMask, result);
@@ -94,6 +96,8 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 
 /*virtual*/ Result* ObjectToWorldQuery::ExecuteQuery(Thread* thread)
 {
+	IMZADI_COLLISION_PROFILE("Object-to-World Query");
+
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 	{
@@ -124,6 +128,8 @@ CollisionQuery::CollisionQuery()
 
 /*virtual*/ Result* CollisionQuery::ExecuteQuery(Thread* thread)
 {
+	IMZADI_COLLISION_PROFILE("Collision Query");
+
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 	{
@@ -164,6 +170,8 @@ ShapeInBoundsQuery::ShapeInBoundsQuery()
 
 /*virtual*/ Result* ShapeInBoundsQuery::ExecuteQuery(Thread* thread)
 {
+	IMZADI_COLLISION_PROFILE("Shape-in-Bounds Query");
+
 	BoolResult* result = BoolResult::Create();
 	result->SetAnswer(false);
 
@@ -178,4 +186,26 @@ ShapeInBoundsQuery::ShapeInBoundsQuery()
 /*static*/ ShapeInBoundsQuery* ShapeInBoundsQuery::Create()
 {
 	return new ShapeInBoundsQuery();
+}
+
+//--------------------------------- ProfileStatsQuery ---------------------------------
+
+ProfileStatsQuery::ProfileStatsQuery()
+{
+}
+
+/*virtual*/ ProfileStatsQuery::~ProfileStatsQuery()
+{
+}
+
+/*virtual*/ Result* ProfileStatsQuery::ExecuteQuery(Thread* thread)
+{
+	auto result = StringResult::Create();
+	result->SetText(collisionProfileData.PrintStats());
+	return result;
+}
+
+/*static*/ ProfileStatsQuery* ProfileStatsQuery::Create()
+{
+	return new ProfileStatsQuery();
 }

@@ -70,6 +70,22 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 	std::vector<std::string> lineArray;
 	if ((this->flags & Flag::MULTI_LINE) == 0)
 		lineArray.push_back(this->text);
+	else if ((this->flags & Flag::USE_NEWLINE_CHARS) != 0)
+	{
+		std::string line;
+		for (int i = 0; this->text.c_str()[i] != '\0'; i++)
+		{
+			if (this->text.c_str()[i] != '\n')
+				line += this->text.c_str()[i];
+			else
+			{
+				lineArray.push_back(line);
+				line = "";
+			}
+		}
+		if (line.length() > 0)
+			lineArray.push_back(line);
+	}
 	else
 	{
 		// Get an array of words in the text.

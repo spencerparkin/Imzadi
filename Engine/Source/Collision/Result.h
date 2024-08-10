@@ -67,6 +67,25 @@ namespace Imzadi
 	};
 
 	/**
+	 * This result is returned by any query that requires a string answer.
+	 */
+	class IMZADI_API StringResult : public Result
+	{
+	public:
+		StringResult();
+		virtual ~StringResult();
+
+		void SetText(const std::string& text) { this->text = text; }
+
+		const std::string& GetText() const { return this->text; }
+
+		static StringResult* Create();
+
+	private:
+		std::string text;
+	};
+
+	/**
 	 * A result of a DebugRenderQuery class query, this class contains all of
 	 * wire-frame drawing information the user can use to visualize (render)
 	 * the collision system as far as what was requested in the query.

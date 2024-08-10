@@ -96,6 +96,15 @@ void Scene::PrepareRenderObjects()
 	}
 }
 
+void Scene::PreRender()
+{
+	for (auto pair : this->renderObjectMap)
+	{
+		RenderObject* renderObject = pair.second.Get();
+		renderObject->PreRender();
+	}
+}
+
 //--------------------------- RenderObject ---------------------------
 
 RenderObject::RenderObject()
@@ -113,5 +122,9 @@ RenderObject::RenderObject()
 }
 
 /*virtual*/ void RenderObject::Prepare()
+{
+}
+
+/*virtual*/ void RenderObject::PreRender()
 {
 }

@@ -9,6 +9,11 @@
 
 using namespace Imzadi;
 
+namespace Imzadi
+{
+	ProfileData collisionProfileData;
+}
+
 Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(collisionWorldExtents), taskQueueSemaphore(0)
 {
 	this->thread = nullptr;
@@ -70,6 +75,8 @@ void Thread::Run()
 
 		if (task)
 		{
+			IMZADI_COLLISION_PROFILE("Task Execution");
+
 			// Process the task.
 			task->Execute(this);
 			Task::Free(task);

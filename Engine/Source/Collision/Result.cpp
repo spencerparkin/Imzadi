@@ -35,6 +35,22 @@ BoolResult::BoolResult()
 	return new BoolResult();
 }
 
+//-------------------------------- StringResult --------------------------------
+
+StringResult::StringResult()
+{
+	this->text = "";
+}
+
+/*virtual*/ StringResult::~StringResult()
+{
+}
+
+/*static*/ StringResult* StringResult::Create()
+{
+	return new StringResult();
+}
+
 //-------------------------------- DebugRenderResult --------------------------------
 
 DebugRenderResult::DebugRenderResult()
