@@ -10,16 +10,20 @@ wxIMPLEMENT_APP(ConverterApp);
 ConverterApp::ConverterApp()
 {
 	this->frame = nullptr;
+	this->config = nullptr;
 }
 
 /*virtual*/ ConverterApp::~ConverterApp()
 {
+	delete this->config;
 }
 
 /*virtual*/ bool ConverterApp::OnInit(void)
 {
 	if (!wxApp::OnInit())
 		return false;
+
+	this->config = new wxConfig("ImzadiConverterAppConfig");
 
 	wxInitAllImageHandlers();
 
