@@ -780,7 +780,7 @@ bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& p
 				}
 				else if (edgeSegA0IsEdgeSegB1 && edgeSegB0IsEdgeSegA1)
 				{
-					this->AddVerticesFrom(polygonA, i + i, i, false, true);
+					this->AddVerticesFrom(polygonA, i + 1, i, false, true);
 					this->AddVerticesFrom(polygonB, j + 1, j, false, true);
 
 					return true;
