@@ -225,6 +225,14 @@ namespace Imzadi
 		void ReduceVerticesOf(const Polygon& polygon, double tolerance = 1e-7);
 
 		/**
+		 * Remove all cusp vertices from the polygon.  These are a special-case
+		 * of redundant vertices.  It's arguable whether the shape is changed by
+		 * removing these vertices.  The area and silloutte of the polygon is not
+		 * changed by removing these vertices, but the edge-path is modified.
+		 */
+		void RemoveCusps(double epsilon = 1e-6);
+
+		/**
 		 * Return true if and only if the given vertex is, up
 		 * to a distance of the given epsilon, equal to one of
 		 * the vertices of this polygon.
@@ -279,6 +287,11 @@ namespace Imzadi
 		 * This function is used internally by the @ref Compress static method.
 		 */
 		static void MergeCoplanarPolygons(std::vector<Polygon>& coplanarPolygonArray);
+
+		/**
+		 * This function is used internally by the @ref MergeCoplanarPolygonPair method.
+		 */
+		bool MergeCoplanarPolygonPairInternal(const Polygon& polygonA, const Polygon& polygonB);
 
 	public:
 		std::vector<Vector3> vertexArray;

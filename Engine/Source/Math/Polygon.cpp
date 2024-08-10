@@ -68,6 +68,9 @@ bool Polygon::IsConvex(ConvexityInfo* convexityInfo /*= nullptr*/, double tolera
 		Vector3 vectorPrev = (vertexPrev - vertex).Normalized();
 		Vector3 vectorNext = (vertexNext - vertex).Normalized();
 
+		IMZADI_ASSERT(vectorPrev.IsValid());
+		IMZADI_ASSERT(vectorNext.IsValid());
+
 		double angle = vectorPrev.AngleBetween(vectorNext, plane.unitNormal);
 		if (angle < M_PI)
 			convexityInfo->concaveVertexArray.push_back(i);
@@ -718,7 +721,44 @@ void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j, bool include
 	}
 }
 
+void Polygon::RemoveCusps(double epsilon /*= 1e-6*/)
+{
+	bool makeAnotherPass = true;
+
+	while (makeAnotherPass && this->vertexArray.size() > 3)
+	{
+		makeAnotherPass = false;
+
+		for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+		{
+			const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
+			const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
+
+			if (vertexPrev.IsPoint(vertexNext, epsilon))
+			{
+				this->vertexArray.erase(this->vertexArray.begin() + i);
+				i = this->Mod(i);
+				this->vertexArray.erase(this->vertexArray.begin() + i);
+				makeAnotherPass = true;
+				break;
+			}
+		}
+	}
+}
+
 bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& polygonB)
+{
+	if (!this->MergeCoplanarPolygonPairInternal(polygonA, polygonB))
+		return false;
+
+	// After the merge, the final step is to remove any cusps in the polygon.
+	// These can arrise as a consequence of the merge operation if more than
+	// one edge of one polygon was flesh with an edge of the other polygon.
+	this->RemoveCusps();
+	return true;
+}
+
+bool Polygon::MergeCoplanarPolygonPairInternal(const Polygon& polygonA, const Polygon& polygonB)
 {
 	constexpr double epsilon = 1e-7;
 
