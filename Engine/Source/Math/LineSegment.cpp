@@ -91,9 +91,46 @@ double LineSegment::ShortestDistanceTo(const Plane& plane) const
 	return IMZADI_MIN(::fabs(distanceA), ::fabs(distanceB));
 }
 
-Vector3 LineSegment::Lerp(double lambda) const
+Vector3 LineSegment::Lerp(double alpha) const
 {
-	return this->point[0] + lambda * this->GetDelta();
+	return this->point[0] + alpha * this->GetDelta();
+}
+
+bool LineSegment::Alpha(const Vector3& point, double& alpha, double tolerance /*= 1e-6*/) const
+{
+	Vector3 delta = this->GetDelta();
+	Vector3 vector = point - this->point[0];
+	double distanceToLine = vector.RejectedFrom(delta.Normalized()).Length();
+	if (distanceToLine > tolerance)
+		return false;
+
+	alpha = vector.Dot(delta) / delta.Dot(delta);
+	return true;
+}
+
+bool LineSegment::ContainsPoint(const Vector3& point, bool* isInterior /*= nullptr*/, double tolerance /*= 1e-6*/) const
+{
+	if (isInterior)
+		*isInterior = true;
+
+	for (int i = 0; i < 2; i++)
+	{
+		if (this->point[i].IsPoint(point, tolerance))
+		{
+			if (isInterior)
+				*isInterior = false;
+
+			return true;
+		}
+	}
+
+	return this->ShortestDistanceTo(point) < tolerance;
+}
+
+bool LineSegment::ContainsInteriorPoint(const Vector3& point, double tolerance /*= 1e-6*/) const
+{
+	bool isInterior = false;
+	return this->ContainsPoint(point, &isInterior, tolerance) && isInterior;
 }
 
 bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB)

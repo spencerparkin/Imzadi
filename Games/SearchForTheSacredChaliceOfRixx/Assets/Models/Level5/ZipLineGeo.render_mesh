@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level5\\ZipLineGeo_Indices.buffer",
+    "vertex_buffer": "Models\\Level5\\ZipLineGeo_Vertices.buffer",
+    "texture": "Textures\\MegaWack.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 82.77409362792969,
+            "y": 117.69896697998047,
+            "z": 340.1258544921875
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.73699951171875,
+            "y": -58.0032844543457,
+            "z": -225.29696655273438
+        },
+        "max": {
+            "x": 0.73699951171875,
+            "y": 58.0032844543457,
+            "z": 225.29698181152345
+        }
+    }
+}

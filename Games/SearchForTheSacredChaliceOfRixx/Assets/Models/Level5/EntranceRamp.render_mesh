@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level5\\EntranceRamp_Indices.buffer",
+    "vertex_buffer": "Models\\Level5\\EntranceRamp_Vertices.buffer",
+    "texture": "Textures\\AstroTurf.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -186.41433715820313,
+            "y": -18.035436630249025,
+            "z": -37.265411376953128
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -91.62947845458985,
+            "y": -0.21372966468334199,
+            "z": -19.6864070892334
+        },
+        "max": {
+            "x": 145.9763641357422,
+            "y": 0.2137296199798584,
+            "z": 18.71732521057129
+        }
+    }
+}

@@ -211,19 +211,32 @@ void Thread::WaitForAllTasksToComplete()
 	this->allTasksDoneCondVar.wait(lock, [=]() { return this->taskQueue.size() == 0; });
 }
 
-bool Thread::DumpShapes(std::ostream& stream) const
+bool Thread::DumpShapes(std::ostream& stream, const std::vector<const Shape*>* shapeArray /*= nullptr*/) const
 {
-	uint32_t numShapes = this->boxTree.GetNumShapes();
+	std::vector<const Shape*> allShapesArray;
+	const std::vector<const Shape*>* shapesToDumpArray = shapeArray;
+	if (!shapesToDumpArray)
+	{
+		this->boxTree.ForAllShapes([&allShapesArray](const Shape* shape) -> bool
+		{
+			allShapesArray.push_back(shape);
+			return true;
+		});
+		shapesToDumpArray = &allShapesArray;
+	}
+
+	uint32_t numShapes = (uint32_t)shapesToDumpArray->size();
 	stream.write((char*)&numShapes, sizeof(uint32_t));
 
-	return this->boxTree.ForAllShapes([&stream](const Shape* shape) -> bool
+	for(const Shape* shape : *shapesToDumpArray)
 	{
 		uint32_t typeID = shape->GetShapeTypeID();
 		stream.write((char*)&typeID, sizeof(typeID));
 		if (!shape->Dump(stream))
 			return false;
-		return true;
-	});
+	}
+
+	return true;
 }
 
 bool Thread::RestoreShapes(std::istream& stream)

@@ -23,6 +23,8 @@ public:
 		ID_AddCapsule,
 		ID_AddPolygon,
 		ID_AddSphere,
+		ID_LoadPolygons,
+		ID_MergePolygons,
 		ID_DrawBoxTree,
 		ID_DrawShapes,
 		ID_DrawShapeBoxes,
@@ -36,6 +38,8 @@ public:
 	void OnClearWorld(wxCommandEvent& event);
 	void OnDebugDrawToggle(wxCommandEvent& event);
 	void OnDumpOrRestoreWorld(wxCommandEvent& event);
+	void OnLoadPolygons(wxCommandEvent& event);
+	void OnMergePolygons(wxCommandEvent& event);
 	void OnUpdateUI(wxUpdateUIEvent& event);
 	void OnTimer(wxTimerEvent& event);
 

@@ -114,7 +114,7 @@ Biped::Biped()
 
 /*virtual*/ uint32_t Biped::TickOrder() const
 {
-	return std::numeric_limits<uint32_t>::max();
+	return 1;
 }
 
 /*virtual*/ bool Biped::Tick(TickPass tickPass, double deltaTime)

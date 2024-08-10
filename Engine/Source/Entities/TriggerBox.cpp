@@ -73,6 +73,7 @@ TriggerBox::TriggerBox()
 		{
 			auto collisionQuery = CollisionQuery::Create();
 			collisionQuery->SetShapeID(this->collisionShapeID);
+			collisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
 
 			break;

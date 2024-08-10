@@ -108,6 +108,8 @@ set(GAME_ENGINE_SOURCES
     Source/Math/SphericalCoords.h
     Source/Math/Angle.cpp
     Source/Math/Angle.h
+    Source/Math/Polygon.cpp
+    Source/Math/Polygon.h
     Source/RenderObjects/AnimatedMeshInstance.cpp
     Source/RenderObjects/AnimatedMeshInstance.h
     Source/RenderObjects/DebugLines.cpp

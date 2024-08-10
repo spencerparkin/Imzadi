@@ -132,9 +132,11 @@ namespace Imzadi
 		 * This is mainly for debugging purposes as sometimes it's nice to
 		 * capture a scene for restoration later.
 		 * 
+		 * @param[in,out] stream The shapes are written to this stream.
+		 * @param[in] shapeArray If given, these are the shapes dumped.  If not given, all shapes in the system are dumped.
 		 * @return True is returned if all shapes are successfully dumped; false, otherwise.
 		 */
-		bool DumpShapes(std::ostream& stream) const;
+		bool DumpShapes(std::ostream& stream, const std::vector<const Shape*>* shapeArray = nullptr) const;
 
 		/**
 		 * Read shapes in to the collision world from the given stream.
@@ -142,6 +144,7 @@ namespace Imzadi
 		 * the restoration is performed.  In other words, this is not an
 		 * accumulative operation.
 		 * 
+		 * @param[in,out] stream The shapes are read from this stream.
 		 * @return True is returned if all shapes are successfully restored; false, otherwise.
 		 */
 		bool RestoreShapes(std::istream& stream);

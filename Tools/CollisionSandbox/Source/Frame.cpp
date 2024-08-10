@@ -12,6 +12,7 @@
 #include "Collision/Shapes/Polygon.h"
 #include "Collision/Shapes/Sphere.h"
 #include "Collision/Command.h"
+#include <fstream>
 
 using namespace Imzadi;
 
@@ -27,6 +28,8 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	fileMenu->AppendSeparator();
 	fileMenu->Append(new wxMenuItem(fileMenu, ID_ClearWorld, "Clear World", "Remove all shapes from the collision world."));
 	fileMenu->AppendSeparator();
+	fileMenu->Append(new wxMenuItem(fileMenu, ID_LoadPolygons, "Load Polygons", "Load some polygons for analysis."));
+	fileMenu->AppendSeparator();
 	fileMenu->Append(new wxMenuItem(fileMenu, ID_Exit, "Exit", "Go skiing."));
 
 	wxMenu* shapeMenu = new wxMenu();
@@ -40,6 +43,9 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	drawMenu->Append(new wxMenuItem(drawMenu, ID_DrawShapeBoxes, "Draw Shape Boxes", "When checked, draw the bounding boxes of the collision shapes.", wxITEM_CHECK));
 	drawMenu->Append(new wxMenuItem(drawMenu, ID_DrawBoxTree, "Draw Box Tree", "When checked, draw the bounding box tree used to partition space in the collision world.", wxITEM_CHECK));
 
+	wxMenu* miscMenu = new wxMenu();
+	miscMenu->Append(new wxMenuItem(miscMenu, ID_MergePolygons, "Merge Polygons", "Merge currently loaded polygons, if possible."));
+
 	wxMenu* helpMenu = new wxMenu();
 	helpMenu->Append(new wxMenuItem(helpMenu, ID_About, "About", "Show the about-box."));
 
@@ -47,6 +53,7 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	menuBar->Append(fileMenu, "File");
 	menuBar->Append(shapeMenu, "Shape");
 	menuBar->Append(drawMenu, "Draw");
+	menuBar->Append(miscMenu, "Misc");
 	menuBar->Append(helpMenu, "Help");
 	this->SetMenuBar(menuBar);
 
@@ -65,9 +72,12 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->Bind(wxEVT_MENU, &Frame::OnDebugDrawToggle, this, ID_DrawShapes);
 	this->Bind(wxEVT_MENU, &Frame::OnDebugDrawToggle, this, ID_DrawShapeBoxes);
 	this->Bind(wxEVT_MENU, &Frame::OnDebugDrawToggle, this, ID_DrawBoxTree);
+	this->Bind(wxEVT_MENU, &Frame::OnLoadPolygons, this, ID_LoadPolygons);
+	this->Bind(wxEVT_MENU, &Frame::OnMergePolygons, this, ID_MergePolygons);
 	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_DrawShapes);
 	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_DrawShapeBoxes);
 	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_DrawBoxTree);
+	this->Bind(wxEVT_UPDATE_UI, &Frame::OnUpdateUI, this, ID_MergePolygons);
 	this->Bind(wxEVT_TIMER, &Frame::OnTimer, this, ID_Timer);
 
 	this->canvas = new Canvas(this);
@@ -96,6 +106,9 @@ void Frame::OnUpdateUI(wxUpdateUIEvent& event)
 		break;
 	case ID_DrawBoxTree:
 		event.Check((this->canvas->GetDebugDrawFlags() & IMZADI_DRAW_FLAG_AABB_TREE) != 0);
+		break;
+	case ID_MergePolygons:
+		event.Enable(wxGetApp().GetPolygonArray().size() > 0);
 		break;
 	}
 }
@@ -130,7 +143,38 @@ void Frame::OnClearWorld(wxCommandEvent& event)
 {
 	CollisionSystem* system = wxGetApp().GetCollisionSystem();
 	system->Clear();
+	wxGetApp().GetPolygonArray().clear();
 	this->canvas->Refresh();
+}
+
+void Frame::OnLoadPolygons(wxCommandEvent& event)
+{
+	wxFileDialog fileDialog(this, "Choose file from which to load polygons.", wxEmptyString, wxEmptyString, "(*.bin)|*.bin", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+	if (fileDialog.ShowModal() == wxID_OK)
+	{
+		std::string fileName((const char*)fileDialog.GetPath().c_str());
+
+		std::ifstream stream;
+		stream.open(fileName.c_str(), std::ios::binary);
+		if (!stream.is_open())
+			wxMessageBox(wxString::Format("Failed to open file: %s", fileName.c_str()), "Error!", wxICON_ERROR | wxOK, this);
+		else
+		{
+			Imzadi::Polygon::RestoreArray(wxGetApp().GetPolygonArray(), stream);
+			this->Refresh();
+		}
+	}
+}
+
+void Frame::OnMergePolygons(wxCommandEvent& event)
+{
+	bool tessellate = false;
+	if (wxYES == wxMessageBox("Tessellate after compression?", "Query", wxICON_QUESTION | wxYES_NO, this))
+		tessellate = true;
+
+	Imzadi::Polygon::Compress(wxGetApp().GetPolygonArray(), tessellate);
+
+	this->Refresh();
 }
 
 void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)

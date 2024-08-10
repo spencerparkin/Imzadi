@@ -1,0 +1,42 @@
+{
+    "static_meshes": [
+        "Models/Level5/EntranceRamp.render_mesh",
+        "Models/Level5/Floor1.render_mesh",
+        "Models/Level5/Floor2.render_mesh",
+        "Models/Level5/Floor3.render_mesh",
+        "Models/Level5/Floor4.render_mesh",
+        "Models/Level5/Roof.render_mesh",
+        "Models/Level5/TargetZone.render_mesh",
+        "Models/Level5/ZipLineGeo.render_mesh"
+    ],
+    "static_collision": [
+        "Models/Level5/EntranceRamp.collision",
+        "Models/Level5/Floor1.collision",
+        "Models/Level5/Floor2.collision",
+        "Models/Level5/Floor3.collision",
+        "Models/Level5/Floor4.collision",
+        "Models/Level5/Roof.collision",
+        "Models/Level5/TargetZone.collision",
+        "Models/Level5/ZipLineGeo.collision"
+    ],
+    "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
+    "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
+    "player_start_location": {
+        "x": -272.815,
+        "y": -17.25,
+        "z": -37.713
+    },
+    "player_start_orientation": {
+        "yaw": -90.0,
+        "pitch": 0.0,
+        "roll": 0.0
+    },
+    "moving_platforms": [
+        "Levels/Level5_Floater1.mov_plat",
+        "Levels/Level5_Floater2.mov_plat",
+        "Levels/Level5_Elevator.mov_plat"
+    ],
+    "zip_lines": [
+        "Levels/Level5_MainZip.zip_line"
+    ]
+}

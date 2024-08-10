@@ -5,6 +5,7 @@
 #include "assimp/postprocess.h"
 #include "assimp/config.h"
 #include "Math/AxisAlignedBoundingBox.h"
+#include "Math/Polygon.h"
 #include "AssetCache.h"
 #include "App.h"
 #include "Frame.h"
@@ -744,17 +745,12 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		rapidjson::Value shapeSetValue;
 		shapeSetValue.SetArray();
 
+		std::vector<Imzadi::Polygon> polygonArray;
 		for (int i = 0; i < mesh->mNumFaces; i++)
 		{
 			const aiFace* face = &mesh->mFaces[i];
 
-			rapidjson::Value collisionPolygonValue;
-			collisionPolygonValue.SetObject();
-			collisionPolygonValue.AddMember("type", rapidjson::Value().SetString("polygon", collisionDoc.GetAllocator()), collisionDoc.GetAllocator());
-
-			rapidjson::Value vertexArrayValue;
-			vertexArrayValue.SetArray();
-
+			Imzadi::Polygon polygon;
 			for (int j = 0; j < face->mNumIndices; j++)
 			{
 				Imzadi::Vector3 vertex;
@@ -768,10 +764,27 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 				this->MakeVector(vertex, mesh->mVertices[k]);
 				vertex = nodeToObject.TransformPoint(vertex);
+				polygon.vertexArray.push_back(vertex);
+			}
 
+			polygonArray.push_back(polygon);
+		}
+
+		Imzadi::Polygon::Compress(polygonArray, true);
+
+		for(const Imzadi::Polygon& polygon : polygonArray)
+		{
+			rapidjson::Value collisionPolygonValue;
+			collisionPolygonValue.SetObject();
+			collisionPolygonValue.AddMember("type", rapidjson::Value().SetString("polygon", collisionDoc.GetAllocator()), collisionDoc.GetAllocator());
+
+			rapidjson::Value vertexArrayValue;
+			vertexArrayValue.SetArray();
+
+			for (const Imzadi::Vector3& vertex : polygon.vertexArray)
+			{
 				rapidjson::Value vertexValue;
 				Imzadi::Asset::SaveVector(vertexValue, vertex, &collisionDoc);
-
 				vertexArrayValue.PushBack(vertexValue, collisionDoc.GetAllocator());
 			}
 

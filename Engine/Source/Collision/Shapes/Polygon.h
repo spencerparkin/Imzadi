@@ -3,6 +3,7 @@
 #include "Collision/Shape.h"
 #include "Math/Vector3.h"
 #include "Math/Plane.h"
+#include "Math/Polygon.h"
 #include <vector>
 
 namespace Imzadi
@@ -86,11 +87,7 @@ namespace Imzadi
 		virtual void DebugRender(DebugRenderResult* renderResult) const override;
 
 		/**
-		 * Perform a ray-cast against this polygon.
 		 *
-		 * @param[in] ray This is the ray to use in the ray-cast.
-		 * @param[out] alpha This is the distance from the ray origin along the ray-direction to the point where the polygon is hit, if any.
-		 * @param[out] unitSurfaceNormal This is the surface normal of the polygon at the ray hit-point, if any.  It will always make an obtuse angle with the ray direction vector.
 		 */
 		virtual bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const override;
 
@@ -175,33 +172,6 @@ namespace Imzadi
 		const Vector3& GetWorldCenter() const;
 
 		/**
-		 * Calculate and return a plane in object space that best fits this polygon's set of vertices,
-		 * which are not assumed to be a valid polygon.  They can be any cloud of points in 3D space.
-		 * If, however, this polygon is valid, then there is one and only one such plane, up to sign.
-		 * 
-		 * @param[out] plane The best fit object-space plane is calcualted and returned using a linear least-squares method.
-		 * @return True is returned if successful; false, otherwise.
-		 */
-		bool CalculatePlaneOfBestFit(Plane& plane) const;
-
-		/**
-		 * Orthogonally project all vertices of this polygon onto the given object-space plane.
-		 * This might be done using the result of the CalculatePlaneOfBestFit function.
-		 * 
-		 * @param[in] plane This is the plane, in object space, to use for the snapping process.
-		 */
-		void SnapToPlane(const Plane& plane);
-
-		/**
-		 * Set this polygon as the convex hull of the given set of object-space points.
-		 * A plane of best fit is found for the given point-cloud, and then
-		 * the cloud is snapped to this plane, before the convex hull is computed.
-		 * 
-		 * @param[in] pointCloud This is the set of points, in object-space, to use in the operation.
-		 */
-		void SetAsConvexHull(const std::vector<Vector3>& pointCloud);
-
-		/**
 		 * Return the vertices of this polygon (in CCW order) transformed into world space.
 		 */
 		const std::vector<Vector3>& GetWorldVertices() const;
@@ -214,19 +184,12 @@ namespace Imzadi
 		void GetWorldEdges(std::vector<LineSegment>& edgeArray) const;
 
 		/**
-		 * Calculate and return the point on this polygon (in world space) that is closest
-		 * to the given point.
-		 * 
-		 * @param point This should be a point in world space.
+		 *
 		 */
 		Vector3 ClosestPointTo(const Vector3& point) const;
 
 		/**
-		 * Tell the caller if and where the given line segment intersects this polygon.
-		 * 
-		 * @param[in] lineSegment This is the line-segment to test against this polygon.  It must be non-degenerate.
-		 * @param[out] intersectionPoint This will be the point on the given line-segment where it intersects this polygon, if at all; left undefined, otherwise.
-		 * @return True is returned if and only if the given line segment shares a single point in common with this polygon.
+		 *
 		 */
 		bool IntersectsWith(const LineSegment& lineSegment, Vector3& intersectionPoint) const;
 
@@ -245,23 +208,8 @@ namespace Imzadi
 		 */
 		int ModIndex(int i) const;
 
-		/**
-		 * This function is used internally and exclusively by the SetAsConvexHull function.
-		 * 
-		 * @param[in] planarPointCloud It is assumed that all points in this set are distinct and coplanar.
-		 * @param[in] plane It is assumed that all given points lie on this plane.
-		 */
-		void CalculateConvexHullInternal(const std::vector<Vector3>& planarPointCloud, const Plane& plane);
-
-		/**
-		 * This function is used internally and exclusively by the CalculateConvexHullInternal function.
-		 * It just makes sure that, in the case this polygon is a triangle, that its front-side has a normal
-		 * making an acute angle with the given normal.
-		 */
-		void FixWindingOfTriangle(const Vector3& desiredNormal);
-
 	private:
-		std::vector<Vector3> vertexArray;
+		Polygon localPolygon;
 	};
 
 	/**
@@ -285,6 +233,6 @@ namespace Imzadi
 		Vector3 worldCenter;	///< This is the center of the polygon in world-space.
 		Plane plane;			///< This is the plane containing the object-space polygon with normal facing the direction of the front-space of the polygon.
 		Plane worldPlane;		///< This is the plane containing the world-space polygon with normal facing the direction of the front-space of the polygon.
-		std::vector<Vector3> worldVertexArray;		///< These are the world-space vertices of the polygon.
+		Polygon worldPolygon;	///< These are the world-space vertices of the polygon.
 	};
 }

@@ -2,6 +2,7 @@
 #include "Plane.h"
 #include "Ray.h"
 #include "LineSegment.h"
+#include "Polygon.h"
 #include "Matrix4x4.h"
 #include "Angle.h"
 
@@ -84,6 +85,13 @@ Ray Transform::TransformRay(const Ray& ray) const
 	transformedRay.origin = this->TransformPoint(ray.origin);
 	transformedRay.unitDirection = this->TransformVector(ray.unitDirection).Normalized();
 	return transformedRay;
+}
+
+void Transform::TransformPolygon(const Polygon& polygonIn, Polygon& polygonOut) const
+{
+	polygonOut.vertexArray.clear();
+	for (const Vector3& vertex : polygonIn.vertexArray)
+		polygonOut.vertexArray.push_back(this->TransformPoint(vertex));
 }
 
 Transform Transform::Inverted() const
