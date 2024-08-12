@@ -28,6 +28,8 @@ set(GAME_ENGINE_SOURCES
     Source/Profile.h
     Source/Clock.cpp
     Source/Clock.h
+    Source/Command.cpp
+    Source/Command.h
     Source/Entities/FollowCam.cpp
     Source/Entities/FollowCam.h
     Source/Entities/FreeCam.cpp
@@ -70,6 +72,8 @@ set(GAME_ENGINE_SOURCES
     Source/Collision/Shapes/Polygon.h
     Source/Collision/Shapes/Sphere.cpp
     Source/Collision/Shapes/Sphere.h
+    Source/Commands/CollisionSystemCommand.cpp
+    Source/Commands/CollisionSystemCommand.h
     Source/Physics/System.cpp
     Source/Physics/System.h
     Source/Audio/System.cpp
@@ -126,6 +130,8 @@ set(GAME_ENGINE_SOURCES
     Source/RenderObjects/CollisionStatsRenderObject.h
     Source/RenderObjects/SkyDomeRenderObject.cpp
     Source/RenderObjects/SkyDomeRenderObject.h
+    Source/RenderObjects/ConsoleRenderObject.cpp
+    Source/RenderObjects/ConsoleRenderObject.h
     Source/Assets/Animation.cpp
     Source/Assets/Animation.h
     Source/Assets/Buffer.cpp

@@ -137,6 +137,16 @@ namespace Imzadi
 		virtual void PreRender();
 
 		/**
+		 * This is called just after this object has been added to the scene.
+		 */
+		virtual void OnPostAdded();
+
+		/**
+		 * This is called just before the object is removed from the scene.
+		 */
+		virtual void OnPreRemoved();
+
+		/**
 		 * This gives us some control over the order in which render objects render.
 		 * Rather than have a separate pass for opaque and translucent objects, alpha
 		 * blending is enabled in the main pass, and this key can be used to make sure

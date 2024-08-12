@@ -36,6 +36,7 @@ bool Scene::AddRenderObject(const std::string& name, Reference<RenderObject> ren
 		return false;
 
 	this->renderObjectMap.insert(std::pair<std::string, Reference<RenderObject>>(name, renderObject));
+	renderObject->OnPostAdded();
 	return true;
 }
 
@@ -48,6 +49,7 @@ bool Scene::RemoveRenderObject(const std::string& name, Reference<RenderObject>*
 	if (renderObject)
 		renderObject->Set(iter->second);
 
+	iter->second->OnPreRemoved();
 	this->renderObjectMap.erase(iter);
 	return true;
 }
@@ -126,5 +128,13 @@ RenderObject::RenderObject()
 }
 
 /*virtual*/ void RenderObject::PreRender()
+{
+}
+
+/*virtual*/ void RenderObject::OnPostAdded()
+{
+}
+
+/*virtual*/ void RenderObject::OnPreRemoved()
 {
 }

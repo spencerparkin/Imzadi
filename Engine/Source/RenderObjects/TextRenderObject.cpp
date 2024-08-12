@@ -16,7 +16,7 @@ TextRenderObject::TextRenderObject()
 	this->maxCharsPerLine = 32;
 	this->objectToTargetSpace.SetIdentity();
 	this->foreColor.SetComponents(1.0, 1.0, 1.0);
-	this->backColor.SetComponents(0.0, 0.0, 0.0);
+	this->backColor.SetComponents(0.0, 0.0, 0.0, 1.0);
 }
 
 /*virtual*/ TextRenderObject::~TextRenderObject()
@@ -516,12 +516,12 @@ const Vector3& TextRenderObject::GetForegroundColor() const
 	return this->foreColor;
 }
 
-void TextRenderObject::SetBackgroundColor(const Vector3& color)
+void TextRenderObject::SetBackgroundColor(const Vector4& color)
 {
 	this->backColor = color;
 }
 
-const Vector3& TextRenderObject::GetBackgroundColor() const
+const Vector4& TextRenderObject::GetBackgroundColor() const
 {
 	return this->backColor;
 }
@@ -586,8 +586,7 @@ FPSRenderObject::FPSRenderObject()
 	double frameRateFPS = 1.0 / averageFrameTimeSeconds;
 	this->SetText(std::format("FPS: {:.2f}", frameRateFPS));
 
-	const D3D11_VIEWPORT* viewport = Game::Get()->GetViewportInfo();
-	double aspectRatio = double(viewport->Width) / double(viewport->Height);
+	double aspectRatio = Game::Get()->GetAspectRatio();
 
 	Transform scale;
 	scale.SetIdentity();

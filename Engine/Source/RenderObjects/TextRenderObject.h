@@ -75,12 +75,12 @@ namespace Imzadi
 		/**
 		 * Set the background color used to render the text, if an opaque background is wanted.
 		 */
-		void SetBackgroundColor(const Vector3& color);
+		void SetBackgroundColor(const Vector4& color);
 
 		/**
 		 * Get the background color used to render the text, if an opaque background is wanted.
 		 */
-		const Vector3& GetBackgroundColor() const;
+		const Vector4& GetBackgroundColor() const;
 
 		/**
 		 * Try to load a font by the given name and then cache it on this text render
@@ -127,7 +127,7 @@ namespace Imzadi
 		ID3D11Buffer* vertexBuffer;
 		std::string text;
 		Vector3 foreColor;
-		Vector3 backColor;
+		Vector4 backColor;
 		uint32_t flags;
 		Transform objectToTargetSpace;
 		UINT numElements;

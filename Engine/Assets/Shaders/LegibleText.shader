@@ -7,7 +7,7 @@
         },
         "textBackColor": {
             "offset": 80,
-            "size": 12,
+            "size": 16,
             "type": "float"
         },
         "textForeColor": {

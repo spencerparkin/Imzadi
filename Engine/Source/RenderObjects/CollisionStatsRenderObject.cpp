@@ -47,8 +47,7 @@ CollisionStatsRenderObject::CollisionStatsRenderObject()
 	flags |= Flag::USE_NEWLINE_CHARS;
 	this->SetFlags(flags);
 
-	const D3D11_VIEWPORT* viewport = Game::Get()->GetViewportInfo();
-	double aspectRatio = double(viewport->Width) / double(viewport->Height);
+	double aspectRatio = Game::Get()->GetAspectRatio();
 
 	Transform scale;
 	scale.SetIdentity();
@@ -60,5 +59,5 @@ CollisionStatsRenderObject::CollisionStatsRenderObject()
 
 	this->SetTransform(transform * scale);
 
-	TextRenderObject::Prepare();
+	TextRenderObject::PreRender();
 }

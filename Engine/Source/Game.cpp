@@ -5,6 +5,7 @@
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "RenderObjects/TextRenderObject.h"
 #include "RenderObjects/CollisionStatsRenderObject.h"
+#include "RenderObjects/ConsoleRenderObject.h"
 #include "Camera.h"
 #include "Entities/Level.h"
 #include "Math/Transform.h"
@@ -72,7 +73,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 		return false;
 	}
 
-	RECT rect = { 0, 0, 1024, 768 };
+	RECT rect = { 0, 0, 1700, 800 };
 	AdjustWindowRectEx(&rect, WS_OVERLAPPEDWINDOW, FALSE, WS_EX_OVERLAPPEDWINDOW);
 	LONG width = rect.right - rect.left;
 	LONG height = rect.bottom - rect.top;
@@ -660,6 +661,8 @@ void Game::AdvanceEntities(TickPass tickPass)
 				this->ToggleFPSDisplay();
 			else if (wParam == VK_F6)
 				this->ToggleCollisionStats();
+			else if (wParam == VK_F7)
+				this->ToggleConsole();
 			break;
 		}
 		case WM_DESTROY:
@@ -707,6 +710,16 @@ void Game::ToggleCollisionStats()
 		auto collisionStats = new CollisionStatsRenderObject();
 		collisionStats->SetFont("UbuntuMono_R");
 		return collisionStats;
+	});
+}
+
+void Game::ToggleConsole()
+{
+	this->ToggleRenderObject("console", []() -> RenderObject*
+	{
+		auto console = new ConsoleRenderObject();
+		console->SetFont("UbuntuMono_R");
+		return console;
 	});
 }
 
@@ -840,6 +853,12 @@ void Game::ShutdownAllEntities()
 	this->PostShutdown();
 
 	return true;
+}
+
+double Game::GetAspectRatio() const
+{
+	double aspectRatio = double(this->mainPassViewport.Width) / double(this->mainPassViewport.Height);
+	return aspectRatio;
 }
 
 double Game::GetDeltaTime() const

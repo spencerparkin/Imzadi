@@ -240,6 +240,7 @@ namespace Imzadi
 		void SetAssetCache(AssetCache* assetCache);
 
 		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
+		double GetAspectRatio() const;
 		double GetDeltaTime() const;
 
 		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>* GetRasterStateCache() { return &this->rasterStateCache; }
@@ -315,6 +316,7 @@ namespace Imzadi
 		bool RecreateViews();
 		void ToggleFPSDisplay();
 		void ToggleCollisionStats();
+		void ToggleConsole();
 		void ToggleRenderObject(const std::string& name, std::function<RenderObject*()> renderObjectCreatorFunc);
 		void ShutdownAllEntities();
 

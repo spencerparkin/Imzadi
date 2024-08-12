@@ -185,7 +185,7 @@ DialogBasicElement::DialogBasicElement()
 	textRenderObject->SetFlags(flags);
 	textRenderObject->SetText(std::format("{}: {} (Press \"A\".)", this->speaker.c_str(), this->text.c_str()));
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
-	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector4(0.0, 0.0, 0.0, 1.0));
 	textRenderObject->SetTransform(transform);
 	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
 
@@ -302,7 +302,7 @@ DialogChoiceElement::DialogChoiceElement()
 	textRenderObject->SetFlags(flags);
 	textRenderObject->SetText(text);
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
-	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector4(0.0, 0.0, 0.0, 1.0));
 	textRenderObject->SetTransform(transform);
 	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
 
