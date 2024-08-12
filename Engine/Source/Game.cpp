@@ -51,6 +51,11 @@ Game::Game(HINSTANCE instance) : controller(0)
 {
 }
 
+/*virtual*/ HICON Game::GetWindowIcon()
+{
+	return NULL;
+}
+
 /*virtual*/ bool Game::CreateRenderWindow()
 {
 	WNDCLASSEX winClass;
@@ -59,6 +64,7 @@ Game::Game(HINSTANCE instance) : controller(0)
 	winClass.style = CS_HREDRAW | CS_VREDRAW;
 	winClass.lpfnWndProc = &Game::WndProcEntryFunc;
 	winClass.lpszClassName = IMZADI_GAME_WINDOW_CLASS_NAME;
+	winClass.hIcon = this->GetWindowIcon();
 
 	if (!RegisterClassEx(&winClass))
 	{

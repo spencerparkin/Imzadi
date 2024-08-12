@@ -134,6 +134,11 @@ namespace Imzadi
 		 */
 		virtual bool CreateRenderWindow();
 
+		/**
+		 * Return the icon used for the window.
+		 */
+		virtual HICON GetWindowIcon();
+
 		Scene* GetScene();
 		Camera* GetCamera();
 		void SetCamera(Reference<Camera> camera);
