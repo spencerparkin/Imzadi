@@ -29,6 +29,7 @@ set(RIXX_SOURCES
     Source/Assets/ZipLine.h
     Source/Assets/GameLevelData.cpp
     Source/Assets/GameLevelData.h
+    Assets/Icons/Icon.rc
 )
 
 source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${RIXX_SOURCES})
