@@ -245,10 +245,11 @@ PolygonShapeCache::PolygonShapeCache()
 	else
 	{
 		this->center = polygon->localPolygon.CalcCenter();
-		this->worldCenter = polygon->objectToWorld.TransformPoint(this->center);
 		this->plane = polygon->localPolygon.CalcPlane(true);
-		this->worldPlane = polygon->objectToWorld.TransformPlane(this->plane);
 	}
+
+	this->worldCenter = polygon->objectToWorld.TransformPoint(this->center);
+	this->worldPlane = polygon->objectToWorld.TransformPlane(this->plane);
 
 	polygon->objectToWorld.TransformPolygon(polygon->localPolygon, this->worldPolygon);
 	this->boundingBox.SetToBoundPointCloud(this->worldPolygon.vertexArray);

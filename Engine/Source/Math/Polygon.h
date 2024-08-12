@@ -82,7 +82,14 @@ namespace Imzadi
 		double Area() const;
 
 		/**
-		 * This method assumes the polygon is convex.
+		 * Tell the caller if the given point is a member of the set
+		 * of points consituting this polygon.  This method assumes
+		 * the polygon is convex.
+		 * 
+		 * @param[in] point This is the point being tested against this polygon for membership in its set of points.
+		 * @param[in] tolerance This is a thickness of the plane of the polygon and a girth of the polygon's edges.
+		 * @param[out] isInterior If given, this is set to true if and only if the given point is approximately on the polygon, but not on an edge or vertex boundary.
+		 * @return True is returned if the given point is approximately on this polygon; false, otherwise.
 		 */
 		bool ContainsPoint(const Vector3& point, double tolerance = 1e-5, bool* isInterior = nullptr) const;
 
