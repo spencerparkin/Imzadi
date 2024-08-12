@@ -1,0 +1,10 @@
+{
+    "texture_array": [
+        "Textures/OceanSkyBox/right.texture",
+        "Textures/OceanSkyBox/left.texture",
+        "Textures/OceanSkyBox/top.texture",
+        "Textures/OceanSkyBox/bottom.texture",
+        "Textures/OceanSkyBox/front.texture",
+        "Textures/OceanSkyBox/back.texture"
+    ]
+}

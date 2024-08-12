@@ -14,7 +14,7 @@
         "Models/Level1/Tube004.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
-    "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
+    "cube_texture": "Textures/OceanSkyBox/SkyBox.cube_texture",
     "player_start_location": {
         "x": 0.0,
         "y": 2.0,

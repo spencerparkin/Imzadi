@@ -1,0 +1,9 @@
+{
+    "width": 2048,
+    "height": 2048,
+    "data": "Textures\\OceanSkyBox\\right.texture_data",
+    "num_mips": 12,
+    "for_staging": true,
+    "format": "RGBA",
+    "compressed": true
+}
