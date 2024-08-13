@@ -27,7 +27,11 @@ CollisionSystemCommand::CollisionSystemCommand()
 	return "Inspect or tweak the collision system internals.";
 }
 
-/*virtual*/ void CollisionSystemCommand::Execute(const std::vector<std::string>& arguments)
+/*virtual*/ bool CollisionSystemCommand::Execute(const std::vector<std::string>& arguments, std::vector<std::string>& results)
 {
-	//...
+	results.push_back("Test 1");
+	results.push_back("Test 2");
+	results.push_back("Test 3");
+
+	return true;
 }

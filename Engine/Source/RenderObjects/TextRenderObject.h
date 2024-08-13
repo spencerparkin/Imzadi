@@ -130,6 +130,15 @@ namespace Imzadi
 		 */
 		uint32_t GetMaxCharsPerLine() const;
 
+		/**
+		 * Split a string into seperate strings.
+		 * 
+		 * @param[in] givenString This is the string to split.
+		 * @param[out] tokenArray These are the parts of the given string that don't contain spaces.
+		 * @param[in] delimiter This is the separator token to use to split the string.
+		 */
+		static void SplitString(const std::string& givenString, std::vector<std::string>& tokenArray, const std::string& delimiter = " ");
+
 	private:
 		AxisAlignedBoundingBox CalculateStringBox(const std::string& givenString);
 

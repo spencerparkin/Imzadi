@@ -14,6 +14,6 @@ namespace Imzadi
 		virtual std::string GetName() override;
 		virtual std::string GetSyntaxHelp() override;
 		virtual std::string GetHelpDescription() override;
-		virtual void Execute(const std::vector<std::string>& arguments) override;
+		virtual bool Execute(const std::vector<std::string>& arguments, std::vector<std::string>& results) override;
 	};
 }

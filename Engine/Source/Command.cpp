@@ -25,3 +25,8 @@ ConsoleCommand::ConsoleCommand()
 {
 	return registrationList;
 }
+
+/*virtual*/ std::string ConsoleCommand::GetDetailedHelp()
+{
+	return "No detailed help available.";
+}

@@ -73,6 +73,20 @@ namespace Imzadi
 		bool FindRenderObject(const std::string& name, Reference<RenderObject>& renderObject);
 
 		/**
+		 * This is a convenience wrapper around the non-templated @ref FindRenderObject method.
+		 */
+		template<typename T>
+		bool FindRenderObject(const std::string& name, Reference<T>& renderObjectTyped)
+		{
+			Reference<RenderObject> renderObject;
+			if (!this->FindRenderObject(name, renderObject))
+				return false;
+
+			renderObjectTyped.SafeSet(renderObject.Get());
+			return renderObjectTyped.Get() != nullptr;
+		}
+
+		/**
 		 * Submit draw-calls for everything approximately deemed visible in the scene
 		 * to the given camera.
 		 *

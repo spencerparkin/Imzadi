@@ -645,6 +645,11 @@ void Game::AdvanceEntities(TickPass tickPass)
 		{
 			if (wParam == VK_ESCAPE)
 				DestroyWindow(this->mainWindowHandle);
+
+			Reference<ConsoleRenderObject> console;
+			if (this->scene->FindRenderObject("console", console))
+				console->OnKeyDown(wParam, lParam);
+
 			break;
 		}
 		case WM_KEYUP:
