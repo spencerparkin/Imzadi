@@ -91,7 +91,7 @@ FollowCam::FollowCam()
 			ray.origin = this->worldSpaceFocalPoint;
 			ray.unitDirection = (this->desiredCameraObjectToWorld.translation - this->worldSpaceFocalPoint).Normalized();
 
-			auto rayCastQuery = Collision::RayCastQuery::Create();
+			auto rayCastQuery = new Collision::RayCastQuery();
 			rayCastQuery->SetRay(ray);
 			rayCastQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
@@ -134,7 +134,7 @@ FollowCam::FollowCam()
 						}
 					}
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 

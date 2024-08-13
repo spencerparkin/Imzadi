@@ -28,14 +28,6 @@ class IMZADI_API Result
 public:
 	Result();
 	virtual ~Result();
-
-	/**
-	 * Use this function to free any given collision result once you've
-	 * had a chance to process it on the main thread.
-	 *
-	 * @param result This is the result who's memory is to be reclaimed.
-	 */
-	static void Free(Result* result);
 };
 
 /**
@@ -57,11 +49,6 @@ public:
 	 */
 	void SetAnswer(bool answer) { this->answer = answer; }
 
-	/**
-	 * Allocate and return a new BoolResult instance.
-	 */
-	static BoolResult* Create();
-
 private:
 	bool answer;
 };
@@ -78,8 +65,6 @@ public:
 	void SetText(const std::string& text) { this->text = text; }
 
 	const std::string& GetText() const { return this->text; }
-
-	static StringResult* Create();
 
 private:
 	std::string text;
@@ -128,11 +113,6 @@ public:
 	 */
 	void AddLinesForBox(const AxisAlignedBoundingBox& box, const Vector3& color);
 
-	/**
-	 * Allocate and return a new DebugRenderResult object.
-	 */
-	static DebugRenderResult* Create();
-
 private:
 	std::vector<RenderLine> renderLineArray;
 };
@@ -174,11 +154,6 @@ public:
 	 */
 	void SetHitData(const HitData& hitData) { this->hitData = hitData; }
 
-	/**
-	 * Allocate and return a new RayCastResult instance.
-	 */
-	static RayCastResult* Create();
-
 private:
 	HitData hitData;
 };
@@ -191,8 +166,6 @@ class IMZADI_API ObjectToWorldResult : public Result
 public:
 	ObjectToWorldResult();
 	virtual ~ObjectToWorldResult();
-
-	static ObjectToWorldResult* Create();
 
 public:
 	Transform objectToWorld;
@@ -210,11 +183,6 @@ class IMZADI_API CollisionQueryResult : public Result
 public:
 	CollisionQueryResult();
 	virtual ~CollisionQueryResult();
-
-	/**
-	 * Allocate and return a new instance of the CollisionQueryResult class.
-	 */
-	static CollisionQueryResult* Create();
 
 	/**
 	 * This is used internally to populate the query result.

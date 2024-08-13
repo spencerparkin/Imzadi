@@ -8,22 +8,17 @@ using namespace Imzadi::Collision;
 
 //----------------------------- PolygonShape -----------------------------
 
-PolygonShape::PolygonShape(const PolygonShape& polygon) : Shape(true)
+PolygonShape::PolygonShape(const PolygonShape& polygon)
 {
 	this->localPolygon = polygon.localPolygon;
 }
 
-PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
+PolygonShape::PolygonShape()
 {
 }
 
 /*virtual*/ PolygonShape::~PolygonShape()
 {
-}
-
-/*static*/ PolygonShape* PolygonShape::Create()
-{
-	return new PolygonShape(false);
 }
 
 /*virtual*/ ShapeCache* PolygonShape::CreateCache() const
@@ -43,7 +38,7 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ Shape* PolygonShape::Clone() const
 {
-	auto polygon = PolygonShape::Create();
+	auto polygon = new PolygonShape();
 	polygon->Copy(this);
 	return polygon;
 }
@@ -88,8 +83,8 @@ PolygonShape::PolygonShape(bool temporary) : Shape(temporary)
 {
 	constexpr double planeThickness = 1e-6;
 
-	auto polygonBack = new PolygonShape(false);
-	auto polygonFront = new PolygonShape(false);
+	auto polygonBack = new PolygonShape();
+	auto polygonFront = new PolygonShape();
 
 	if (!this->localPolygon.SplitAgainstPlane(plane, polygonBack->localPolygon, polygonFront->localPolygon, planeThickness))
 	{

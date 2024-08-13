@@ -91,7 +91,7 @@ OBJ_ShapeLoader::OBJ_ShapeLoader()
 			}
 			else if (tokenArray[0] == "f")
 			{
-				auto polygon = new PolygonShape(false);
+				auto polygon = new PolygonShape();
 				shapeArray.push_back(polygon);
 
 				for (int i = 1; i < (signed)tokenArray.size(); i++)

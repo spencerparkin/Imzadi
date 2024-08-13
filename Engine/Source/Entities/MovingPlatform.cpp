@@ -158,7 +158,7 @@ MovingPlatform::MovingPlatform()
 
 		for (Collision::ShapeID shapeID : this->collisionShapeArray)
 		{
-			auto command = Collision::ObjectToWorldCommand::Create();
+			auto command = new Collision::ObjectToWorldCommand();
 			command->SetShapeID(shapeID);
 			command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			Game::Get()->GetCollisionSystem()->IssueCommand(command);

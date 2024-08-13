@@ -34,7 +34,7 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	objectToWorld.SetIdentity();
 	objectToWorld.translation = this->zipLine->GetLineSegment().point[0];
 
-	auto sphereShape = Imzadi::Collision::SphereShape::Create();
+	auto sphereShape = new Imzadi::Collision::SphereShape();
 	sphereShape->SetObjectToWorldTransform(objectToWorld);
 	sphereShape->SetCenter(Imzadi::Vector3(0.0, 0.0, 0.0));
 	sphereShape->SetRadius(this->zipLine->GetRadius());
@@ -61,7 +61,7 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 		{
 			Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
-			auto query = Imzadi::Collision::CollisionQuery::Create();
+			auto query = new Imzadi::Collision::CollisionQuery();
 			query->SetShapeID(this->sphereShapeID);
 			query->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 			collisionSystem->MakeQuery(query, this->collisionQueryTaskID);
@@ -81,7 +81,7 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 					if (collisionResult)
 						this->HandleCollisionResult(collisionResult);
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 

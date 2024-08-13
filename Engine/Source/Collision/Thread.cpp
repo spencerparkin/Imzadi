@@ -43,7 +43,7 @@ bool Thread::Shutdown()
 {
 	if (this->thread)
 	{
-		this->SendTask(ExitThreadCommand::Create());
+		this->SendTask(new ExitThreadCommand());
 		this->thread->join();
 		delete this->thread;
 		this->thread = nullptr;
@@ -122,7 +122,7 @@ void Thread::ClearResults()
 	{
 		std::unordered_map<TaskID, Result*>::iterator iter = this->resultMap.begin();
 		Result* result = iter->second;
-		Result::Free(result);
+		delete result;
 		this->resultMap.erase(iter);
 	}
 }
@@ -194,7 +194,7 @@ void Thread::StoreResult(Result* result, TaskID taskID)
 		this->resultMap.insert(std::pair<TaskID, Result*>(taskID, result));
 	else
 	{
-		Result::Free(iter->second);
+		delete iter->second;
 		iter->second = result;
 	}
 }

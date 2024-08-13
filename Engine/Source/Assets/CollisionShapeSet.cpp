@@ -44,7 +44,7 @@ CollisionShapeSet::CollisionShapeSet()
 
 		if (shapeType == "polygon")
 		{
-			auto polygon = Collision::PolygonShape::Create();
+			auto polygon = new Collision::PolygonShape();
 			this->collisionShapeArray.push_back(polygon);
 
 			if (!shapeValue.HasMember("vertex_array") || !shapeValue["vertex_array"].IsArray())

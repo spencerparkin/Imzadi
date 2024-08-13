@@ -18,7 +18,7 @@ class IMZADI_API BoxShape : public Shape
 	friend class BoxShapeCache;
 
 public:
-	BoxShape(bool temporary);
+	BoxShape();
 	BoxShape(const BoxShape& boxShape);
 	virtual ~BoxShape();
 

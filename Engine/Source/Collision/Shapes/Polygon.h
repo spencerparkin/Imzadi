@@ -31,7 +31,7 @@ class IMZADI_API PolygonShape : public Shape
 
 public:
 	PolygonShape(const PolygonShape& polygon);
-	PolygonShape(bool temporary);
+	PolygonShape();
 	virtual ~PolygonShape();
 
 	/**
@@ -101,11 +101,6 @@ public:
 	 * Read this polygon from the given stream in binary form.
 	 */
 	virtual bool Restore(std::istream& stream) override;
-
-	/**
-	 * Allocate and return a new PolygonShape class instance.
-	 */
-	static PolygonShape* Create();
 
 	/**
 	 * Remove all object-space vertices from this polygon.  Note that the

@@ -17,7 +17,7 @@ class IMZADI_API CapsuleShape : public Shape
 	friend class CapsuleShapeCache;
 
 public:
-	CapsuleShape(bool temporary);
+	CapsuleShape();
 	virtual ~CapsuleShape();
 
 	/**
@@ -80,11 +80,6 @@ public:
 	 * Read this capsule from the given stream in binary form.
 	 */
 	virtual bool Restore(std::istream& stream) override;
-
-	/**
-	 * Allocate and return a new CapsuleShape class instance.
-	 */
-	static CapsuleShape* Create();
 
 	/**
 	 * Set one of the two object-space vertices of this capsule.

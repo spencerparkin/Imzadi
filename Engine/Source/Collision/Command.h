@@ -35,11 +35,6 @@ public:
 	 * Signal the collision thread to shutdown.
 	 */
 	virtual void Execute(Thread* thread) override;
-
-	/**
-	 * Allocate and return an instance of the ExitThreadCommand.
-	 */
-	static ExitThreadCommand* Create();
 };
 
 /**
@@ -104,11 +99,6 @@ public:
 	 */
 	uint32_t GetFlags() const { return this->flags; }
 
-	/**
-	 * Allocate an instance of the AddShapeCommand.
-	 */
-	static AddShapeCommand* Create();
-
 private:
 	Shape* shape;
 	uint32_t flags;
@@ -127,11 +117,6 @@ public:
 	 * Perform the removal of the set shape from the collision system.
 	 */
 	virtual void Execute(Thread* thread) override;
-
-	/**
-	 * Allocate an instance of the RemoveShapeCommand.
-	 */
-	static RemoveShapeCommand* Create();
 };
 
 /**
@@ -147,11 +132,6 @@ public:
 	 * Perform the removal of all collision shapes from the collision world.
 	 */
 	virtual void Execute(Thread* thread) override;
-
-	/**
-	 * Create a new instance of the RemoveAllShapesCommand class.
-	 */
-	static RemoveAllShapesCommand* Create();
 };
 
 /**
@@ -179,11 +159,6 @@ public:
 	 */
 	const Vector3& GetColor() const { return this->color; }
 
-	/**
-	 * Create a new instance of the SetDebugRenderColorCommand class.
-	 */
-	static SetDebugRenderColorCommand* Create();
-
 private:
 	Vector3 color;
 };
@@ -202,11 +177,6 @@ public:
 	 */
 	virtual void Execute(Thread* thread) override;
 
-	/**
-	 * Allocate and return a new instance of the ObjectToWorldCommand class.
-	 */
-	static ObjectToWorldCommand* Create();
-
 public:
 	Transform objectToWorld;		///< This transform is what's assigned to the target shape's object-to-world transform.
 };
@@ -222,8 +192,6 @@ public:
 	virtual ~ResetProfileDataCommand();
 
 	virtual void Execute(Thread* thread) override;
-
-	static ResetProfileDataCommand* Create();
 };
 
 /**
@@ -240,11 +208,6 @@ public:
 	 * Perform the dump or restore operation of the collision world.
 	 */
 	virtual void Execute(Thread* thread) override;
-
-	/**
-	 * Create a new instance of the FileComand class.
-	 */
-	static FileCommand* Create();
 
 	enum Action
 	{

@@ -82,11 +82,6 @@ public:
 	 */
 	uint32_t GetDrawFlags() const { return this->drawFlags; }
 
-	/**
-	 * Allocate and construct a new DebugRenderQuery object.
-	 */
-	static DebugRenderQuery* Create();
-
 private:
 	uint32_t drawFlags;
 };
@@ -152,11 +147,6 @@ public:
 	 * Extract the shape's object-to-world transform.
 	 */
 	virtual Result* ExecuteQuery(Thread* thread) override;
-
-	/**
-	 * Allocate and return a new instance of the ObjectToWorldQuery class.
-	 */
-	static ObjectToWorldQuery* Create();
 };
 
 /**
@@ -193,11 +183,6 @@ public:
 	virtual Result* ExecuteQuery(Thread* thread) override;
 
 	/**
-	 * Create an instance of the CollisionQuery class.
-	 */
-	static CollisionQuery* Create();
-
-	/**
 	 * Set flags that are used to limit which collision shapes to test against.
 	 */
 	void SetUserFlagsMask(uint64_t userFlagsMask) { this->userFlagsMask = userFlagsMask; }
@@ -227,11 +212,6 @@ public:
 	 * See if the shape has a node in the bounding box tree.
 	 */
 	virtual Result* ExecuteQuery(Thread* thread) override;
-
-	/**
-	 * Create an instance of the ShapeInBoundsQuery class.
-	 */
-	static ShapeInBoundsQuery* Create();
 };
 
 /**
@@ -245,8 +225,6 @@ public:
 	virtual ~ProfileStatsQuery();
 
 	virtual Result* ExecuteQuery(Thread* thread) override;
-
-	static ProfileStatsQuery* Create();
 };
 
 } // namespace Collision {

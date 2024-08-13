@@ -263,7 +263,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 	{
 		case ID_AddBox:
 		{
-			auto box = system->Create<Collision::BoxShape>();
+			auto box = new Collision::BoxShape();
 			Transform objectToWorld;
 			objectToWorld.SetIdentity();
 			objectToWorld.matrix.SetFromAxisAngle(Vector3(1.0, 1.0, 1.0).Normalized(), M_PI / 3.0);
@@ -275,7 +275,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		}
 		case ID_AddCapsule:
 		{
-			auto capsule = system->Create<Collision::CapsuleShape>();
+			auto capsule = new Collision::CapsuleShape();
 			capsule->SetRadius(2.0);
 			capsule->SetVertex(0, Vector3(-5.0, 0.0, 0.0));
 			capsule->SetVertex(1, Vector3(5.0, 0.0, 0.0));
@@ -284,7 +284,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		}
 		case ID_AddPolygon:
 		{
-			auto polygon = system->Create<Collision::PolygonShape>();
+			auto polygon = new Collision::PolygonShape();
 			Transform objectToWorld;
 			objectToWorld.SetIdentity();
 			objectToWorld.translation.SetComponents(-20.0, -20.0, -20.0);
@@ -307,7 +307,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		}
 		case ID_AddSphere:
 		{
-			auto sphere = system->Create<Collision::SphereShape>();
+			auto sphere = new Collision::SphereShape();
 			Transform objectToWorld;
 			objectToWorld.SetIdentity();
 			objectToWorld.translation.SetComponents(-20.0, 20.0, -20.0);

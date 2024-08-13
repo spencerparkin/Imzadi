@@ -15,11 +15,6 @@ Result::Result()
 {
 }
 
-/*static*/ void Result::Free(Result* result)
-{
-	delete result;
-}
-
 //-------------------------------- BoolResult --------------------------------
 
 BoolResult::BoolResult()
@@ -31,11 +26,6 @@ BoolResult::BoolResult()
 {
 }
 
-/*static*/ BoolResult* BoolResult::Create()
-{
-	return new BoolResult();
-}
-
 //-------------------------------- StringResult --------------------------------
 
 StringResult::StringResult()
@@ -45,11 +35,6 @@ StringResult::StringResult()
 
 /*virtual*/ StringResult::~StringResult()
 {
-}
-
-/*static*/ StringResult* StringResult::Create()
-{
-	return new StringResult();
 }
 
 //-------------------------------- DebugRenderResult --------------------------------
@@ -65,11 +50,6 @@ DebugRenderResult::DebugRenderResult()
 void DebugRenderResult::AddRenderLine(const RenderLine& renderLine)
 {
 	this->renderLineArray.push_back(renderLine);
-}
-
-/*static*/ DebugRenderResult* DebugRenderResult::Create()
-{
-	return new DebugRenderResult();
 }
 
 void DebugRenderResult::AddLinesForBox(const AxisAlignedBoundingBox& box, const Vector3& color)
@@ -137,11 +117,6 @@ RayCastResult::RayCastResult()
 {
 }
 
-/*static*/ RayCastResult* RayCastResult::Create()
-{
-	return new RayCastResult();
-}
-
 //-------------------------------- TransformResult --------------------------------
 
 ObjectToWorldResult::ObjectToWorldResult()
@@ -150,11 +125,6 @@ ObjectToWorldResult::ObjectToWorldResult()
 
 /*virtual*/ ObjectToWorldResult::~ObjectToWorldResult()
 {
-}
-
-/*static*/ ObjectToWorldResult* ObjectToWorldResult::Create()
-{
-	return new ObjectToWorldResult();
 }
 
 //-------------------------------- CollisionQueryResult --------------------------------
@@ -166,11 +136,6 @@ CollisionQueryResult::CollisionQueryResult()
 
 /*virtual*/ CollisionQueryResult::~CollisionQueryResult()
 {
-}
-
-/*static*/ CollisionQueryResult* CollisionQueryResult::Create()
-{
-	return new CollisionQueryResult();
 }
 
 void CollisionQueryResult::AddCollisionStatus(ShapePairCollisionStatus* collisionStatus)

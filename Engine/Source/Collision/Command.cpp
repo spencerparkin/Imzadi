@@ -34,11 +34,6 @@ ExitThreadCommand::ExitThreadCommand()
 	thread->signaledToExit = true;
 }
 
-/*static*/ ExitThreadCommand* ExitThreadCommand::Create()
-{
-	return new ExitThreadCommand();
-}
-
 //------------------------------- ShapeCommand -------------------------------
 
 ShapeCommand::ShapeCommand()
@@ -70,11 +65,6 @@ AddShapeCommand::AddShapeCommand()
 	thread->AddShape(this->shape, this->flags);
 }
 
-/*static*/ AddShapeCommand* AddShapeCommand::Create()
-{
-	return new AddShapeCommand();
-}
-
 //------------------------------- RemoveShapeCommand -------------------------------
 
 RemoveShapeCommand::RemoveShapeCommand()
@@ -89,11 +79,6 @@ RemoveShapeCommand::RemoveShapeCommand()
 /*virtual*/ void RemoveShapeCommand::Execute(Thread* thread)
 {
 	thread->RemoveShape(this->shapeID);
-}
-
-/*static*/ RemoveShapeCommand* RemoveShapeCommand::Create()
-{
-	return new RemoveShapeCommand();
 }
 
 //------------------------------- RemoveAllShapesCommand -------------------------------
@@ -111,11 +96,6 @@ RemoveAllShapesCommand::RemoveAllShapesCommand()
 	thread->ClearShapes();
 }
 
-/*static*/ RemoveAllShapesCommand* RemoveAllShapesCommand::Create()
-{
-	return new RemoveAllShapesCommand();
-}
-
 //------------------------------- RemoveAllShapesCommand -------------------------------
 
 SetDebugRenderColorCommand::SetDebugRenderColorCommand()
@@ -131,11 +111,6 @@ SetDebugRenderColorCommand::SetDebugRenderColorCommand()
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (shape)
 		shape->SetDebugRenderColor(this->color);
-}
-
-/*static*/ SetDebugRenderColorCommand* SetDebugRenderColorCommand::Create()
-{
-	return new SetDebugRenderColorCommand();
 }
 
 //------------------------------- ObjectToWorldCommand -------------------------------
@@ -161,11 +136,6 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 	boxTree.Insert(shape, 0);
 }
 
-/*static*/ ObjectToWorldCommand* ObjectToWorldCommand::Create()
-{
-	return new ObjectToWorldCommand();
-}
-
 //------------------------------- ResetProfileDataCommand -------------------------------
 
 ResetProfileDataCommand::ResetProfileDataCommand()
@@ -181,11 +151,6 @@ ResetProfileDataCommand::ResetProfileDataCommand()
 	collisionProfileData.Reset();
 }
 
-/*static*/ ResetProfileDataCommand* ResetProfileDataCommand::Create()
-{
-	return new ResetProfileDataCommand();
-}
-
 //------------------------------- FileCommand -------------------------------
 
 FileCommand::FileCommand()
@@ -197,11 +162,6 @@ FileCommand::FileCommand()
 /*virtual*/ FileCommand::~FileCommand()
 {
 	delete this->filePath;
-}
-
-/*static*/ FileCommand* FileCommand::Create()
-{
-	return new FileCommand();
 }
 
 /*virtual*/ void FileCommand::Execute(Thread* thread)

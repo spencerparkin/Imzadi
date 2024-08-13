@@ -41,7 +41,7 @@ TriggerBox::TriggerBox()
 	objectToWorld.matrix.SetIdentity();
 	objectToWorld.translation = center;
 
-	auto boxShape = Collision::BoxShape::Create();
+	auto boxShape = new Collision::BoxShape();
 	boxShape->SetExtents(extents);
 	boxShape->SetObjectToWorldTransform(objectToWorld);
 	boxShape->SetUserFlags(IMZADI_SHAPE_FLAG_TRIGGER_BOX);
@@ -71,7 +71,7 @@ TriggerBox::TriggerBox()
 	{
 		case TickPass::SUBMIT_COLLISION_QUERIES:
 		{
-			auto collisionQuery = Collision::CollisionQuery::Create();
+			auto collisionQuery = new Collision::CollisionQuery();
 			collisionQuery->SetShapeID(this->collisionShapeID);
 			collisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
@@ -89,7 +89,7 @@ TriggerBox::TriggerBox()
 					if (collisionResult)
 						this->UpdateCollisionState(collisionResult);
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 

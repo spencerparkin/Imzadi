@@ -507,7 +507,7 @@ bool Game::RecreateViews()
 				for (const Collision::DebugRenderResult::RenderLine& line : debugRenderResult->GetRenderLineArray())
 					this->debugLines->AddLine({ line.color, line.line });
 
-			this->collisionSystem.Free(result);
+			delete result;
 		}
 	}
 

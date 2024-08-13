@@ -114,30 +114,6 @@ public:
 	Result* ObtainQueryResult(TaskID taskID);
 
 	/**
-	 * Free the memory associated with the given object.  Note that no heap-allocated object
-	 * used by the collision system should ever be created or destroyed by the collision system user
-	 * using the standard new and delete operators.  Rather, they should be created or destroyed by
-	 * the collision system user using the Create or Free methods, respectively.  This is because the
-	 * user's heap and the collision system's heap may not be the same.  The collision system might
-	 * even impliment it's own high-performance heap to boost efficiency.
-	 */
-	template<typename T>
-	void Free(T* object)
-	{
-		T::Free(object);
-	}
-
-	/**
-	 * Allocate and construct a new object of the given type.  This can be a Shape, a Query, a Command, etc.
-	 * See the corresponding Free function.
-	 */
-	template<typename T>
-	T* Create()
-	{
-		return T::Create();
-	}
-
-	/**
 	 * Stall until all collision tasks (queries or commands) are complete.  Once this function has returned,
 	 * all previously issued commands will have been executed, and every call to ObtainQueryResult with a
 	 * valid query handle will succeed.  In other words, no command or query is pending or in flight once

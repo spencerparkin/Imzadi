@@ -20,7 +20,7 @@ CollisionStatsRenderObject::CollisionStatsRenderObject()
 
 	this->SetText("?");
 
-	auto query = Collision::ProfileStatsQuery::Create();
+	auto query = new Collision::ProfileStatsQuery();
 	Collision::TaskID taskID = 0;
 	collisionSystem->MakeQuery(query, taskID);
 	collisionSystem->FlushAllTasks();
@@ -31,10 +31,10 @@ CollisionStatsRenderObject::CollisionStatsRenderObject()
 		if (statsResult)
 			this->SetText(statsResult->GetText());
 
-		collisionSystem->Free(result);
+		delete result;
 	}
 
-	auto command = Collision::ResetProfileDataCommand::Create();
+	auto command = new Collision::ResetProfileDataCommand();
 	collisionSystem->IssueCommand(command);
 
 	this->SetForegroundColor(Vector3(1.0, 0.0, 0.0));

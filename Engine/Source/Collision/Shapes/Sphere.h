@@ -14,7 +14,7 @@ class IMZADI_API SphereShape : public Shape
 	friend class SphereShapeCache;
 
 public:
-	SphereShape(bool temporary);
+	SphereShape();
 	virtual ~SphereShape();
 
 	/**
@@ -54,11 +54,6 @@ public:
 	 * Tell the caller if the given point is contained within this sphere or on its surface.
 	 */
 	virtual bool ContainsPoint(const Vector3& point) const override;
-
-	/**
-	 * Allocate and return a new SphereShape class instance.
-	 */
-	static SphereShape* Create();
 
 	/**
 	 * Set the center location of the sphere in object space.

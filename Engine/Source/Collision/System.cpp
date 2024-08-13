@@ -57,7 +57,7 @@ ShapeID System::AddShape(Shape* shape, uint32_t flags)
 
 	ShapeID shapeID = shape->GetShapeID();
 
-	auto command = AddShapeCommand::Create();
+	auto command = new AddShapeCommand();
 	command->SetShape(shape);
 	command->SetFlags(flags);
 	this->thread->SendTask(command);
@@ -67,14 +67,14 @@ ShapeID System::AddShape(Shape* shape, uint32_t flags)
 
 void System::RemoveShape(ShapeID shapeID)
 {
-	auto command = this->Create<RemoveShapeCommand>();
+	auto command = new RemoveShapeCommand();
 	command->SetShapeID(shapeID);
 	this->IssueCommand(command);
 }
 
 void System::Clear()
 {
-	this->IssueCommand(this->Create<RemoveAllShapesCommand>());
+	this->IssueCommand(new RemoveAllShapesCommand());
 }
 
 bool System::IssueCommand(Command* command)
@@ -114,7 +114,7 @@ bool System::FlushAllTasks()
 
 bool System::DumpToFile(const std::string& fileName)
 {
-	auto command = FileCommand::Create();
+	auto command = new FileCommand();
 	command->SetFilePath(fileName);
 	command->SetAction(FileCommand::Action::DUMP);
 	this->IssueCommand(command);
@@ -124,7 +124,7 @@ bool System::DumpToFile(const std::string& fileName)
 
 bool System::RestoreFromFile(const std::string& fileName)
 {
-	auto command = FileCommand::Create();
+	auto command = new FileCommand();
 	command->SetFilePath(fileName);
 	command->SetAction(FileCommand::Action::RESTORE);
 	this->IssueCommand(command);

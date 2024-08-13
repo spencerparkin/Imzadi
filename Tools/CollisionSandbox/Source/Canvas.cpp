@@ -123,7 +123,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 
 	Collision::System* system = wxGetApp().GetCollisionSystem();
 
-	auto renderQuery = system->Create<Collision::DebugRenderQuery>();
+	auto renderQuery = new Collision::DebugRenderQuery();
 	renderQuery->SetDrawFlags(this->debugDrawFlags);
 	Collision::TaskID taskID = 0;
 	system->MakeQuery(renderQuery, taskID);
@@ -146,7 +146,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		glEnd();
 	}
 
-	system->Free<Collision::Result>(result);
+	delete result;
 
 	if (this->targetShapes)
 	{
@@ -363,7 +363,7 @@ void Canvas::Tick()
 
 		Collision::System* system = wxGetApp().GetCollisionSystem();
 
-		auto rayCastQuery = system->Create<Collision::RayCastQuery>();
+		auto rayCastQuery = new Collision::RayCastQuery();
 		rayCastQuery->SetRay(ray);
 
 		Collision::TaskID taskID = 0;
@@ -390,7 +390,7 @@ void Canvas::Tick()
 				}
 			}
 
-			system->Free(result);
+			delete result;
 		}
 
 		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_Y))
@@ -410,7 +410,7 @@ void Canvas::Tick()
 		{
 			Collision::System* system = wxGetApp().GetCollisionSystem();
 
-			auto query = system->Create<Collision::ObjectToWorldQuery>();
+			auto query = new Collision::ObjectToWorldQuery();
 			query->SetShapeID(this->selectedShapeID);
 			Collision::TaskID taskID = 0;
 			if (system->MakeQuery(query, taskID))
@@ -446,13 +446,13 @@ void Canvas::Tick()
 					shapeToWorld = shapeToWorld * xAxisRotation * yAxisRotation;
 					shapeToWorld.matrix.Orthonormalized(IMZADI_AXIS_FLAG_X);
 
-					auto command = system->Create<Collision::ObjectToWorldCommand>();
+					auto command = new Collision::ObjectToWorldCommand();
 					command->objectToWorld = shapeToWorld;
 					command->SetShapeID(this->selectedShapeID);
 					system->IssueCommand(command);
 				}
 
-				system->Free(result);
+				delete result;
 			}
 		}
 
@@ -464,7 +464,7 @@ void Canvas::Tick()
 			{
 				Collision::System* system = wxGetApp().GetCollisionSystem();
 
-				auto query = system->Create<Collision::ObjectToWorldQuery>();
+				auto query = new Collision::ObjectToWorldQuery();
 				query->SetShapeID(this->selectedShapeID);
 				Collision::TaskID taskID = 0;
 				if (system->MakeQuery(query, taskID))
@@ -483,7 +483,7 @@ void Canvas::Tick()
 						this->shapeToCamera = worldToCamera * shapeToWorld;
 					}
 
-					system->Free(result);
+					delete result;
 				}
 			}
 		}
@@ -491,7 +491,7 @@ void Canvas::Tick()
 		if (this->dragSelectedShape)
 		{
 			Collision::System* system = wxGetApp().GetCollisionSystem();
-			auto command = system->Create<Collision::ObjectToWorldCommand>();
+			auto command = new Collision::ObjectToWorldCommand();
 			command->objectToWorld = this->camera.GetCameraToWorldTransform() * this->shapeToCamera;
 			command->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(command);
@@ -501,7 +501,7 @@ void Canvas::Tick()
 		{
 			Collision::System* system = wxGetApp().GetCollisionSystem();
 
-			auto collisionQuery = system->Create<Collision::CollisionQuery>();
+			auto collisionQuery = new Collision::CollisionQuery();
 			collisionQuery->SetShapeID(this->selectedShapeID);
 			Collision::TaskID taskID = 0;
 			if (system->MakeQuery(collisionQuery, taskID))
@@ -517,14 +517,14 @@ void Canvas::Tick()
 						Transform resolverTransform;
 						resolverTransform.SetIdentity();
 						resolverTransform.translation = collisionStatus->GetSeparationDelta(this->selectedShapeID);
-						auto command = system->Create<Collision::ObjectToWorldCommand>();
+						auto command = new Collision::ObjectToWorldCommand();
 						command->SetShapeID(this->selectedShapeID);
 						command->objectToWorld = resolverTransform * collisionResult->GetObjectToWorldTransform();
 						system->IssueCommand(command);
 					}
 				}
 
-				system->Free(result);
+				delete result;
 			}
 		}
 	}
@@ -542,7 +542,7 @@ void Canvas::SetSelectedShape(Imzadi::Collision::ShapeID shapeID)
 
 		if (this->selectedShapeID != 0)
 		{
-			auto setColorCommand = system->Create<Collision::SetDebugRenderColorCommand>();
+			auto setColorCommand = new Collision::SetDebugRenderColorCommand();
 			setColorCommand->SetColor(Vector3(1.0, 0.0, 0.0));
 			setColorCommand->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(setColorCommand);
@@ -552,7 +552,7 @@ void Canvas::SetSelectedShape(Imzadi::Collision::ShapeID shapeID)
 
 		if (this->selectedShapeID != 0)
 		{
-			auto setColorCommand = system->Create<Collision::SetDebugRenderColorCommand>();
+			auto setColorCommand = new Collision::SetDebugRenderColorCommand();
 			setColorCommand->SetColor(Vector3(0.0, 1.0, 0.0));
 			setColorCommand->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(setColorCommand);

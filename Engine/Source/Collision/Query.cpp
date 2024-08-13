@@ -50,14 +50,9 @@ DebugRenderQuery::DebugRenderQuery()
 /*virtual*/ Result* DebugRenderQuery::ExecuteQuery(Thread* thread)
 {
 	IMZADI_COLLISION_PROFILE("Debug Render Query");
-	auto renderResult = DebugRenderResult::Create();
+	auto renderResult = new DebugRenderResult();
 	thread->DebugVisualize(renderResult, this->drawFlags);
 	return renderResult;
-}
-
-/*static*/ DebugRenderQuery* DebugRenderQuery::Create()
-{
-	return new DebugRenderQuery();
 }
 
 //--------------------------------- RayCastQuery ---------------------------------
@@ -75,14 +70,9 @@ RayCastQuery::RayCastQuery()
 {
 	IMZADI_COLLISION_PROFILE("Ray Cast Query");
 	const BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
-	RayCastResult* result = RayCastResult::Create();
+	auto result = new RayCastResult();
 	boxTree.RayCast(this->ray, this->userFlagsMask, result);
 	return result;
-}
-
-/*static*/ RayCastQuery* RayCastQuery::Create()
-{
-	return new RayCastQuery();
 }
 
 //--------------------------------- ObjectToWorldQuery ---------------------------------
@@ -106,14 +96,9 @@ ObjectToWorldQuery::ObjectToWorldQuery()
 		return nullptr;
 	}
 
-	auto result = ObjectToWorldResult::Create();
+	auto result = new ObjectToWorldResult();
 	result->objectToWorld = shape->GetObjectToWorldTransform();
 	return result;
-}
-
-/*static*/ ObjectToWorldQuery* ObjectToWorldQuery::Create()
-{
-	return new ObjectToWorldQuery();
 }
 
 //--------------------------------- CollisionQuery ---------------------------------
@@ -138,25 +123,20 @@ CollisionQuery::CollisionQuery()
 		return nullptr;
 	}
 	
-	auto collisionResult = CollisionQueryResult::Create();
+	auto collisionResult = new CollisionQueryResult();
 	collisionResult->SetShapeID(shape->GetShapeID());
 	collisionResult->SetObjectToWorldTransform(shape->GetObjectToWorldTransform());
 
 	BoundingBoxTree& tree = thread->GetBoundingBoxTree();
 	if (!tree.CalculateCollision(shape, this->userFlagsMask, collisionResult))
 	{
-		CollisionQueryResult::Free(collisionResult);
+		delete collisionResult;
 
 		IMZADI_LOG_ERROR(std::format("Failed to calculate collision result for shape with ID {}.", this->shapeID));
 		return nullptr;
 	}
 
 	return collisionResult;
-}
-
-/*static*/ CollisionQuery* CollisionQuery::Create()
-{
-	return new CollisionQuery();
 }
 
 //--------------------------------- ShapeInBoundsQuery ---------------------------------
@@ -173,7 +153,7 @@ ShapeInBoundsQuery::ShapeInBoundsQuery()
 {
 	IMZADI_COLLISION_PROFILE("Shape-in-Bounds Query");
 
-	BoolResult* result = BoolResult::Create();
+	auto result = new BoolResult();
 	result->SetAnswer(false);
 
 	BoundingBoxTree& tree = thread->GetBoundingBoxTree();
@@ -182,11 +162,6 @@ ShapeInBoundsQuery::ShapeInBoundsQuery()
 		result->SetAnswer(true);
 
 	return result;
-}
-
-/*static*/ ShapeInBoundsQuery* ShapeInBoundsQuery::Create()
-{
-	return new ShapeInBoundsQuery();
 }
 
 //--------------------------------- ProfileStatsQuery ---------------------------------
@@ -201,12 +176,7 @@ ProfileStatsQuery::ProfileStatsQuery()
 
 /*virtual*/ Result* ProfileStatsQuery::ExecuteQuery(Thread* thread)
 {
-	auto result = StringResult::Create();
+	auto result = new StringResult();
 	result->SetText(collisionProfileData.PrintStats());
 	return result;
-}
-
-/*static*/ ProfileStatsQuery* ProfileStatsQuery::Create()
-{
-	return new ProfileStatsQuery();
 }

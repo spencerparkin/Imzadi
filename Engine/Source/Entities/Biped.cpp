@@ -51,7 +51,7 @@ Biped::Biped()
 	}
 
 	// TODO: Really should get capsule size from somewhere on disk.
-	auto capsule = Collision::CapsuleShape::Create();
+	auto capsule = new Collision::CapsuleShape();
 	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(1.0);
@@ -143,7 +143,7 @@ Biped::Biped()
 			{
 				// Stalling for a minor query like this isn't so bad.  It's the big queries
 				// where I'm hoping to get some sort of speed-up by doing them asynchronously.
-				auto objectToWorldQuery = Collision::ObjectToWorldQuery::Create();
+				auto objectToWorldQuery = new Collision::ObjectToWorldQuery();
 				objectToWorldQuery->SetShapeID(this->groundShapeID);
 				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
 				collisionSystem->FlushAllTasks();
@@ -154,7 +154,7 @@ Biped::Biped()
 					if (objectToWorldResult)
 						this->platformToWorld = objectToWorldResult->objectToWorld;
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -167,17 +167,17 @@ Biped::Biped()
 		{
 			// Kick-off the queries we'll need later to resolve collision constraints.
 
-			auto boundsQuery = Collision::ShapeInBoundsQuery::Create();
+			auto boundsQuery = new Collision::ShapeInBoundsQuery();
 			boundsQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
 
-			auto worldSurfaceCollisionQuery = Collision::CollisionQuery::Create();
+			auto worldSurfaceCollisionQuery = new Collision::CollisionQuery();
 			worldSurfaceCollisionQuery->SetShapeID(this->collisionShapeID);
 			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
 
 			const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-			auto groundSurfaceQuery = Collision::RayCastQuery::Create();
+			auto groundSurfaceQuery = new Collision::RayCastQuery();
 			groundSurfaceQuery->SetRay(Ray(objectToWorld.translation + Vector3(0.0, 3.0, 0.0), Vector3(0.0, -1.0, 0.0)));
 			groundSurfaceQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(groundSurfaceQuery, this->groundSurfaceQueryTaskID);
@@ -225,7 +225,7 @@ Biped::Biped()
 					if (collisionResult)
 						this->HandleWorldSurfaceCollisionResult(collisionResult);
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -238,7 +238,7 @@ Biped::Biped()
 					if (boolResult && !boolResult->GetAnswer())
 						bipedDied = true;
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -255,7 +255,7 @@ Biped::Biped()
 						this->groundSurfaceNormal = hitData.surfaceNormal;
 					}
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -387,7 +387,7 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 		Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 		// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
-		auto command = Collision::ObjectToWorldCommand::Create();
+		auto command = new Collision::ObjectToWorldCommand();
 		command->SetShapeID(this->collisionShapeID);
 		command->objectToWorld = transform;
 		collisionSystem->IssueCommand(command);

@@ -176,7 +176,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			ray.origin = transform.translation + ray.unitDirection * 2.0;
 			ray.origin.y += 2.0;
 
-			auto rayCastQuery = Imzadi::Collision::RayCastQuery::Create();
+			auto rayCastQuery = new Imzadi::Collision::RayCastQuery();
 			rayCastQuery->SetRay(ray);
 			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
 
@@ -229,7 +229,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						}
 					}
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 

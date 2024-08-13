@@ -42,12 +42,9 @@ class IMZADI_API Shape
 
 public:
 	/**
-	 * Construct a new shape.  If temporary, it means that the shape is not
-	 * intended for long-term use in the collision system.  For example, the
-	 * shape is being allocated on the callstack.  If not temporary, the shape
-	 * is assigned an ID that can be used to safely refer to it on any thread.
+	 * Construct a new shape.
 	 */
-	Shape(bool temporary);
+	Shape();
 
 	/**
 	 * Destruct the shape.  It's important this is virtual, of course.
@@ -201,8 +198,8 @@ public:
 	static void Free(Shape* shape);
 
 	/**
-		* This is a shape class factory creating the shape corresponding to the given type.
-		*/
+	 * This is a shape class factory creating the shape corresponding to the given type.
+	 */
 	static Shape* Create(TypeID typeID);
 
 	/**
