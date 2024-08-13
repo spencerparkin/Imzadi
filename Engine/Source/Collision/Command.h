@@ -211,6 +211,21 @@ namespace Imzadi
 	};
 
 	/**
+	 * This would be typically called once per frame at the top of the frame
+	 * before any other command or query to the collision system.
+	 */
+	class IMZADI_API ResetProfileDataCommand : public Command
+	{
+	public:
+		ResetProfileDataCommand();
+		virtual ~ResetProfileDataCommand();
+
+		virtual void Execute(Thread* thread) override;
+
+		static ResetProfileDataCommand* Create();
+	};
+
+	/**
 	 * Use this command to dump or restore the collision world to or from disk, respectively.
 	 * It's mainly used for debugging purposes.  It's not meant to be used in a production case.
 	 */

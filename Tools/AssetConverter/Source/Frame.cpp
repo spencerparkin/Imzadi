@@ -173,6 +173,7 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 			{"Meshes", Converter::Flag::CONVERT_MESHES},
 			{"Animations", Converter::Flag::CONVERT_ANIMATIONS},
 			{"Collision", Converter::Flag::MAKE_COLLISION},
+			{"Compress Collision", Converter::Flag::COMPRESS_COLLISION},
 			{"Sky Dome", Converter::Flag::CONVERT_SKYDOME},
 			{"Center Obj. Space at Origin", Converter::Flag::CENTER_OBJ_SPACE_AT_ORIGIN}
 		};
@@ -229,11 +230,22 @@ bool Frame::FlagsFromDialog(const wxString& prompt, const std::vector<FlagChoice
 	for (const FlagChoice& flagChoice : flagChoiceArray)
 		choiceArray.Add(flagChoice.name);
 
+	wxArrayInt selectionArray;
+	wxConfig* config = wxGetApp().GetConfig();
+	chosenFlags = config->Read(prompt, uint32_t(0));
+	for (int i = 0; i < flagChoiceArray.size(); i++)
+	{
+		const FlagChoice& flagChoice = flagChoiceArray[i];
+		if ((flagChoice.flag & chosenFlags) != 0)
+			selectionArray.push_back(i);
+	}
+
 	wxMultiChoiceDialog choiceDialog(this, prompt, "Choose, Please", choiceArray);
+	choiceDialog.SetSelections(selectionArray);
 	if (choiceDialog.ShowModal() != wxID_OK)
 		return false;
 
-	wxArrayInt selectionArray = choiceDialog.GetSelections();
+	selectionArray = choiceDialog.GetSelections();
 	for (int i = 0; i < selectionArray.size(); i++)
 	{
 		const wxString& selection = choiceArray[selectionArray[i]];
@@ -247,6 +259,7 @@ bool Frame::FlagsFromDialog(const wxString& prompt, const std::vector<FlagChoice
 		}
 	}
 
+	config->Write(prompt, chosenFlags);
 	return true;
 }
 

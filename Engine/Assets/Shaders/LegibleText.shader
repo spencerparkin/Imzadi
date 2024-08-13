@@ -5,6 +5,11 @@
             "size": 64,
             "type": "float"
         },
+        "textBackAlpha": {
+            "offset": 92,
+            "size": 4,
+            "type": "float"
+        },
         "textBackColor": {
             "offset": 80,
             "size": 12,

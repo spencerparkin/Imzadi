@@ -29,8 +29,9 @@ namespace Imzadi
 			LEFT_JUSTIFY				= 0x00000040,		///< Left-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			RIGHT_JUSTIFY				= 0x00000080,		///< Right-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
 			CENTER_JUSTIFY				= 0x00000100,		///< Center-justify the text in object space when generating the vertex buffer.  Should not be set if any other justification flag is set.
-			OPAQUE_BACKGROUND			= 0x00000200,		///< If given, a background color used used.  If not given, text renders with transparent background.
-			MULTI_LINE					= 0x00000400		///< If given, the text will be broken down into separate lines.  See the @ref SetMaxCharsPerLine method.
+			DRAW_BACKGROUND				= 0x00000200,		///< If given, a background color used used.  If not given, text renders with transparent background.
+			MULTI_LINE					= 0x00000400,		///< If given, the text will be broken down into separate lines.  See the @ref SetMaxCharsPerLine method.
+			USE_NEWLINE_CHARS			= 0x00000800		///< If given, multi-line text is split by new-lines, not by max words (the default.)
 		};
 
 		/**
@@ -72,14 +73,24 @@ namespace Imzadi
 		const Vector3& GetForegroundColor() const;
 
 		/**
-		 * Set the background color used to render the text, if an opaque background is wanted.
+		 * Set the background color used to render the text, if a background is wanted.
 		 */
 		void SetBackgroundColor(const Vector3& color);
 
 		/**
-		 * Get the background color used to render the text, if an opaque background is wanted.
+		 * Get the background color used to render the text, if a background is wanted.
 		 */
 		const Vector3& GetBackgroundColor() const;
+
+		/**
+		 * Set the background alpha used to render the text, if a background is wanted.
+		 */
+		void SetBackgroundAlpha(double alpha);
+
+		/**
+		 * Get the background alpha used to render the text, if a background is wanted.
+		 */
+		double GetBackgroundAlpha() const;
 
 		/**
 		 * Try to load a font by the given name and then cache it on this text render
@@ -127,6 +138,7 @@ namespace Imzadi
 		std::string text;
 		Vector3 foreColor;
 		Vector3 backColor;
+		double backAlpha;
 		uint32_t flags;
 		Transform objectToTargetSpace;
 		UINT numElements;

@@ -8,6 +8,7 @@
 #include <string>
 #include <list>
 #include <time.h>
+#include <functional>
 #include "Reference.h"
 #include "RenderObjects/DebugLines.h"
 #include "Math/Vector3.h"
@@ -18,6 +19,7 @@
 #include "Audio/System.h"
 #include "EventSystem.h"
 #include "StateCache.h"
+#include "Clock.h"
 
 #define IMZADI_GAME_WINDOW_CLASS_NAME		TEXT("ImzadiGameWindowClass")
 
@@ -132,6 +134,11 @@ namespace Imzadi
 		 */
 		virtual bool CreateRenderWindow();
 
+		/**
+		 * Return the icon used for the window.
+		 */
+		virtual HICON GetWindowIcon();
+
 		Scene* GetScene();
 		Camera* GetCamera();
 		void SetCamera(Reference<Camera> camera);
@@ -233,6 +240,7 @@ namespace Imzadi
 		void SetAssetCache(AssetCache* assetCache);
 
 		const D3D11_VIEWPORT* GetViewportInfo() const { return &this->mainPassViewport; }
+		double GetAspectRatio() const;
 		double GetDeltaTime() const;
 
 		StateCache<ID3D11RasterizerState, D3D11_RASTERIZER_DESC>* GetRasterStateCache() { return &this->rasterStateCache; }
@@ -307,6 +315,9 @@ namespace Imzadi
 
 		bool RecreateViews();
 		void ToggleFPSDisplay();
+		void ToggleCollisionStats();
+		void ToggleConsole();
+		void ToggleRenderObject(const std::string& name, std::function<RenderObject*()> renderObjectCreatorFunc);
 		void ShutdownAllEntities();
 
 		TCHAR windowTitle[256];
@@ -343,7 +354,7 @@ namespace Imzadi
 		Reference<DebugLines> debugLines;
 		uint32_t collisionSystemDebugDrawFlags;
 		double deltaTimeSeconds;
-		clock_t lastTickTime;
+		Clock frameClock;
 		static Game* gameSingleton;
 	};
 }

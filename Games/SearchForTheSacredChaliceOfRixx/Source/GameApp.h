@@ -16,6 +16,7 @@ public:
 	virtual bool PostInit() override;
 	virtual bool PreShutdown() override;
 	virtual bool PostShutdown() override;
+	virtual HICON GetWindowIcon() override;
 
 	DialogSystem* GetDialogSystem() { return &this->dialogSystem; }
 	GameProgress* GetGameProgress() { return this->gameProgress.Get(); }

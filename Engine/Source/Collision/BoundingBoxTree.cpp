@@ -2,6 +2,7 @@
 #include "Result.h"
 #include "Math/Ray.h"
 #include "Math/Plane.h"
+#include "Thread.h"
 #include <algorithm>
 #include <format>
 
@@ -195,6 +196,8 @@ void BoundingBoxTree::RayCast(const Ray& ray, uint64_t userFlagsMask, RayCastRes
 
 bool BoundingBoxTree::CalculateCollision(const Shape* shape, uint64_t userFlagsMask, CollisionQueryResult* collisionResult) const
 {
+	IMZADI_COLLISION_PROFILE("Collision Calculation");
+
 	const BoundingBoxNode* node = shape->node;
 	if (!node)
 		return false;

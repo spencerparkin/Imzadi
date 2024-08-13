@@ -88,6 +88,11 @@ namespace Imzadi
 		 */
 		void PrepareRenderObjects();
 
+		/**
+		 * This is called just before all render passes are preformed.
+		 */
+		void PreRender();
+
 	private:
 		typedef std::unordered_map<std::string, Reference<RenderObject>> RenderObjectMap;
 		RenderObjectMap renderObjectMap;
@@ -125,6 +130,21 @@ namespace Imzadi
 		 * in each pass, you could do them once here.
 		 */
 		virtual void Prepare();
+
+		/**
+		 * This is called before all render passes are performed.
+		 */
+		virtual void PreRender();
+
+		/**
+		 * This is called just after this object has been added to the scene.
+		 */
+		virtual void OnPostAdded();
+
+		/**
+		 * This is called just before the object is removed from the scene.
+		 */
+		virtual void OnPreRemoved();
 
 		/**
 		 * This gives us some control over the order in which render objects render.

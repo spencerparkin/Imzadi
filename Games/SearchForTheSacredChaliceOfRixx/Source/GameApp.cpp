@@ -24,6 +24,12 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 	return true;
 }
 
+/*virtual*/ HICON GameApp::GetWindowIcon()
+{
+	HICON iconHandle = LoadIconA(this->instance, "IDI_GAME_ICON");
+	return iconHandle;
+}
+
 /*virtual*/ bool GameApp::PostInit()
 {
 	this->assetCache.Set(new CustomAssetCache());

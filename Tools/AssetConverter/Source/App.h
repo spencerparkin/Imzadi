@@ -1,6 +1,7 @@
 #pragma once
 
 #include <wx/app.h>
+#include <wx/config.h>
 
 class Frame;
 
@@ -14,12 +15,14 @@ public:
 	virtual int OnExit(void) override;
 
 	Frame* GetFrame() { return this->frame; }
+	wxConfig* GetConfig() { return this->config; }
 
 	wxString MakeAssetFileReference(const wxString& assetFile);
 	wxString GetAssetsRootFolder();
 
 private:
 	Frame* frame;
+	wxConfig* config;
 };
 
 wxDECLARE_APP(ConverterApp);

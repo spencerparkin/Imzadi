@@ -9,7 +9,7 @@ using namespace Imzadi;
 DebugLines::DebugLines()
 {
 	this->vertexBuffer = nullptr;
-	this->maxLines = 10000;
+	this->maxLines = 32 * 1024;
 }
 
 /*virtual*/ DebugLines::~DebugLines()

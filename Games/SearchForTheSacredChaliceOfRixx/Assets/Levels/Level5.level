@@ -20,7 +20,7 @@
         "Models/Level5/ZipLineGeo.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
-    "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
+    "cube_texture": "Textures/OceanSkyBox/SkyBox.cube_texture",
     "player_start_location": {
         "x": -272.815,
         "y": -17.25,

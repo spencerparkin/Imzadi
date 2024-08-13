@@ -212,7 +212,7 @@ bool Polygon::ContainsPoint(const Vector3& point, double tolerance /*= 1e-5*/, b
 	if (isInterior)
 		*isInterior = false;
 
-	Plane plane = this->CalcPlane();
+	Plane plane = this->CalcPlane(true);
 	if (plane.GetSide(point, tolerance) != Plane::Side::NEITHER)
 		return false;
 
@@ -604,7 +604,7 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	if (this->ContainsPoint(ray.origin))
 		return false;
 
-	Plane plane = this->CalcPlane();
+	Plane plane = this->CalcPlane(true);
 	if (!ray.CastAgainst(plane, alpha) || alpha < 0.0)
 		return false;
 

@@ -36,6 +36,7 @@ bool Scene::AddRenderObject(const std::string& name, Reference<RenderObject> ren
 		return false;
 
 	this->renderObjectMap.insert(std::pair<std::string, Reference<RenderObject>>(name, renderObject));
+	renderObject->OnPostAdded();
 	return true;
 }
 
@@ -48,6 +49,7 @@ bool Scene::RemoveRenderObject(const std::string& name, Reference<RenderObject>*
 	if (renderObject)
 		renderObject->Set(iter->second);
 
+	iter->second->OnPreRemoved();
 	this->renderObjectMap.erase(iter);
 	return true;
 }
@@ -96,6 +98,15 @@ void Scene::PrepareRenderObjects()
 	}
 }
 
+void Scene::PreRender()
+{
+	for (auto pair : this->renderObjectMap)
+	{
+		RenderObject* renderObject = pair.second.Get();
+		renderObject->PreRender();
+	}
+}
+
 //--------------------------- RenderObject ---------------------------
 
 RenderObject::RenderObject()
@@ -113,5 +124,17 @@ RenderObject::RenderObject()
 }
 
 /*virtual*/ void RenderObject::Prepare()
+{
+}
+
+/*virtual*/ void RenderObject::PreRender()
+{
+}
+
+/*virtual*/ void RenderObject::OnPostAdded()
+{
+}
+
+/*virtual*/ void RenderObject::OnPreRemoved()
 {
 }

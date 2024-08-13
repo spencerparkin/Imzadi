@@ -177,7 +177,7 @@ DialogBasicElement::DialogBasicElement()
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
 		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
 		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
-		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::DRAW_BACKGROUND |
 		Imzadi::TextRenderObject::Flag::MULTI_LINE;
 
 	auto textRenderObject = new Imzadi::TextRenderObject();
@@ -284,7 +284,7 @@ DialogChoiceElement::DialogChoiceElement()
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
 		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
 		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
-		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::DRAW_BACKGROUND |
 		Imzadi::TextRenderObject::Flag::MULTI_LINE;
 
 	std::string text = this->speaker + ": ";

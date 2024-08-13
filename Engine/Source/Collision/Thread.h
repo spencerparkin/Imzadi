@@ -5,14 +5,23 @@
 #include "Shape.h"
 #include "Math/AxisAlignedBoundingBox.h"
 #include "BoundingBoxTree.h"
+#include "Profile.h"
 #include <thread>
 #include <mutex>
 #include <list>
 #include <semaphore>
 #include <unordered_map>
 
+#if defined IMZADI_COLLISION_PROFILING_ENABLED
+#	define IMZADI_COLLISION_PROFILE(name)	ProfileBlock profileBlock(&collisionProfileData, name)
+#else
+#	define IMZADI_COLLISION_PROFILE(name)
+#endif
+
 namespace Imzadi
 {
+	extern ProfileData collisionProfileData;
+
 	class Task;
 	class Result;
 	class DebugRenderResult;
