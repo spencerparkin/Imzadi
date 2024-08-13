@@ -46,11 +46,6 @@ public:
 	 * Be sure to call the Free function when you're done with it.
 	 */
 	static ShapeLoader* Create(const std::string& filePath);
-
-	/**
-	 * Reclaim the memory associated with the given shape loader.
-	 */
-	static void Free(ShapeLoader* shapeLoader);
 };
 
 /**

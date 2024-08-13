@@ -238,7 +238,7 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 				if (!shapeLoader->LoadShapes((const char*)filePath.c_str(), shapeArray))
 					wxMessageBox(wxString::Format("Failed to load all shapes from file: %s", filePath.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 
-				Collision::ShapeLoader::Free(shapeLoader);
+				delete shapeLoader;
 			}
 		}
 

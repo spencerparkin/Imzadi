@@ -36,18 +36,13 @@ ShapeLoader::ShapeLoader()
 			break;
 		}
 
-		Free(shapeLoader);
+		delete shapeLoader;
 	}
 
 	for (ShapeLoaderClassInterface* shapeLoaderClass : shapeLoaderClassArray)
 		delete shapeLoaderClass;
 
 	return chosenShapeLoader;
-}
-
-/*static*/ void ShapeLoader::Free(ShapeLoader* shapeLoader)
-{
-	delete shapeLoader;
 }
 
 //------------------------------ OBJ_ShapeLoader ------------------------------
