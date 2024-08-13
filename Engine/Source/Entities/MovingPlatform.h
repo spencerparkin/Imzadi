@@ -50,7 +50,7 @@ namespace Imzadi
 		State state;
 		Reference<MovingPlatformData> data;
 		Reference<RenderMeshInstance> renderMesh;
-		std::vector<ShapeID> collisionShapeArray;
+		std::vector<Collision::ShapeID> collisionShapeArray;
 		std::string movingPlatformFile;
 		int targetDeltaIndex;
 		int bounceDelta;

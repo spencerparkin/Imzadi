@@ -7,6 +7,7 @@
 #include <vector>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------- BoxShape -------------------------------
 

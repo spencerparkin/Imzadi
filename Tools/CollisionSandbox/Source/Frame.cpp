@@ -141,7 +141,7 @@ void Frame::OnExit(wxCommandEvent& event)
 
 void Frame::OnClearWorld(wxCommandEvent& event)
 {
-	CollisionSystem* system = wxGetApp().GetCollisionSystem();
+	Collision::System* system = wxGetApp().GetCollisionSystem();
 	system->Clear();
 	wxGetApp().GetPolygonArray().clear();
 	this->canvas->Refresh();
@@ -179,7 +179,7 @@ void Frame::OnMergePolygons(wxCommandEvent& event)
 
 void Frame::OnDumpOrRestoreWorld(wxCommandEvent& event)
 {
-	CollisionSystem* system = wxGetApp().GetCollisionSystem();
+	Collision::System* system = wxGetApp().GetCollisionSystem();
 
 	switch (event.GetId())
 	{
@@ -226,11 +226,11 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 		wxArrayString fileArray;
 		fileDialog.GetPaths(fileArray);
 
-		std::vector<Shape*> shapeArray;
+		std::vector<Collision::Shape*> shapeArray;
 
 		for (const wxString& filePath : fileArray)
 		{
-			ShapeLoader* shapeLoader = ShapeLoader::Create((const char*)filePath.c_str());
+			Collision::ShapeLoader* shapeLoader = Collision::ShapeLoader::Create((const char*)filePath.c_str());
 			if (!shapeLoader)
 				wxMessageBox(wxString::Format("Failed to create shape loader for file: %s", filePath.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 			else
@@ -238,7 +238,7 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 				if (!shapeLoader->LoadShapes((const char*)filePath.c_str(), shapeArray))
 					wxMessageBox(wxString::Format("Failed to load all shapes from file: %s", filePath.c_str()), "Error!", wxICON_ERROR | wxOK, this);
 
-				ShapeLoader::Free(shapeLoader);
+				Collision::ShapeLoader::Free(shapeLoader);
 			}
 		}
 
@@ -246,7 +246,7 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 		{
 			wxMessageBox(wxString::Format("%d shapes loaded!", int(shapeArray.size())), "Shape Loading", wxICON_INFORMATION | wxOK, this);
 
-			CollisionSystem* system = wxGetApp().GetCollisionSystem();
+			Collision::System* system = wxGetApp().GetCollisionSystem();
 			for (auto shape : shapeArray)
 				system->AddShape(shape, IMZADI_ADD_FLAG_ALLOW_SPLIT);
 		}
@@ -255,15 +255,15 @@ void Frame::OnLoadShapes(wxCommandEvent& event)
 
 void Frame::OnAddShape(wxCommandEvent& event)
 {
-	CollisionSystem* system = wxGetApp().GetCollisionSystem();
-	Shape* shape = nullptr;
+	Collision::System* system = wxGetApp().GetCollisionSystem();
+	Collision::Shape* shape = nullptr;
 
 	// TODO: Maybe ask the user for size information?
 	switch (event.GetId())
 	{
 		case ID_AddBox:
 		{
-			auto box = system->Create<BoxShape>();
+			auto box = system->Create<Collision::BoxShape>();
 			Transform objectToWorld;
 			objectToWorld.SetIdentity();
 			objectToWorld.matrix.SetFromAxisAngle(Vector3(1.0, 1.0, 1.0).Normalized(), M_PI / 3.0);
@@ -275,7 +275,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		}
 		case ID_AddCapsule:
 		{
-			auto capsule = system->Create<CapsuleShape>();
+			auto capsule = system->Create<Collision::CapsuleShape>();
 			capsule->SetRadius(2.0);
 			capsule->SetVertex(0, Vector3(-5.0, 0.0, 0.0));
 			capsule->SetVertex(1, Vector3(5.0, 0.0, 0.0));
@@ -284,7 +284,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		}
 		case ID_AddPolygon:
 		{
-			auto polygon = system->Create<PolygonShape>();
+			auto polygon = system->Create<Collision::PolygonShape>();
 			Transform objectToWorld;
 			objectToWorld.SetIdentity();
 			objectToWorld.translation.SetComponents(-20.0, -20.0, -20.0);
@@ -307,7 +307,7 @@ void Frame::OnAddShape(wxCommandEvent& event)
 		}
 		case ID_AddSphere:
 		{
-			auto sphere = system->Create<SphereShape>();
+			auto sphere = system->Create<Collision::SphereShape>();
 			Transform objectToWorld;
 			objectToWorld.SetIdentity();
 			objectToWorld.translation.SetComponents(-20.0, 20.0, -20.0);

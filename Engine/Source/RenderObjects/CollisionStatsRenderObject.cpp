@@ -16,25 +16,25 @@ CollisionStatsRenderObject::CollisionStatsRenderObject()
 
 /*virtual*/ void CollisionStatsRenderObject::PreRender()
 {
-	CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+	Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 	this->SetText("?");
 
-	auto query = ProfileStatsQuery::Create();
-	TaskID taskID = 0;
+	auto query = Collision::ProfileStatsQuery::Create();
+	Collision::TaskID taskID = 0;
 	collisionSystem->MakeQuery(query, taskID);
 	collisionSystem->FlushAllTasks();
-	Result* result = collisionSystem->ObtainQueryResult(taskID);
+	Collision::Result* result = collisionSystem->ObtainQueryResult(taskID);
 	if (result)
 	{
-		auto statsResult = dynamic_cast<StringResult*>(result);
+		auto statsResult = dynamic_cast<Collision::StringResult*>(result);
 		if (statsResult)
 			this->SetText(statsResult->GetText());
 
 		collisionSystem->Free(result);
 	}
 
-	auto command = ResetProfileDataCommand::Create();
+	auto command = Collision::ResetProfileDataCommand::Create();
 	collisionSystem->IssueCommand(command);
 
 	this->SetForegroundColor(Vector3(1.0, 0.0, 0.0));

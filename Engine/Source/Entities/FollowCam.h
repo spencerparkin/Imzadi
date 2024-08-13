@@ -55,6 +55,6 @@ namespace Imzadi
 		std::string cameraUser;
 		Vector3 worldSpaceFocalPoint;
 		Transform desiredCameraObjectToWorld;
-		TaskID rayCastQueryTaskID;
+		Collision::TaskID rayCastQueryTaskID;
 	};
 }

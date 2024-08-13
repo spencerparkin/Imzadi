@@ -6,6 +6,7 @@
 #include <format>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //--------------------------------- Query ---------------------------------
 

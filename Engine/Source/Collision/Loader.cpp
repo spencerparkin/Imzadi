@@ -5,6 +5,7 @@
 #include <filesystem>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------ ShapeLoader ------------------------------
 

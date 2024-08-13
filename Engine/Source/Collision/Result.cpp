@@ -3,6 +3,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //-------------------------------- Result --------------------------------
 

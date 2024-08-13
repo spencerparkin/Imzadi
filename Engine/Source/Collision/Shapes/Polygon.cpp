@@ -4,6 +4,7 @@
 #include <list>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //----------------------------- PolygonShape -----------------------------
 

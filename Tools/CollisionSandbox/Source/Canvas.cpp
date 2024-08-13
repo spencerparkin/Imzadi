@@ -121,21 +121,21 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		blue = fmodf(blue * 0.2 + 0.7f, 1.0f);
 	}
 
-	CollisionSystem* system = wxGetApp().GetCollisionSystem();
+	Collision::System* system = wxGetApp().GetCollisionSystem();
 
-	auto renderQuery = system->Create<DebugRenderQuery>();
+	auto renderQuery = system->Create<Collision::DebugRenderQuery>();
 	renderQuery->SetDrawFlags(this->debugDrawFlags);
-	TaskID taskID = 0;
+	Collision::TaskID taskID = 0;
 	system->MakeQuery(renderQuery, taskID);
 	system->FlushAllTasks();
-	Result* result = system->ObtainQueryResult(taskID);
-	auto renderResult = dynamic_cast<DebugRenderResult*>(result);
+	Collision::Result* result = system->ObtainQueryResult(taskID);
+	auto renderResult = dynamic_cast<Collision::DebugRenderResult*>(result);
 	if (renderResult)
 	{
 		glLineWidth(1.0);
 		glBegin(GL_LINES);
 
-		const std::vector<DebugRenderResult::RenderLine>& renderLineArray = renderResult->GetRenderLineArray();
+		const std::vector<Collision::DebugRenderResult::RenderLine>& renderLineArray = renderResult->GetRenderLineArray();
 		for (auto renderLine : renderLineArray)
 		{
 			glColor3d(renderLine.color.x, renderLine.color.y, renderLine.color.z);
@@ -146,7 +146,7 @@ void Canvas::OnPaint(wxPaintEvent& event)
 		glEnd();
 	}
 
-	system->Free<Result>(result);
+	system->Free<Collision::Result>(result);
 
 	if (this->targetShapes)
 	{
@@ -266,7 +266,7 @@ void Canvas::OnKeyPressed(wxKeyEvent& event)
 		{
 			if (this->selectedShapeID != 0)
 			{
-				CollisionSystem* system = wxGetApp().GetCollisionSystem();
+				Collision::System* system = wxGetApp().GetCollisionSystem();
 				system->RemoveShape(this->selectedShapeID);
 				this->selectedShapeID = 0;
 				this->Refresh();
@@ -361,22 +361,22 @@ void Canvas::Tick()
 		Transform cameraToWorld = this->camera.GetCameraToWorldTransform();
 		ray = cameraToWorld.TransformRay(ray);
 
-		CollisionSystem* system = wxGetApp().GetCollisionSystem();
+		Collision::System* system = wxGetApp().GetCollisionSystem();
 
-		auto rayCastQuery = system->Create<RayCastQuery>();
+		auto rayCastQuery = system->Create<Collision::RayCastQuery>();
 		rayCastQuery->SetRay(ray);
 
-		TaskID taskID = 0;
-		ShapeID hitShapeID = 0;
+		Collision::TaskID taskID = 0;
+		Collision::ShapeID hitShapeID = 0;
 		if (system->MakeQuery(rayCastQuery, taskID))
 		{
 			system->FlushAllTasks();
 
-			Result* result = system->ObtainQueryResult(taskID);
-			auto rayCastResult = dynamic_cast<RayCastResult*>(result);
+			Collision::Result* result = system->ObtainQueryResult(taskID);
+			auto rayCastResult = dynamic_cast<Collision::RayCastResult*>(result);
 			if (rayCastResult)
 			{
-				const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+				const Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 				hitShapeID = hitData.shapeID;
 
 				delete this->targetShapeHitLine;
@@ -390,7 +390,7 @@ void Canvas::Tick()
 				}
 			}
 
-			system->Free<Result>(result);
+			system->Free(result);
 		}
 
 		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_Y))
@@ -408,17 +408,17 @@ void Canvas::Tick()
 
 		if (dpadDown || dpadUp || dpadLeft || dpadRight)
 		{
-			CollisionSystem* system = wxGetApp().GetCollisionSystem();
+			Collision::System* system = wxGetApp().GetCollisionSystem();
 
-			auto query = system->Create<ObjectToWorldQuery>();
+			auto query = system->Create<Collision::ObjectToWorldQuery>();
 			query->SetShapeID(this->selectedShapeID);
-			TaskID taskID = 0;
+			Collision::TaskID taskID = 0;
 			if (system->MakeQuery(query, taskID))
 			{
 				system->FlushAllTasks();
 
-				Result* result = system->ObtainQueryResult(taskID);
-				auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+				Collision::Result* result = system->ObtainQueryResult(taskID);
+				auto objectToWorldResult = dynamic_cast<Collision::ObjectToWorldResult*>(result);
 				if (objectToWorldResult)
 				{
 					Transform shapeToWorld = objectToWorldResult->objectToWorld;
@@ -446,13 +446,13 @@ void Canvas::Tick()
 					shapeToWorld = shapeToWorld * xAxisRotation * yAxisRotation;
 					shapeToWorld.matrix.Orthonormalized(IMZADI_AXIS_FLAG_X);
 
-					auto command = system->Create<ObjectToWorldCommand>();
+					auto command = system->Create<Collision::ObjectToWorldCommand>();
 					command->objectToWorld = shapeToWorld;
 					command->SetShapeID(this->selectedShapeID);
 					system->IssueCommand(command);
 				}
 
-				system->Free<Result>(result);
+				system->Free(result);
 			}
 		}
 
@@ -462,17 +462,17 @@ void Canvas::Tick()
 
 			if (this->dragSelectedShape)
 			{
-				CollisionSystem* system = wxGetApp().GetCollisionSystem();
+				Collision::System* system = wxGetApp().GetCollisionSystem();
 
-				auto query = system->Create<ObjectToWorldQuery>();
+				auto query = system->Create<Collision::ObjectToWorldQuery>();
 				query->SetShapeID(this->selectedShapeID);
-				TaskID taskID = 0;
+				Collision::TaskID taskID = 0;
 				if (system->MakeQuery(query, taskID))
 				{
 					system->FlushAllTasks();
 
-					Result* result = system->ObtainQueryResult(taskID);
-					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+					Collision::Result* result = system->ObtainQueryResult(taskID);
+					auto objectToWorldResult = dynamic_cast<Collision::ObjectToWorldResult*>(result);
 					if (objectToWorldResult)
 					{
 						const Transform& shapeToWorld = objectToWorldResult->objectToWorld;
@@ -483,15 +483,15 @@ void Canvas::Tick()
 						this->shapeToCamera = worldToCamera * shapeToWorld;
 					}
 
-					system->Free<Result>(result);
+					system->Free(result);
 				}
 			}
 		}
 
 		if (this->dragSelectedShape)
 		{
-			CollisionSystem* system = wxGetApp().GetCollisionSystem();
-			auto command = system->Create<ObjectToWorldCommand>();
+			Collision::System* system = wxGetApp().GetCollisionSystem();
+			auto command = system->Create<Collision::ObjectToWorldCommand>();
 			command->objectToWorld = this->camera.GetCameraToWorldTransform() * this->shapeToCamera;
 			command->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(command);
@@ -499,32 +499,32 @@ void Canvas::Tick()
 
 		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_B))
 		{
-			CollisionSystem* system = wxGetApp().GetCollisionSystem();
+			Collision::System* system = wxGetApp().GetCollisionSystem();
 
-			auto collisionQuery = system->Create<CollisionQuery>();
+			auto collisionQuery = system->Create<Collision::CollisionQuery>();
 			collisionQuery->SetShapeID(this->selectedShapeID);
-			TaskID taskID = 0;
+			Collision::TaskID taskID = 0;
 			if (system->MakeQuery(collisionQuery, taskID))
 			{
 				system->FlushAllTasks();
-				Result* result = system->ObtainQueryResult(taskID);
-				auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+				Collision::Result* result = system->ObtainQueryResult(taskID);
+				auto collisionResult = dynamic_cast<Collision::CollisionQueryResult*>(result);
 				if (collisionResult)
 				{
-					const ShapePairCollisionStatus* collisionStatus = collisionResult->GetMostEgregiousCollision();
+					const Collision::ShapePairCollisionStatus* collisionStatus = collisionResult->GetMostEgregiousCollision();
 					if(collisionStatus)
 					{
 						Transform resolverTransform;
 						resolverTransform.SetIdentity();
 						resolverTransform.translation = collisionStatus->GetSeparationDelta(this->selectedShapeID);
-						auto command = system->Create<ObjectToWorldCommand>();
+						auto command = system->Create<Collision::ObjectToWorldCommand>();
 						command->SetShapeID(this->selectedShapeID);
 						command->objectToWorld = resolverTransform * collisionResult->GetObjectToWorldTransform();
 						system->IssueCommand(command);
 					}
 				}
 
-				system->Free<Result>(result);
+				system->Free(result);
 			}
 		}
 	}
@@ -532,17 +532,17 @@ void Canvas::Tick()
 	this->Refresh();
 }
 
-void Canvas::SetSelectedShape(Imzadi::ShapeID shapeID)
+void Canvas::SetSelectedShape(Imzadi::Collision::ShapeID shapeID)
 {
 	if (shapeID != this->selectedShapeID)
 	{
 		this->dragSelectedShape = false;
 
-		CollisionSystem* system = wxGetApp().GetCollisionSystem();
+		Collision::System* system = wxGetApp().GetCollisionSystem();
 
 		if (this->selectedShapeID != 0)
 		{
-			auto setColorCommand = system->Create<SetDebugRenderColorCommand>();
+			auto setColorCommand = system->Create<Collision::SetDebugRenderColorCommand>();
 			setColorCommand->SetColor(Vector3(1.0, 0.0, 0.0));
 			setColorCommand->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(setColorCommand);
@@ -552,7 +552,7 @@ void Canvas::SetSelectedShape(Imzadi::ShapeID shapeID)
 
 		if (this->selectedShapeID != 0)
 		{
-			auto setColorCommand = system->Create<SetDebugRenderColorCommand>();
+			auto setColorCommand = system->Create<Collision::SetDebugRenderColorCommand>();
 			setColorCommand->SetColor(Vector3(0.0, 1.0, 0.0));
 			setColorCommand->SetShapeID(this->selectedShapeID);
 			system->IssueCommand(setColorCommand);

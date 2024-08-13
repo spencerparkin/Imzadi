@@ -44,7 +44,7 @@ CollisionShapeSet::CollisionShapeSet()
 
 		if (shapeType == "polygon")
 		{
-			auto polygon = PolygonShape::Create();
+			auto polygon = Collision::PolygonShape::Create();
 			this->collisionShapeArray.push_back(polygon);
 
 			if (!shapeValue.HasMember("vertex_array") || !shapeValue["vertex_array"].IsArray())
@@ -86,7 +86,7 @@ CollisionShapeSet::CollisionShapeSet()
 		}
 	}
 
-	for (Imzadi::Shape* shape : this->collisionShapeArray)
+	for (Collision::Shape* shape : this->collisionShapeArray)
 	{
 		shape->SetObjectToWorldTransform(objectToWorld);
 		shape->SetUserFlags(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
@@ -105,8 +105,8 @@ CollisionShapeSet::CollisionShapeSet()
 void CollisionShapeSet::Clear(bool deleteShapes)
 {
 	if (deleteShapes)
-		for (Shape* shape : this->collisionShapeArray)
-			Shape::Free(shape);
+		for (Collision::Shape* shape : this->collisionShapeArray)
+			Collision::Shape::Free(shape);
 
 	this->collisionShapeArray.clear();
 }
@@ -116,7 +116,7 @@ bool CollisionShapeSet::GetBoundingBox(AxisAlignedBoundingBox& boundingBox) cons
 	if (this->collisionShapeArray.size() == 0)
 		return false;
 
-	Shape* shape = this->collisionShapeArray[0];
+	Collision::Shape* shape = this->collisionShapeArray[0];
 	boundingBox = shape->GetBoundingBox();
 
 	for (int i = 1; i < (signed)this->collisionShapeArray.size(); i++)

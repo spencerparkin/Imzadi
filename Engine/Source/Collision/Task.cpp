@@ -1,6 +1,7 @@
 #include "Task.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 TaskID Task::nextTaskID = 0;
 

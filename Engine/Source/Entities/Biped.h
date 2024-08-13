@@ -44,7 +44,7 @@ namespace Imzadi
 		virtual bool ConstraintVelocityWithGround();
 		virtual bool OnBipedDied();
 		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
-		virtual bool OwnsCollisionShape(ShapeID shapeID) const override;
+		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
 		virtual uint32_t TickOrder() const override;
 
 		void SetRestartLocation(const Vector3& restartLocation);
@@ -63,17 +63,17 @@ namespace Imzadi
 		RenderMeshInstance* GetRenderMesh() { return this->renderMesh.Get(); }
 
 	protected:
-		void HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult);
+		void HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* collisionResult);
 
 		bool canRestart;
-		ShapeID collisionShapeID;
-		ShapeID groundShapeID;
+		Collision::ShapeID collisionShapeID;
+		Collision::ShapeID groundShapeID;
 		Reference<RenderMeshInstance> renderMesh;
 		bool inContactWithGround;
-		TaskID boundsQueryTaskID;
-		TaskID worldSurfaceCollisionQueryTaskID;
-		TaskID groundQueryTaskID;
-		TaskID groundSurfaceQueryTaskID;
+		Collision::TaskID boundsQueryTaskID;
+		Collision::TaskID worldSurfaceCollisionQueryTaskID;
+		Collision::TaskID groundQueryTaskID;
+		Collision::TaskID groundSurfaceQueryTaskID;
 		Transform objectToPlatform;
 		Transform platformToWorld;
 		Transform restartTransformObjectToWorld;

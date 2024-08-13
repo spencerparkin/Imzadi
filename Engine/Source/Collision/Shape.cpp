@@ -5,6 +5,7 @@
 #include "Shapes/Sphere.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 std::atomic<ShapeID> Shape::nextShapeID(1);
 

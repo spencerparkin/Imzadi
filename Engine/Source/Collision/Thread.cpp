@@ -8,10 +8,14 @@
 #include <istream>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 namespace Imzadi
 {
-	ProfileData collisionProfileData;
+	namespace Collision
+	{
+		ProfileData collisionProfileData;
+	}
 }
 
 Thread::Thread(const AxisAlignedBoundingBox& collisionWorldExtents) : boxTree(collisionWorldExtents), taskQueueSemaphore(0)

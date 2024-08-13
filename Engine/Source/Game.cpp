@@ -152,7 +152,7 @@ void Game::SetCamera(Reference<Camera> camera)
 	this->camera = camera;
 }
 
-CollisionSystem* Game::GetCollisionSystem()
+Collision::System* Game::GetCollisionSystem()
 {
 	return &this->collisionSystem;
 }
@@ -494,20 +494,20 @@ bool Game::RecreateViews()
 
 	if (this->collisionSystemDebugDrawFlags != 0)
 	{
-		auto query = new DebugRenderQuery();
+		auto query = new Collision::DebugRenderQuery();
 		query->SetDrawFlags(this->collisionSystemDebugDrawFlags);
-		TaskID collisionSystemDebugDrawTaskID = 0;
+		Collision::TaskID collisionSystemDebugDrawTaskID = 0;
 		this->collisionSystem.MakeQuery(query, collisionSystemDebugDrawTaskID);
 		this->collisionSystem.FlushAllTasks();
-		Result* result = this->collisionSystem.ObtainQueryResult(collisionSystemDebugDrawTaskID);
+		Collision::Result* result = this->collisionSystem.ObtainQueryResult(collisionSystemDebugDrawTaskID);
 		if (result)
 		{
-			auto debugRenderResult = dynamic_cast<DebugRenderResult*>(result);
+			auto debugRenderResult = dynamic_cast<Collision::DebugRenderResult*>(result);
 			if (debugRenderResult)
-				for (const DebugRenderResult::RenderLine& line : debugRenderResult->GetRenderLineArray())
+				for (const Collision::DebugRenderResult::RenderLine& line : debugRenderResult->GetRenderLineArray())
 					this->debugLines->AddLine({ line.color, line.line });
 
-			this->collisionSystem.Free<Result>(result);
+			this->collisionSystem.Free(result);
 		}
 	}
 
@@ -554,7 +554,7 @@ bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEnt
 	return false;
 }
 
-bool Game::FindEntityByShapeID(ShapeID shapeID, Reference<Entity>& foundEntity)
+bool Game::FindEntityByShapeID(Collision::ShapeID shapeID, Reference<Entity>& foundEntity)
 {
 	for (auto& entity : this->tickingEntityList)
 	{

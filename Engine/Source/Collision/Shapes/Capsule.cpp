@@ -6,6 +6,7 @@
 #include "Collision/Result.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //-------------------------------- CapsuleShape --------------------------------
 

@@ -85,13 +85,13 @@ FollowCam::FollowCam()
 		}
 		case TickPass::SUBMIT_COLLISION_QUERIES:
 		{
-			CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+			Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 			
 			Ray ray;
 			ray.origin = this->worldSpaceFocalPoint;
 			ray.unitDirection = (this->desiredCameraObjectToWorld.translation - this->worldSpaceFocalPoint).Normalized();
 
-			auto rayCastQuery = RayCastQuery::Create();
+			auto rayCastQuery = Collision::RayCastQuery::Create();
 			rayCastQuery->SetRay(ray);
 			rayCastQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
@@ -108,15 +108,15 @@ FollowCam::FollowCam()
 
 			if (this->rayCastQueryTaskID)
 			{
-				CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+				Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
-				Result* result = collisionSystem->ObtainQueryResult(this->rayCastQueryTaskID);
+				Collision::Result* result = collisionSystem->ObtainQueryResult(this->rayCastQueryTaskID);
 				if (result)
 				{
-					auto rayCastResult = dynamic_cast<RayCastResult*>(result);
+					auto rayCastResult = dynamic_cast<Collision::RayCastResult*>(result);
 					if (rayCastResult)
 					{
-						const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+						const Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 						if (hitData.shapeID != 0)
 						{
 							// Is something obscurring the view of the camera?

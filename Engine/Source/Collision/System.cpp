@@ -5,18 +5,19 @@
 #include "Command.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
-CollisionSystem::CollisionSystem()
+System::System()
 {
 	this->thread = nullptr;
 }
 
-/*virtual*/ CollisionSystem::~CollisionSystem()
+/*virtual*/ System::~System()
 {
 	delete this->thread;
 }
 
-bool CollisionSystem::Initialize(const AxisAlignedBoundingBox& collsionWorldExtents)
+bool System::Initialize(const AxisAlignedBoundingBox& collsionWorldExtents)
 {
 	if (this->thread)
 		return false;
@@ -34,7 +35,7 @@ bool CollisionSystem::Initialize(const AxisAlignedBoundingBox& collsionWorldExte
 	return true;
 }
 
-bool CollisionSystem::Shutdown()
+bool System::Shutdown()
 {
 	if (this->thread)
 	{
@@ -46,7 +47,7 @@ bool CollisionSystem::Shutdown()
 	return true;
 }
 
-ShapeID CollisionSystem::AddShape(Shape* shape, uint32_t flags)
+ShapeID System::AddShape(Shape* shape, uint32_t flags)
 {
 	if (!this->thread)
 		return false;
@@ -64,19 +65,19 @@ ShapeID CollisionSystem::AddShape(Shape* shape, uint32_t flags)
 	return shapeID;
 }
 
-void CollisionSystem::RemoveShape(ShapeID shapeID)
+void System::RemoveShape(ShapeID shapeID)
 {
 	auto command = this->Create<RemoveShapeCommand>();
 	command->SetShapeID(shapeID);
 	this->IssueCommand(command);
 }
 
-void CollisionSystem::Clear()
+void System::Clear()
 {
 	this->IssueCommand(this->Create<RemoveAllShapesCommand>());
 }
 
-bool CollisionSystem::IssueCommand(Command* command)
+bool System::IssueCommand(Command* command)
 {
 	if (!this->thread)
 		return false;
@@ -85,7 +86,7 @@ bool CollisionSystem::IssueCommand(Command* command)
 	return true;
 }
 
-bool CollisionSystem::MakeQuery(Query* query, TaskID& taskID)
+bool System::MakeQuery(Query* query, TaskID& taskID)
 {
 	if (!this->thread)
 		return false;
@@ -94,7 +95,7 @@ bool CollisionSystem::MakeQuery(Query* query, TaskID& taskID)
 	return true;
 }
 
-Result* CollisionSystem::ObtainQueryResult(TaskID taskID)
+Result* System::ObtainQueryResult(TaskID taskID)
 {
 	if (!this->thread)
 		return nullptr;
@@ -102,7 +103,7 @@ Result* CollisionSystem::ObtainQueryResult(TaskID taskID)
 	return this->thread->ReceiveResult(taskID);
 }
 
-bool CollisionSystem::FlushAllTasks()
+bool System::FlushAllTasks()
 {
 	if (!this->thread)
 		return false;
@@ -111,7 +112,7 @@ bool CollisionSystem::FlushAllTasks()
 	return true;
 }
 
-bool CollisionSystem::DumpToFile(const std::string& fileName)
+bool System::DumpToFile(const std::string& fileName)
 {
 	auto command = FileCommand::Create();
 	command->SetFilePath(fileName);
@@ -121,7 +122,7 @@ bool CollisionSystem::DumpToFile(const std::string& fileName)
 	return true;
 }
 
-bool CollisionSystem::RestoreFromFile(const std::string& fileName)
+bool System::RestoreFromFile(const std::string& fileName)
 {
 	auto command = FileCommand::Create();
 	command->SetFilePath(fileName);

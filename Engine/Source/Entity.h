@@ -70,7 +70,7 @@ namespace Imzadi
 		 * where the entity can say whether or not it owns the given collision shape ID.
 		 * By default, we just return false here.
 		 */
-		virtual bool OwnsCollisionShape(ShapeID shapeID) const;
+		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const;
 
 		void SetName(const std::string& name) { this->name = name; }
 		const std::string& GetName() const { return this->name; }

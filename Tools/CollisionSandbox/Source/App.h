@@ -15,12 +15,12 @@ public:
 	virtual bool OnInit(void) override;
 	virtual int OnExit(void) override;
 
-	Imzadi::CollisionSystem* GetCollisionSystem() { return this->collisionSystem; }
+	Imzadi::Collision::System* GetCollisionSystem() { return this->collisionSystem; }
 	std::vector<Imzadi::Polygon>& GetPolygonArray() { return this->polygonArray; }
 
 private:
 	Frame* frame;
-	Imzadi::CollisionSystem* collisionSystem;
+	Imzadi::Collision::System* collisionSystem;
 	std::vector<Imzadi::Polygon> polygonArray;
 };
 
