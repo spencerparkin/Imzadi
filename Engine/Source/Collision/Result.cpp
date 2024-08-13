@@ -111,6 +111,8 @@ void DebugRenderResult::AddLinesForBox(const AxisAlignedBoundingBox& box, const 
 RayCastResult::RayCastResult()
 {
 	this->hitData.shapeID = 0;
+	this->hitData.shape = nullptr;
+	this->hitData.alpha = 0.0;
 }
 
 /*virtual*/ RayCastResult::~RayCastResult()

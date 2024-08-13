@@ -126,6 +126,10 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 
 /*virtual*/ void ObjectToWorldCommand::Execute(Thread* thread)
 {
+	// TODO: This is also really slow.  First of all, why are there
+	//       so many of these commands being executed per frame?
+	IMZADI_COLLISION_PROFILE("Object-to-World Cmd");
+
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 		return;
