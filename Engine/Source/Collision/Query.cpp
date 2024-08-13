@@ -68,6 +68,10 @@ RayCastQuery::RayCastQuery()
 
 /*virtual*/ Result* RayCastQuery::ExecuteQuery(Thread* thread)
 {
+	// TODO: My profiling has revealed that this is where the slowness is coming from.
+	//       Optimize this.  I think that one obvious optimization here is to limit the
+	//       length of ray-casts.  In any case, the infinite-length ray-cast is probably
+	//       written wrong, and I should start by trying to fix it.
 	IMZADI_COLLISION_PROFILE("Ray Cast Query");
 	const BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
 	auto result = new RayCastResult();

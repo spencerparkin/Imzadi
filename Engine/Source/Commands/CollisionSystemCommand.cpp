@@ -29,9 +29,13 @@ CollisionSystemCommand::CollisionSystemCommand()
 
 /*virtual*/ bool CollisionSystemCommand::Execute(const std::vector<std::string>& arguments, std::vector<std::string>& results)
 {
-	results.push_back("Test 1");
-	results.push_back("Test 2");
-	results.push_back("Test 3");
+	if (arguments.size() < 1)
+		return false;
+
+	if (arguments[0] == "stats")
+	{
+		// TODO: Issue stats query here.
+	}
 
 	return true;
 }
