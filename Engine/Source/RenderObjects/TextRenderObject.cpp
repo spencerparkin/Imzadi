@@ -16,7 +16,8 @@ TextRenderObject::TextRenderObject()
 	this->maxCharsPerLine = 32;
 	this->objectToTargetSpace.SetIdentity();
 	this->foreColor.SetComponents(1.0, 1.0, 1.0);
-	this->backColor.SetComponents(0.0, 0.0, 0.0, 1.0);
+	this->backColor.SetComponents(0.0, 0.0, 0.0);
+	this->backAlpha = 1.0;
 }
 
 /*virtual*/ TextRenderObject::~TextRenderObject()
@@ -135,7 +136,7 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 	this->numElements = 0;
 	auto floatPtr = static_cast<float*>(mappedSubresource.pData);
 
-	if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+	if ((this->flags & Flag::DRAW_BACKGROUND) != 0)
 	{
 		// Reserve space for an initial quad that will serve as the background.
 		Font::CharacterInfo info;
@@ -263,7 +264,7 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 		}
 	}
 
-	if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+	if ((this->flags & Flag::DRAW_BACKGROUND) != 0)
 	{
 		floatPtr = static_cast<float*>(mappedSubresource.pData);
 
@@ -352,7 +353,7 @@ AxisAlignedBoundingBox TextRenderObject::CalculateStringBox(const std::string& g
 	Game::Get()->GetRasterStateCache()->SetState(&rasterizerDesc);
 
 	D3D11_DEPTH_STENCIL_DESC depthStencilDesc{};
-	depthStencilDesc.DepthEnable = ((this->flags & Flag::OPAQUE_BACKGROUND) != 0) ? FALSE : TRUE;
+	depthStencilDesc.DepthEnable = ((this->flags & Flag::DRAW_BACKGROUND) != 0) ? FALSE : TRUE;
 	depthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
 	depthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 	depthStencilDesc.StencilEnable = FALSE;
@@ -405,7 +406,7 @@ AxisAlignedBoundingBox TextRenderObject::CalculateStringBox(const std::string& g
 		}
 	}
 
-	bool legible = (this->flags & Flag::OPAQUE_BACKGROUND) != 0;
+	bool legible = (this->flags & Flag::DRAW_BACKGROUND) != 0;
 	Shader* shader = this->font->GetShader(legible);
 
 	ID3D11Buffer* constantsBuffer = shader->GetConstantsBuffer();
@@ -422,13 +423,16 @@ AxisAlignedBoundingBox TextRenderObject::CalculateStringBox(const std::string& g
 	if (shader->GetConstantInfo("objectToProjection", constant))
 		StoreShaderConstant(&mappedSubresource, constant, &objectToProjMat);
 
-	if ((this->flags & Flag::OPAQUE_BACKGROUND) != 0)
+	if ((this->flags & Flag::DRAW_BACKGROUND) != 0)
 	{
 		if (shader->GetConstantInfo("textForeColor", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &this->foreColor);
 
 		if (shader->GetConstantInfo("textBackColor", constant))
 			StoreShaderConstant(&mappedSubresource, constant, &this->backColor);
+
+		if (shader->GetConstantInfo("textBackAlpha", constant))
+			StoreShaderConstant(&mappedSubresource, constant, &this->backAlpha);
 	}
 	else
 	{
@@ -516,14 +520,24 @@ const Vector3& TextRenderObject::GetForegroundColor() const
 	return this->foreColor;
 }
 
-void TextRenderObject::SetBackgroundColor(const Vector4& color)
+void TextRenderObject::SetBackgroundColor(const Vector3& color)
 {
 	this->backColor = color;
 }
 
-const Vector4& TextRenderObject::GetBackgroundColor() const
+const Vector3& TextRenderObject::GetBackgroundColor() const
 {
 	return this->backColor;
+}
+
+void TextRenderObject::SetBackgroundAlpha(double alpha)
+{
+	this->backAlpha = alpha;
+}
+
+double TextRenderObject::GetBackgroundAlpha() const
+{
+	return this->backAlpha;
 }
 
 bool TextRenderObject::SetFont(const std::string& fontName)

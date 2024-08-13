@@ -177,7 +177,7 @@ DialogBasicElement::DialogBasicElement()
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
 		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
 		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
-		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::DRAW_BACKGROUND |
 		Imzadi::TextRenderObject::Flag::MULTI_LINE;
 
 	auto textRenderObject = new Imzadi::TextRenderObject();
@@ -185,7 +185,7 @@ DialogBasicElement::DialogBasicElement()
 	textRenderObject->SetFlags(flags);
 	textRenderObject->SetText(std::format("{}: {} (Press \"A\".)", this->speaker.c_str(), this->text.c_str()));
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
-	textRenderObject->SetBackgroundColor(Imzadi::Vector4(0.0, 0.0, 0.0, 1.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
 	textRenderObject->SetTransform(transform);
 	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
 
@@ -284,7 +284,7 @@ DialogChoiceElement::DialogChoiceElement()
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
 		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
 		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
-		Imzadi::TextRenderObject::Flag::OPAQUE_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::DRAW_BACKGROUND |
 		Imzadi::TextRenderObject::Flag::MULTI_LINE;
 
 	std::string text = this->speaker + ": ";
@@ -302,7 +302,7 @@ DialogChoiceElement::DialogChoiceElement()
 	textRenderObject->SetFlags(flags);
 	textRenderObject->SetText(text);
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
-	textRenderObject->SetBackgroundColor(Imzadi::Vector4(0.0, 0.0, 0.0, 1.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
 	textRenderObject->SetTransform(transform);
 	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
 

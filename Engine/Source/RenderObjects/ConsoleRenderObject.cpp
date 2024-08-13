@@ -40,11 +40,12 @@ ConsoleRenderObject::ConsoleRenderObject()
 	flags |= Flag::STICK_WITH_CAMERA_PROJ;
 	flags |= Flag::MULTI_LINE;
 	flags |= Flag::USE_NEWLINE_CHARS;
-	flags |= Flag::OPAQUE_BACKGROUND;
+	flags |= Flag::DRAW_BACKGROUND;
 	this->SetFlags(flags);
 
-	this->SetBackgroundColor(Vector4(0.0, 0.0, 0.0, 0.5));
+	this->SetBackgroundColor(Vector3(0.0, 0.0, 0.0));
 	this->SetForegroundColor(Vector3(1.0, 1.0, 1.0));
+	this->SetBackgroundAlpha(0.5);
 
 	const D3D11_VIEWPORT* viewport = Game::Get()->GetViewportInfo();
 	double aspectRatio = double(viewport->Width) / double(viewport->Height);
