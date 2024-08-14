@@ -150,19 +150,32 @@ Vector3 Polygon::CalcCenter() const
 	return center;
 }
 
-double Polygon::Area() const
+double Polygon::Area(bool assumeConvex /*= true*/) const
 {
 	double area = 0.0;
-	Vector3 center = this->CalcCenter();
 
-	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	if (assumeConvex)
 	{
-		int j = (i + 1) % this->vertexArray.size();
+		Vector3 center = this->CalcCenter();
 
-		const Vector3& vertexA = this->vertexArray[i];
-		const Vector3& vertexB = this->vertexArray[j];
+		for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+		{
+			int j = (i + 1) % this->vertexArray.size();
 
-		area += (vertexA - center).Cross(vertexB - center).Length() / 2.0;
+			const Vector3& vertexA = this->vertexArray[i];
+			const Vector3& vertexB = this->vertexArray[j];
+
+			area += (vertexA - center).Cross(vertexB - center).Length() / 2.0;
+		}
+	}
+	else
+	{
+		std::vector<Polygon> polygonArray;
+		if (this->TessellateUntilConvex(polygonArray))
+		{
+			for (const Polygon& convexPolygon : polygonArray)
+				area += convexPolygon.Area(true);
+		}
 	}
 
 	return area;
@@ -619,7 +632,7 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	return true;
 }
 
-/*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex)
+/*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex, bool sanityCheck /*= false*/)
 {
 	std::list<Polygon> polygonQueue;
 	for (Polygon& polygon : polygonArray)
@@ -652,7 +665,26 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 			iter = nextIter;
 		}
 
+		double totalAreaBeforehand = 0.0;
+		double totalAreaAfterword = 0.0;
+
+		if (sanityCheck)
+			for (const Polygon& polygon : coplanarPolygonArray)
+				totalAreaBeforehand += polygon.Area(false);
+
 		MergeCoplanarPolygons(coplanarPolygonArray);
+
+		if (sanityCheck)
+		{
+			for (const Polygon& polygon : coplanarPolygonArray)
+				totalAreaAfterword += polygon.Area(false);
+			
+			double tolerance = 1e-6;
+			if (::fabs(totalAreaBeforehand - totalAreaAfterword) >= tolerance)
+			{
+				IMZADI_ASSERT(false);
+			}
+		}
 
 		if (!mustBeConvex)
 		{

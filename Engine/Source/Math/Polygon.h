@@ -76,10 +76,11 @@ namespace Imzadi
 		Vector3 CalcCenter() const;
 
 		/**
-		 * Assuming that this polygon is convex, calculate
-		 * and return the polygon's area.
+		 * Calculate and return the area of this polygon.
+		 * 
+		 * @param[in] assumeConvex If true, we do not try to tessellate and recurse.
 		 */
-		double Area() const;
+		double Area(bool assumeConvex = true) const;
 
 		/**
 		 * Tell the caller if the given point is a member of the set
@@ -171,8 +172,9 @@ namespace Imzadi
 		 * 
 		 * @param[in,out] polygonArray These are the polygons to compress.  This array is modified, hopefully reduced in size.
 		 * @param[in] mustBeConvex If true, polygons returned will all be convex.  I false, this is not necessarily the case.
+		 * @param[in] sanityCheck If true, the total area of polygons in a plane is measured before being compressed, then compared against the total area afterword.
 		 */
-		static void Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex);
+		static void Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex, bool sanityCheck = false);
 
 		/**
 		 * Generate a set of pair-wise disjoint and convex polygons
