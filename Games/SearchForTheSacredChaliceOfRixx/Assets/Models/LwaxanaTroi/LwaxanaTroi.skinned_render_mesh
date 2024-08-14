@@ -27,7 +27,7 @@
         "min": {
             "x": -3.6925888061523439,
             "y": -0.00015405184240080416,
-            "z": -1.3288984298706055
+            "z": -0.6993388533592224
         },
         "max": {
             "x": 3.5307323932647707,
@@ -40,7 +40,7 @@
     "skeleton": "Models\\LwaxanaTroi\\LwaxanaTroi.skeleton",
     "skin_weights": "Models\\LwaxanaTroi\\LwaxanaTroi.skin_weights",
     "animations": [
-        "Animations\\LwaxanaTroiIdle.animation",
-        "Animations\\LwaxanaTroiHappy.animation"
+        "Animations\\LwaxanaTroiHappy.animation",
+        "Animations\\LwaxanaTroiIdle.animation"
     ]
 }
