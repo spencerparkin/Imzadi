@@ -65,6 +65,23 @@ ShapeID Shape::GetShapeID() const
 	return nullptr;
 }
 
+/*static*/ std::string Shape::ShapeTypeLabel(TypeID typeID)
+{
+	switch (typeID)
+	{
+	case TypeID::BOX:
+		return "BOX";
+	case TypeID::CAPSULE:
+		return "CAPSULE";
+	case TypeID::POLYGON:
+		return "POLYGON";
+	case TypeID::SPHERE:
+		return "SPHERE";
+	}
+
+	return "?";
+}
+
 /*virtual*/ bool Shape::Copy(const Shape* shape)
 {
 	// We only copy here the defining characteristics of the shape.

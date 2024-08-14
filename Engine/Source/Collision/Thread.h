@@ -26,6 +26,7 @@ extern ProfileData collisionProfileData;
 class Task;
 class Result;
 class DebugRenderResult;
+class StatsResult;
 
 /**
  * This class impliments, and provides an interface to, the collision thread.
@@ -124,6 +125,13 @@ public:
 	 * @param[in] drawFlags An OR-ing of the IMZADI_DRAW_FLAG_* defines is given here to determine what's produced in the result.
 	 */
 	void DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags);
+
+	/**
+	 * Gather some stats about the collision system in its current state.
+	 * 
+	 * @param[out] statsResult This is populated with the returned stats.
+	 */
+	void GatherStats(StatsResult* statsResult);
 
 	/**
 	 * Block until all pending tasks have been processed by this thread.

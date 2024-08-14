@@ -216,6 +216,22 @@ void Thread::DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags)
 		this->boxTree.DebugRender(renderResult);
 }
 
+void Thread::GatherStats(StatsResult* statsResult)
+{
+	statsResult->numShapes = 0;
+
+	this->boxTree.ForAllShapes([statsResult](const Shape* shape) -> bool
+	{
+		statsResult->numShapes++;
+		std::map<Shape::TypeID, uint32_t>::iterator iter = statsResult->shapeCountMap.find(shape->GetShapeTypeID());
+		if (iter == statsResult->shapeCountMap.end())
+			statsResult->shapeCountMap.insert(std::pair<Shape::TypeID, uint32_t>(shape->GetShapeTypeID(), 1));
+		else
+			iter->second++;
+		return true;
+	});
+}
+
 void Thread::WaitForAllTasksToComplete()
 {
 	std::unique_lock<std::mutex> lock(this->taskQueueMutex);

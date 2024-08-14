@@ -31,6 +31,18 @@ public:
 };
 
 /**
+ * Query for collision system statistics.
+ */
+class IMZADI_API StatsQuery : public Query
+{
+public:
+	StatsQuery();
+	virtual ~StatsQuery();
+
+	virtual Result* ExecuteQuery(Thread* thread) override;
+};
+
+/**
  * This is the base class for all queries about a particular shape.
  */
 class IMZADI_API ShapeQuery : public Query
