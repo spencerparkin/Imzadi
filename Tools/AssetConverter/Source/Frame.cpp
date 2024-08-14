@@ -224,8 +224,6 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 
 bool Frame::FlagsFromDialog(const wxString& prompt, const std::vector<FlagChoice>& flagChoiceArray, uint32_t& chosenFlags)
 {
-	chosenFlags = 0;
-
 	wxArrayString choiceArray;
 	for (const FlagChoice& flagChoice : flagChoiceArray)
 		choiceArray.Add(flagChoice.name);
@@ -245,6 +243,7 @@ bool Frame::FlagsFromDialog(const wxString& prompt, const std::vector<FlagChoice
 	if (choiceDialog.ShowModal() != wxID_OK)
 		return false;
 
+	chosenFlags = 0;
 	selectionArray = choiceDialog.GetSelections();
 	for (int i = 0; i < selectionArray.size(); i++)
 	{
