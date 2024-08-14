@@ -7,14 +7,15 @@
 #include <vector>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------- BoxShape -------------------------------
 
-BoxShape::BoxShape(bool temporary) : Shape(temporary)
+BoxShape::BoxShape()
 {
 }
 
-BoxShape::BoxShape(const BoxShape& boxShape) : Shape(true)
+BoxShape::BoxShape(const BoxShape& boxShape)
 {
 	this->extents = boxShape.extents;
 	this->objectToWorld = boxShape.objectToWorld;
@@ -22,11 +23,6 @@ BoxShape::BoxShape(const BoxShape& boxShape) : Shape(true)
 
 /*virtual*/ BoxShape::~BoxShape()
 {
-}
-
-/*static*/ BoxShape* BoxShape::Create()
-{
-	return new BoxShape(false);
 }
 
 /*virtual*/ ShapeCache* BoxShape::CreateCache() const
@@ -46,7 +42,7 @@ BoxShape::BoxShape(const BoxShape& boxShape) : Shape(true)
 
 /*virtual*/ Shape* BoxShape::Clone() const
 {
-	auto box = BoxShape::Create();
+	auto box = new BoxShape();
 	box->Copy(this);
 	return box;
 }
@@ -126,7 +122,7 @@ void BoxShape::GetFacePolygonArray(std::vector<PolygonShape>& facePolygonArray, 
 	BoxVertexMatrix boxVertices;
 	this->GetCornerMatrix(boxVertices, worldSpace);
 
-	PolygonShape face(true);
+	PolygonShape face;
 	face.AddVertex(boxVertices[0][0][0]);
 	face.AddVertex(boxVertices[0][0][1]);
 	face.AddVertex(boxVertices[0][1][1]);

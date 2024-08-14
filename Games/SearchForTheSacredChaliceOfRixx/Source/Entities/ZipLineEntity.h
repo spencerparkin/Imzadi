@@ -21,10 +21,10 @@ public:
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 
 private:
-	void HandleCollisionResult(Imzadi::CollisionQueryResult* collisionResult);
+	void HandleCollisionResult(Imzadi::Collision::CollisionQueryResult* collisionResult);
 	ZipLineRider* FindZipLineRider(Character* character);
 
 	Imzadi::Reference<ZipLine> zipLine;
-	Imzadi::TaskID collisionQueryTaskID;
-	Imzadi::ShapeID sphereShapeID;
+	Imzadi::Collision::TaskID collisionQueryTaskID;
+	Imzadi::Collision::ShapeID sphereShapeID;
 };

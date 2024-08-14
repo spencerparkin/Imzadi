@@ -26,7 +26,7 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	if (!this->zipLine)
 		return false;
 
-	Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+	Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 	if (!collisionSystem)
 		return false;
 
@@ -34,7 +34,7 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	objectToWorld.SetIdentity();
 	objectToWorld.translation = this->zipLine->GetLineSegment().point[0];
 
-	auto sphereShape = Imzadi::SphereShape::Create();
+	auto sphereShape = new Imzadi::Collision::SphereShape();
 	sphereShape->SetObjectToWorldTransform(objectToWorld);
 	sphereShape->SetCenter(Imzadi::Vector3(0.0, 0.0, 0.0));
 	sphereShape->SetRadius(this->zipLine->GetRadius());
@@ -45,7 +45,7 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 
 /*virtual*/ bool ZipLineEntity::Shutdown()
 {
-	Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+	Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
 	collisionSystem->RemoveShape(this->sphereShapeID);
 	this->sphereShapeID = 0;
@@ -59,9 +59,9 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	{
 		case Imzadi::TickPass::SUBMIT_COLLISION_QUERIES:
 		{
-			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+			Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
-			auto query = Imzadi::CollisionQuery::Create();
+			auto query = new Imzadi::Collision::CollisionQuery();
 			query->SetShapeID(this->sphereShapeID);
 			query->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 			collisionSystem->MakeQuery(query, this->collisionQueryTaskID);
@@ -72,16 +72,16 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 		{
 			if (this->collisionQueryTaskID)
 			{
-				Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+				Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
-				Imzadi::Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
+				Imzadi::Collision::Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
 				if (result)
 				{
-					auto collisionResult = dynamic_cast<Imzadi::CollisionQueryResult*>(result);
+					auto collisionResult = dynamic_cast<Imzadi::Collision::CollisionQueryResult*>(result);
 					if (collisionResult)
 						this->HandleCollisionResult(collisionResult);
 
-					collisionSystem->Free<Imzadi::Result>(result);
+					delete result;
 				}
 			}
 
@@ -92,11 +92,11 @@ void ZipLineEntity::SetZipLine(ZipLine* givenZipLine)
 	return true;
 }
 
-void ZipLineEntity::HandleCollisionResult(Imzadi::CollisionQueryResult* collisionResult)
+void ZipLineEntity::HandleCollisionResult(Imzadi::Collision::CollisionQueryResult* collisionResult)
 {
-	for (const Imzadi::Reference<Imzadi::ShapePairCollisionStatus>& collisionPair : collisionResult->GetCollisionStatusArray())
+	for (const Imzadi::Reference<Imzadi::Collision::ShapePairCollisionStatus>& collisionPair : collisionResult->GetCollisionStatusArray())
 	{
-		Imzadi::ShapeID shapeID = collisionPair->GetOtherShape(this->sphereShapeID);
+		Imzadi::Collision::ShapeID shapeID = collisionPair->GetOtherShape(this->sphereShapeID);
 		Imzadi::Reference<Imzadi::Entity> foundEntity;
 		if (!Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
 			continue;

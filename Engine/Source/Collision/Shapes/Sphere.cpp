@@ -5,21 +5,17 @@
 #include "Collision/Result.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------------- SphereShape -------------------------------------
 
-SphereShape::SphereShape(bool temporary) : Shape(temporary)
+SphereShape::SphereShape()
 {
 	this->radius = 1.0;
 }
 
 /*virtual*/ SphereShape::~SphereShape()
 {
-}
-
-/*static*/ SphereShape* SphereShape::Create()
-{
-	return new SphereShape(false);
 }
 
 /*virtual*/ ShapeCache* SphereShape::CreateCache() const
@@ -39,7 +35,7 @@ SphereShape::SphereShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ Shape* SphereShape::Clone() const
 {
-	auto sphere = SphereShape::Create();
+	auto sphere = new SphereShape();
 	sphere->Copy(this);
 	return sphere;
 }

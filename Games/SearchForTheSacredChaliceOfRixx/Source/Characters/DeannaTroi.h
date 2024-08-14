@@ -81,5 +81,5 @@ private:
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
 	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;
-	Imzadi::TaskID rayCastQueryTaskID;
+	Imzadi::Collision::TaskID rayCastQueryTaskID;
 };

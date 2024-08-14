@@ -6,21 +6,17 @@
 #include "Collision/Result.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //-------------------------------- CapsuleShape --------------------------------
 
-CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
+CapsuleShape::CapsuleShape()
 {
 	this->radius = 1.0;
 }
 
 /*virtual*/ CapsuleShape::~CapsuleShape()
 {
-}
-
-/*static*/ CapsuleShape* CapsuleShape::Create()
-{
-	return new CapsuleShape(false);
 }
 
 /*virtual*/ ShapeCache* CapsuleShape::CreateCache() const
@@ -40,7 +36,7 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 
 /*virtual*/ Shape* CapsuleShape::Clone() const
 {
-	auto capsule = CapsuleShape::Create();
+	auto capsule = new CapsuleShape();
 	capsule->Copy(this);
 	return capsule;
 }
@@ -264,13 +260,13 @@ CapsuleShape::CapsuleShape(bool temporary) : Shape(temporary)
 	// as full spheres, because we've eliminated the possibility of half of those
 	// spheres getting hit by the ray.
 
-	SphereShape capA(true);
+	SphereShape capA;
 	capA.SetCenter(pointA);
 	capA.SetRadius(this->radius);
 	if (capA.RayCast(ray, alpha, unitSurfaceNormal))
 		return true;
 
-	SphereShape capB(true);
+	SphereShape capB;
 	capB.SetCenter(pointB);
 	capB.SetRadius(this->radius);
 	if (capB.RayCast(ray, alpha, unitSurfaceNormal))

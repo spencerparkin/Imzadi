@@ -49,7 +49,7 @@ private:
 	};
 
 	void GetSensativityParams(SensativityParams& sensativityParams);
-	void SetSelectedShape(Imzadi::ShapeID shapeID);
+	void SetSelectedShape(Imzadi::Collision::ShapeID shapeID);
 
 	wxGLContext* renderContext;
 	static int attributeList[];
@@ -63,6 +63,6 @@ private:
 	bool targetShapes;
 	bool dragSelectedShape;
 	Imzadi::LineSegment* targetShapeHitLine;
-	Imzadi::ShapeID selectedShapeID;
+	Imzadi::Collision::ShapeID selectedShapeID;
 	Imzadi::Transform shapeToCamera;
 };

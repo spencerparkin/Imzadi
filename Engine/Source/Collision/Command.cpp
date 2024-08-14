@@ -6,6 +6,7 @@
 #include <fstream>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------- Command -------------------------------
 
@@ -31,11 +32,6 @@ ExitThreadCommand::ExitThreadCommand()
 /*virtual*/ void ExitThreadCommand::Execute(Thread* thread)
 {
 	thread->signaledToExit = true;
-}
-
-/*static*/ ExitThreadCommand* ExitThreadCommand::Create()
-{
-	return new ExitThreadCommand();
 }
 
 //------------------------------- ShapeCommand -------------------------------
@@ -69,11 +65,6 @@ AddShapeCommand::AddShapeCommand()
 	thread->AddShape(this->shape, this->flags);
 }
 
-/*static*/ AddShapeCommand* AddShapeCommand::Create()
-{
-	return new AddShapeCommand();
-}
-
 //------------------------------- RemoveShapeCommand -------------------------------
 
 RemoveShapeCommand::RemoveShapeCommand()
@@ -90,11 +81,6 @@ RemoveShapeCommand::RemoveShapeCommand()
 	thread->RemoveShape(this->shapeID);
 }
 
-/*static*/ RemoveShapeCommand* RemoveShapeCommand::Create()
-{
-	return new RemoveShapeCommand();
-}
-
 //------------------------------- RemoveAllShapesCommand -------------------------------
 
 RemoveAllShapesCommand::RemoveAllShapesCommand()
@@ -108,11 +94,6 @@ RemoveAllShapesCommand::RemoveAllShapesCommand()
 /*virtual*/ void RemoveAllShapesCommand::Execute(Thread* thread)
 {
 	thread->ClearShapes();
-}
-
-/*static*/ RemoveAllShapesCommand* RemoveAllShapesCommand::Create()
-{
-	return new RemoveAllShapesCommand();
 }
 
 //------------------------------- RemoveAllShapesCommand -------------------------------
@@ -132,11 +113,6 @@ SetDebugRenderColorCommand::SetDebugRenderColorCommand()
 		shape->SetDebugRenderColor(this->color);
 }
 
-/*static*/ SetDebugRenderColorCommand* SetDebugRenderColorCommand::Create()
-{
-	return new SetDebugRenderColorCommand();
-}
-
 //------------------------------- ObjectToWorldCommand -------------------------------
 
 ObjectToWorldCommand::ObjectToWorldCommand()
@@ -150,6 +126,10 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 
 /*virtual*/ void ObjectToWorldCommand::Execute(Thread* thread)
 {
+	// TODO: This is also really slow.  First of all, why are there
+	//       so many of these commands being executed per frame?
+	IMZADI_COLLISION_PROFILE("Object-to-World Cmd");
+
 	Shape* shape = thread->FindShape(this->shapeID);
 	if (!shape)
 		return;
@@ -158,11 +138,6 @@ ObjectToWorldCommand::ObjectToWorldCommand()
 
 	BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
 	boxTree.Insert(shape, 0);
-}
-
-/*static*/ ObjectToWorldCommand* ObjectToWorldCommand::Create()
-{
-	return new ObjectToWorldCommand();
 }
 
 //------------------------------- ResetProfileDataCommand -------------------------------
@@ -180,11 +155,6 @@ ResetProfileDataCommand::ResetProfileDataCommand()
 	collisionProfileData.Reset();
 }
 
-/*static*/ ResetProfileDataCommand* ResetProfileDataCommand::Create()
-{
-	return new ResetProfileDataCommand();
-}
-
 //------------------------------- FileCommand -------------------------------
 
 FileCommand::FileCommand()
@@ -196,11 +166,6 @@ FileCommand::FileCommand()
 /*virtual*/ FileCommand::~FileCommand()
 {
 	delete this->filePath;
-}
-
-/*static*/ FileCommand* FileCommand::Create()
-{
-	return new FileCommand();
 }
 
 /*virtual*/ void FileCommand::Execute(Thread* thread)

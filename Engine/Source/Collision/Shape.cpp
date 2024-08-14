@@ -5,16 +5,17 @@
 #include "Shapes/Sphere.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 std::atomic<ShapeID> Shape::nextShapeID(1);
 
 //---------------------------------- Shape ----------------------------------
 
-Shape::Shape(bool temporary)
+Shape::Shape()
 {
 	this->node = nullptr;
 	this->debugColor.SetComponents(1.0, 0.0, 0.0);
-	this->shapeID = temporary ? 0 : nextShapeID++;
+	this->shapeID = nextShapeID++;
 	this->cache = nullptr;
 	this->objectToWorld.SetIdentity();
 	this->revisionNumber = 0;
@@ -52,13 +53,13 @@ ShapeID Shape::GetShapeID() const
 	switch (typeID)
 	{
 	case TypeID::BOX:
-		return new BoxShape(false);
+		return new BoxShape();
 	case TypeID::CAPSULE:
-		return new CapsuleShape(false);
+		return new CapsuleShape();
 	case TypeID::POLYGON:
-		return new PolygonShape(false);
+		return new PolygonShape();
 	case TypeID::SPHERE:
-		return new SphereShape(false);
+		return new SphereShape();
 	}
 
 	return nullptr;

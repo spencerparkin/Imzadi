@@ -25,12 +25,12 @@ namespace Imzadi
 		void SetData(TriggerBoxData* data) { this->data.Set(data); }
 
 	protected:
-		void UpdateCollisionState(CollisionQueryResult* collisionResult);
+		void UpdateCollisionState(Collision::CollisionQueryResult* collisionResult);
 
-		ShapeID collisionShapeID;
-		TaskID collisionQueryTaskID;
+		Collision::ShapeID collisionShapeID;
+		Collision::TaskID collisionQueryTaskID;
 		Reference<TriggerBoxData> data;
-		std::unordered_set<ShapeID> shapeSet;
+		std::unordered_set<Collision::ShapeID> shapeSet;
 	};
 
 	/**
@@ -45,7 +45,7 @@ namespace Imzadi
 			SHAPE_EXITED
 		};
 
-		TriggerBoxEvent(Type type, ShapeID shapeID, const std::string& triggerBoxName)
+		TriggerBoxEvent(Type type, Collision::ShapeID shapeID, const std::string& triggerBoxName)
 		{
 			this->type = type;
 			this->shapeID = shapeID;
@@ -57,7 +57,7 @@ namespace Imzadi
 		}
 
 	public:
-		Type type;			///< Did the shape leave or enter the box?
-		ShapeID shapeID;	///< This is the shape ID of the collision shape that entered or exited the trigger box.
+		Type type;					///< Did the shape leave or enter the box?
+		Collision::ShapeID shapeID;	///< This is the shape ID of the collision shape that entered or exited the trigger box.
 	};
 }

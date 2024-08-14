@@ -35,13 +35,13 @@ TriggerBox::TriggerBox()
 	Vector3 extents = (box.maxCorner - box.minCorner) / 2.0;
 	Vector3 center = (box.maxCorner + box.minCorner) / 2.0;
 
-	CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+	Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 	Transform objectToWorld;
 	objectToWorld.matrix.SetIdentity();
 	objectToWorld.translation = center;
 
-	auto boxShape = BoxShape::Create();
+	auto boxShape = new Collision::BoxShape();
 	boxShape->SetExtents(extents);
 	boxShape->SetObjectToWorldTransform(objectToWorld);
 	boxShape->SetUserFlags(IMZADI_SHAPE_FLAG_TRIGGER_BOX);
@@ -65,13 +65,13 @@ TriggerBox::TriggerBox()
 	if (!Entity::Tick(tickPass, deltaTime))
 		return false;
 
-	CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+	Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 	switch (tickPass)
 	{
 		case TickPass::SUBMIT_COLLISION_QUERIES:
 		{
-			auto collisionQuery = CollisionQuery::Create();
+			auto collisionQuery = new Collision::CollisionQuery();
 			collisionQuery->SetShapeID(this->collisionShapeID);
 			collisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 			collisionSystem->MakeQuery(collisionQuery, this->collisionQueryTaskID);
@@ -82,14 +82,14 @@ TriggerBox::TriggerBox()
 		{
 			if (this->collisionQueryTaskID)
 			{
-				Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
+				Collision::Result* result = collisionSystem->ObtainQueryResult(this->collisionQueryTaskID);
 				if (result)
 				{
-					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+					auto collisionResult = dynamic_cast<Collision::CollisionQueryResult*>(result);
 					if (collisionResult)
 						this->UpdateCollisionState(collisionResult);
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -100,12 +100,12 @@ TriggerBox::TriggerBox()
 	return true;
 }
 
-void TriggerBox::UpdateCollisionState(CollisionQueryResult* collisionResult)
+void TriggerBox::UpdateCollisionState(Collision::CollisionQueryResult* collisionResult)
 {
-	const std::vector<Reference<ShapePairCollisionStatus>>& collisionStatusArray = collisionResult->GetCollisionStatusArray();
+	const std::vector<Reference<Collision::ShapePairCollisionStatus>>& collisionStatusArray = collisionResult->GetCollisionStatusArray();
 	for (const auto& collisionStatus : collisionStatusArray)
 	{
-		ShapeID shapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
+		Collision::ShapeID shapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
 
 		if (this->shapeSet.find(shapeID) == this->shapeSet.end())
 		{
@@ -114,8 +114,8 @@ void TriggerBox::UpdateCollisionState(CollisionQueryResult* collisionResult)
 		}
 	}
 
-	std::vector<ShapeID> shapesToRemoveArray;
-	for (ShapeID shapeID : this->shapeSet)
+	std::vector<Collision::ShapeID> shapesToRemoveArray;
+	for (Collision::ShapeID shapeID : this->shapeSet)
 	{
 		bool found = false;
 		for (const auto& collisionStatus : collisionStatusArray)
@@ -131,7 +131,7 @@ void TriggerBox::UpdateCollisionState(CollisionQueryResult* collisionResult)
 			shapesToRemoveArray.push_back(shapeID);
 	}
 
-	for (ShapeID shapeID : shapesToRemoveArray)
+	for (Collision::ShapeID shapeID : shapesToRemoveArray)
 	{
 		this->shapeSet.erase(shapeID);
 		Game::Get()->GetEventSystem()->SendEvent(this->data->GetEventChannelName(), new TriggerBoxEvent(TriggerBoxEvent::Type::SHAPE_EXITED, shapeID, this->GetName()));

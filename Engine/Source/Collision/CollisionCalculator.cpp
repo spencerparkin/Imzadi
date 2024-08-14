@@ -12,6 +12,7 @@
 #include <algorithm>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------ CollisionCalculator<SphereShape, SphereShape> ------------------------------
 

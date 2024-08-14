@@ -72,36 +72,12 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 	if ((this->flags & Flag::MULTI_LINE) == 0)
 		lineArray.push_back(this->text);
 	else if ((this->flags & Flag::USE_NEWLINE_CHARS) != 0)
-	{
-		std::string line;
-		for (int i = 0; this->text.c_str()[i] != '\0'; i++)
-		{
-			if (this->text.c_str()[i] != '\n')
-				line += this->text.c_str()[i];
-			else
-			{
-				lineArray.push_back(line);
-				line = "";
-			}
-		}
-		if (line.length() > 0)
-			lineArray.push_back(line);
-	}
+		this->SplitString(this->text, lineArray, "\n");
 	else
 	{
-		// Get an array of words in the text.
+		// Get an array of words from the text.
 		std::vector<std::string> wordArray;
-		char* buffer = new char[this->text.length() + 1];
-		::strcpy_s(buffer, this->text.length() + 1, this->text.c_str());
-		char* context = nullptr;
-		char* tokenBuffer = ::strtok_s(buffer, " ", &context);
-		while (tokenBuffer)
-		{
-			std::string token(tokenBuffer);
-			wordArray.push_back(token);
-			tokenBuffer = ::strtok_s(nullptr, " ", &context);
-		}
-		delete[] buffer;
+		this->SplitString(this->text, wordArray);
 
 		// Build each line, making sure not to exceed the maximum for each line.
 		uint32_t i = 0, j = 0;
@@ -175,14 +151,13 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 		penStartLocationArray.push_back(Vector2(0.0, 0.0));
 	}
 
-	// Get some metrics on the boxes.
-	double maxBoxWidth = 0.0, maxBoxHeight = 0.0;
+	// Calculate the largest box height.
+	double maxBoxHeight = 0.0;
 	for (uint32_t i = 0; i < (uint32_t)lineBoxArray.size(); i++)
 	{
 		AxisAlignedBoundingBox& lineBox = lineBoxArray[i];
 		double boxWidth = 0.0, boxHeight = 0.0, boxDepth = 0.0;
 		lineBox.GetDimensions(boxWidth, boxHeight, boxDepth);
-		maxBoxWidth = IMZADI_MAX(maxBoxWidth, boxWidth);
 		maxBoxHeight = IMZADI_MAX(maxBoxHeight, boxHeight);
 	}
 
@@ -202,22 +177,22 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 	{
 		AxisAlignedBoundingBox& lineBox = lineBoxArray[i];
 		Vector2& penStartLocation = penStartLocationArray[i];
-		lineBox.minCorner.x -= maxBoxWidth / 2.0;
-		lineBox.maxCorner.x -= maxBoxWidth / 2.0;
-		penStartLocation.x -= maxBoxWidth / 2.0;
 
 		double boxWidth = 0.0, boxHeight = 0.0, boxDepth = 0.0;
 		lineBox.GetDimensions(boxWidth, boxHeight, boxDepth);
 
-		double justificationDelta = 0.0;
 		if ((this->flags & Flag::RIGHT_JUSTIFY) != 0)
-			justificationDelta = maxBoxWidth - boxWidth;
+		{
+			lineBox.minCorner.x -= boxWidth;
+			lineBox.maxCorner.x -= boxWidth;
+			penStartLocation.x -= boxWidth;
+		}
 		else if ((this->flags & Flag::CENTER_JUSTIFY) != 0)
-			justificationDelta = (maxBoxWidth - boxWidth) / 2;
-
-		lineBox.minCorner.x += justificationDelta;
-		lineBox.maxCorner.x += justificationDelta;
-		penStartLocation.x += justificationDelta;
+		{
+			lineBox.minCorner.x -= boxWidth / 2.0;
+			lineBox.maxCorner.x -= boxWidth / 2.0;
+			penStartLocation.x -= boxWidth / 2.0;
+		}
 	}
 
 	// Finally, render the lines of text.
@@ -292,10 +267,28 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 	deviceContext->Unmap(this->vertexBuffer, 0);
 }
 
+/*static*/ void TextRenderObject::SplitString(const std::string& givenString, std::vector<std::string>& tokenArray, const std::string& delimiter /*= " "*/)
+{
+	char* buffer = new char[givenString.length() + 1];
+	::strcpy_s(buffer, givenString.length() + 1, givenString.c_str());
+	char* context = nullptr;
+	char* tokenBuffer = ::strtok_s(buffer, delimiter.c_str(), &context);
+	while (tokenBuffer)
+	{
+		std::string token(tokenBuffer);
+		tokenArray.push_back(token);
+		tokenBuffer = ::strtok_s(nullptr, delimiter.c_str(), &context);
+	}
+	delete[] buffer;
+}
+
 AxisAlignedBoundingBox TextRenderObject::CalculateStringBox(const std::string& givenString)
 {
 	AxisAlignedBoundingBox stringBox;
 	stringBox.MakeReadyForExpansion();
+
+	if (givenString.length() == 0)
+		stringBox.Expand(Vector3(0.0, 0.0, 0.0));
 
 	Vector2 penLocation(0.0, 0.0);
 
@@ -366,10 +359,7 @@ AxisAlignedBoundingBox TextRenderObject::CalculateStringBox(const std::string& g
 	Matrix4x4 objectToProjMat;
 
 	if ((this->flags & Flag::STICK_WITH_CAMERA_PROJ) != 0)
-	{
-		Matrix4x4 objectToCameraMat;
 		this->objectToTargetSpace.GetToMatrix(objectToProjMat);
-	}
 	else
 	{
 		Matrix4x4 cameraToProjMat;
@@ -608,7 +598,7 @@ FPSRenderObject::FPSRenderObject()
 
 	Transform translate;
 	translate.SetIdentity();
-	translate.translation.SetComponents(0.8, 0.9, -0.5);
+	translate.translation.SetComponents(0.7, 0.9, -0.5);
 
 	this->SetTransform(translate * scale);
 

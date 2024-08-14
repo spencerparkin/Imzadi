@@ -142,7 +142,7 @@ namespace Imzadi
 		Scene* GetScene();
 		Camera* GetCamera();
 		void SetCamera(Reference<Camera> camera);
-		CollisionSystem* GetCollisionSystem();
+		Collision::System* GetCollisionSystem();
 		AudioSystem* GetAudioSystem();
 		EventSystem* GetEventSystem();
 		DebugLines* GetDebugLines();
@@ -263,7 +263,7 @@ namespace Imzadi
 		 * @param[out] foundEntity If found, the entity is returned in this reference pointer.
 		 * @return True is returned if an entity is found; false, otherwise, and the given reference pointer is left untouched.
 		 */
-		bool FindEntityByShapeID(ShapeID shapeID, Reference<Entity>& foundEntity);
+		bool FindEntityByShapeID(Collision::ShapeID shapeID, Reference<Entity>& foundEntity);
 
 		/**
 		 * Get access to the list of entities being tracked by the game.
@@ -347,7 +347,7 @@ namespace Imzadi
 		std::list<Reference<Entity>> tickingEntityList;
 		Controller controller;
 		std::vector<std::string> controllerUserStack;
-		CollisionSystem collisionSystem;
+		Collision::System collisionSystem;
 		AudioSystem audioSystem;
 		EventSystem eventSystem;
 		double accelerationDuetoGravity;

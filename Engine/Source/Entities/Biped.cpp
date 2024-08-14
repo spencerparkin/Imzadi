@@ -32,7 +32,7 @@ Biped::Biped()
 {
 }
 
-/*virtual*/ bool Biped::OwnsCollisionShape(ShapeID shapeID) const
+/*virtual*/ bool Biped::OwnsCollisionShape(Collision::ShapeID shapeID) const
 {
 	return shapeID == this->collisionShapeID;
 }
@@ -51,7 +51,7 @@ Biped::Biped()
 	}
 
 	// TODO: Really should get capsule size from somewhere on disk.
-	auto capsule = CapsuleShape::Create();
+	auto capsule = new Collision::CapsuleShape();
 	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(1.0);
@@ -122,7 +122,7 @@ Biped::Biped()
 	if (!Entity::Tick(tickPass, deltaTime))
 		return false;
 
-	CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+	Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 	switch (tickPass)
 	{
@@ -143,18 +143,18 @@ Biped::Biped()
 			{
 				// Stalling for a minor query like this isn't so bad.  It's the big queries
 				// where I'm hoping to get some sort of speed-up by doing them asynchronously.
-				auto objectToWorldQuery = ObjectToWorldQuery::Create();
+				auto objectToWorldQuery = new Collision::ObjectToWorldQuery();
 				objectToWorldQuery->SetShapeID(this->groundShapeID);
 				collisionSystem->MakeQuery(objectToWorldQuery, this->groundQueryTaskID);
 				collisionSystem->FlushAllTasks();
-				Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
+				Collision::Result* result = collisionSystem->ObtainQueryResult(this->groundQueryTaskID);
 				if (result)
 				{
-					auto objectToWorldResult = dynamic_cast<ObjectToWorldResult*>(result);
+					auto objectToWorldResult = dynamic_cast<Collision::ObjectToWorldResult*>(result);
 					if (objectToWorldResult)
 						this->platformToWorld = objectToWorldResult->objectToWorld;
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -167,17 +167,17 @@ Biped::Biped()
 		{
 			// Kick-off the queries we'll need later to resolve collision constraints.
 
-			auto boundsQuery = ShapeInBoundsQuery::Create();
+			auto boundsQuery = new Collision::ShapeInBoundsQuery();
 			boundsQuery->SetShapeID(this->collisionShapeID);
 			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
 
-			auto worldSurfaceCollisionQuery = CollisionQuery::Create();
+			auto worldSurfaceCollisionQuery = new Collision::CollisionQuery();
 			worldSurfaceCollisionQuery->SetShapeID(this->collisionShapeID);
 			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
 
 			const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-			auto groundSurfaceQuery = RayCastQuery::Create();
+			auto groundSurfaceQuery = new Collision::RayCastQuery();
 			groundSurfaceQuery->SetRay(Ray(objectToWorld.translation + Vector3(0.0, 3.0, 0.0), Vector3(0.0, -1.0, 0.0)));
 			groundSurfaceQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 			collisionSystem->MakeQuery(groundSurfaceQuery, this->groundSurfaceQueryTaskID);
@@ -218,44 +218,44 @@ Biped::Biped()
 
 			if (this->worldSurfaceCollisionQueryTaskID)
 			{
-				Result* result = collisionSystem->ObtainQueryResult(this->worldSurfaceCollisionQueryTaskID);
+				Collision::Result* result = collisionSystem->ObtainQueryResult(this->worldSurfaceCollisionQueryTaskID);
 				if (result)
 				{
-					auto collisionResult = dynamic_cast<CollisionQueryResult*>(result);
+					auto collisionResult = dynamic_cast<Collision::CollisionQueryResult*>(result);
 					if (collisionResult)
 						this->HandleWorldSurfaceCollisionResult(collisionResult);
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
 			if (this->boundsQueryTaskID)
 			{
-				Result* result = collisionSystem->ObtainQueryResult(this->boundsQueryTaskID);
+				Collision::Result* result = collisionSystem->ObtainQueryResult(this->boundsQueryTaskID);
 				if (result)
 				{
-					auto boolResult = dynamic_cast<BoolResult*>(result);
+					auto boolResult = dynamic_cast<Collision::BoolResult*>(result);
 					if (boolResult && !boolResult->GetAnswer())
 						bipedDied = true;
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
 			if (this->groundSurfaceQueryTaskID)
 			{
-				Result* result = collisionSystem->ObtainQueryResult(this->groundSurfaceQueryTaskID);
+				Collision::Result* result = collisionSystem->ObtainQueryResult(this->groundSurfaceQueryTaskID);
 				if (result)
 				{
-					auto rayCastResult = dynamic_cast<RayCastResult*>(result);
+					auto rayCastResult = dynamic_cast<Collision::RayCastResult*>(result);
 					if (rayCastResult)
 					{
-						const RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+						const Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 						this->groundSurfacePoint = hitData.surfacePoint;
 						this->groundSurfaceNormal = hitData.surfaceNormal;
 					}
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 
@@ -317,19 +317,19 @@ void Biped::SetRestartOrientation(const Quaternion& restartOrientation)
 	return "?";
 }
 
-void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionResult)
+void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* collisionResult)
 {
 	if (collisionResult->GetCollisionStatusArray().size() == 0)
 		return;
 
 	Vector3 averageSeperationDelta(0.0, 0.0, 0.0);
-	ShapeID newGroundShapeID = 0;
+	Collision::ShapeID newGroundShapeID = 0;
 	Transform newGroundObjectToWorld;
 	newGroundObjectToWorld.SetIdentity();
 
 	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
 	{
-		ShapeID otherShapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
+		Collision::ShapeID otherShapeID = collisionStatus->GetOtherShape(this->collisionShapeID);
 		
 		Vector3 separationDelta = collisionStatus->GetSeparationDelta(this->collisionShapeID);
 		averageSeperationDelta += separationDelta;
@@ -384,10 +384,10 @@ void Biped::HandleWorldSurfaceCollisionResult(CollisionQueryResult* collisionRes
 
 	if (this->collisionShapeID)
 	{
-		CollisionSystem* collisionSystem = Game::Get()->GetCollisionSystem();
+		Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
 
 		// Make sure that the collision shape transform for the biped matches the biped's render mesh transform.
-		auto command = ObjectToWorldCommand::Create();
+		auto command = new Collision::ObjectToWorldCommand();
 		command->SetShapeID(this->collisionShapeID);
 		command->objectToWorld = transform;
 		collisionSystem->IssueCommand(command);

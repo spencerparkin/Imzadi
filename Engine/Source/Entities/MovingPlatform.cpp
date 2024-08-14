@@ -54,9 +54,9 @@ MovingPlatform::MovingPlatform()
 		return false;
 
 	this->collisionShapeArray.clear();
-	for (Shape* shape : collisionShapeSet->GetCollisionShapeArray())
+	for (Collision::Shape* shape : collisionShapeSet->GetCollisionShapeArray())
 	{
-		ShapeID shapeID = Game::Get()->GetCollisionSystem()->AddShape(shape, 0);
+		Collision::ShapeID shapeID = Game::Get()->GetCollisionSystem()->AddShape(shape, 0);
 		this->collisionShapeArray.push_back(shapeID);
 	}
 
@@ -156,9 +156,9 @@ MovingPlatform::MovingPlatform()
 			this->renderMesh->SetObjectToWorldTransform(newObjectToWorld);
 		}
 
-		for (ShapeID shapeID : this->collisionShapeArray)
+		for (Collision::ShapeID shapeID : this->collisionShapeArray)
 		{
-			auto command = ObjectToWorldCommand::Create();
+			auto command = new Collision::ObjectToWorldCommand();
 			command->SetShapeID(shapeID);
 			command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
 			Game::Get()->GetCollisionSystem()->IssueCommand(command);

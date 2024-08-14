@@ -9,7 +9,7 @@ using namespace Imzadi;
 App::App()
 {
 	this->frame = nullptr;
-	this->collisionSystem = new Imzadi::CollisionSystem();
+	this->collisionSystem = new Imzadi::Collision::System();
 }
 
 /*virtual*/ App::~App()

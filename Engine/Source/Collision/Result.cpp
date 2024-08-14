@@ -3,6 +3,7 @@
 #include "Math/AxisAlignedBoundingBox.h"
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //-------------------------------- Result --------------------------------
 
@@ -12,11 +13,6 @@ Result::Result()
 
 /*virtual*/ Result::~Result()
 {
-}
-
-/*static*/ void Result::Free(Result* result)
-{
-	delete result;
 }
 
 //-------------------------------- BoolResult --------------------------------
@@ -30,11 +26,6 @@ BoolResult::BoolResult()
 {
 }
 
-/*static*/ BoolResult* BoolResult::Create()
-{
-	return new BoolResult();
-}
-
 //-------------------------------- StringResult --------------------------------
 
 StringResult::StringResult()
@@ -44,11 +35,6 @@ StringResult::StringResult()
 
 /*virtual*/ StringResult::~StringResult()
 {
-}
-
-/*static*/ StringResult* StringResult::Create()
-{
-	return new StringResult();
 }
 
 //-------------------------------- DebugRenderResult --------------------------------
@@ -64,11 +50,6 @@ DebugRenderResult::DebugRenderResult()
 void DebugRenderResult::AddRenderLine(const RenderLine& renderLine)
 {
 	this->renderLineArray.push_back(renderLine);
-}
-
-/*static*/ DebugRenderResult* DebugRenderResult::Create()
-{
-	return new DebugRenderResult();
 }
 
 void DebugRenderResult::AddLinesForBox(const AxisAlignedBoundingBox& box, const Vector3& color)
@@ -130,15 +111,12 @@ void DebugRenderResult::AddLinesForBox(const AxisAlignedBoundingBox& box, const 
 RayCastResult::RayCastResult()
 {
 	this->hitData.shapeID = 0;
+	this->hitData.shape = nullptr;
+	this->hitData.alpha = 0.0;
 }
 
 /*virtual*/ RayCastResult::~RayCastResult()
 {
-}
-
-/*static*/ RayCastResult* RayCastResult::Create()
-{
-	return new RayCastResult();
 }
 
 //-------------------------------- TransformResult --------------------------------
@@ -151,11 +129,6 @@ ObjectToWorldResult::ObjectToWorldResult()
 {
 }
 
-/*static*/ ObjectToWorldResult* ObjectToWorldResult::Create()
-{
-	return new ObjectToWorldResult();
-}
-
 //-------------------------------- CollisionQueryResult --------------------------------
 
 CollisionQueryResult::CollisionQueryResult()
@@ -165,11 +138,6 @@ CollisionQueryResult::CollisionQueryResult()
 
 /*virtual*/ CollisionQueryResult::~CollisionQueryResult()
 {
-}
-
-/*static*/ CollisionQueryResult* CollisionQueryResult::Create()
-{
-	return new CollisionQueryResult();
 }
 
 void CollisionQueryResult::AddCollisionStatus(ShapePairCollisionStatus* collisionStatus)

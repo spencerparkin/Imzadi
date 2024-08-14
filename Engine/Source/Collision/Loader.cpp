@@ -5,6 +5,7 @@
 #include <filesystem>
 
 using namespace Imzadi;
+using namespace Imzadi::Collision;
 
 //------------------------------ ShapeLoader ------------------------------
 
@@ -35,18 +36,13 @@ ShapeLoader::ShapeLoader()
 			break;
 		}
 
-		Free(shapeLoader);
+		delete shapeLoader;
 	}
 
 	for (ShapeLoaderClassInterface* shapeLoaderClass : shapeLoaderClassArray)
 		delete shapeLoaderClass;
 
 	return chosenShapeLoader;
-}
-
-/*static*/ void ShapeLoader::Free(ShapeLoader* shapeLoader)
-{
-	delete shapeLoader;
 }
 
 //------------------------------ OBJ_ShapeLoader ------------------------------
@@ -90,7 +86,7 @@ OBJ_ShapeLoader::OBJ_ShapeLoader()
 			}
 			else if (tokenArray[0] == "f")
 			{
-				auto polygon = new PolygonShape(false);
+				auto polygon = new PolygonShape();
 				shapeArray.push_back(polygon);
 
 				for (int i = 1; i < (signed)tokenArray.size(); i++)

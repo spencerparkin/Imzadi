@@ -166,7 +166,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	{
 		case Imzadi::TickPass::SUBMIT_COLLISION_QUERIES:
 		{
-			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+			Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
 			Imzadi::Transform transform;
 			this->GetTransform(transform);
@@ -176,7 +176,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			ray.origin = transform.translation + ray.unitDirection * 2.0;
 			ray.origin.y += 2.0;
 
-			auto rayCastQuery = Imzadi::RayCastQuery::Create();
+			auto rayCastQuery = new Imzadi::Collision::RayCastQuery();
 			rayCastQuery->SetRay(ray);
 			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
 
@@ -193,17 +193,17 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		}
 		case Imzadi::TickPass::RESOLVE_COLLISIONS:
 		{
-			Imzadi::CollisionSystem* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+			Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
 			if (this->rayCastQueryTaskID)
 			{
-				Imzadi::Result* result = collisionSystem->ObtainQueryResult(this->rayCastQueryTaskID);
+				Imzadi::Collision::Result* result = collisionSystem->ObtainQueryResult(this->rayCastQueryTaskID);
 				if (result)
 				{
-					auto rayCastResult = dynamic_cast<Imzadi::RayCastResult*>(result);
+					auto rayCastResult = dynamic_cast<Imzadi::Collision::RayCastResult*>(result);
 					if (rayCastResult)
 					{
-						const Imzadi::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+						const Imzadi::Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 						if (hitData.shape)
 						{
 							auto gameApp = (GameApp*)Imzadi::Game::Get();
@@ -229,7 +229,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						}
 					}
 
-					collisionSystem->Free(result);
+					delete result;
 				}
 			}
 

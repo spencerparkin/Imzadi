@@ -525,7 +525,53 @@
         [
             {
                 "bone_name": "Bip001 Head",
+                "weight": 0.9936415553092957
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0063584125600755219
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
                 "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 1.0
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9936415553092957
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0063584125600755219
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9966628551483154
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0033371681347489359
+            }
+        ],
+        [
+            {
+                "bone_name": "Bip001 Head",
+                "weight": 0.9936415553092957
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0063584125600755219
             }
         ],
         [
@@ -555,37 +601,11 @@
         [
             {
                 "bone_name": "Bip001 Head",
-                "weight": 1.0
-            }
-        ],
-        [
+                "weight": 0.9966628551483154
+            },
             {
-                "bone_name": "Bip001 Head",
-                "weight": 1.0
-            }
-        ],
-        [
-            {
-                "bone_name": "Bip001 Head",
-                "weight": 1.0
-            }
-        ],
-        [
-            {
-                "bone_name": "Bip001 Head",
-                "weight": 1.0
-            }
-        ],
-        [
-            {
-                "bone_name": "Bip001 Head",
-                "weight": 1.0
-            }
-        ],
-        [
-            {
-                "bone_name": "Bip001 Head",
-                "weight": 1.0
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0033371681347489359
             }
         ],
         [
@@ -4071,7 +4091,11 @@
         [
             {
                 "bone_name": "Bip001 Head",
-                "weight": 1.0
+                "weight": 0.9966628551483154
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0033371681347489359
             }
         ],
         [
@@ -4095,13 +4119,21 @@
         [
             {
                 "bone_name": "Bip001 Head",
-                "weight": 1.0
+                "weight": 0.9966628551483154
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0033371681347489359
             }
         ],
         [
             {
                 "bone_name": "Bip001 Head",
-                "weight": 1.0
+                "weight": 0.9936415553092957
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0063584125600755219
             }
         ],
         [
@@ -4189,7 +4221,11 @@
         [
             {
                 "bone_name": "Bip001 Head",
-                "weight": 1.0
+                "weight": 0.9936415553092957
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0063584125600755219
             }
         ],
         [
@@ -4225,7 +4261,11 @@
         [
             {
                 "bone_name": "Bip001 Head",
-                "weight": 1.0
+                "weight": 0.9966628551483154
+            },
+            {
+                "bone_name": "Bip001 Spine3",
+                "weight": 0.0033371681347489359
             }
         ]
     ]

@@ -18,180 +18,183 @@
 #	define IMZADI_COLLISION_PROFILE(name)
 #endif
 
-namespace Imzadi
-{
-	extern ProfileData collisionProfileData;
+namespace Imzadi {
+namespace Collision {
 
-	class Task;
-	class Result;
-	class DebugRenderResult;
+extern ProfileData collisionProfileData;
+
+class Task;
+class Result;
+class DebugRenderResult;
+
+/**
+ * This class impliments, and provides an interface to, the collision thread.
+ * It is not meant to be a user-facing class, but is solely used by the System
+ * class.  Users of the collision system API shouldn't even be able to get a
+ * pointer to this class, nor should they ever need one.  Note that some methods
+ * of this class are meant to be called only from the main thread, or only from
+ * the collision thread.
+ */
+class IMZADI_API Thread
+{
+	friend class ExitThreadCommand;
+
+public:
+	Thread(const AxisAlignedBoundingBox& collisionWorldExtents);
+	virtual ~Thread();
 
 	/**
-	 * This class impliments, and provides an interface to, the collision thread.
-	 * It is not meant to be a user-facing class, but is solely used by the System
-	 * class.  Users of the collision system API shouldn't even be able to get a
-	 * pointer to this class, nor should they ever need one.  Note that some methods
-	 * of this class are meant to be called only from the main thread, or only from
-	 * the collision thread.
+	 * Kick-off this thread.
+	 *
+	 * @return True is returned on success; false, otherwise.
 	 */
-	class IMZADI_API Thread
-	{
-		friend class ExitThreadCommand;
+	bool Startup();
 
-	public:
-		Thread(const AxisAlignedBoundingBox& collisionWorldExtents);
-		virtual ~Thread();
+	/**
+	 * Gracefully terminate this thread from the main thread.
+	 *
+	 * @return True is returned on success; false, otherwise.
+	 */
+	bool Shutdown();
 
-		/**
-		 * Kick-off this thread.
-		 * 
-		 * @return True is returned on success; false, otherwise.
-		 */
-		bool Startup();
+	/**
+	 * Send a task to this thread from the main thread.  The given task should
+	 * be created using the collision system API.  Ownership of the memory is taken
+	 * by this thread.  The caller should consider their pointer invalid
+	 * once the call has returned.
+	 *
+	 * @param[in] task This is the task (command or query) to be performed by this thread.
+	 * @return A task ID is returned.  The caller can safely refer to this task in other API calls using this ID.
+	 */
+	TaskID SendTask(Task* task);
 
-		/**
-		 * Gracefully terminate this thread from the main thread.
-		 * 
-		 * @return True is returned on success; false, otherwise.
-		 */
-		bool Shutdown();
+	/**
+	 * Retrieve the result of a previously made query, if it's ready, from the main thread.
+	 * After sending a bunch of queries, the user may wish to do some other work.  Once that
+	 * work is done, a call to FlushAllTasks can be made, at which point, any call to this
+	 * method should succeed with a valid task ID.
+	 *
+	 * @param[in] taskID This is the task ID of the query that was previously made.
+	 * @return A pointer to the query result, if any, is returned; null, otherwise.  The caller takes ownership of the memory and should free it when done.
+	 */
+	Result* ReceiveResult(TaskID taskID);
 
-		/**
-		 * Send a task to this thread from the main thread.  The given task should
-		 * be created using the collision system API.  Ownership of the memory is taken
-		 * by this thread.  The caller should consider their pointer invalid
-		 * once the call has returned.
-		 * 
-		 * @param[in] task This is the task (command or query) to be performed by this thread.
-		 * @return A task ID is returned.  The caller can safely refer to this task in other API calls using this ID.
-		 */
-		TaskID SendTask(Task* task);
+	/**
+	 * Store a newly calculated result for the query of the given taskID.
+	 * If a result is already stored for the given query, then it is replaced,
+	 * and the other result is freed.
+	 *
+	 * @param[in] result This is the result to store.
+	 * @param[in] taskID This is a handle to the query.
+	 */
+	void StoreResult(Result* result, TaskID taskID);
 
-		/**
-		 * Retrieve the result of a previously made query, if it's ready, from the main thread.
-		 * After sending a bunch of queries, the user may wish to do some other work.  Once that
-		 * work is done, a call to FlushAllTasks can be made, at which point, any call to this
-		 * method should succeed with a valid task ID.
-		 * 
-		 * @param[in] taskID This is the task ID of the query that was previously made.
-		 * @return A pointer to the query result, if any, is returned; null, otherwise.  The caller takes ownership of the memory and should free it when done.
-		 */
-		Result* ReceiveResult(TaskID taskID);
+	/**
+	 * Add the given shape to the collision world.
+	 *
+	 * @param[in] shape This is the shape to add.
+	 * @param[in] flags These are an OR-ing of the IMZADI_ADD_FLAG_* flags.
+	 */
+	void AddShape(Shape* shape, uint32_t flags);
 
-		/**
-		 * Store a newly calculated result for the query of the given taskID.
-		 * If a result is already stored for the given query, then it is replaced,
-		 * and the other result is freed.
-		 * 
-		 * @param[in] result This is the result to store.
-		 * @param[in] taskID This is a handle to the query.
-		 */
-		void StoreResult(Result* result, TaskID taskID);
+	/**
+	 * Remove the given shape from the collision world.
+	 *
+	 * @param shapeID This is the shape ID of the shape to be removed from the collision system.
+	 */
+	void RemoveShape(ShapeID shapeID);
 
-		/**
-		 * Add the given shape to the collision world.
-		 * 
-		 * @param[in] shape This is the shape to add.
-		 * @param[in] flags These are an OR-ing of the IMZADI_ADD_FLAG_* flags.
-		 */
-		void AddShape(Shape* shape, uint32_t flags);
+	/**
+	 * Search the bounding-box tree for the shape having the given shape ID.
+	 *
+	 * @param[in] shapeID This is the ID of the shape to find within the collision world.
+	 * @return If found, a pointer to the shape is returned; null, otherwise.
+	 */
+	Shape* FindShape(ShapeID shapeID);
 
-		/**
-		 * Remove the given shape from the collision world.
-		 * 
-		 * @param shapeID This is the shape ID of the shape to be removed from the collision system.
-		 */
-		void RemoveShape(ShapeID shapeID);
+	/**
+	 * Wipe out all currently stored collision shapes.
+	 */
+	void ClearShapes();
 
-		/**
-		 * Search the bounding-box tree for the shape having the given shape ID.
-		 * 
-		 * @param[in] shapeID This is the ID of the shape to find within the collision world.
-		 * @return If found, a pointer to the shape is returned; null, otherwise.
-		 */
-		Shape* FindShape(ShapeID shapeID);
+	/**
+	 * Produce a debug visualization of the collision system.
+	 *
+	 * @param[out] renderResult This is populated with line-segments of various colors to produce a wire-frame rendering of the system.
+	 * @param[in] drawFlags An OR-ing of the IMZADI_DRAW_FLAG_* defines is given here to determine what's produced in the result.
+	 */
+	void DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags);
 
-		/**
-		 * Wipe out all currently stored collision shapes.
-		 */
-		void ClearShapes();
+	/**
+	 * Block until all pending tasks have been processed by this thread.
+	 * This is not a busy wait, so it should not significantly consume any
+	 * CPU resources.
+	 */
+	void WaitForAllTasksToComplete();
 
-		/**
-		 * Produce a debug visualization of the collision system.
-		 * 
-		 * @param[out] renderResult This is populated with line-segments of various colors to produce a wire-frame rendering of the system.
-		 * @param[in] drawFlags An OR-ing of the IMZADI_DRAW_FLAG_* defines is given here to determine what's produced in the result.
-		 */
-		void DebugVisualize(DebugRenderResult* renderResult, uint32_t drawFlags);
+	/**
+	 * Return the AABB tree being used to spatially sort all shapes in the collision world.
+	 */
+	BoundingBoxTree& GetBoundingBoxTree() { return this->boxTree; }
 
-		/**
-		 * Block until all pending tasks have been processed by this thread.
-		 * This is not a busy wait, so it should not significantly consume any
-		 * CPU resources.
-		 */
-		void WaitForAllTasksToComplete();
+	/**
+	 * Write all shapes of the collision world to the given stream.
+	 * This is mainly for debugging purposes as sometimes it's nice to
+	 * capture a scene for restoration later.
+	 *
+	 * @param[in,out] stream The shapes are written to this stream.
+	 * @param[in] shapeArray If given, these are the shapes dumped.  If not given, all shapes in the system are dumped.
+	 * @return True is returned if all shapes are successfully dumped; false, otherwise.
+	 */
+	bool DumpShapes(std::ostream& stream, const std::vector<const Shape*>* shapeArray = nullptr) const;
 
-		/**
-		 * Return the AABB tree being used to spatially sort all shapes in the collision world.
-		 */
-		BoundingBoxTree& GetBoundingBoxTree() { return this->boxTree; }
+	/**
+	 * Read shapes in to the collision world from the given stream.
+	 * Note that a wipe of the collision world is performed before
+	 * the restoration is performed.  In other words, this is not an
+	 * accumulative operation.
+	 *
+	 * @param[in,out] stream The shapes are read from this stream.
+	 * @return True is returned if all shapes are successfully restored; false, otherwise.
+	 */
+	bool RestoreShapes(std::istream& stream);
 
-		/**
-		 * Write all shapes of the collision world to the given stream.
-		 * This is mainly for debugging purposes as sometimes it's nice to
-		 * capture a scene for restoration later.
-		 * 
-		 * @param[in,out] stream The shapes are written to this stream.
-		 * @param[in] shapeArray If given, these are the shapes dumped.  If not given, all shapes in the system are dumped.
-		 * @return True is returned if all shapes are successfully dumped; false, otherwise.
-		 */
-		bool DumpShapes(std::ostream& stream, const std::vector<const Shape*>* shapeArray = nullptr) const;
+private:
 
-		/**
-		 * Read shapes in to the collision world from the given stream.
-		 * Note that a wipe of the collision world is performed before
-		 * the restoration is performed.  In other words, this is not an
-		 * accumulative operation.
-		 * 
-		 * @param[in,out] stream The shapes are read from this stream.
-		 * @return True is returned if all shapes are successfully restored; false, otherwise.
-		 */
-		bool RestoreShapes(std::istream& stream);
+	/**
+	 * This is the main thread-entry function.
+	 *
+	 * @param thread This is the thread object representing the thread being executed.
+	 */
+	static void EntryFunc(Thread* thread);
 
-	private:
+	/**
+	 * This is our thread implimentation.  All we do is consume and
+	 * process thread tasks.
+	 */
+	void Run();
 
-		/**
-		 * This is the main thread-entry function.
-		 * 
-		 * @param thread This is the thread object representing the thread being executed.
-		 */
-		static void EntryFunc(Thread* thread);
+	/**
+	 * Wipe out all currently queued tasks without processing them.
+	 */
+	void ClearTasks();
 
-		/**
-		 * This is our thread implimentation.  All we do is consume and
-		 * process thread tasks.
-		 */
-		void Run();
+	/**
+	 * Wipe out all currently stored results before they can be processed by the user.
+	 */
+	void ClearResults();
 
-		/**
-		 * Wipe out all currently queued tasks without processing them.
-		 */
-		void ClearTasks();
+private:
+	BoundingBoxTree boxTree;
+	bool signaledToExit;
+	std::thread* thread;
+	std::mutex taskQueueMutex;
+	std::list<Task*> taskQueue;		// TODO: May want to replace this with a lock-free queue at some point.
+	std::counting_semaphore<std::numeric_limits<uint32_t>::max()> taskQueueSemaphore;
+	std::mutex resultMapMutex;
+	std::unordered_map<TaskID, Result*> resultMap;
+	std::condition_variable allTasksDoneCondVar;
+};
 
-		/**
-		 * Wipe out all currently stored results before they can be processed by the user.
-		 */
-		void ClearResults();
-
-	private:
-		BoundingBoxTree boxTree;
-		bool signaledToExit;
-		std::thread* thread;
-		std::mutex taskQueueMutex;
-		std::list<Task*> taskQueue;		// TODO: May want to replace this with a lock-free queue at some point.
-		std::counting_semaphore<std::numeric_limits<uint32_t>::max()> taskQueueSemaphore;
-		std::mutex resultMapMutex;
-		std::unordered_map<TaskID, Result*> resultMap;
-		std::condition_variable allTasksDoneCondVar;
-	};
-}
+} // namespace Collision {
+} // namespace Imzadi {
