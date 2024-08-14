@@ -1,6 +1,7 @@
 #include "AxisAlignedBoundingBox.h"
 #include "LineSegment.h"
 #include "Plane.h"
+#include "Interval.h"
 #include <algorithm>
 
 using namespace Imzadi;
@@ -422,6 +423,15 @@ void AxisAlignedBoundingBox::GatherClosestPointsTo(const Vector3& point, std::ve
 			return squareDistanceA < squareDistanceB;
 		});
 	}
+}
+
+Vector3 AxisAlignedBoundingBox::GetRandomContainingPoint() const
+{
+	Vector3 point;
+	point.x = Interval(this->minCorner.x, this->maxCorner.x).Random();
+	point.y = Interval(this->minCorner.y, this->maxCorner.y).Random();
+	point.z = Interval(this->minCorner.z, this->maxCorner.z).Random();
+	return point;
 }
 
 double AxisAlignedBoundingBox::GetVolume() const

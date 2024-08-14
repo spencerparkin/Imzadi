@@ -234,6 +234,11 @@ namespace Imzadi
 		void GatherClosestPointsTo(const Vector3& point, std::vector<Vector3>& closestPointsArray, double borderThickness = 0.0, bool returnListSorted = false) const;
 
 		/**
+		 * Return a random point inside this box.
+		 */
+		Vector3 GetRandomContainingPoint() const;
+
+		/**
 		 * Write this AABB to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;
