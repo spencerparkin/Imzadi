@@ -27,7 +27,9 @@ namespace Imzadi
 		{
 			IDLE,
 			RUN,
-			JUMP
+			JUMP,
+			FATAL_LANDING,
+			ABYSS_FALLING
 		};
 
 		virtual bool Setup() override;
