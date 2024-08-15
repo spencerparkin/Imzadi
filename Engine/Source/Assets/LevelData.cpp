@@ -77,6 +77,37 @@ LevelData::LevelData()
 		return false;
 	}
 
+	this->npcArray.clear();
+	if (jsonDoc.HasMember("npc_array") && jsonDoc["npc_array"].IsArray())
+	{
+		const rapidjson::Value& npcArrayValue = jsonDoc["npc_array"];
+		for (int i = 0; i < npcArrayValue.Size(); i++)
+		{
+			const rapidjson::Value& npcValue = npcArrayValue[i];
+			if (!npcValue.IsObject())
+			{
+				IMZADI_LOG_ERROR("Expected NPC entry to be an object.");
+				return false;
+			}
+
+			NPC npc;
+			npc.startPosition.SetComponents(0.0, 0.0, 0.0);
+			npc.startOrientation.SetIdentity();
+			npc.type = "?";
+
+			if (npcValue.HasMember("type") && npcValue["type"].IsString())
+				npc.type = npcValue["type"].GetString();
+
+			if (npcValue.HasMember("start_position") && !this->LoadVector(npcValue["start_position"], npc.startPosition))
+				return false;
+
+			if (npcValue.HasMember("start_orientation") && !this->LoadEulerAngles(npcValue["start_orientation"], npc.startOrientation))
+				return false;
+
+			this->npcArray.push_back(npc);
+		}
+	}
+
 	return true;
 }
 

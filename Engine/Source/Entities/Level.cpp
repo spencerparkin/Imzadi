@@ -82,7 +82,8 @@ Level::Level()
 		biped->SetRestartOrientation(levelData->GetPlayerStartOrientation());
 	}
 
-	// TODO: Spawn other characters throughout the level as dictated in the level JSON file.
+	for (const LevelData::NPC& npc : levelData->GetNPCArray())
+		this->SpawnNPC(npc.type, npc.startPosition, npc.startOrientation);
 
 	AxisAlignedBoundingBox collisionWorldBox;
 	std::vector<Reference<CollisionShapeSet>> collisionShapeSetArray;
@@ -165,4 +166,8 @@ Level::Level()
 /*virtual*/ uint32_t Level::ShutdownOrder() const
 {
 	return std::numeric_limits<uint32_t>::max();
+}
+
+/*virtual*/ void Level::SpawnNPC(const std::string& type, const Vector3& position, const Quaternion& orientation)
+{
 }

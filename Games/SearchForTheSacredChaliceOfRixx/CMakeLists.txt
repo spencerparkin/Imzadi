@@ -17,6 +17,8 @@ set(RIXX_SOURCES
     Source/Characters/DeannaTroi.h
     Source/Characters/LwaxanaTroi.cpp
     Source/Characters/LwaxanaTroi.h
+    Source/Characters/Borg.cpp
+    Source/Characters/Borg.h
     Source/Entities/ZipLineEntity.cpp
     Source/Entities/ZipLineEntity.h
     Source/Entities/ZipLineRider.cpp
