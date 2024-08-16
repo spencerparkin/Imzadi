@@ -121,11 +121,11 @@ bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime, bool canLoop)
 
 bool AnimatedMeshInstance::SetAnimationLocation(double alpha)
 {
-	Animation* animation = this->GetAnimation();
-	SkinnedRenderMesh* skinnedMesh = this->GetSkinnedMesh();
-	Skeleton* skeleton = skinnedMesh->GetSkeleton();
+	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
+	if (!skeleton)
+		return false;
 
-	double duration = animation->GetDuration();
+	double duration = this->animation->GetDuration();
 	double animationLocationTime = alpha * duration;
 
 	Imzadi::KeyFrame keyFrame;
@@ -134,7 +134,26 @@ bool AnimatedMeshInstance::SetAnimationLocation(double alpha)
 
 	keyFrame.PoseSkeleton(skeleton);
 	skeleton->UpdateCachedTransforms(Imzadi::BoneTransformType::CURRENT_POSE);
-	skinnedMesh->DeformMesh();
+	this->skinnedMesh->DeformMesh();
+
+	return true;
+}
+
+bool AnimatedMeshInstance::SetAnimationLocation(int i)
+{
+	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
+	if (!skeleton)
+		return false;
+
+	i = i % this->animation->GetNumKeyFrames();
+
+	const KeyFrame* keyFrame = this->animation->GetKeyFrame(i);
+	if (!keyFrame)
+		return false;
+
+	keyFrame->PoseSkeleton(skeleton);
+	skeleton->UpdateCachedTransforms(Imzadi::BoneTransformType::CURRENT_POSE);
+	this->skinnedMesh->DeformMesh();
 
 	return true;
 }

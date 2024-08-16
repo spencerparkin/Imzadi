@@ -25,7 +25,8 @@ public:
 	enum AnimationMode
 	{
 		PLAY,
-		SCRUB
+		SCRUB_INTERPOLATE,
+		SCRUB_KEYFRAMES
 	};
 
 	void SetAnimationMode(AnimationMode animationMode);

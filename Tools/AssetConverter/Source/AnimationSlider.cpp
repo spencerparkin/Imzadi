@@ -4,7 +4,7 @@
 #include "Assets/Animation.h"
 #include "Assets/Skeleton.h"
 
-AnimationSlider::AnimationSlider(wxWindow* parent) : wxSlider(parent, wxID_ANY, 0, 0, 24, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS)
+AnimationSlider::AnimationSlider(wxWindow* parent) : wxSlider(parent, wxID_ANY, 0, 0, 100, wxDefaultPosition, wxDefaultSize, wxSL_HORIZONTAL | wxSL_AUTOTICKS | wxSL_LABELS)
 {
 	this->Bind(wxEVT_SLIDER, &AnimationSlider::OnSliderPositionChanged, this);
 }
@@ -15,15 +15,33 @@ AnimationSlider::AnimationSlider(wxWindow* parent) : wxSlider(parent, wxID_ANY, 
 
 void AnimationSlider::OnSliderPositionChanged(wxCommandEvent& event)
 {
-	double sliderValue = (double)this->GetValue();
-	double sliderMinValue = (double)this->GetMin();
-	double sliderMaxValue = (double)this->GetMax();
-	
-	double alpha = (sliderValue - sliderMinValue) / (sliderMaxValue - sliderMinValue);
-
 	auto game = (GamePreview*)Imzadi::Game::Get();
-	game->SetAnimationMode(GamePreview::AnimationMode::SCRUB);
-
 	Imzadi::AnimatedMeshInstance* animatedMesh = game->GetAnimatingMesh();
-	animatedMesh->SetAnimationLocation(alpha);
+	if (!animatedMesh)
+		return;
+
+#if 1
+	game->SetAnimationMode(GamePreview::AnimationMode::SCRUB_INTERPOLATE);
+#else
+	game->SetAnimationMode(GamePreview::AnimationMode::SCRUB_KEYFRAMES);
+#endif
+
+	switch (game->GetAnimationMode())
+	{
+		case GamePreview::AnimationMode::SCRUB_INTERPOLATE:
+		{
+			double sliderValue = (double)this->GetValue();
+			double sliderMinValue = (double)this->GetMin();
+			double sliderMaxValue = (double)this->GetMax();
+			double alpha = (sliderValue - sliderMinValue) / (sliderMaxValue - sliderMinValue);
+			animatedMesh->SetAnimationLocation(alpha);
+			break;
+		}
+		case GamePreview::AnimationMode::SCRUB_KEYFRAMES:
+		{
+			int i = this->GetValue();
+			animatedMesh->SetAnimationLocation(i);
+			break;
+		}
+	}
 }
