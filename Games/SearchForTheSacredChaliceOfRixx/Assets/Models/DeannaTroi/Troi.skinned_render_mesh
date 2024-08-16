@@ -41,6 +41,8 @@
     "skin_weights": "Models\\DeannaTroi\\Troi.skin_weights",
     "animations": [
         "Animations\\DeannaZipLine.animation",
+        "Animations\\DeannaTroiAbyssFalling.animation",
+        "Animations\\DeannaTroiFatalLanding.animation",
         "Animations\\Idle.animation",
         "Animations\\Jumping.animation",
         "Animations\\Run.animation"

@@ -27,6 +27,23 @@ Query::Query()
 
 //--------------------------------- ShapeQuery ---------------------------------
 
+StatsQuery::StatsQuery()
+{
+}
+
+/*virtual*/ StatsQuery::~StatsQuery()
+{
+}
+
+/*virtual*/ Result* StatsQuery::ExecuteQuery(Thread* thread)
+{
+	auto result = new StatsResult();
+	thread->GatherStats(result);
+	return result;
+}
+
+//--------------------------------- ShapeQuery ---------------------------------
+
 ShapeQuery::ShapeQuery()
 {
 	this->shapeID = 0;

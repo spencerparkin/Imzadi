@@ -771,7 +771,14 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		}
 
 		if ((this->flags & Flag::COMPRESS_COLLISION) != 0)
-			Imzadi::Polygon::Compress(polygonArray, true);
+		{
+#if defined _DEBUG
+			bool sanityCheck = true;
+#else
+			bool sanityCheck = false;
+#endif
+			Imzadi::Polygon::Compress(polygonArray, true, sanityCheck);
+		}
 
 		for(const Imzadi::Polygon& polygon : polygonArray)
 		{

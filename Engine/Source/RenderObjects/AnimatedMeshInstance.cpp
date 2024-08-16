@@ -69,7 +69,13 @@ bool AnimatedMeshInstance::SetAnimation(const std::string& animationName)
 	return true;
 }
 
-bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime)
+void AnimatedMeshInstance::ClearTransition()
+{
+	this->transitionalKeyFrame.Clear();
+	this->currentKeyFrame.Clear();
+}
+
+bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime, bool canLoop)
 {
 	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
 	if (!skeleton)
@@ -79,6 +85,7 @@ bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime)
 		return false;
 
 	KeyFramePair keyFramePair{};
+	bool animationAdvanced = true;
 
 	if (this->transitionalKeyFrame.GetPoseCount() > 0)
 	{
@@ -99,7 +106,9 @@ bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime)
 	}
 	else
 	{
-		this->animation->AdvanceCursor(cursor, deltaTime, true);
+		if (!this->animation->AdvanceCursor(cursor, deltaTime, canLoop))
+			animationAdvanced = false;
+
 		this->animation->GetKeyFramesFromCursor(this->cursor, keyFramePair);
 		this->currentKeyFrame.Interpolate(keyFramePair, this->cursor.timeSeconds);
 	}
@@ -107,5 +116,5 @@ bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime)
 	this->currentKeyFrame.PoseSkeleton(skeleton);
 	skeleton->UpdateCachedTransforms(BoneTransformType::CURRENT_POSE);
 	this->skinnedMesh->DeformMesh();
-	return true;
+	return animationAdvanced;
 }

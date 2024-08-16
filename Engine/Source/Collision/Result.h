@@ -8,6 +8,7 @@
 #include "Reference.h"
 #include <vector>
 #include <string>
+#include <map>
 
 namespace Imzadi {
 namespace Collision {
@@ -68,6 +69,20 @@ public:
 
 private:
 	std::string text;
+};
+
+/**
+ * This result is returned by the StatsQuery class query.
+ */
+class IMZADI_API StatsResult : public Result
+{
+public:
+	StatsResult();
+	virtual ~StatsResult();
+
+public:
+	uint32_t numShapes;
+	std::map<Shape::TypeID, uint32_t> shapeCountMap;
 };
 
 /**

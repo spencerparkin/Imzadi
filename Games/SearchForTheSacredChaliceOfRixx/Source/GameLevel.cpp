@@ -2,6 +2,7 @@
 #include "GameApp.h"
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
+#include "Characters/Borg.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
 #include "Audio/System.h"
@@ -66,4 +67,15 @@ GameLevel::GameLevel()
 	auto game = (GameApp*)Imzadi::Game::Get();
 	game->GetDialogSystem()->Tick();
 	return true;
+}
+
+/*virtual*/ void GameLevel::SpawnNPC(const std::string& type, const Imzadi::Vector3& position, const Imzadi::Quaternion& orientation)
+{
+	if (type == "borg")
+	{
+		Borg* borg = Imzadi::Game::Get()->SpawnEntity<Borg>();
+		borg->SetRestartLocation(position);
+		borg->SetRestartOrientation(orientation);
+		borg->SetCanRestart(false);
+	}
 }

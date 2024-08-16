@@ -203,6 +203,11 @@ public:
 	static Shape* Create(TypeID typeID);
 
 	/**
+	 * Convert the given type ID to a string.
+	 */
+	static std::string ShapeTypeLabel(TypeID typeID);
+
+	/**
 	 * Set this shape's transform taking it from object space to world space.
 	 * Note that to keep things simple, all calculations assume that there
 	 * is no shear or scale in the matrix part of the given transform.  In other

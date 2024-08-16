@@ -24,10 +24,18 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
+		struct NPC
+		{
+			std::string type;
+			Vector3 startPosition;
+			Quaternion startOrientation;
+		};
+
 		const std::vector<std::string>& GetModelFilesArray() { return this->modelFilesArray; }
 		const std::vector<std::string>& GetCollisionFilesArray() { return this->collisionFilesArray; }
 		const std::vector<std::string>& GetMovingPlatformFilesArray() { return this->movingPlatformFilesArray; }
 		const std::vector<std::string>& GetTriggerBoxFilesArray() { return this->triggerBoxFilesArray; }
+		const std::vector<NPC>& GetNPCArray() { return this->npcArray; }
 		const std::string& GetSkyDomeFile() { return this->skyDomeFile; }
 		const std::string& GetCubeTextureFile() { return this->cubeTextureFile; }
 		const Vector3& GetPlayerStartPosition() { return this->playerStartPosition; }
@@ -38,6 +46,7 @@ namespace Imzadi
 		std::vector<std::string> collisionFilesArray;
 		std::vector<std::string> movingPlatformFilesArray;
 		std::vector<std::string> triggerBoxFilesArray;
+		std::vector<NPC> npcArray;
 		std::string skyDomeFile;
 		std::string cubeTextureFile;
 		Vector3 playerStartPosition;

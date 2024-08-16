@@ -31,5 +31,20 @@
     "trigger_boxes": [
         "Models/Level1/JumpToLevel2.trigger_box",
         "Models/Level1/JumpToLevel3.trigger_box"
+    ],
+    "npc_array": [
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -50.608,
+                "y": 64.811,
+                "z": -30.566
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        }
     ]
 }

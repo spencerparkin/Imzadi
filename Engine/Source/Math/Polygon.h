@@ -76,10 +76,11 @@ namespace Imzadi
 		Vector3 CalcCenter() const;
 
 		/**
-		 * Assuming that this polygon is convex, calculate
-		 * and return the polygon's area.
+		 * Calculate and return the area of this polygon.
+		 * 
+		 * @param[in] assumeConvex If true, we do not try to tessellate and recurse.
 		 */
-		double Area() const;
+		double Area(bool assumeConvex = true) const;
 
 		/**
 		 * Tell the caller if the given point is a member of the set
@@ -171,8 +172,9 @@ namespace Imzadi
 		 * 
 		 * @param[in,out] polygonArray These are the polygons to compress.  This array is modified, hopefully reduced in size.
 		 * @param[in] mustBeConvex If true, polygons returned will all be convex.  I false, this is not necessarily the case.
+		 * @param[in] sanityCheck If true, the total area of polygons in a plane is measured before being compressed, then compared against the total area afterword.
 		 */
-		static void Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex);
+		static void Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex, bool sanityCheck = false);
 
 		/**
 		 * Generate a set of pair-wise disjoint and convex polygons
@@ -224,20 +226,10 @@ namespace Imzadi
 		bool Split(int i, int j, Polygon& polygonA, Polygon& polygonB, bool assumeConvex = false) const;
 
 		/**
-		 * Set this polygon to be a reduced version of the given polygon.
-		 * A polygon is reduced, in this sense, when all redundant vertices
-		 * are removed.  These are any vertices that, if removed, don't change
-		 * the shape of the polygon.
+		 * Remove as many redundancies in this polygon as we can.  The shape and
+		 * area of the polygon are not changed by this routine.
 		 */
-		void ReduceVerticesOf(const Polygon& polygon, double tolerance = 1e-7);
-
-		/**
-		 * Remove all cusp vertices from the polygon.  These are a special-case
-		 * of redundant vertices.  It's arguable whether the shape is changed by
-		 * removing these vertices.  The area and silloutte of the polygon is not
-		 * changed by removing these vertices, but the edge-path is modified.
-		 */
-		void RemoveCusps(double epsilon = 1e-6);
+		void Reduce(double tolerance = 1e-7);
 
 		/**
 		 * Return true if and only if the given vertex is, up
@@ -255,6 +247,17 @@ namespace Imzadi
 		 * Read an array of polygons from the stream in binary form.
 		 */
 		static void RestoreArray(std::vector<Polygon>& polygonArray, std::istream& stream);
+
+		/**
+		 * Return true if and only if area interior to the polygon
+		 * overlaps with other area interior to the polygon.
+		 * We assume that the polygon is reduced.  To ensure this,
+		 * call the @ref Reduce method.
+		 * 
+		 * Of course, if a polygon is convex, then it doesn't self-overlap.
+		 * But the converse of this statement is not true.
+		 */
+		bool SelfOverlaps(double epsilon = 1e-6) const;
 
 		/**
 		 * Write this polygon to the given stream in binary form.
@@ -299,6 +302,37 @@ namespace Imzadi
 		 * This function is used internally by the @ref MergeCoplanarPolygonPair method.
 		 */
 		bool MergeCoplanarPolygonPairInternal(const Polygon& polygonA, const Polygon& polygonB);
+
+		/**
+		 * Look for an instance of a vertex repeated in the sequence.  If found, remove it.
+		 * 
+		 * @return True is returned if and only if a removal occurred.
+		 */
+		bool FindAndRemoveRepeatedPoint(double epsilon);
+
+		/**
+		 * Look for an instance of a vertex colinear with the two vertices
+		 * immediately preceding and following it.  If found, remove it.
+		 * 
+		 * @return True is returned if and only if a removal occurred.
+		 */
+		bool FindAndRemoveVertexOnEdge(double epsilon);
+
+		/**
+		 * Look for an instance of two edges, the same length, adjacent,
+		 * and overlapping one another.  If found, remove it.
+		 * 
+		 * @return True is returned if and onlyf if a removal occurred.
+		 */
+		bool FindAndRemoveSymmetricSpike(double epsilon);
+
+		/**
+		 * Look for an instance of two edges, different lengths, adjacent,
+		 * and overlapping one another.  If found, remove it.
+		 * 
+		 * @return True is returned if and onlyf if a removal occurred.
+		 */
+		bool FindAndRemoveNonSymmetricSpike(double epsilon);
 
 	public:
 		std::vector<Vector3> vertexArray;

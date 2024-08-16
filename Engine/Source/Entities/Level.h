@@ -40,6 +40,11 @@ namespace Imzadi
 		virtual Biped* SpawnMainCharacter();
 
 		/**
+		 * Override this to spawn NPC specified in the level.
+		 */
+		virtual void SpawnNPC(const std::string& type, const Vector3& position, const Quaternion& orientation);
+
+		/**
 		 * Make sure we're the last entity to get shutdown when the level goes down.
 		 */
 		virtual uint32_t ShutdownOrder() const override;

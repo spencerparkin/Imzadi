@@ -95,30 +95,28 @@ void Canvas::OnPaint(wxPaintEvent& event)
 
 	glEnd();
 
+	Imzadi::AxisAlignedBoundingBox colorSpaceBox;
+	colorSpaceBox.minCorner.SetComponents(0.0, 0.0, 0.0);
+	colorSpaceBox.maxCorner.SetComponents(1.0, 1.0, 1.0);
+
+	::srand(0);
+
 	const std::vector<Imzadi::Polygon>& polygonArray = wxGetApp().GetPolygonArray();
-	GLfloat red = 0.0;
-	GLfloat green = 0.5;
-	GLfloat blue = 0.2;
 	for (int i = 0; i < (signed)polygonArray.size(); i++)
 	{
-		static int debug_i = -1;
-		if (debug_i != -1 && debug_i != i)
-			continue;
-
 		const Imzadi::Polygon& polygon = polygonArray[i];
 #if 0
 		glBegin(GL_POLYGON);
 #else
 		glBegin(GL_LINE_LOOP);
 #endif
-		glColor3d(red, green, blue);
 		for (const Imzadi::Vector3& vertex : polygon.vertexArray)
+		{
+			Imzadi::Vector3 color = colorSpaceBox.GetRandomContainingPoint();
+			glColor3dv(&color.x);
 			glVertex3dv(&vertex.x);
+		}
 		glEnd();
-
-		red = fmodf(red + 0.2f, 1.0f);
-		green = fmodf(green * 2.0f + 0.3f, 1.0f);
-		blue = fmodf(blue * 0.2 + 0.7f, 1.0f);
 	}
 
 	Collision::System* system = wxGetApp().GetCollisionSystem();

@@ -150,19 +150,32 @@ Vector3 Polygon::CalcCenter() const
 	return center;
 }
 
-double Polygon::Area() const
+double Polygon::Area(bool assumeConvex /*= true*/) const
 {
 	double area = 0.0;
-	Vector3 center = this->CalcCenter();
 
-	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	if (assumeConvex)
 	{
-		int j = (i + 1) % this->vertexArray.size();
+		Vector3 center = this->CalcCenter();
 
-		const Vector3& vertexA = this->vertexArray[i];
-		const Vector3& vertexB = this->vertexArray[j];
+		for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+		{
+			int j = (i + 1) % this->vertexArray.size();
 
-		area += (vertexA - center).Cross(vertexB - center).Length() / 2.0;
+			const Vector3& vertexA = this->vertexArray[i];
+			const Vector3& vertexB = this->vertexArray[j];
+
+			area += (vertexA - center).Cross(vertexB - center).Length() / 2.0;
+		}
+	}
+	else
+	{
+		std::vector<Polygon> polygonArray;
+		if (this->TessellateUntilConvex(polygonArray))
+		{
+			for (const Polygon& convexPolygon : polygonArray)
+				area += convexPolygon.Area(true);
+		}
 	}
 
 	return area;
@@ -619,7 +632,7 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 	return true;
 }
 
-/*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex)
+/*static*/ void Polygon::Compress(std::vector<Polygon>& polygonArray, bool mustBeConvex, bool sanityCheck /*= false*/)
 {
 	std::list<Polygon> polygonQueue;
 	for (Polygon& polygon : polygonArray)
@@ -652,7 +665,26 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 			iter = nextIter;
 		}
 
+		double totalAreaBeforehand = 0.0;
+		double totalAreaAfterword = 0.0;
+
+		if (sanityCheck)
+			for (const Polygon& polygon : coplanarPolygonArray)
+				totalAreaBeforehand += polygon.Area(false);
+
 		MergeCoplanarPolygons(coplanarPolygonArray);
+
+		if (sanityCheck)
+		{
+			for (const Polygon& polygon : coplanarPolygonArray)
+				totalAreaAfterword += polygon.Area(false);
+			
+			double tolerance = 1e-6;
+			if (::fabs(totalAreaBeforehand - totalAreaAfterword) >= tolerance)
+			{
+				IMZADI_ASSERT(false);
+			}
+		}
 
 		if (!mustBeConvex)
 		{
@@ -689,10 +721,8 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 			Polygon mergedPolygon;
 			if (mergedPolygon.MergeCoplanarPolygonPair(polygonA, polygonB))
 			{
-				Polygon reducedPolygon;
-				reducedPolygon.ReduceVerticesOf(mergedPolygon);
 				polygonQueue.erase(iter);
-				polygonQueue.push_back(reducedPolygon);
+				polygonQueue.push_back(mergedPolygon);
 				merged = true;
 				break;
 			}
@@ -721,29 +751,215 @@ void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j, bool include
 	}
 }
 
-void Polygon::RemoveCusps(double epsilon /*= 1e-6*/)
+void Polygon::Reduce(double tolerance /*= 1e-7*/)
 {
-	bool makeAnotherPass = true;
-
-	while (makeAnotherPass && this->vertexArray.size() > 3)
+	while (true)
 	{
-		makeAnotherPass = false;
+		if (this->FindAndRemoveRepeatedPoint(tolerance))
+			continue;
 
-		for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+		if (this->FindAndRemoveVertexOnEdge(tolerance))
+			continue;
+
+		if (this->FindAndRemoveSymmetricSpike(tolerance))
+			continue;
+
+		if (this->FindAndRemoveNonSymmetricSpike(tolerance))
+			continue;
+
+		break;
+	}
+}
+
+bool Polygon::FindAndRemoveRepeatedPoint(double epsilon)
+{
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	{
+		int j = this->Mod(i + 1);
+		const Vector3& pointA = this->vertexArray[i];
+		const Vector3& pointB = this->vertexArray[j];
+		if (pointA.IsPoint(pointB, epsilon))
 		{
-			const Vector3& vertexPrev = this->vertexArray[this->Mod(i - 1)];
-			const Vector3& vertexNext = this->vertexArray[this->Mod(i + 1)];
+			// It doesn't matter which point we remove.  Choose point A arbitrarily.
+			this->vertexArray.erase(this->vertexArray.begin() + i);
+			return true;
+		}
+	}
 
-			if (vertexPrev.IsPoint(vertexNext, epsilon))
+	return false;
+}
+
+bool Polygon::FindAndRemoveVertexOnEdge(double epsilon)
+{
+	for (int j = 0; j < (signed)this->vertexArray.size(); j++)
+	{
+		int i = this->Mod(j - 1);
+		int k = this->Mod(j + 1);
+
+		LineSegment lineSegment;
+		lineSegment.point[0] = this->vertexArray[i];
+		lineSegment.point[1] = this->vertexArray[k];
+
+		if (lineSegment.ContainsInteriorPoint(this->vertexArray[j], epsilon))
+		{
+			this->vertexArray.erase(this->vertexArray.begin() + j);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Polygon::FindAndRemoveSymmetricSpike(double epsilon)
+{
+	for (int j = 0; j < (signed)this->vertexArray.size(); j++)
+	{
+		int i = this->Mod(j - 1);
+		int k = this->Mod(j + 1);
+
+		const Vector3& pointA = this->vertexArray[i];
+		const Vector3& pointB = this->vertexArray[k];
+
+		if (pointA.IsPoint(pointB, epsilon))
+		{
+			this->vertexArray.erase(this->vertexArray.begin() + j);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Polygon::FindAndRemoveNonSymmetricSpike(double epsilon)
+{
+	for (int j = 0; j < (signed)this->vertexArray.size(); j++)
+	{
+		int i = this->Mod(j - 1);
+		int k = this->Mod(j + 1);
+
+		LineSegment lineSegA;
+		lineSegA.point[0] = this->vertexArray[i];
+		lineSegA.point[1] = this->vertexArray[j];
+
+		if (lineSegA.ContainsInteriorPoint(this->vertexArray[k], epsilon))
+		{
+			this->vertexArray.erase(this->vertexArray.begin() + j);
+			return true;
+		}
+
+		LineSegment lineSegB;
+		lineSegB.point[0] = this->vertexArray[j];
+		lineSegB.point[1] = this->vertexArray[k];
+
+		if (lineSegB.ContainsInteriorPoint(this->vertexArray[i], epsilon))
+		{
+			this->vertexArray.erase(this->vertexArray.begin() + j);
+			return true;
+		}
+	}
+
+	return false;
+}
+
+bool Polygon::SelfOverlaps(double epsilon /*= 1e-6*/) const
+{
+	struct Intersection
+	{
+		Vector3 vectorAIn, vectorAOut;
+		Vector3 vectorBIn, vectorBOut;
+	};
+
+	std::vector<Intersection> intersectionArray;
+
+	for (int i = 0; i < (signed)this->vertexArray.size(); i++)
+	{
+		const Vector3& pointA = this->vertexArray[i];
+
+		LineSegment edgeA;
+		edgeA.point[0] = this->vertexArray[i];
+		edgeA.point[1] = this->vertexArray[this->Mod(i + 1)];
+
+		for (int j = 0; j < (signed)this->vertexArray.size(); j++)
+		{
+			if (i == j)
+				continue;
+
+			if (this->Mod(i + 1) == j || this->Mod(i - 1) == j)
+				continue;
+
+			const Vector3& pointB = this->vertexArray[j];
+
+			LineSegment edgeB;
+			edgeB.point[0] = this->vertexArray[j];
+			edgeB.point[1] = this->vertexArray[this->Mod(j + 1)];
+
+			if (pointA.IsPoint(pointB, epsilon))
 			{
-				this->vertexArray.erase(this->vertexArray.begin() + i);
-				i = this->Mod(i);
-				this->vertexArray.erase(this->vertexArray.begin() + i);
-				makeAnotherPass = true;
-				break;
+				Vector3 center = (pointA + pointB) / 2.0;
+				Intersection intersection;
+				intersection.vectorAIn = (this->vertexArray[this->Mod(i - 1)] - center).Normalized();
+				intersection.vectorAOut = (this->vertexArray[this->Mod(i + 1)] - center).Normalized();
+				intersection.vectorBIn = (this->vertexArray[this->Mod(j - 1)] - center).Normalized();
+				intersection.vectorBOut = (this->vertexArray[this->Mod(j + 1)] - center).Normalized();
+				intersectionArray.push_back(intersection);
+			}
+
+			if (edgeA.ContainsInteriorPoint(edgeB.point[0], epsilon))
+			{
+				Intersection intersection;
+				intersection.vectorAIn = (this->vertexArray[this->Mod(i + 0)] - this->vertexArray[j]).Normalized();
+				intersection.vectorAOut = (this->vertexArray[this->Mod(i + 1)] - this->vertexArray[j]).Normalized();
+				intersection.vectorBIn = (this->vertexArray[this->Mod(j + 1)] - this->vertexArray[j]).Normalized();
+				intersection.vectorBOut = (this->vertexArray[this->Mod(j - 1)] - this->vertexArray[j]).Normalized();
+				intersectionArray.push_back(intersection);
+			}
+
+			if (edgeB.ContainsInteriorPoint(edgeA.point[0], epsilon))
+			{
+				Intersection intersection;
+				intersection.vectorAIn = (this->vertexArray[this->Mod(i - 1)] - this->vertexArray[i]).Normalized();
+				intersection.vectorAOut = (this->vertexArray[this->Mod(i + 1)] - this->vertexArray[i]).Normalized();
+				intersection.vectorBIn = (this->vertexArray[this->Mod(j + 0)] - this->vertexArray[i]).Normalized();
+				intersection.vectorBOut = (this->vertexArray[this->Mod(j + 1)] - this->vertexArray[i]).Normalized();
+				intersectionArray.push_back(intersection);
+			}
+
+			LineSegment connector;
+			if (connector.SetAsShortestConnector(edgeA, edgeB) && connector.Length() < epsilon)
+			{
+				Vector3 center = connector.Lerp(0.5);
+				if (edgeA.ContainsInteriorPoint(center, epsilon) && edgeB.ContainsInteriorPoint(center, epsilon))
+				{
+					Intersection intersection;
+					intersection.vectorAIn = (this->vertexArray[this->Mod(i + 0)] - center).Normalized();
+					intersection.vectorAOut = (this->vertexArray[this->Mod(i + 1)] - center).Normalized();
+					intersection.vectorBIn = (this->vertexArray[this->Mod(j + 0)] - center).Normalized();
+					intersection.vectorBOut = (this->vertexArray[this->Mod(j + 1)] - center).Normalized();
+					intersectionArray.push_back(intersection);
+				}
 			}
 		}
 	}
+
+	if(intersectionArray.size() > 0)
+	{
+		Plane plane = this->CalcPlane(false);
+
+		for(const Intersection& intersection : intersectionArray)
+		{
+			double angleA = intersection.vectorAOut.AngleBetween(intersection.vectorAIn, plane.unitNormal);
+
+			double angleB0 = intersection.vectorAOut.AngleBetween(intersection.vectorBIn, plane.unitNormal);
+			if (0.0 < angleB0 && angleB0 < angleA)
+				return true;
+
+			double angleB1 = intersection.vectorAOut.AngleBetween(intersection.vectorBOut, plane.unitNormal);
+			if (0.0 < angleB1 && angleB1 < angleA)
+				return true;
+		}
+	}
+
+	return false;
 }
 
 bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& polygonB)
@@ -751,10 +967,17 @@ bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& p
 	if (!this->MergeCoplanarPolygonPairInternal(polygonA, polygonB))
 		return false;
 
-	// After the merge, the final step is to remove any cusps in the polygon.
-	// These can arrise as a consequence of the merge operation if more than
-	// one edge of one polygon was flesh with an edge of the other polygon.
-	this->RemoveCusps();
+	// Reduction must follow the merge, because the merger process
+	// can leave behind a valid (in some some sense) yet undesirable
+	// polygon.  Reduction does not change the shape or area of the
+	// polygon.  It just removes redundancies.
+	this->Reduce();
+
+	// Lastly, at this point, make sure the resulting polygon doesn't
+	// touch itself in a way that is invalid.
+	if (this->SelfOverlaps())
+		return false;
+
 	return true;
 }
 
@@ -1052,43 +1275,6 @@ int Polygon::Mod(int i) const
 		i = i % int(this->vertexArray.size());
 	}
 	return i;
-}
-
-void Polygon::ReduceVerticesOf(const Polygon& polygon, double tolerance /*= 1e-7*/)
-{
-	std::unordered_set<int> redundantVerticesSet;
-	for (int i = 0; i < (signed)polygon.vertexArray.size(); i++)
-	{
-		int j = polygon.Mod(i + 1);
-
-		const Vector3& vertexA = polygon.vertexArray[i];
-		const Vector3& vertexB = polygon.vertexArray[j];
-
-		if (vertexA.IsPoint(vertexB, tolerance))
-			redundantVerticesSet.insert(j);
-	}
-	
-	Polygon intermediatePolygon;
-	for (int i = 0; i < (signed)polygon.vertexArray.size(); i++)
-		if (redundantVerticesSet.find(i) == redundantVerticesSet.end())
-			intermediatePolygon.vertexArray.push_back(polygon.vertexArray[i]);
-
-	this->vertexArray.clear();
-
-	for (int i = 0; i < (signed)intermediatePolygon.vertexArray.size(); i++)
-	{
-		const Vector3& vertexPrev = intermediatePolygon.vertexArray[intermediatePolygon.Mod(i - 1)];
-		const Vector3& vertex = intermediatePolygon.vertexArray[i];
-		const Vector3& vertexNext = intermediatePolygon.vertexArray[intermediatePolygon.Mod(i + 1)];
-
-		LineSegment lineSeg;
-		lineSeg.point[0] = vertexPrev;
-		lineSeg.point[1] = vertexNext;
-
-		double distance = lineSeg.ShortestDistanceTo(vertex);
-		if (distance >= tolerance)
-			this->vertexArray.push_back(vertex);
-	}
 }
 
 bool Polygon::HasVertex(const Vector3& givenVertex, double epsilon /*= 1e-5*/) const

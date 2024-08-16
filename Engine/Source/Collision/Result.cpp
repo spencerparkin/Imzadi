@@ -37,6 +37,17 @@ StringResult::StringResult()
 {
 }
 
+//-------------------------------- StatsResult --------------------------------
+
+StatsResult::StatsResult()
+{
+	this->numShapes = 0;
+}
+
+/*virtual*/ StatsResult::~StatsResult()
+{
+}
+
 //-------------------------------- DebugRenderResult --------------------------------
 
 DebugRenderResult::DebugRenderResult()

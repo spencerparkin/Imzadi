@@ -70,6 +70,25 @@ DeannaTroi::DeannaTroi()
 	return true;
 }
 
+/*virtual*/ std::string DeannaTroi::GetAnimName(Imzadi::Biped::AnimType animType)
+{
+	switch (animType)
+	{
+	case Imzadi::Biped::AnimType::IDLE:
+		return "Idle";
+	case Imzadi::Biped::AnimType::JUMP:
+		return "Jumping";
+	case Imzadi::Biped::AnimType::RUN:
+		return "Run";
+	case Imzadi::Biped::AnimType::ABYSS_FALLING:
+		return "DeannaTroiAbyssFalling";
+	case Imzadi::Biped::AnimType::FATAL_LANDING:
+		return "DeannaTroiFatalLanding";
+	}
+
+	return "";
+}
+
 void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
 	if (this->collisionShapeID == event->shapeID)
@@ -283,12 +302,19 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 	double platformLandingSpeed = this->velocity.Length();
 
 	if (platformLandingSpeed > MAX_PLATFORM_LANDING_SPEED)
-	{
-		Imzadi::Game::Get()->GetAudioSystem()->PlaySound("DeathGroan");
 		return false;
-	}
 
 	return Biped::ConstraintVelocityWithGround();
+}
+
+/*virtual*/ void DeannaTroi::OnBipedFatalLanding()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("DeathGroan");
+}
+
+/*virtual*/ void DeannaTroi::OnBipedAbyssFalling()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("HelpMeAhhh");
 }
 
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------

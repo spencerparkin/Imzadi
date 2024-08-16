@@ -17,9 +17,10 @@ namespace Imzadi
 		void SetTransitionTime(double transitionTime) { this->transitionTime = transitionTime; }
 		double GetTransitionTime() const { return this->transitionTime; }
 
-		bool AdvanceAnimation(double deltaTime);
+		bool AdvanceAnimation(double deltaTime, bool canLoop);
 		bool SetAnimation(const std::string& animationName);
 		Animation* GetAnimation() { return this->animation.Get(); }
+		void ClearTransition();
 
 		void SetSkinnedMesh(SkinnedRenderMesh* skinnedMesh) { this->skinnedMesh.Set(skinnedMesh); }
 		SkinnedRenderMesh* GetSkinnedMesh() { return this->skinnedMesh.Get(); }

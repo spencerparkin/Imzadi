@@ -27,7 +27,9 @@ namespace Imzadi
 		{
 			IDLE,
 			RUN,
-			JUMP
+			JUMP,
+			FATAL_LANDING,
+			ABYSS_FALLING
 		};
 
 		virtual bool Setup() override;
@@ -42,7 +44,9 @@ namespace Imzadi
 		virtual void IntegrateVelocity(const Vector3& acceleration, double deltaTime);
 		virtual void IntegratePosition(double deltaTime);
 		virtual bool ConstraintVelocityWithGround();
-		virtual bool OnBipedDied();
+		virtual void OnBipedDied();
+		virtual void OnBipedFatalLanding();
+		virtual void OnBipedAbyssFalling();
 		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
 		virtual uint32_t TickOrder() const override;
@@ -63,6 +67,17 @@ namespace Imzadi
 		RenderMeshInstance* GetRenderMesh() { return this->renderMesh.Get(); }
 
 	protected:
+		enum AnimationMode
+		{
+			BASIC_PLATFORMING,
+			DEATH_BY_ABYSS_FALLING,
+			DEATH_BY_FATAL_LANDING
+		};
+
+		void SetAnimationMode(AnimationMode newMode);
+
+		virtual void ManageAnimation(double deltaTime);
+
 		void HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* collisionResult);
 
 		bool canRestart;
@@ -81,5 +96,6 @@ namespace Imzadi
 		double mass;
 		Vector3 groundSurfaceNormal;
 		Vector3 groundSurfacePoint;
+		AnimationMode animationMode;
 	};
 }
