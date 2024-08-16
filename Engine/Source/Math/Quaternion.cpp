@@ -128,7 +128,7 @@ Quaternion& Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
 
 void Quaternion::GetToAxisAngle(Vector3& unitAxis, double& angle) const
 {
-	angle = 2.0 * ::acos(IMZADI_CLAMP(this->w, 0.0, 1.0));
+	angle = 2.0 * ::acos(IMZADI_CLAMP(this->w, -1.0, 1.0));
 	unitAxis = this->GetPoint();
 	if (!unitAxis.Normalize())
 		unitAxis.SetComponents(0.0, 0.0, 1.0);
