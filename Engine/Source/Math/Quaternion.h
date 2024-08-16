@@ -29,6 +29,7 @@ namespace Imzadi
 		void operator-=(const Quaternion& quat);
 		void operator*=(const Quaternion& quat);
 		void operator/=(const Quaternion& quat);
+		Quaternion operator-() const;
 
 		/**
 		 * Make sure that no component of the quaternion is Inf and NaN.

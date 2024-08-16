@@ -69,6 +69,16 @@ void Quaternion::operator/=(const Quaternion& quat)
 	*this = *this / quat;
 }
 
+Quaternion Quaternion::operator-() const
+{
+	return Quaternion(
+		-this->w,
+		-this->x,
+		-this->y,
+		-this->z
+	);
+}
+
 bool Quaternion::IsValid() const
 {
 	if (::isnan(this->w) || ::isinf(this->w))
@@ -196,10 +206,15 @@ Ray Quaternion::Rotate(const Ray& ray) const
 
 void Quaternion::Interpolate(const Quaternion& unitQuatA, const Quaternion& unitQuatB, double alpha)
 {
-	Quaternion unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
+	Quaternion unitDeltaQuat;
+	if (IMZADI_SIGN(unitQuatA.w) == IMZADI_SIGN(unitQuatB.w))
+		unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
+	else
+		unitDeltaQuat = -unitQuatB * unitQuatA.Conjugated();
 	Vector3 unitAxis;
 	double angle = 0.0;
 	unitDeltaQuat.GetToAxisAngle(unitAxis, angle);
+	IMZADI_ASSERT(angle <= 2.0 * M_PI);
 	angle *= alpha;
 	unitDeltaQuat.SetFromAxisAngle(unitAxis, angle);
 	*this = unitDeltaQuat * unitQuatA;
