@@ -69,6 +69,12 @@ bool AnimatedMeshInstance::SetAnimation(const std::string& animationName)
 	return true;
 }
 
+void AnimatedMeshInstance::ClearTransition()
+{
+	this->transitionalKeyFrame.Clear();
+	this->currentKeyFrame.Clear();
+}
+
 bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime, bool canLoop)
 {
 	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();

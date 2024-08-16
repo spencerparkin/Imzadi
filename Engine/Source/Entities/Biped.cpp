@@ -168,20 +168,27 @@ Biped::Biped()
 		{
 			// Kick-off the queries we'll need later to resolve collision constraints.
 
-			auto boundsQuery = new Collision::ShapeInBoundsQuery();
-			boundsQuery->SetShapeID(this->collisionShapeID);
-			collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
+			this->boundsQueryTaskID = 0;
+			this->worldSurfaceCollisionQueryTaskID = 0;
+			this->groundSurfaceQueryTaskID = 0;
 
-			auto worldSurfaceCollisionQuery = new Collision::CollisionQuery();
-			worldSurfaceCollisionQuery->SetShapeID(this->collisionShapeID);
-			worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
-			collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
+			if (this->animationMode != AnimationMode::DEATH_BY_ABYSS_FALLING)
+			{
+				auto boundsQuery = new Collision::ShapeInBoundsQuery();
+				boundsQuery->SetShapeID(this->collisionShapeID);
+				collisionSystem->MakeQuery(boundsQuery, this->boundsQueryTaskID);
 
-			const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-			auto groundSurfaceQuery = new Collision::RayCastQuery();
-			groundSurfaceQuery->SetRay(Ray(objectToWorld.translation + Vector3(0.0, 3.0, 0.0), Vector3(0.0, -1.0, 0.0)));
-			groundSurfaceQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
-			collisionSystem->MakeQuery(groundSurfaceQuery, this->groundSurfaceQueryTaskID);
+				auto worldSurfaceCollisionQuery = new Collision::CollisionQuery();
+				worldSurfaceCollisionQuery->SetShapeID(this->collisionShapeID);
+				worldSurfaceCollisionQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+				collisionSystem->MakeQuery(worldSurfaceCollisionQuery, this->worldSurfaceCollisionQueryTaskID);
+
+				const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+				auto groundSurfaceQuery = new Collision::RayCastQuery();
+				groundSurfaceQuery->SetRay(Ray(objectToWorld.translation + Vector3(0.0, 3.0, 0.0), Vector3(0.0, -1.0, 0.0)));
+				groundSurfaceQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+				collisionSystem->MakeQuery(groundSurfaceQuery, this->groundSurfaceQueryTaskID);
+			}
 
 			break;
 		}
@@ -214,7 +221,7 @@ Biped::Biped()
 				{
 					auto boolResult = dynamic_cast<Collision::BoolResult*>(result);
 					if (boolResult && !boolResult->GetAnswer())
-						this->animationMode = AnimationMode::DEATH_BY_ABYSS_FALLING;
+						this->SetAnimationMode(AnimationMode::DEATH_BY_ABYSS_FALLING);
 
 					delete result;
 				}
@@ -237,11 +244,8 @@ Biped::Biped()
 				}
 			}
 
-			if (this->inContactWithGround)
-			{
-				if (!this->ConstraintVelocityWithGround())
-					this->animationMode = AnimationMode::DEATH_BY_FATAL_LANDING;
-			}
+			if (this->inContactWithGround && !this->ConstraintVelocityWithGround())
+				this->SetAnimationMode(AnimationMode::DEATH_BY_FATAL_LANDING);
 
 			break;
 		}
@@ -278,7 +282,7 @@ Biped::Biped()
 				{
 					animatedMesh->SetAnimation(this->GetAnimName(AnimType::RUN));
 
-					static double conversionFactor = 0.01;
+					static double conversionFactor = 0.1;
 					double speed = this->velocity.Length();
 
 					animationRate = speed * conversionFactor;
@@ -312,15 +316,40 @@ Biped::Biped()
 	}
 }
 
-/*virtual*/ bool Biped::OnBipedDied()
+/*virtual*/ void Biped::OnBipedDied()
 {
 	if (this->canRestart)
-	{
 		this->Reset();
-		return true;
+}
+
+/*virtual*/ void Biped::OnBipedFatalLanding()
+{
+}
+
+/*virtual*/ void Biped::OnBipedAbyssFalling()
+{
+}
+
+void Biped::SetAnimationMode(AnimationMode newMode)
+{
+	if (this->animationMode == newMode)
+		return;
+
+	this->animationMode = newMode;
+
+	switch (this->animationMode)
+	{
+		case AnimationMode::DEATH_BY_FATAL_LANDING:
+		{
+			this->OnBipedFatalLanding();
+			break;
+		}
+		case AnimationMode::DEATH_BY_ABYSS_FALLING:
+		{
+			this->OnBipedAbyssFalling();
+			break;
+		}
 	}
-	
-	return false;
 }
 
 /*virtual*/ bool Biped::ConstraintVelocityWithGround()
@@ -441,5 +470,9 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	this->objectToPlatform = this->restartTransformObjectToWorld;
 	this->inContactWithGround = false;
 	this->groundShapeID = 0;
-	this->animationMode = AnimationMode::BASIC_PLATFORMING;
+	this->SetAnimationMode(AnimationMode::BASIC_PLATFORMING);
+
+	auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+	if (animatedMesh)
+		animatedMesh->ClearTransition();
 }

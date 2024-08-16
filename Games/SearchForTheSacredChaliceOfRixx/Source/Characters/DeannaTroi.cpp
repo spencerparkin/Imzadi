@@ -302,12 +302,19 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 	double platformLandingSpeed = this->velocity.Length();
 
 	if (platformLandingSpeed > MAX_PLATFORM_LANDING_SPEED)
-	{
-		Imzadi::Game::Get()->GetAudioSystem()->PlaySound("DeathGroan");
 		return false;
-	}
 
 	return Biped::ConstraintVelocityWithGround();
+}
+
+/*virtual*/ void DeannaTroi::OnBipedFatalLanding()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("DeathGroan");
+}
+
+/*virtual*/ void DeannaTroi::OnBipedAbyssFalling()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("HelpMeAhhh");
 }
 
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------
