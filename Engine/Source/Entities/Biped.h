@@ -65,6 +65,15 @@ namespace Imzadi
 		RenderMeshInstance* GetRenderMesh() { return this->renderMesh.Get(); }
 
 	protected:
+		enum AnimationMode
+		{
+			BASIC_PLATFORMING,
+			DEATH_BY_ABYSS_FALLING,
+			DEATH_BY_FATAL_LANDING
+		};
+
+		virtual void ManageAnimation(double deltaTime);
+
 		void HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* collisionResult);
 
 		bool canRestart;
@@ -83,5 +92,6 @@ namespace Imzadi
 		double mass;
 		Vector3 groundSurfaceNormal;
 		Vector3 groundSurfacePoint;
+		AnimationMode animationMode;
 	};
 }

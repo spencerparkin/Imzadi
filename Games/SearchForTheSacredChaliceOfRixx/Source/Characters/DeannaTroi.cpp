@@ -70,6 +70,25 @@ DeannaTroi::DeannaTroi()
 	return true;
 }
 
+/*virtual*/ std::string DeannaTroi::GetAnimName(Imzadi::Biped::AnimType animType)
+{
+	switch (animType)
+	{
+	case Imzadi::Biped::AnimType::IDLE:
+		return "Idle";
+	case Imzadi::Biped::AnimType::JUMP:
+		return "Jumping";
+	case Imzadi::Biped::AnimType::RUN:
+		return "Run";
+	case Imzadi::Biped::AnimType::ABYSS_FALLING:
+		return "DeannaTroiAbyssFalling";
+	case Imzadi::Biped::AnimType::FATAL_LANDING:
+		return "DeannaTroiFatalLanding";
+	}
+
+	return "";
+}
+
 void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
 	if (this->collisionShapeID == event->shapeID)

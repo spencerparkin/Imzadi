@@ -17,6 +17,7 @@ using namespace Imzadi;
 
 Biped::Biped()
 {
+	this->animationMode = AnimationMode::BASIC_PLATFORMING;
 	this->collisionShapeID = 0;
 	this->groundShapeID = 0;
 	this->boundsQueryTaskID = 0;
@@ -186,35 +187,12 @@ Biped::Biped()
 		}
 		case TickPass::PARALLEL_WORK:
 		{
-			// Make sure we're playing an appropriate animation and pump the animation system.
-
-			auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
-			if (animatedMesh)
-			{
-				Animation* animation = animatedMesh->GetAnimation();
-				if (!this->inContactWithGround)
-					animatedMesh->SetAnimation(this->GetAnimName(AnimType::JUMP));
-				else
-				{
-					double threshold = 1.0;
-					if (this->velocity.Length() < threshold)
-						animatedMesh->SetAnimation(this->GetAnimName(AnimType::IDLE));
-					else
-						animatedMesh->SetAnimation(this->GetAnimName(AnimType::RUN));
-				}
-
-				// TODO: If running, make sure that animation speed matches the speed we're moving
-				//       so that we don't skate across the ground.
-
-				animatedMesh->AdvanceAnimation(deltaTime);
-			}
-
+			this->ManageAnimation(deltaTime);
 			break;
 		}
 		case TickPass::RESOLVE_COLLISIONS:
 		{
 			this->inContactWithGround = false;
-			bool bipedDied = false;
 
 			if (this->worldSurfaceCollisionQueryTaskID)
 			{
@@ -236,7 +214,7 @@ Biped::Biped()
 				{
 					auto boolResult = dynamic_cast<Collision::BoolResult*>(result);
 					if (boolResult && !boolResult->GetAnswer())
-						bipedDied = true;
+						this->animationMode = AnimationMode::DEATH_BY_ABYSS_FALLING;
 
 					delete result;
 				}
@@ -262,17 +240,76 @@ Biped::Biped()
 			if (this->inContactWithGround)
 			{
 				if (!this->ConstraintVelocityWithGround())
-					bipedDied = true;
+					this->animationMode = AnimationMode::DEATH_BY_FATAL_LANDING;
 			}
-
-			if (bipedDied && !this->OnBipedDied())
-				return false;
 
 			break;
 		}
 	}
 
 	return true;
+}
+
+/*virtual*/ void Biped::ManageAnimation(double deltaTime)
+{
+	// Make sure we're playing an appropriate animation and pump the animation system.
+
+	auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
+	if (!animatedMesh)
+		return;
+	
+	bool canLoop = true;
+	double animationRate = 1.0;
+
+	switch (this->animationMode)
+	{
+		case AnimationMode::BASIC_PLATFORMING:
+		{
+			const Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+			double heightAboveGround = (objectToWorld.translation - this->groundSurfacePoint).Length();
+			if (!this->inContactWithGround && heightAboveGround > 1.0)
+				animatedMesh->SetAnimation(this->GetAnimName(AnimType::JUMP));
+			else
+			{
+				double threshold = 1.0;
+				if (this->velocity.Length() < threshold)
+					animatedMesh->SetAnimation(this->GetAnimName(AnimType::IDLE));
+				else
+				{
+					animatedMesh->SetAnimation(this->GetAnimName(AnimType::RUN));
+
+					static double conversionFactor = 0.01;
+					double speed = this->velocity.Length();
+
+					animationRate = speed * conversionFactor;
+				}
+			}
+
+			break;
+		}
+		case AnimationMode::DEATH_BY_ABYSS_FALLING:
+		{
+			animatedMesh->SetAnimation(this->GetAnimName(AnimType::ABYSS_FALLING));
+			canLoop = false;
+			animationRate = 0.2;
+			break;
+		}
+		case AnimationMode::DEATH_BY_FATAL_LANDING:
+		{
+			animatedMesh->SetAnimation(this->GetAnimName(AnimType::FATAL_LANDING));
+			canLoop = false;
+			animationRate = 0.2;
+			break;
+		}
+	}
+
+	if (!animatedMesh->AdvanceAnimation(deltaTime * animationRate, canLoop))
+	{
+		if (this->animationMode == AnimationMode::DEATH_BY_FATAL_LANDING || this->animationMode == AnimationMode::DEATH_BY_ABYSS_FALLING)
+		{
+			this->OnBipedDied();
+		}
+	}
 }
 
 /*virtual*/ bool Biped::OnBipedDied()
@@ -404,4 +441,5 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	this->objectToPlatform = this->restartTransformObjectToWorld;
 	this->inContactWithGround = false;
 	this->groundShapeID = 0;
+	this->animationMode = AnimationMode::BASIC_PLATFORMING;
 }

@@ -77,7 +77,7 @@ ZipLineRider::ZipLineRider()
 			{
 				std::string animationName = this->character->GetZipLineAnimationName();
 				animatedMesh->SetAnimation(animationName);
-				animatedMesh->AdvanceAnimation(deltaTime);
+				animatedMesh->AdvanceAnimation(deltaTime, true);
 			}
 
 			break;

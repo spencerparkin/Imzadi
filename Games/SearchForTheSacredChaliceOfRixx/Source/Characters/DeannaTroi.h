@@ -24,6 +24,7 @@ public:
 	virtual void Reset() override;
 	virtual bool HangingOnToZipLine() override;
 	virtual std::string GetZipLineAnimationName() override;
+	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
 
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);
