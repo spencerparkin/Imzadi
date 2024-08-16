@@ -9,6 +9,7 @@
 #include "RenderObjectProperties.h"
 #include "FontMaker.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "AnimationSlider.h"
 #include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/aboutdlg.h>
@@ -67,13 +68,19 @@ Frame::Frame(const wxPoint& pos, const wxSize& size) : wxFrame(nullptr, wxID_ANY
 	this->renderObjectList = new RenderObjectList(sideSplitter);
 	this->renderObjectProperties = new RenderObjectProperties(sideSplitter);
 
+	this->animationSlider = new AnimationSlider(this);
+
 	wxBoxSizer* sideSizer = new wxBoxSizer(wxVERTICAL);
 	sideSizer->Add(sideSplitter, 1, wxALL | wxEXPAND, 0);
 	sidePanel->SetSizer(sideSizer);
 
-	wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);
-	mainSizer->Add(mainSplitter, 1, wxALL | wxEXPAND, 0);
-	this->SetSizer(mainSizer);
+	wxBoxSizer* innerSizer = new wxBoxSizer(wxHORIZONTAL);
+	innerSizer->Add(mainSplitter, 1, wxALL | wxEXPAND, 0);
+	
+	wxBoxSizer* outerSizer = new wxBoxSizer(wxVERTICAL);
+	outerSizer->Add(innerSizer, 1, wxALL | wxEXPAND, 0);
+	outerSizer->Add(this->animationSlider, 0, wxALL | wxEXPAND, 0);
+	this->SetSizer(outerSizer);
 
 	mainSplitter->SplitVertically(this->canvas, sidePanel);
 	mainSplitter->SetSashPosition(800);

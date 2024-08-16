@@ -20,7 +20,18 @@ public:
 	virtual bool PreShutdown() override;
 
 	void SetAnimatingMesh(Imzadi::AnimatedMeshInstance* instance);
+	Imzadi::AnimatedMeshInstance* GetAnimatingMesh();
+
+	enum AnimationMode
+	{
+		PLAY,
+		SCRUB
+	};
+
+	void SetAnimationMode(AnimationMode animationMode);
+	AnimationMode GetAnimationMode();
 
 private:
 	Imzadi::Reference<Imzadi::AnimatedMeshInstance> animatedMesh;
+	AnimationMode animationMode;
 };

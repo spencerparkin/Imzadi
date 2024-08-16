@@ -7,6 +7,7 @@
 
 GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 {
+	this->animationMode = AnimationMode::PLAY;
 }
 
 /*virtual*/ GamePreview::~GamePreview()
@@ -72,7 +73,7 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 		zAxis.segment.point[1].SetComponents(0.0, 0.0, 1.0);
 		debugLines->AddLine(zAxis);
 
-		if (this->animatedMesh)
+		if (this->animatedMesh && this->animationMode == AnimationMode::PLAY)
 			this->animatedMesh->AdvanceAnimation(this->GetDeltaTime(), true);
 	}
 }
@@ -80,4 +81,19 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 void GamePreview::SetAnimatingMesh(Imzadi::AnimatedMeshInstance* instance)
 {
 	this->animatedMesh.Set(instance);
+}
+
+Imzadi::AnimatedMeshInstance* GamePreview::GetAnimatingMesh()
+{
+	return this->animatedMesh.Get();
+}
+
+void GamePreview::SetAnimationMode(AnimationMode animationMode)
+{
+	this->animationMode = animationMode;
+}
+
+GamePreview::AnimationMode GamePreview::GetAnimationMode()
+{
+	return this->animationMode;
 }

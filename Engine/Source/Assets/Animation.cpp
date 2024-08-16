@@ -286,6 +286,22 @@ bool Animation::CanAnimateSkeleton(const Skeleton* skeleton, double threshold) c
 	return matchRatio > threshold;
 }
 
+bool Animation::CalculateKeyFrameFromTime(double timeSeconds, KeyFrame& keyFrame) const
+{
+	Cursor cursor;
+	if (!this->MakeCursorFromTime(cursor, timeSeconds))
+		return false;
+
+	KeyFramePair keyFramePair{};
+	if (!this->GetKeyFramesFromCursor(cursor, keyFramePair))
+		return false;
+
+	if (!keyFrame.Interpolate(keyFramePair, cursor.timeSeconds))
+		return false;
+
+	return true;
+}
+
 //------------------------------- KeyFrame -------------------------------
 
 KeyFrame::KeyFrame()

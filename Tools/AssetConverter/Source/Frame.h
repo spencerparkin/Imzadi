@@ -6,6 +6,7 @@
 class Canvas;
 class RenderObjectList;
 class RenderObjectProperties;
+class AnimationSlider;
 
 class Frame : public wxFrame
 {
@@ -51,6 +52,7 @@ protected:
 	Canvas* canvas;
 	RenderObjectList* renderObjectList;
 	RenderObjectProperties* renderObjectProperties;
+	AnimationSlider* animationSlider;
 	wxTimer timer;
 	bool inTimer;
 };

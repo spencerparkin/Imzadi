@@ -23,6 +23,8 @@ set(ASSET_CONVERTER_SOURCES
     Source/RenderObjectList.h
     Source/RenderObjectProperties.cpp
     Source/RenderObjectProperties.h
+    Source/AnimationSlider.cpp
+    Source/AnimationSlider.h
 )
 
 set(FreeTypeFolder "freetype")
