@@ -207,14 +207,12 @@ Ray Quaternion::Rotate(const Ray& ray) const
 void Quaternion::Interpolate(const Quaternion& unitQuatA, const Quaternion& unitQuatB, double alpha)
 {
 	Quaternion unitDeltaQuat;
-	if (IMZADI_SIGN(unitQuatA.w) == IMZADI_SIGN(unitQuatB.w))
-		unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
-	else
-		unitDeltaQuat = -unitQuatB * unitQuatA.Conjugated();
+	unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
 	Vector3 unitAxis;
 	double angle = 0.0;
 	unitDeltaQuat.GetToAxisAngle(unitAxis, angle);
-	IMZADI_ASSERT(angle <= 2.0 * M_PI);
+	if (angle > M_PI)
+		angle -= 2.0 * M_PI;
 	angle *= alpha;
 	unitDeltaQuat.SetFromAxisAngle(unitAxis, angle);
 	*this = unitDeltaQuat * unitQuatA;
