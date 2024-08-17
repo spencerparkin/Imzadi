@@ -69,6 +69,16 @@ void Quaternion::operator/=(const Quaternion& quat)
 	*this = *this / quat;
 }
 
+Quaternion Quaternion::operator-() const
+{
+	return Quaternion(
+		-this->w,
+		-this->x,
+		-this->y,
+		-this->z
+	);
+}
+
 bool Quaternion::IsValid() const
 {
 	if (::isnan(this->w) || ::isinf(this->w))
@@ -128,7 +138,7 @@ Quaternion& Quaternion::SetFromAxisAngle(const Vector3& unitAxis, double angle)
 
 void Quaternion::GetToAxisAngle(Vector3& unitAxis, double& angle) const
 {
-	angle = 2.0 * ::acos(IMZADI_CLAMP(this->w, 0.0, 1.0));
+	angle = 2.0 * ::acos(IMZADI_CLAMP(this->w, -1.0, 1.0));
 	unitAxis = this->GetPoint();
 	if (!unitAxis.Normalize())
 		unitAxis.SetComponents(0.0, 0.0, 1.0);
@@ -196,10 +206,13 @@ Ray Quaternion::Rotate(const Ray& ray) const
 
 void Quaternion::Interpolate(const Quaternion& unitQuatA, const Quaternion& unitQuatB, double alpha)
 {
-	Quaternion unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
+	Quaternion unitDeltaQuat;
+	unitDeltaQuat = unitQuatB * unitQuatA.Conjugated();
 	Vector3 unitAxis;
 	double angle = 0.0;
 	unitDeltaQuat.GetToAxisAngle(unitAxis, angle);
+	if (angle > M_PI)
+		angle -= 2.0 * M_PI;
 	angle *= alpha;
 	unitDeltaQuat.SetFromAxisAngle(unitAxis, angle);
 	*this = unitDeltaQuat * unitQuatA;

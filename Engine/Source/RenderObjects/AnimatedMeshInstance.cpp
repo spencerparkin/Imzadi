@@ -118,3 +118,42 @@ bool AnimatedMeshInstance::AdvanceAnimation(double deltaTime, bool canLoop)
 	this->skinnedMesh->DeformMesh();
 	return animationAdvanced;
 }
+
+bool AnimatedMeshInstance::SetAnimationLocation(double alpha)
+{
+	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
+	if (!skeleton)
+		return false;
+
+	double duration = this->animation->GetDuration();
+	double animationLocationTime = alpha * duration;
+
+	Imzadi::KeyFrame keyFrame;
+	if (!animation->CalculateKeyFrameFromTime(animationLocationTime, keyFrame))
+		return false;
+
+	keyFrame.PoseSkeleton(skeleton);
+	skeleton->UpdateCachedTransforms(Imzadi::BoneTransformType::CURRENT_POSE);
+	this->skinnedMesh->DeformMesh();
+
+	return true;
+}
+
+bool AnimatedMeshInstance::SetAnimationLocation(int i)
+{
+	Skeleton* skeleton = this->skinnedMesh->GetSkeleton();
+	if (!skeleton)
+		return false;
+
+	i = i % this->animation->GetNumKeyFrames();
+
+	const KeyFrame* keyFrame = this->animation->GetKeyFrame(i);
+	if (!keyFrame)
+		return false;
+
+	keyFrame->PoseSkeleton(skeleton);
+	skeleton->UpdateCachedTransforms(Imzadi::BoneTransformType::CURRENT_POSE);
+	this->skinnedMesh->DeformMesh();
+
+	return true;
+}

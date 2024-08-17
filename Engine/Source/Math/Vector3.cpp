@@ -75,7 +75,12 @@ void Vector3::SetAsOrthogonalTo(const Vector3& vector)
 
 bool Vector3::IsPoint(const Vector3& point, double tolerance /*= 0.0*/) const
 {
+#if false
 	return (*this - point).Length() <= tolerance;
+#else
+	Vector3 delta = *this - point;
+	return delta.Dot(delta) <= tolerance * tolerance;
+#endif
 }
 
 bool Vector3::IsAnyPoint(const std::vector<Vector3>& pointArray, double tolerance /*= 0.0*/) const

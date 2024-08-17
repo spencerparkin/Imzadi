@@ -122,6 +122,7 @@ namespace Imzadi
 		 *
 		 * @param[out] cursor This will indicate the position along the animation for the given time.
 		 * @param[in] timeSeconds This should be a length of time (in seconds) from the start of the animation and before its end.
+		 * @return True is returned on success; false, otherwise.
 		 */
 		bool MakeCursorFromTime(Cursor& cursor, double timeSeconds) const;
 
@@ -141,6 +142,21 @@ namespace Imzadi
 		 * ratio of these counts is above the given threshold.
 		 */
 		bool CanAnimateSkeleton(const Skeleton* skeleton, double threshold) const;
+
+		/**
+		 * Calculate an interpolate key-frame from the given time.  An animation
+		 * is a sequence of key-frames, and actual animation-frames are what's
+		 * produced here, so the term key-frame is a bit odd, but in practice here,
+		 * there is no distinction between key-frames and animation-frames.
+		 * 
+		 * This method is provided for convenience, but may not be the most efficient
+		 * way to animate, because a cursor is recomputed with each call.
+		 * 
+		 * @param[in] timeSeconds This should be in the range zero to the duration of the animation.
+		 * @param[out] keyFrame This is the computed frame which you can use to pose a skeleton.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool CalculateKeyFrameFromTime(double timeSeconds, KeyFrame& keyFrame) const;
 
 	private:
 
