@@ -18,7 +18,10 @@ namespace Imzadi
 	{
 	public:
 		Graph();
+		Graph(const Graph& graph);
 		virtual ~Graph();
+
+		void operator=(const Graph& graph);
 
 		/**
 		 * Delete all nodes from this graph.
@@ -37,6 +40,12 @@ namespace Imzadi
 		 * graph become polygons of the mesh.
 		 */
 		bool ToPolygonMesh(PolygonMesh& mesh) const;
+
+		/**
+		 * Construct a polygon mesh from this graph, but also destroy
+		 * this graph in the process of doing so.
+		 */
+		bool ToPolygonMesh(PolygonMesh& mesh);
 
 		/**
 		 * This is where we increase or decrease the number of vertices and edges
@@ -74,6 +83,13 @@ namespace Imzadi
 		int GetNumNodes() const { return (int)this->nodeArray.size(); }
 
 	private:
+
+		/**
+		 * This is used in the graph to mesh conversion process, and
+		 * it is destructive to the graph.
+		 */
+		bool FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray);
+
 		std::vector<Node*> nodeArray;
 	};
 }

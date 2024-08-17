@@ -182,6 +182,7 @@ namespace Imzadi
 
 		const Polygon& GetPolygon(int i) const { return this->polygonArray[i]; }
 		void SetPolygon(int i, const Polygon& polygon) { this->polygonArray[i] = polygon; }
+		void AddPolygon(const Polygon& polygon) { this->polygonArray.push_back(polygon); }
 
 		int GetNumVertices() const { return (int)this->vertexArray.size(); }
 		int GetNumPolygons() const { return (int)this->polygonArray.size(); }

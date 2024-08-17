@@ -11,9 +11,21 @@ Graph::Graph()
 {
 }
 
+Graph::Graph(const Graph& graph)
+{
+	*this = graph;
+}
+
 /*virtual*/ Graph::~Graph()
 {
 	this->Clear();
+}
+
+void Graph::operator=(const Graph& graph)
+{
+	this->Clear();
+
+	// TODO: Write this.
 }
 
 void Graph::Clear()
@@ -71,9 +83,33 @@ bool Graph::FromPolygohMesh(const PolygonMesh& mesh)
 
 bool Graph::ToPolygonMesh(PolygonMesh& mesh) const
 {
+	Graph graph = *this;
+	return graph.ToPolygonMesh(mesh);
+}
+
+bool Graph::ToPolygonMesh(PolygonMesh& mesh)
+{
 	mesh.Clear();
 
-	// TODO: Think about this.
+	for (const Node* node : this->nodeArray)
+		mesh.AddVertex(node->vertex);
+
+	PolygonMesh::Polygon polygon;
+	while (this->FindAndRemovePolygonCycleForMesh(polygon.vertexArray))
+		mesh.AddPolygon(polygon);
+
+	for (const Node* node : this->nodeArray)
+		if (node->adjacentNodeArray.size() > 0)
+			return false;
+
+	return true;
+}
+
+bool Graph::FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray)
+{
+	cycleArray.clear();
+
+	// TODO: Write this.
 
 	return false;
 }
