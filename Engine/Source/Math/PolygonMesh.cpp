@@ -1,5 +1,6 @@
 #include "PolygonMesh.h"
 #include "Polygon.h"
+#include "Graph.h"
 
 using namespace Imzadi;
 
@@ -217,14 +218,21 @@ bool PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 	return true;
 }
 
-void PolygonMesh::DecreaseDetail(double percentage)
+bool PolygonMesh::ModifyDetail(double percentage)
 {
-	// TODO: Write this.  Use quadratic interpolation.
-}
+	if (percentage == 1.0)
+		return true;
 
-void PolygonMesh::IncreaseDetail(double percentage)
-{
-	// TODO: Write this.  Use quadratic interpolation.
+	Graph graph;
+	if (!graph.FromPolygohMesh(*this))
+		return false;
+
+	graph.ModifyDetail(percentage);
+
+	if (!graph.ToPolygonMesh(*this))
+		return false;
+
+	return true;
 }
 
 void PolygonMesh::CalculateUnion(const PolygonMesh& polygonMeshA, const PolygonMesh& polygonMeshB)
@@ -376,6 +384,29 @@ void PolygonMesh::Polygon::FromStandalonePolygon(const Imzadi::Polygon& polygon,
 
 	for (const Vector3& vertex : polygon.vertexArray)
 		this->vertexArray.push_back(mesh->FindOrAddVertex(vertex, epsilon));
+}
+
+int PolygonMesh::Polygon::Mod(int i) const
+{
+	i %= (int)this->vertexArray.size();
+	if (i < 0)
+		i += (int)this->vertexArray.size();
+	return i;
+}
+
+void PolygonMesh::Polygon::Reverse()
+{
+	std::vector<int> vertexStack;
+	for (int i : this->vertexArray)
+		vertexStack.push_back(i);
+
+	this->vertexArray.clear();
+	while (vertexStack.size() > 0)
+	{
+		int i = vertexStack[vertexStack.size() - 1];
+		vertexStack.pop_back();
+		this->vertexArray.push_back(i);
+	}
 }
 
 void PolygonMesh::Polygon::Dump(std::ostream& stream) const

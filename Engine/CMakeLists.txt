@@ -120,6 +120,8 @@ set(GAME_ENGINE_SOURCES
     Source/Math/Polygon.h
     Source/Math/PolygonMesh.cpp
     Source/Math/PolygonMesh.h
+    Source/Math/Graph.cpp
+    Source/Math/Graph.h
     Source/RenderObjects/AnimatedMeshInstance.cpp
     Source/RenderObjects/AnimatedMeshInstance.h
     Source/RenderObjects/DebugLines.cpp
