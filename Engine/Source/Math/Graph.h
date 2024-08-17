@@ -32,6 +32,12 @@ namespace Imzadi
 		 * Construct a graph from a polygon mesh.  The graph's vertices
 		 * will be the mesh's vertices.  The graph's edges will be the
 		 * edges of the polygons in the mesh.
+		 * 
+		 * Of course, this isn't the only way to construct a graph from
+		 * a mesh.  You could also let the mesh polygons be the vertices
+		 * and the edges of the graph indicate where polygons are adjacent
+		 * to other polygons.  This has applications in other algorithms,
+		 * such as the union, intersection and difference of meshes.
 		 */
 		bool FromPolygohMesh(const PolygonMesh& mesh);
 
@@ -78,7 +84,7 @@ namespace Imzadi
 		private:
 			Vector3 vertex;
 			Vector3 normal;
-			int i;
+			mutable int i;
 			std::vector<Node*> adjacentNodeArray;
 		};
 
@@ -86,6 +92,8 @@ namespace Imzadi
 		int GetNumNodes() const { return (int)this->nodeArray.size(); }
 
 	private:
+
+		void AssignIndicesForNodes() const;
 
 		/**
 		 * This is used in the graph to mesh conversion process, and

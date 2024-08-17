@@ -25,7 +25,27 @@ void Graph::operator=(const Graph& graph)
 {
 	this->Clear();
 
-	// TODO: Write this.
+	graph.AssignIndicesForNodes();
+
+	for (const Node* otherNode : graph.nodeArray)
+	{
+		auto node = new Node();
+		node->vertex = otherNode->vertex;
+		node->normal = otherNode->normal;
+		node->i = otherNode->i;
+		this->nodeArray.push_back(node);
+	}
+
+	for (const Node* otherNode : graph.nodeArray)
+	{
+		Node* node = this->nodeArray[otherNode->i];
+
+		for (const Node* otherAdjacentNode : otherNode->adjacentNodeArray)
+		{
+			Node* adjacentNode = this->nodeArray[otherAdjacentNode->i];
+			node->adjacentNodeArray.push_back(adjacentNode);
+		}
+	}
 }
 
 void Graph::Clear()
@@ -94,8 +114,7 @@ bool Graph::ToPolygonMesh(PolygonMesh& mesh)
 	for (const Node* node : this->nodeArray)
 		mesh.AddVertex(node->vertex);
 
-	for (int i = 0; i < (signed)this->nodeArray.size(); i++)
-		this->nodeArray[i]->i = i;
+	this->AssignIndicesForNodes();
 
 	PolygonMesh::Polygon polygon;
 	while (this->FindAndRemovePolygonCycleForMesh(polygon.vertexArray))
@@ -106,6 +125,12 @@ bool Graph::ToPolygonMesh(PolygonMesh& mesh)
 			return false;
 
 	return true;
+}
+
+void Graph::AssignIndicesForNodes() const
+{
+	for (int i = 0; i < (signed)this->nodeArray.size(); i++)
+		this->nodeArray[i]->i = i;
 }
 
 bool Graph::FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray)
