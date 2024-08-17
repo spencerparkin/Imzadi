@@ -43,7 +43,9 @@ namespace Imzadi
 
 		/**
 		 * Construct a polygon mesh from this graph, but also destroy
-		 * this graph in the process of doing so.
+		 * this graph in the process of doing so.  Note that no check
+		 * is made here to ensure that the resulting polygons are valid
+		 * in the sense that their vertices are all coplanar.
 		 */
 		bool ToPolygonMesh(PolygonMesh& mesh);
 
@@ -76,6 +78,7 @@ namespace Imzadi
 		private:
 			Vector3 vertex;
 			Vector3 normal;
+			int i;
 			std::vector<Node*> adjacentNodeArray;
 		};
 
