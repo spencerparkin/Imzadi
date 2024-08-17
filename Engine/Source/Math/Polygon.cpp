@@ -48,6 +48,11 @@ bool Polygon::IsValid(double tolerance /*= 1e-4*/) const
 	return true;
 }
 
+void Polygon::Clear()
+{
+	this->vertexArray.clear();
+}
+
 bool Polygon::IsConvex(ConvexityInfo* convexityInfo /*= nullptr*/, double tolerance /*= 1e-4*/) const
 {
 	ConvexityInfo convexityInfoStorage;

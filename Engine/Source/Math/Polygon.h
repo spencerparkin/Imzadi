@@ -47,6 +47,11 @@ namespace Imzadi
 		bool IsValid(double tolerance = 1e-4) const;
 
 		/**
+		 * Remove all vertices from this polygon.
+		 */
+		void Clear();
+
+		/**
 		 * If passed to the @ref IsConvex method, you can get further information
 		 * about how convex or how concave the polygon is.
 		 */
