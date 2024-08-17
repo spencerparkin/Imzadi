@@ -61,12 +61,12 @@ namespace Imzadi
 		void GenerateConvexHull(const std::vector<Vector3>& pointArray);
 
 		/**
-		 * Collapse edges of this mesh to decrease the number of vertices and polygons in the mesh.
+		 * Collapse edges to points in this mesh to decrease the number of vertices and polygons in the mesh.
 		 */
 		void DecreaseDetail(double percentage);
 
 		/**
-		 * Subdivide polygons of this mesh to increase the number of vertices and polygons in the mesh.
+		 * Expand points to edges in this mesh to increase the number of vertices and polygons in the mesh.
 		 */
 		void IncreaseDetail(double percentage);
 
