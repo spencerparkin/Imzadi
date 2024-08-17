@@ -73,16 +73,16 @@ void PolygonMesh::Clear()
 	this->polygonArray.clear();
 }
 
-void PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
+bool PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 {
 	this->Clear();
 
 	std::list<Triangle> triangleList;
 
-	auto findInitialTetrahedron = [&pointArray, &triangleList, this]()
+	auto findInitialTetrahedron = [&pointArray, &triangleList, this]() -> bool
 	{
 		// Is there a better approach to this problem?  This looks really
-		// slow, but we only loop until we find a negative determinant.
+		// slow, but we only loop until we find a non-negative determinant.
 		for (int i = 0; i < (signed)pointArray.size(); i++)
 		{
 			const Vector3& vertexA = pointArray[i];
@@ -114,27 +114,42 @@ void PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 
 						double det = xAxis.Cross(yAxis).Dot(zAxis);
 
-						if (det < 0.0)
+						if (det != 0.0)
 						{
 							this->vertexArray.push_back(vertexA);
 							this->vertexArray.push_back(vertexB);
 							this->vertexArray.push_back(vertexC);
 							this->vertexArray.push_back(vertexD);
+						}
 
+						if (det < 0.0)
+						{
 							triangleList.push_back(Triangle(0, 1, 2));
 							triangleList.push_back(Triangle(0, 2, 3));
 							triangleList.push_back(Triangle(0, 3, 1));
 							triangleList.push_back(Triangle(1, 3, 2));
 
-							return;
+							return true;
+						}
+						else if (det > 0.0)
+						{
+							triangleList.push_back(Triangle(0, 2, 1));
+							triangleList.push_back(Triangle(0, 3, 2));
+							triangleList.push_back(Triangle(0, 1, 3));
+							triangleList.push_back(Triangle(1, 2, 3));
+
+							return true;
 						}
 					}
 				}
 			}
 		}
+
+		return false;
 	};
 
-	findInitialTetrahedron();
+	if (!findInitialTetrahedron())
+		return false;
 
 	std::list<Vector3> pointList;
 	for (const Vector3& point : pointArray)
@@ -198,6 +213,8 @@ void PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 		triangle.ToPolygon(polygon);
 		this->polygonArray.push_back(polygon);
 	}
+
+	return true;
 }
 
 void PolygonMesh::DecreaseDetail(double percentage)

@@ -58,7 +58,7 @@ namespace Imzadi
 		/**
 		 * Generate a mesh that fits the given point-cloud as tightly as possible.
 		 */
-		void GenerateConvexHull(const std::vector<Vector3>& pointArray);
+		bool GenerateConvexHull(const std::vector<Vector3>& pointArray);
 
 		/**
 		 * Collapse edges to points in this mesh to decrease the number of vertices and polygons in the mesh.
