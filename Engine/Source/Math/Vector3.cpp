@@ -1,4 +1,5 @@
 #include "Vector3.h"
+#include "Matrix3x3.h"
 
 using namespace Imzadi;
 
@@ -142,4 +143,28 @@ Vector3 Vector3::MoveTo(const Vector3& vector, double stepSize) const
 	if (distance <= stepSize)
 		return vector;
 	return *this + delta * (stepSize / distance);
+}
+
+bool Vector3::CalcBarycentricCoords(const Vector3& vertexA, const Vector3& vertexB, const Vector3& vertexC, Vector3& coordinates) const
+{
+	Matrix3x3 matrix;
+
+	matrix.ele[0][0] = vertexA.x;
+	matrix.ele[0][1] = vertexB.x;
+	matrix.ele[0][2] = vertexC.x;
+
+	matrix.ele[1][0] = vertexA.y;
+	matrix.ele[1][1] = vertexB.y;
+	matrix.ele[1][2] = vertexC.y;
+
+	matrix.ele[2][0] = vertexA.z;
+	matrix.ele[2][1] = vertexB.z;
+	matrix.ele[2][2] = vertexC.z;
+
+	Matrix3x3 matrixInv;
+	if (!matrixInv.Invert(matrix))
+		return false;
+
+	coordinates = matrixInv * *this;
+	return true;
 }
