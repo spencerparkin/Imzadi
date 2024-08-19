@@ -1,7 +1,9 @@
 #include "Graph.h"
 #include "PolygonMesh.h"
 #include "Polygon.h"
+#include "Function.h"
 #include <map>
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -193,12 +195,106 @@ bool Graph::FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray)
 	return true;
 }
 
-void Graph::ReduceEdgeCount(int numEdgesToRemove)
+bool Graph::ReduceEdgeCount(int numEdgesToRemove)
 {
-	if (numEdgesToRemove <= 0)
-		return;
+	// I'm not sure if this algorithm will be any good.
+	// It's something to try.
 
-	// TODO: Think about it.
+	if (numEdgesToRemove <= 0)
+		return true;
+
+	std::set<UnorderedEdge, UnorderedEdge> edgeSet;
+	this->GenerateEdgeSet<UnorderedEdge>(edgeSet);
+
+	std::vector<UnorderedEdge> edgeArray;
+	for (auto edge : edgeSet)
+		edgeArray.push_back(edge);
+
+	std::sort(edgeArray.begin(), edgeArray.end(), [this](const UnorderedEdge& edgeA, const UnorderedEdge& edgeB) -> bool
+	{
+		double lengthA = this->CalcEdgeLength(edgeA);
+		double lengthB = this->CalcEdgeLength(edgeB);
+		return lengthA < lengthB;
+	});
+
+	for (int i = 0; i < (signed)edgeArray.size(); i++)
+	{
+		if (numEdgesToRemove == 0)
+			break;
+
+		const Edge& edge = edgeArray[i];
+		Node* nodeA = this->nodeArray[edge.i];
+		Node* nodeB = this->nodeArray[edge.j];
+		Node* newNode = this->MergeVertices(nodeA, nodeB);
+		if (newNode)
+			numEdgesToRemove--;
+	}
+
+	return numEdgesToRemove == 0;
+}
+
+double Graph::CalcEdgeLength(const Edge& edge) const
+{
+	return (this->nodeArray[edge.i]->vertex - this->nodeArray[edge.j]->vertex).Length();
+}
+
+Graph::Node* Graph::MergeVertices(Node* nodeA, Node* nodeB)
+{
+	if (!nodeA->IsAdjacentTo(nodeB) || !nodeB->IsAdjacentTo(nodeA))
+		return nullptr;
+
+	Vector3 unitDirection = nodeB->vertex - nodeA->vertex;
+	if (!unitDirection.Normalize())
+		return nullptr;
+
+	Node* nodeU = nodeA->FindAdjacencyInDirection(-unitDirection);
+	Node* nodeV = nodeB->FindAdjacencyInDirection(unitDirection);
+
+	if (!nodeU || !nodeV)
+		return nullptr;
+
+	if (nodeU == nodeB || nodeV == nodeA)
+		return nullptr;
+
+	CubicSpaceCurve spaceCurve;
+	if (!spaceCurve.FitToPoints(nodeU->vertex, nodeA->vertex, nodeB->vertex, nodeV->vertex, 0.0, 1.0 / 3.0, 2.0 / 3.0, 1.0))
+		return nullptr;
+
+	auto newNode = new Node();
+	newNode->vertex = spaceCurve.Evaluate(0.5);
+	newNode->normal = (nodeA->normal + nodeB->normal).Normalized();
+	this->nodeArray.push_back(newNode);
+
+	this->DeleteNode(nodeA, newNode);
+	this->DeleteNode(nodeB, newNode);
+
+	return newNode;
+}
+
+void Graph::DeleteNode(Node* node, Node* alternativeNode /*= nullptr*/)
+{
+	for (Node* existingNode : this->nodeArray)
+	{
+		if (existingNode->IsAdjacentTo(node))
+		{
+			existingNode->adjacentNodeSet.erase(node);
+			if (alternativeNode)
+				existingNode->adjacentNodeSet.insert(alternativeNode);
+		}
+	}
+
+	for (int i = 0; i < (signed)this->nodeArray.size(); i++)
+	{
+		if (nodeArray[i] == node)
+		{
+			if (i != (signed)this->nodeArray.size() - 1)
+				this->nodeArray[i] = this->nodeArray[this->nodeArray.size() - 1];
+			this->nodeArray.pop_back();
+			break;
+		}
+	}
+
+	delete node;
 }
 
 //--------------------------------- Graph::Node ---------------------------------
@@ -215,4 +311,22 @@ Graph::Node::Node()
 bool Graph::Node::IsAdjacentTo(const Node* node) const
 {
 	return this->adjacentNodeSet.find(const_cast<Node*>(node)) != this->adjacentNodeSet.end();
+}
+
+Graph::Node* Graph::Node::FindAdjacencyInDirection(const Vector3& unitDirection)
+{
+	Node* foundNode = nullptr;
+	double minAngle = std::numeric_limits<double>::max();
+	for (Node* adjacentNode : this->adjacentNodeSet)
+	{
+		Vector3 unitAdjacentNodeDirection = (adjacentNode->vertex - this->vertex).Normalized();
+		double angle = unitDirection.AngleBetween(unitAdjacentNodeDirection);
+		if (angle < minAngle)
+		{
+			minAngle = angle;
+			foundNode = adjacentNode;
+		}
+	}
+
+	return foundNode;
 }

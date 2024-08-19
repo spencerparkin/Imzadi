@@ -18,6 +18,8 @@ namespace Imzadi
 	class IMZADI_API Graph
 	{
 	public:
+		class Node;
+
 		Graph();
 		Graph(const Graph& graph);
 		virtual ~Graph();
@@ -57,9 +59,108 @@ namespace Imzadi
 		bool ToPolygonMesh(PolygonMesh& mesh);
 
 		/**
-		 * ...
+		 * Uniformly(?) merge adjacent vertices of the mesh until the given
+		 * number of edges have been removed.  Note that if the graph does
+		 * not represent a triangle mesh, then the result, when converted
+		 * back into a mesh, may contain polygons that are non-planar.
+		 * If, however, you just stick with triangle meshes, then this
+		 * shouldn't be a problem.
 		 */
-		void ReduceEdgeCount(int numEdgesToRemove);
+		bool ReduceEdgeCount(int numEdgesToRemove);
+
+		/**
+		 * Remove a node from the graph.  Fixup any node that pointed to it
+		 * by removing the adjacency or having the node point to the given
+		 * alternative node.
+		 */
+		void DeleteNode(Node* node, Node* alternativeNode = nullptr);
+
+		/**
+		 * These are not part of the graph data-structure, but can sometimes
+		 * be useful in algorithm that deal with the graph.
+		 */
+		struct Edge
+		{
+			int i, j;
+
+			Edge()
+			{
+				this->i = 0;
+				this->j = 0;
+			}
+
+			Edge(const Edge& edge)
+			{
+				this->i = edge.i;
+				this->j = edge.j;
+			}
+
+			Edge(int i, int j)
+			{
+				this->i = i;
+				this->j = j;
+			}
+
+			virtual uint64_t MakeKey() const = 0;
+
+			bool operator()(const Edge& edgeA, const Edge& edgeB) const
+			{
+				return edgeA.MakeKey() < edgeB.MakeKey();
+			}
+		};
+
+		struct OrderedEdge : public Edge
+		{
+			OrderedEdge()
+			{
+			}
+
+			OrderedEdge(int i, int j) : Edge(i, j)
+			{
+			}
+
+			virtual uint64_t MakeKey() const override
+			{
+				return (uint64_t(this->i) << 32) | uint64_t(this->j);
+			}
+		};
+
+		struct UnorderedEdge : public Edge
+		{
+			UnorderedEdge()
+			{
+			}
+
+			UnorderedEdge(int i, int j) : Edge(i, j)
+			{
+			}
+
+			virtual uint64_t MakeKey() const override
+			{
+				if (this->i < this->j)
+					return (uint64_t(this->i) << 32) | uint64_t(this->j);
+				else
+					return (uint64_t(this->j) << 32) | uint64_t(this->i);
+			}
+		};
+
+		/**
+		 * Generate a set of edges for the graph.  These can be ordered edges
+		 * or unordered edges.  (I.e., directional edges or non-directional.)
+		 */
+		template<typename T>
+		void GenerateEdgeSet(std::set<T, T>& edgeSet) const
+		{
+			this->AssignIndicesForNodes();
+			for (const Node* node : this->nodeArray)
+				for (const Node* adjacentNode : node->adjacentNodeSet)
+					edgeSet.insert(T(node->i, adjacentNode->i));
+		}
+
+		/**
+		 * Calculate and return the length of the given edge.
+		 */
+		double CalcEdgeLength(const Edge& edge) const;
 
 		/**
 		 * These are the vertices of the graph, and they each
@@ -81,6 +182,12 @@ namespace Imzadi
 
 			bool IsAdjacentTo(const Node* node) const;
 
+			/**
+			 * Find and return a node adjacent to this node that is as close as
+			 * being in the given direction as possible relative to this node.
+			 */
+			Node* FindAdjacencyInDirection(const Vector3& unitDirection);
+
 		private:
 			Vector3 vertex;
 			Vector3 normal;
@@ -92,6 +199,11 @@ namespace Imzadi
 		int GetNumNodes() const { return (int)this->nodeArray.size(); }
 
 	private:
+
+		/**
+		 * This is used by the edge reduction algorithm.
+		 */
+		Node* MergeVertices(Node* nodeA, Node* nodeB);
 
 		/**
 		 * Make each node aware of where it is in the node array.
