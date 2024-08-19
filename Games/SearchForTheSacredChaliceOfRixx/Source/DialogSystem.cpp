@@ -131,6 +131,10 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 			else
 				sequenceName = "lwaxana_encourage_deanna";
 		}
+		else if (otherEntityName == "Borg")
+		{
+			sequenceName = "borg_talk";
+		}
 	}
 
 	return sequenceName.size() > 0;

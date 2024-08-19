@@ -1,12 +1,10 @@
 #include "Borg.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "GameApp.h"
-#include <format>
 
 Borg::Borg()
 {
-	static int count = 0;
-	this->SetName(std::format("Borg{}", count++));
+	this->SetName("Borg");
 }
 
 /*virtual*/ Borg::~Borg()
@@ -31,17 +29,20 @@ Borg::Borg()
 	return true;
 }
 
+/*virtual*/ void Borg::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+{
+	capsule->SetVertex(0, Imzadi::Vector3(0.0, 2.5, 0.0));
+	capsule->SetVertex(1, Imzadi::Vector3(0.0, 6.5, 0.0));
+	capsule->SetRadius(2.5);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER);
+}
+
 /*virtual*/ bool Borg::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
 
 	return true;
-}
-
-/*virtual*/ uint64_t Borg::GetAdditionalUserFlagsForCollisionShape()
-{
-	return SHAPE_FLAG_TALKER;
 }
 
 /*virtual*/ std::string Borg::GetAnimName(Imzadi::Biped::AnimType animType)

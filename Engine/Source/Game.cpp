@@ -534,10 +534,6 @@ void Game::SetAssetCache(AssetCache* assetCache)
 void Game::AddEntity(Entity* entity)
 {
 	this->spawnedEntityQueue.push_back(entity);
-
-	tickingEntityList.sort([](const Entity* entityA, const Entity* entityB) -> bool {
-		return entityA->TickOrder() < entityB->TickOrder();
-	});
 }
 
 bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEntity)
@@ -570,6 +566,8 @@ bool Game::FindEntityByShapeID(Collision::ShapeID shapeID, Reference<Entity>& fo
 
 void Game::AdvanceEntities(TickPass tickPass)
 {
+	uint32_t tickingEntityListSize = (uint32_t)this->tickingEntityList.size();
+
 	while (this->spawnedEntityQueue.size() > 0)
 	{
 		std::list<Reference<Entity>>::iterator iter = this->spawnedEntityQueue.begin();
@@ -577,6 +575,14 @@ void Game::AdvanceEntities(TickPass tickPass)
 		this->spawnedEntityQueue.erase(iter);
 		if (entity->Setup())
 			this->tickingEntityList.push_back(entity);
+	}
+
+	if ((uint32_t)this->tickingEntityList.size() != tickingEntityListSize)
+	{
+		this->tickingEntityList.sort([](const Entity* entityA, const Entity* entityB) -> bool
+		{
+			return entityA->TickOrder() < entityB->TickOrder();
+		});
 	}
 
 	std::list<Reference<Entity>>::iterator iter = this->tickingEntityList.begin();

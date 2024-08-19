@@ -11,9 +11,12 @@ LwaxanaTroi::LwaxanaTroi()
 {
 }
 
-/*virtual*/ uint64_t LwaxanaTroi::GetAdditionalUserFlagsForCollisionShape()
+/*virtual*/ void LwaxanaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
 {
-	return SHAPE_FLAG_TALKER;
+	capsule->SetVertex(0, Imzadi::Vector3(0.0, 1.0, 0.0));
+	capsule->SetVertex(1, Imzadi::Vector3(0.0, 5.0, 0.0));
+	capsule->SetRadius(1.0);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER);
 }
 
 /*virtual*/ bool LwaxanaTroi::Setup()

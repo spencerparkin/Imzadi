@@ -6,7 +6,6 @@
 #include "Math/Quaternion.h"
 #include "Math/Transform.h"
 #include "Math/Vector2.h"
-#include "Collision/Shapes/Capsule.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "Collision/Command.h"
 #include "Collision/Query.h"
@@ -38,11 +37,6 @@ Biped::Biped()
 	return shapeID == this->collisionShapeID;
 }
 
-/*virtual*/ uint64_t Biped::GetAdditionalUserFlagsForCollisionShape()
-{
-	return 0;
-}
-
 /*virtual*/ bool Biped::Setup()
 {
 	if (!this->renderMesh.Get())
@@ -53,10 +47,7 @@ Biped::Biped()
 
 	// TODO: Really should get capsule size from somewhere on disk.
 	auto capsule = new Collision::CapsuleShape();
-	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
-	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
-	capsule->SetRadius(1.0);
-	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | this->GetAdditionalUserFlagsForCollisionShape());
+	this->ConfigureCollisionCapsule(capsule);
 	this->collisionShapeID = Game::Get()->GetCollisionSystem()->AddShape(capsule, 0);
 	if (this->collisionShapeID == 0)
 		return false;
@@ -74,6 +65,14 @@ Biped::Biped()
 {
 	Entity::Shutdown();
 	return true;
+}
+
+/*virtual*/ void Biped::ConfigureCollisionCapsule(Collision::CapsuleShape* capsule)
+{
+	capsule->SetVertex(0, Vector3(0.0, 1.0, 0.0));
+	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
+	capsule->SetRadius(1.0);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 }
 
 /*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)

@@ -14,5 +14,5 @@ public:
 	virtual void IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime) override;
 	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
 	virtual void AdjustFacingDirection(double deltaTime) override;
-	virtual uint64_t GetAdditionalUserFlagsForCollisionShape() override;
+	virtual void ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule) override;
 };
