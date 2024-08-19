@@ -311,6 +311,29 @@ void PolygonMesh::FromStandalonePolygonArray(const std::vector<Imzadi::Polygon>&
 	}
 }
 
+bool PolygonMesh::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
+{
+	alpha = std::numeric_limits<double>::max();
+
+	for (const Polygon& polygon : this->polygonArray)
+	{
+		Imzadi::Polygon standalonePolygon;
+		polygon.ToStandalonePolygon(standalonePolygon, this);
+		double polygonAlpha = 0.0;
+		Vector3 polygonNormal;
+		if (standalonePolygon.RayCast(ray, polygonAlpha, polygonNormal))
+		{
+			if (polygonAlpha < alpha)
+			{
+				alpha = polygonAlpha;
+				unitSurfaceNormal = polygonNormal;
+			}
+		}
+	}
+
+	return alpha != std::numeric_limits<double>::max();
+}
+
 void PolygonMesh::Dump(std::ostream& stream) const
 {
 	uint32_t numVertices = (uint32_t)this->vertexArray.size();

@@ -7,6 +7,7 @@
 namespace Imzadi
 {
 	class Polygon;
+	class Ray;
 
 	/**
 	 * These are sets of polygons that share a set of vertices.
@@ -109,6 +110,18 @@ namespace Imzadi
 		 * Convert this mesh into a triangle mesh.
 		 */
 		void TessellateFaces(double epsilon = 1e-6);
+
+		/**
+		 * Perform a ray-cast against this mesh.  This method assumes that all polygons of the mesh are convex.
+		 * Note that we're just doing a linear search across the polygons of this mesh.  No spacial sorting is
+		 * used here to accelerate the ray-cast.
+		 *
+		 * @param[in] ray This is the ray to use in the ray-cast.
+		 * @param[out] alpha This is the distance from the ray origin along the ray-direction to the point where a mesh polygon is hit, if any.
+		 * @param[out] unitSurfaceNormal This is the surface normal of the polygon at the ray hit-point, if any.  It will always make an obtuse angle with the ray direction vector.
+		 * @return True is returned if and only if the given ray hits this mesh.
+		 */
+		bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const;
 
 		/**
 		 * Write this mesh to the given stream in binary form.
