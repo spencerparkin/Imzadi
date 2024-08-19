@@ -43,10 +43,10 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 
 	RenderMeshAsset* mesh = nullptr;
 
-	int i = 0;
+	int lodNumber = 0;
 	while (true)
 	{
-		RenderMeshAsset* lodMesh = this->GetRenderMesh(i++);
+		RenderMeshAsset* lodMesh = this->GetRenderMesh(lodNumber++);
 		if (!lodMesh)
 			break;
 

@@ -41,6 +41,7 @@ namespace Imzadi
 		Reference<Shader> mainPassShader;
 		Reference<Shader> shadowPassShader;
 		Reference<Texture> texture;
+		Reference<RenderMeshAsset> nextLOD;
 		AxisAlignedBoundingBox objectSpaceBoundingBox;
 		Transform objectToWorld;
 		double lodRadius;
