@@ -40,10 +40,10 @@ void Graph::operator=(const Graph& graph)
 	{
 		Node* node = this->nodeArray[otherNode->i];
 
-		for (const Node* otherAdjacentNode : otherNode->adjacentNodeArray)
+		for (const Node* otherAdjacentNode : otherNode->adjacentNodeSet)
 		{
 			Node* adjacentNode = this->nodeArray[otherAdjacentNode->i];
-			node->adjacentNodeArray.push_back(adjacentNode);
+			node->adjacentNodeSet.insert(adjacentNode);
 		}
 	}
 }
@@ -78,10 +78,10 @@ bool Graph::FromPolygohMesh(const PolygonMesh& mesh)
 			Node* nodeB = this->nodeArray[j];
 
 			if (!nodeA->IsAdjacentTo(nodeB))
-				nodeA->adjacentNodeArray.push_back(nodeB);
+				nodeA->adjacentNodeSet.insert(nodeB);
 
 			if (!nodeB->IsAdjacentTo(nodeA))
-				nodeB->adjacentNodeArray.push_back(nodeA);
+				nodeB->adjacentNodeSet.insert(nodeA);
 		}
 	}
 
@@ -121,7 +121,7 @@ bool Graph::ToPolygonMesh(PolygonMesh& mesh)
 		mesh.AddPolygon(polygon);
 
 	for (const Node* node : this->nodeArray)
-		if (node->adjacentNodeArray.size() > 0)
+		if (node->GetNumAdjacencies() > 0)
 			return false;
 
 	return true;
@@ -140,7 +140,7 @@ bool Graph::FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray)
 	Node* initialNode = nullptr;
 	for (Node* node : this->nodeArray)
 	{
-		if (node->adjacentNodeArray.size() > 0)
+		if (node->adjacentNodeSet.size() > 0)
 		{
 			initialNode = node;
 			break;
@@ -162,29 +162,29 @@ bool Graph::FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray)
 
 		cycleArray.push_back(node->i);
 
-		if (node->adjacentNodeArray.size() == 0)
+		if (node->adjacentNodeSet.size() == 0)
 			return false;
 
-		int i = 0;
+		Node* chosenNode = *node->adjacentNodeSet.begin();
 		if (nodeIn)
 		{
 			Vector3 vectorIn = (nodeIn->vertex - node->vertex).RejectedFrom(node->normal).Normalized();
 			double smallestAngle = std::numeric_limits<double>::max();
-			for (int j = 0; j < (signed)node->adjacentNodeArray.size(); j++)
+			for (Node* adjacentNode : node->adjacentNodeSet)
 			{
-				nodeOut = node->adjacentNodeArray[j];
+				nodeOut = adjacentNode;
 				Vector3 vectorOut = (nodeOut->vertex - node->vertex).RejectedFrom(node->normal).Normalized();
 				double angle = vectorOut.AngleBetween(vectorIn, node->normal);
 				if (angle > smallestAngle)
 				{
 					smallestAngle = angle;
-					i = j;
+					chosenNode = nodeOut;
 				}
 			}
 		}
 		
-		nodeOut = node->adjacentNodeArray[i];
-		node->adjacentNodeArray.erase(node->adjacentNodeArray.begin() + i);
+		nodeOut = chosenNode;
+		node->adjacentNodeSet.erase(nodeOut);
 		nodeIn = node;
 		node = nodeOut;
 		nodeOut = nullptr;
@@ -193,8 +193,11 @@ bool Graph::FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray)
 	return true;
 }
 
-void Graph::ModifyDetail(double percentage)
+void Graph::ReduceEdgeCount(int numEdgesToRemove)
 {
+	if (numEdgesToRemove <= 0)
+		return;
+
 	// TODO: Think about it.
 }
 
@@ -211,9 +214,5 @@ Graph::Node::Node()
 
 bool Graph::Node::IsAdjacentTo(const Node* node) const
 {
-	for (int i = 0; i < (signed)this->adjacentNodeArray.size(); i++)
-		if (this->adjacentNodeArray[i] == node)
-			return true;
-
-	return false;
+	return this->adjacentNodeSet.find(const_cast<Node*>(node)) != this->adjacentNodeSet.end();
 }

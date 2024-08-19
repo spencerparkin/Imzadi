@@ -61,12 +61,11 @@ namespace Imzadi
 		bool GenerateConvexHull(const std::vector<Vector3>& pointArray);
 
 		/**
-		 * If the given percentage if less than one, then collapse edges to points in this mesh to
-		 * decrease the number of vertices and polygons in the mesh.  If the given percentage is
-		 * greater than one, then expand points to edges in this mesh to increase the number of
-		 * vertices and polygons in the mesh.
+		 * Uniformly delete edges from the mesh in order to reduce the overal detail and
+		 * complexity of the mesh.  This might be done to a highly detailed mesh to get it
+		 * into a suitable state for real-time rendering and animation.
 		 */
-		bool ModifyDetail(double percentage);
+		bool ReduceEdgeCount(int numEdgesToRemove);
 
 		/**
 		 * If topologically, the given meshes have descernable insides and outsides,
@@ -100,6 +99,11 @@ namespace Imzadi
 		 * Make sure that all faces use exactly one polygon.
 		 */
 		void SimplifyFaces(bool mustBeConvex, double epsilon = 1e-6);
+
+		/**
+		 * Remove any polygons with less than 3 vertices.
+		 */
+		void Reduce();
 
 		/**
 		 * Convert this mesh into a triangle mesh.

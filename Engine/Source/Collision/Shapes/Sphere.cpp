@@ -1,6 +1,6 @@
 #include "Sphere.h"
 #include "Math/AxisAlignedBoundingBox.h"
-#include "Math/Quadratic.h"
+#include "Math/Function.h"
 #include "Math/Ray.h"
 #include "Collision/Result.h"
 

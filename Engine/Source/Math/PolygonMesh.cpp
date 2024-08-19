@@ -218,16 +218,16 @@ bool PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 	return true;
 }
 
-bool PolygonMesh::ModifyDetail(double percentage)
+bool PolygonMesh::ReduceEdgeCount(int numEdgesToRemove)
 {
-	if (percentage == 1.0)
+	if (numEdgesToRemove <= 0)
 		return true;
 
 	Graph graph;
 	if (!graph.FromPolygohMesh(*this))
 		return false;
 
-	graph.ModifyDetail(percentage);
+	graph.ReduceEdgeCount(numEdgesToRemove);
 
 	if (!graph.ToPolygonMesh(*this))
 		return false;
@@ -258,6 +258,23 @@ void PolygonMesh::SimplifyFaces(bool mustBeConvex, double epsilon /*= 1e-6*/)
 	Imzadi::Polygon::Compress(standalonePolygonArray, mustBeConvex);
 
 	this->FromStandalonePolygonArray(standalonePolygonArray, epsilon);
+}
+
+void PolygonMesh::Reduce()
+{
+	int i = 0;
+	while (i < (signed)this->polygonArray.size())
+	{
+		Polygon& polygon = this->polygonArray[i];
+		if (polygon.vertexArray.size() >= 3)
+			i++;
+		else
+		{
+			if (i != this->polygonArray.size() - 1)
+				this->polygonArray[i] = this->polygonArray[this->polygonArray.size() - 1];
+			this->polygonArray.pop_back();
+		}
+	}
 }
 
 void PolygonMesh::TessellateFaces(double epsilon /*= 1e-6*/)

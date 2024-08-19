@@ -108,8 +108,8 @@ set(GAME_ENGINE_SOURCES
     Source/Math/LineSegment.h
     Source/Math/Quaternion.cpp
     Source/Math/Quaternion.h
-    Source/Math/Quadratic.cpp
-    Source/Math/Quadratic.h
+    Source/Math/Function.cpp
+    Source/Math/Function.h
     Source/Math/Interval.cpp
     Source/Math/Interval.h
     Source/Math/SphericalCoords.cpp

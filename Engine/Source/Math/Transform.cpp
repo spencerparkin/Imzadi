@@ -52,6 +52,11 @@ void Transform::SetIdentity()
 	this->translation = Vector3(0.0, 0.0, 0.0);
 }
 
+/*virtual*/ Vector3 Transform::Evaluate(const Vector3& v) const
+{
+	return this->TransformPoint(v);
+}
+
 Vector3 Transform::TransformPoint(const Vector3& point) const
 {
 	return this->matrix * point + this->translation;

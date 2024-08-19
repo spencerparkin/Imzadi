@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Vector3.h"
+#include <set>
 
 namespace Imzadi
 {
@@ -56,10 +57,9 @@ namespace Imzadi
 		bool ToPolygonMesh(PolygonMesh& mesh);
 
 		/**
-		 * This is where we increase or decrease the number of vertices and edges
-		 * in the graph under the assumption that the graph represents a mesh.
+		 * ...
 		 */
-		void ModifyDetail(double percentage);
+		void ReduceEdgeCount(int numEdgesToRemove);
 
 		/**
 		 * These are the vertices of the graph, and they each
@@ -76,8 +76,8 @@ namespace Imzadi
 			const Vector3& GetVertex() const { return this->vertex; }
 			void SetVertex(const Vector3& vertex) { this->vertex = vertex; }
 
-			const Node* GetAdjacentNode(int i) const { return this->adjacentNodeArray[i]; }
-			int GetNumAdjacencies() const { return (int)this->adjacentNodeArray.size(); }
+			const std::set<Node*>& GetAdjacentNodeSet() const { return this->adjacentNodeSet; }
+			int GetNumAdjacencies() const { return (int)this->adjacentNodeSet.size(); }
 
 			bool IsAdjacentTo(const Node* node) const;
 
@@ -85,7 +85,7 @@ namespace Imzadi
 			Vector3 vertex;
 			Vector3 normal;
 			mutable int i;
-			std::vector<Node*> adjacentNodeArray;
+			std::set<Node*> adjacentNodeSet;
 		};
 
 		const Node* GetNode(int i) const { return this->nodeArray[i]; }
@@ -93,6 +93,9 @@ namespace Imzadi
 
 	private:
 
+		/**
+		 * Make each node aware of where it is in the node array.
+		 */
 		void AssignIndicesForNodes() const;
 
 		/**
@@ -101,6 +104,7 @@ namespace Imzadi
 		 */
 		bool FindAndRemovePolygonCycleForMesh(std::vector<int>& cycleArray);
 
+	private:
 		std::vector<Node*> nodeArray;
 	};
 }
