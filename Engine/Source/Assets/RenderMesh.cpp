@@ -13,6 +13,7 @@ using namespace Imzadi;
 RenderMeshAsset::RenderMeshAsset()
 {
 	this->primType = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+	this->lodRadius = std::numeric_limits<double>::max();
 }
 
 /*virtual*/ RenderMeshAsset::~RenderMeshAsset()
@@ -129,6 +130,10 @@ RenderMeshAsset::RenderMeshAsset()
 		IMZADI_LOG_ERROR("Failed to load object-to-world transform.");
 		return false;
 	}
+
+	this->lodRadius = std::numeric_limits<double>::max();
+	if (jsonDoc.HasMember("lod_radius") && jsonDoc["lod_radius"].IsFloat())
+		this->lodRadius = jsonDoc["lod_radius"].GetFloat();
 
 	return true;
 }

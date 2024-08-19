@@ -32,6 +32,7 @@ namespace Imzadi
 		Buffer* GetIndexBuffer() { return this->indexBuffer.Get(); }
 		Texture* GetTexture() { return this->texture.Get(); }
 		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
+		double GetLODRadius() const { return this->lodRadius; }
 
 	protected:
 		D3D_PRIMITIVE_TOPOLOGY primType;
@@ -42,5 +43,6 @@ namespace Imzadi
 		Reference<Texture> texture;
 		AxisAlignedBoundingBox objectSpaceBoundingBox;
 		Transform objectToWorld;
+		double lodRadius;
 	};
 }

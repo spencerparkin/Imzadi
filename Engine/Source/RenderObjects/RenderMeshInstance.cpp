@@ -21,19 +21,54 @@ RenderMeshInstance::RenderMeshInstance()
 {
 }
 
+void RenderMeshInstance::SetRenderMesh(Reference<RenderMeshAsset> mesh, int lodNumber /*= 0*/)
+{
+	this->meshMap.insert(std::pair<int, Reference<RenderMeshAsset>>(lodNumber, mesh));
+}
+
+RenderMeshAsset* RenderMeshInstance::GetRenderMesh(int lodNumber /*= 0*/)
+{
+	std::map<int, Reference<RenderMeshAsset>>::iterator iter = this->meshMap.find(lodNumber);
+	if (iter == this->meshMap.end())
+		return nullptr;
+
+	return iter->second.Get();
+}
+
 void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 {
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
+
+	double distanceToCamera = (this->objectToWorld.translation - camera->GetCameraToWorldTransform().translation).Length();
+
+	RenderMeshAsset* mesh = nullptr;
+
+	int i = 0;
+	while (true)
+	{
+		RenderMeshAsset* lodMesh = this->GetRenderMesh(i++);
+		if (!lodMesh)
+			break;
+
+		if (distanceToCamera <= lodMesh->GetLODRadius())
+		{
+			mesh = lodMesh;
+			break;
+		}
+	}
+
+	if (!mesh)
+		return;
 
 	Shader* shader = nullptr;
 
 	switch (renderPass)
 	{
 	case RenderPass::MAIN_PASS:
-		shader = this->mesh->GetShader();
+		shader = mesh->GetShader();
 		break;
 	case RenderPass::SHADOW_PASS:
-		shader = this->mesh->GetShadowShader();
+		shader = mesh->GetShadowShader();
 		break;
 	}
 
@@ -71,11 +106,11 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 	depthStencilDesc.StencilWriteMask = 0;
 	Game::Get()->GetDepthStencilStateCache()->SetState(&depthStencilDesc);
 
-	Buffer* vertexBuffer = this->mesh->GetVertexBuffer();
-	Buffer* indexBuffer = this->mesh->GetIndexBuffer();
-	Texture* texture = this->mesh->GetTexture();
+	Buffer* vertexBuffer = mesh->GetVertexBuffer();
+	Buffer* indexBuffer = mesh->GetIndexBuffer();
+	Texture* texture = mesh->GetTexture();
 
-	deviceContext->IASetPrimitiveTopology(this->mesh->GetPrimType());
+	deviceContext->IASetPrimitiveTopology(mesh->GetPrimType());
 	deviceContext->IASetInputLayout(shader->GetInputLayout());
 
 	deviceContext->VSSetShader(shader->GetVertexShader(), NULL, 0);
@@ -209,7 +244,7 @@ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 	}
 
 	if (!indexBuffer)
-		deviceContext->Draw(this->mesh->GetVertexBuffer()->GetNumElements(), 0);
+		deviceContext->Draw(mesh->GetVertexBuffer()->GetNumElements(), 0);
 	else
 	{
 		ID3D11Buffer* indexBufferIface = indexBuffer->GetBuffer();
