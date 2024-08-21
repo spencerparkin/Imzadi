@@ -7,11 +7,12 @@
 namespace Imzadi
 {
 	class Polygon;
+	class Ray;
 
 	/**
 	 * These are sets of polygons that share a set of vertices.
 	 */
-	class PolygonMesh
+	class IMZADI_API PolygonMesh
 	{
 	public:
 		PolygonMesh();
@@ -58,17 +59,14 @@ namespace Imzadi
 		/**
 		 * Generate a mesh that fits the given point-cloud as tightly as possible.
 		 */
-		void GenerateConvexHull(const std::vector<Vector3>& pointArray);
+		bool GenerateConvexHull(const std::vector<Vector3>& pointArray);
 
 		/**
-		 * Collapse edges to points in this mesh to decrease the number of vertices and polygons in the mesh.
+		 * Uniformly delete edges from the mesh in order to reduce the overal detail and
+		 * complexity of the mesh.  This might be done to a highly detailed mesh to get it
+		 * into a suitable state for real-time rendering and animation.
 		 */
-		void DecreaseDetail(double percentage);
-
-		/**
-		 * Expand points to edges in this mesh to increase the number of vertices and polygons in the mesh.
-		 */
-		void IncreaseDetail(double percentage);
+		bool ReduceEdgeCount(int numEdgesToRemove);
 
 		/**
 		 * If topologically, the given meshes have descernable insides and outsides,
@@ -104,9 +102,26 @@ namespace Imzadi
 		void SimplifyFaces(bool mustBeConvex, double epsilon = 1e-6);
 
 		/**
+		 * Remove any polygons with less than 3 vertices.
+		 */
+		void Reduce();
+
+		/**
 		 * Convert this mesh into a triangle mesh.
 		 */
 		void TessellateFaces(double epsilon = 1e-6);
+
+		/**
+		 * Perform a ray-cast against this mesh.  This method assumes that all polygons of the mesh are convex.
+		 * Note that we're just doing a linear search across the polygons of this mesh.  No spacial sorting is
+		 * used here to accelerate the ray-cast.
+		 *
+		 * @param[in] ray This is the ray to use in the ray-cast.
+		 * @param[out] alpha This is the distance from the ray origin along the ray-direction to the point where a mesh polygon is hit, if any.
+		 * @param[out] unitSurfaceNormal This is the surface normal of the polygon at the ray hit-point, if any.  It will always make an obtuse angle with the ray direction vector.
+		 * @return True is returned if and only if the given ray hits this mesh.
+		 */
+		bool RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const;
 
 		/**
 		 * Write this mesh to the given stream in binary form.
@@ -122,7 +137,7 @@ namespace Imzadi
 		 * These are just sequences of indices into the vertex array.
 		 * We use a CCW winding to indicate the front-side of the polygon.
 		 */
-		class Polygon
+		class IMZADI_API Polygon
 		{
 		public:
 			Polygon();
@@ -152,6 +167,17 @@ namespace Imzadi
 			void FromStandalonePolygon(const Imzadi::Polygon& polygon, PolygonMesh* mesh, double epsilon = 1e-6);
 
 			/**
+			 * Return the given i in the range [0,N-1], where N is the number of vertices in this polygon,
+			 * by adding an appropriate multiple of N to i.
+			 */
+			int Mod(int i) const;
+
+			/**
+			 * Reverse the winding of this polygon from CCW to CW, or vice-versa.
+			 */
+			void Reverse();
+
+			/**
 			 * Write this polygon to the given stream in binary form.
 			 */
 			void Dump(std::ostream& stream) const;
@@ -164,6 +190,19 @@ namespace Imzadi
 		public:
 			std::vector<int> vertexArray;
 		};
+
+		const std::vector<Vector3>& GetVertexArray() const { return this->vertexArray; }
+		const std::vector<Polygon>& GetPolygonArray() const { return this->polygonArray; }
+
+		const Vector3& GetVertex(int i) const { return this->vertexArray[i]; }
+		void SetVertex(int i, const Vector3& vertex) { this->vertexArray[i] = vertex; }
+
+		const Polygon& GetPolygon(int i) const { return this->polygonArray[i]; }
+		void SetPolygon(int i, const Polygon& polygon) { this->polygonArray[i] = polygon; }
+		void AddPolygon(const Polygon& polygon) { this->polygonArray.push_back(polygon); }
+
+		int GetNumVertices() const { return (int)this->vertexArray.size(); }
+		int GetNumPolygons() const { return (int)this->polygonArray.size(); }
 
 	protected:
 

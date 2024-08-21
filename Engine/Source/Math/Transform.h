@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Function.h"
 #include "Vector3.h"
 #include "Matrix3x3.h"
 
@@ -20,7 +21,7 @@ namespace Imzadi
 	 * 4x4 matrix algebra might aide in formulating some of the methods, but it is not a user-facing concept.
 	 * We're not doing anything here with homogenous coordinates, for example.
 	 */
-	class IMZADI_API Transform
+	class IMZADI_API Transform : public Vector3ToVector3Function
 	{
 	public:
 		/**
@@ -69,6 +70,11 @@ namespace Imzadi
 		 * Set this transform to be the identity affine transform.
 		 */
 		void SetIdentity();
+
+		/**
+		 * Evaluate this function at the given vector.
+		 */
+		virtual Vector3 Evaluate(const Vector3& v) const override;
 
 		/**
 		 * Apply our matrix to the given point, then the translation, and then return the result.

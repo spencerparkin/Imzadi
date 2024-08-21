@@ -368,6 +368,18 @@ namespace Imzadi
 		 */
 		Vector3 MoveTo(const Vector3& vector, double stepSize) const;
 
+		/**
+		 * Compute Barycentric coordinates for this vector against the triangle having the three
+		 * given vertices.
+		 * 
+		 * @param[in] vertexA The first triangle vertex.
+		 * @param[in] vertexB The second triangle vertex.
+		 * @param[in] vertexC The third triangle vertex.
+		 * @param[out] coordinates The components of this vector give the linear combination the vector in question inside the given triangle.
+		 * @return True is returned on success; false, otherwise.
+		 */
+		bool CalcBarycentricCoords(const Vector3& vertexA, const Vector3& vertexB, const Vector3& vertexC, Vector3& coordinates) const;
+
 	public:
 		double x, y, z;
 	};

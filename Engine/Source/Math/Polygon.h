@@ -89,7 +89,7 @@ namespace Imzadi
 
 		/**
 		 * Tell the caller if the given point is a member of the set
-		 * of points consituting this polygon.  This method assumes
+		 * of points constituting this polygon.  This method assumes
 		 * the polygon is convex.
 		 * 
 		 * @param[in] point This is the point being tested against this polygon for membership in its set of points.

@@ -131,6 +131,15 @@
                     "text": "Little one, Deanna...  I'll be here.  Bring the challice to me once you've found it."
                 }
             ]
+        },
+        "borg_talk": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Borg",
+                    "text": "We are the Borg.  We will add your biological and technological distinctiveness to our own.  Resistance if futile."
+                }
+            ]
         }
     }
 }

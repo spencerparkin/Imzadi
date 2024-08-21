@@ -70,6 +70,14 @@ DeannaTroi::DeannaTroi()
 	return true;
 }
 
+void DeannaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+{
+	capsule->SetVertex(0, Imzadi::Vector3(0.0, 1.0, 0.0));
+	capsule->SetVertex(1, Imzadi::Vector3(0.0, 5.0, 0.0));
+	capsule->SetRadius(1.0);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
+}
+
 /*virtual*/ std::string DeannaTroi::GetAnimName(Imzadi::Biped::AnimType animType)
 {
 	switch (animType)
@@ -222,6 +230,8 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 					auto rayCastResult = dynamic_cast<Imzadi::Collision::RayCastResult*>(result);
 					if (rayCastResult)
 					{
+						bool unbindTalkActionIfAny = true;
+
 						const Imzadi::Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 						if (hitData.shape)
 						{
@@ -232,6 +242,8 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 								Imzadi::Reference<Imzadi::Entity> entity;
 								if (Imzadi::Game::Get()->FindEntityByShapeID(hitData.shapeID, entity))
 								{
+									unbindTalkActionIfAny = false;
+
 									if (!this->actionManager.IsBound(XINPUT_GAMEPAD_A))
 									{
 										auto action = new TalkToEntityAction(this);
@@ -240,12 +252,10 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 									}
 								}
 							}
-							else
-							{
-								if (dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(XINPUT_GAMEPAD_A)))
-									this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
-							}
 						}
+
+						if (unbindTalkActionIfAny && dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(XINPUT_GAMEPAD_A)))
+							this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
 					}
 
 					delete result;

@@ -4,6 +4,7 @@
 #include "Math/Transform.h"
 #include "Math/Vector4.h"
 #include "Scene.h"
+#include <map>
 
 namespace Imzadi
 {
@@ -12,7 +13,7 @@ namespace Imzadi
 	/**
 	 * These are instances of a renderable mesh.  See the RenderMesh class.
 	 */
-	class RenderMeshInstance : public RenderObject
+	class IMZADI_API RenderMeshInstance : public RenderObject
 	{
 	public:
 		RenderMeshInstance();
@@ -21,8 +22,8 @@ namespace Imzadi
 		virtual void Render(Camera* camera, RenderPass renderPass) override;
 		virtual void GetWorldBoundingSphere(Vector3& center, double& radius) const override;
 
-		void SetRenderMesh(Reference<RenderMeshAsset> mesh) { this->mesh = mesh; }
-		RenderMeshAsset* GetRenderMesh() { return this->mesh.Get(); }
+		void SetRenderMesh(Reference<RenderMeshAsset> mesh, int lodNumber = 0);
+		RenderMeshAsset* GetRenderMesh(int lodNumber = 0);
 		void SetBoundingBox(const AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 		void SetObjectToWorldTransform(const Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
 		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
@@ -40,7 +41,7 @@ namespace Imzadi
 		void SetSurfaceProperties(const SurfaceProperties& surfaceProperties) { this->surfaceProperties = surfaceProperties; }
 
 	protected:
-		Reference<RenderMeshAsset> mesh;
+		std::map<int, Reference<RenderMeshAsset>> meshMap;
 		AxisAlignedBoundingBox objectSpaceBoundingBox;
 		Transform objectToWorld;
 		SurfaceProperties surfaceProperties;

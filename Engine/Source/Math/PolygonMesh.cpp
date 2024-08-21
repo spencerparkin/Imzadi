@@ -1,5 +1,6 @@
 #include "PolygonMesh.h"
 #include "Polygon.h"
+#include "Graph.h"
 
 using namespace Imzadi;
 
@@ -73,16 +74,16 @@ void PolygonMesh::Clear()
 	this->polygonArray.clear();
 }
 
-void PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
+bool PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 {
 	this->Clear();
 
 	std::list<Triangle> triangleList;
 
-	auto findInitialTetrahedron = [&pointArray, &triangleList, this]()
+	auto findInitialTetrahedron = [&pointArray, &triangleList, this]() -> bool
 	{
 		// Is there a better approach to this problem?  This looks really
-		// slow, but we only loop until we find a negative determinant.
+		// slow, but we only loop until we find a non-negative determinant.
 		for (int i = 0; i < (signed)pointArray.size(); i++)
 		{
 			const Vector3& vertexA = pointArray[i];
@@ -114,27 +115,42 @@ void PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 
 						double det = xAxis.Cross(yAxis).Dot(zAxis);
 
-						if (det < 0.0)
+						if (det != 0.0)
 						{
 							this->vertexArray.push_back(vertexA);
 							this->vertexArray.push_back(vertexB);
 							this->vertexArray.push_back(vertexC);
 							this->vertexArray.push_back(vertexD);
+						}
 
+						if (det < 0.0)
+						{
 							triangleList.push_back(Triangle(0, 1, 2));
 							triangleList.push_back(Triangle(0, 2, 3));
 							triangleList.push_back(Triangle(0, 3, 1));
 							triangleList.push_back(Triangle(1, 3, 2));
 
-							return;
+							return true;
+						}
+						else if (det > 0.0)
+						{
+							triangleList.push_back(Triangle(0, 2, 1));
+							triangleList.push_back(Triangle(0, 3, 2));
+							triangleList.push_back(Triangle(0, 1, 3));
+							triangleList.push_back(Triangle(1, 2, 3));
+
+							return true;
 						}
 					}
 				}
 			}
 		}
+
+		return false;
 	};
 
-	findInitialTetrahedron();
+	if (!findInitialTetrahedron())
+		return false;
 
 	std::list<Vector3> pointList;
 	for (const Vector3& point : pointArray)
@@ -198,16 +214,25 @@ void PolygonMesh::GenerateConvexHull(const std::vector<Vector3>& pointArray)
 		triangle.ToPolygon(polygon);
 		this->polygonArray.push_back(polygon);
 	}
+
+	return true;
 }
 
-void PolygonMesh::DecreaseDetail(double percentage)
+bool PolygonMesh::ReduceEdgeCount(int numEdgesToRemove)
 {
-	// TODO: Write this.  Use quadratic interpolation.
-}
+	if (numEdgesToRemove <= 0)
+		return true;
 
-void PolygonMesh::IncreaseDetail(double percentage)
-{
-	// TODO: Write this.  Use quadratic interpolation.
+	Graph graph;
+	if (!graph.FromPolygohMesh(*this))
+		return false;
+
+	graph.ReduceEdgeCount(numEdgesToRemove);
+
+	if (!graph.ToPolygonMesh(*this))
+		return false;
+
+	return true;
 }
 
 void PolygonMesh::CalculateUnion(const PolygonMesh& polygonMeshA, const PolygonMesh& polygonMeshB)
@@ -233,6 +258,23 @@ void PolygonMesh::SimplifyFaces(bool mustBeConvex, double epsilon /*= 1e-6*/)
 	Imzadi::Polygon::Compress(standalonePolygonArray, mustBeConvex);
 
 	this->FromStandalonePolygonArray(standalonePolygonArray, epsilon);
+}
+
+void PolygonMesh::Reduce()
+{
+	int i = 0;
+	while (i < (signed)this->polygonArray.size())
+	{
+		Polygon& polygon = this->polygonArray[i];
+		if (polygon.vertexArray.size() >= 3)
+			i++;
+		else
+		{
+			if (i != this->polygonArray.size() - 1)
+				this->polygonArray[i] = this->polygonArray[this->polygonArray.size() - 1];
+			this->polygonArray.pop_back();
+		}
+	}
 }
 
 void PolygonMesh::TessellateFaces(double epsilon /*= 1e-6*/)
@@ -267,6 +309,29 @@ void PolygonMesh::FromStandalonePolygonArray(const std::vector<Imzadi::Polygon>&
 		polygon.FromStandalonePolygon(standalonePolygon, this, epsilon);
 		this->polygonArray.push_back(polygon);
 	}
+}
+
+bool PolygonMesh::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal) const
+{
+	alpha = std::numeric_limits<double>::max();
+
+	for (const Polygon& polygon : this->polygonArray)
+	{
+		Imzadi::Polygon standalonePolygon;
+		polygon.ToStandalonePolygon(standalonePolygon, this);
+		double polygonAlpha = 0.0;
+		Vector3 polygonNormal;
+		if (standalonePolygon.RayCast(ray, polygonAlpha, polygonNormal))
+		{
+			if (polygonAlpha < alpha)
+			{
+				alpha = polygonAlpha;
+				unitSurfaceNormal = polygonNormal;
+			}
+		}
+	}
+
+	return alpha != std::numeric_limits<double>::max();
 }
 
 void PolygonMesh::Dump(std::ostream& stream) const
@@ -359,6 +424,29 @@ void PolygonMesh::Polygon::FromStandalonePolygon(const Imzadi::Polygon& polygon,
 
 	for (const Vector3& vertex : polygon.vertexArray)
 		this->vertexArray.push_back(mesh->FindOrAddVertex(vertex, epsilon));
+}
+
+int PolygonMesh::Polygon::Mod(int i) const
+{
+	i %= (int)this->vertexArray.size();
+	if (i < 0)
+		i += (int)this->vertexArray.size();
+	return i;
+}
+
+void PolygonMesh::Polygon::Reverse()
+{
+	std::vector<int> vertexStack;
+	for (int i : this->vertexArray)
+		vertexStack.push_back(i);
+
+	this->vertexArray.clear();
+	while (vertexStack.size() > 0)
+	{
+		int i = vertexStack[vertexStack.size() - 1];
+		vertexStack.pop_back();
+		this->vertexArray.push_back(i);
+	}
 }
 
 void PolygonMesh::Polygon::Dump(std::ostream& stream) const

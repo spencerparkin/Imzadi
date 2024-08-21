@@ -9,6 +9,7 @@
 #include "Collision/Shape.h"
 #include "Collision/Task.h"
 #include "Collision/Result.h"
+#include "Collision/Shapes/Capsule.h"
 
 namespace Imzadi
 {
@@ -47,7 +48,7 @@ namespace Imzadi
 		virtual void OnBipedDied();
 		virtual void OnBipedFatalLanding();
 		virtual void OnBipedAbyssFalling();
-		virtual uint64_t GetAdditionalUserFlagsForCollisionShape();
+		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
 		virtual uint32_t TickOrder() const override;
 

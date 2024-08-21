@@ -13,6 +13,7 @@ using namespace Imzadi;
 RenderMeshAsset::RenderMeshAsset()
 {
 	this->primType = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
+	this->lodRadius = std::numeric_limits<double>::max();
 }
 
 /*virtual*/ RenderMeshAsset::~RenderMeshAsset()
@@ -130,6 +131,27 @@ RenderMeshAsset::RenderMeshAsset()
 		return false;
 	}
 
+	this->lodRadius = std::numeric_limits<double>::max();
+	if (jsonDoc.HasMember("lod_radius") && jsonDoc["lod_radius"].IsFloat())
+		this->lodRadius = jsonDoc["lod_radius"].GetFloat();
+
+	if (jsonDoc.HasMember("next_lod") && jsonDoc["next_lod"].IsString())
+	{
+		std::string nextLODFile = jsonDoc["next_lod"].GetString();
+		if (!assetCache->LoadAsset(nextLODFile, asset))
+		{
+			IMZADI_LOG_ERROR("Failed to load next LOD: %s", nextLODFile.c_str());
+			return false;
+		}
+
+		this->nextLOD.SafeSet(asset.Get());
+		if (!this->nextLOD)
+		{
+			IMZADI_LOG_ERROR("Next LOD was not a render mesh.");
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -140,6 +162,7 @@ RenderMeshAsset::RenderMeshAsset()
 	this->mainPassShader.Set(nullptr);
 	this->shadowPassShader.Set(nullptr);
 	this->texture.Set(nullptr);
+	this->nextLOD.Set(nullptr);
 
 	return true;
 }
@@ -148,7 +171,15 @@ RenderMeshAsset::RenderMeshAsset()
 {
 	renderObject.Set(new RenderMeshInstance());
 	auto instance = dynamic_cast<RenderMeshInstance*>(renderObject.Get());
-	instance->SetRenderMesh(this);
+
+	int lodNumber = 0;
+	RenderMeshAsset* mesh = this;
+	while (mesh)
+	{
+		instance->SetRenderMesh(mesh, lodNumber++);
+		mesh = mesh->nextLOD.Get();
+	}
+
 	instance->SetBoundingBox(this->objectSpaceBoundingBox);
 	instance->SetObjectToWorldTransform(this->objectToWorld);
 	return true;

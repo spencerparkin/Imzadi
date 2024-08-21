@@ -27,6 +27,7 @@ public:
 	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
 	virtual void OnBipedFatalLanding() override;
 	virtual void OnBipedAbyssFalling() override;
+	virtual void ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule) override;
 
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);
