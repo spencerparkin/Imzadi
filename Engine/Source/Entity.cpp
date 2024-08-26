@@ -49,3 +49,8 @@ Entity::Entity()
 {
 	return false;
 }
+
+/*virtual*/ std::string Entity::GetInfo() const
+{
+	return "";
+}

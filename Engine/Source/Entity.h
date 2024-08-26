@@ -72,6 +72,11 @@ namespace Imzadi
 		 */
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const;
 
+		/**
+		 * This can be implimented to provide info for the info command.
+		 */
+		virtual std::string GetInfo() const;
+
 		void SetName(const std::string& name) { this->name = name; }
 		const std::string& GetName() const { return this->name; }
 

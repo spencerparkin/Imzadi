@@ -51,6 +51,7 @@ namespace Imzadi
 		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
 		virtual uint32_t TickOrder() const override;
+		virtual std::string GetInfo() const override;
 
 		void SetRestartLocation(const Vector3& restartLocation);
 		void SetRestartOrientation(const Quaternion& restartOrientation);

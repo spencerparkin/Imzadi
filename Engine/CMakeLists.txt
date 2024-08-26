@@ -74,6 +74,8 @@ set(GAME_ENGINE_SOURCES
     Source/Collision/Shapes/Sphere.h
     Source/Commands/CollisionSystemCommand.cpp
     Source/Commands/CollisionSystemCommand.h
+    Source/Commands/InfoCommand.cpp
+    Source/Commands/InfoCommand.h
     Source/Physics/System.cpp
     Source/Physics/System.h
     Source/Audio/System.cpp

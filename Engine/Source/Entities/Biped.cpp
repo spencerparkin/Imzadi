@@ -75,6 +75,15 @@ Biped::Biped()
 	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 }
 
+/*virtual*/ std::string Biped::GetInfo() const
+{
+	Transform transform;
+	this->GetTransform(transform);
+
+	std::string info = std::format("Position: <{}, {}, {}>", transform.translation.x, transform.translation.y, transform.translation.z);
+	return info;
+}
+
 /*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)
 {
 	// Make sure the render mesh faces the direction we're moving.
