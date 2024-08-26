@@ -52,9 +52,10 @@ CollisionStatsRenderObject::CollisionStatsRenderObject()
 
 	double aspectRatio = Game::Get()->GetAspectRatio();
 
+	static double scaleFactor = 0.8;
 	Transform scale;
 	scale.SetIdentity();
-	scale.matrix.SetNonUniformScale(Vector3(1.0, aspectRatio, 1.0));
+	scale.matrix.SetNonUniformScale(Vector3(scaleFactor, scaleFactor * aspectRatio, scaleFactor));
 
 	Transform transform;
 	transform.SetIdentity();
