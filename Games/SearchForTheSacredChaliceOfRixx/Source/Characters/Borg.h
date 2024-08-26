@@ -44,4 +44,5 @@ private:
 	Imzadi::Random random;
 	Imzadi::Collision::TaskID rayCastQueryTaskID;
 	Imzadi::Collision::TaskID rayCastAttackQueryTaskID;
+	std::string renderObjName;
 };
