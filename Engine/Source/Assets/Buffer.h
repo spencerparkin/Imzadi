@@ -18,6 +18,7 @@ namespace Imzadi
 
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
+		virtual bool CanBeCached() const override;
 
 		ID3D11Buffer* GetBuffer() { return this->buffer; }
 		UINT GetStride() { return this->strideBytes; }
@@ -32,6 +33,7 @@ namespace Imzadi
 		UINT strideBytes;					///< This is the byte-distance in the buffer from the start of one element to another.
 		DXGI_FORMAT componentFormat;		///< This is the format of each component of an element.
 		Reference<BareBuffer> bareBuffer;	///< This is a bare copy of the buffer, which is typically null/not-used.
+		bool canBeCached;					///< Indicates if this buffer can be shared across users.
 	};
 
 	/**

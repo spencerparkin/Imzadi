@@ -154,7 +154,7 @@ namespace Imzadi
 		 * Some assets, though, may need to be instanced every time they're loaded, and
 		 * so in such cases, false should be returned here.
 		 */
-		virtual bool CanBeCached() const { return true; }
+		virtual bool CanBeCached() const;
 
 		/**
 		 * For asset types that are meant to be instanced into renderable objects,

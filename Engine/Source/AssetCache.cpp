@@ -263,6 +263,11 @@ Asset::Asset()
 {
 }
 
+/*virtual*/ bool Asset::CanBeCached() const
+{
+	return true;
+}
+
 /*virtual*/ bool Asset::Save(rapidjson::Document& jsonDoc) const
 {
 	IMZADI_LOG_ERROR("Save no implimented.");
