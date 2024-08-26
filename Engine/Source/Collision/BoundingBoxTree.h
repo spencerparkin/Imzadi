@@ -107,10 +107,11 @@ public:
 	 * Perform a ray-cast against all collision shapes within the tree.
 	 *
 	 * @param[in] ray This is the ray with which to perform the cast.
+	 * @param[in] boundingBox If given a valid box, this is used to guide our recursion into the bounding-box tree.  This argument is optional.  If invalid, it is ignored.
 	 * @param[in] userFlagsMask The given ray is only tested against shapes with user flags that make it through this mask filter.
 	 * @param[out] rayCastResult The hit result, if any, is put into the given RayCastResult instance.  If no hit, then the result will indicate as much.
 	 */
-	void RayCast(const Ray& ray, uint64_t userFlagsMask, RayCastResult* rayCastResult) const;
+	void RayCast(const Ray& ray, const AxisAlignedBoundingBox& boundingBox, uint64_t userFlagsMask, RayCastResult* rayCastResult) const;
 
 	/**
 	 * Determine the collision status of the given shape.
@@ -169,10 +170,11 @@ private:
 	 * Descend the tree, performing a ray-cast as we go.
 	 *
 	 * @param[in] ray This is the ray with which to perform the ray-cast.
+	 * @param[in] boundingBox If a box is given, it is used to guide are recursive descent, limiting what the ray can hit.
 	 * @param[out] hitData This will contain info about what shape was hit and how, if any.
 	 * @return True is returned if and only if a hit ocurred in this node of the tree.
 	 */
-	bool RayCast(const Ray& ray, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const;
+	bool RayCast(const Ray& ray, const AxisAlignedBoundingBox* boundingBox, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const;
 
 private:
 	AxisAlignedBoundingBox box;							///< This is the space represented by this node.

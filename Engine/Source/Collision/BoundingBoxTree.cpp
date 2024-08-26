@@ -182,7 +182,7 @@ void BoundingBoxTree::DebugRender(DebugRenderResult* renderResult) const
 		this->rootNode->DebugRender(renderResult);
 }
 
-void BoundingBoxTree::RayCast(const Ray& ray, uint64_t userFlagsMask, RayCastResult* rayCastResult) const
+void BoundingBoxTree::RayCast(const Ray& ray, const AxisAlignedBoundingBox& boundingBox, uint64_t userFlagsMask, RayCastResult* rayCastResult) const
 {
 	RayCastResult::HitData hitData;
 	hitData.shapeID = 0;
@@ -190,7 +190,7 @@ void BoundingBoxTree::RayCast(const Ray& ray, uint64_t userFlagsMask, RayCastRes
 	hitData.shape = nullptr;
 
 	if (this->rootNode && ray.HitsOrOriginatesIn(this->rootNode->box))
-		this->rootNode->RayCast(ray, userFlagsMask, hitData);
+		this->rootNode->RayCast(ray, (boundingBox.IsValid() ? &boundingBox : nullptr), userFlagsMask, hitData);
 
 	rayCastResult->SetHitData(hitData);
 }
@@ -305,7 +305,7 @@ void BoundingBoxNode::DebugRender(DebugRenderResult* renderResult) const
 		childNode->DebugRender(renderResult);
 }
 
-bool BoundingBoxNode::RayCast(const Ray& ray, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const
+bool BoundingBoxNode::RayCast(const Ray& ray, const AxisAlignedBoundingBox* boundingBox, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const
 {
 	struct ChildHit
 	{
@@ -316,6 +316,13 @@ bool BoundingBoxNode::RayCast(const Ray& ray, uint32_t userFlagsMask, RayCastRes
 	std::vector<ChildHit> childHitArray;
 	for (const BoundingBoxNode* childNode : this->childNodeArray)
 	{
+		if (boundingBox)
+		{
+			AxisAlignedBoundingBox intersection;
+			if (!intersection.Intersect(childNode->box, *boundingBox))
+				continue;
+		}
+
 		if (childNode->box.ContainsPoint(ray.origin))
 			childHitArray.push_back(ChildHit{ childNode, 0.0 });
 		else
@@ -330,11 +337,10 @@ bool BoundingBoxNode::RayCast(const Ray& ray, uint32_t userFlagsMask, RayCastRes
 		return childHitA.alpha < childHitB.alpha;
 	});
 
-	// The main optimization here is the early-out, which allows us to disregard branches of the tree.
 	for (const ChildHit& childHit : childHitArray)
 	{
 		const BoundingBoxNode* childNode = childHit.childNode;
-		if (childNode->RayCast(ray, userFlagsMask, hitData))
+		if (childNode->RayCast(ray, boundingBox, userFlagsMask, hitData))
 			break;
 	}
 

@@ -122,6 +122,8 @@ set(GAME_ENGINE_SOURCES
     Source/Math/PolygonMesh.h
     Source/Math/Graph.cpp
     Source/Math/Graph.h
+    Source/Math/Random.cpp
+    Source/Math/Random.h
     Source/RenderObjects/AnimatedMeshInstance.cpp
     Source/RenderObjects/AnimatedMeshInstance.h
     Source/RenderObjects/DebugLines.cpp

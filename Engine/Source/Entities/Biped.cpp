@@ -193,7 +193,9 @@ Biped::Biped()
 		}
 		case TickPass::PARALLEL_WORK:
 		{
-			this->ManageAnimation(deltaTime);
+			if (!this->ManageAnimation(deltaTime))
+				return false;
+
 			break;
 		}
 		case TickPass::RESOLVE_COLLISIONS:
@@ -253,13 +255,13 @@ Biped::Biped()
 	return true;
 }
 
-/*virtual*/ void Biped::ManageAnimation(double deltaTime)
+/*virtual*/ bool Biped::ManageAnimation(double deltaTime)
 {
 	// Make sure we're playing an appropriate animation and pump the animation system.
 
 	auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 	if (!animatedMesh)
-		return;
+		return true;
 	
 	bool canLoop = true;
 	double animationRate = 1.0;
@@ -310,15 +312,23 @@ Biped::Biped()
 	{
 		if (this->animationMode == AnimationMode::DEATH_BY_FATAL_LANDING || this->animationMode == AnimationMode::DEATH_BY_ABYSS_FALLING)
 		{
-			this->OnBipedDied();
+			if (!this->OnBipedDied())
+				return false;
 		}
 	}
+
+	return true;
 }
 
-/*virtual*/ void Biped::OnBipedDied()
+/*virtual*/ bool Biped::OnBipedDied()
 {
 	if (this->canRestart)
+	{
 		this->Reset();
+		return true;
+	}
+
+	return false;
 }
 
 /*virtual*/ void Biped::OnBipedFatalLanding()

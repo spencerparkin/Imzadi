@@ -45,7 +45,7 @@ namespace Imzadi
 		virtual void IntegrateVelocity(const Vector3& acceleration, double deltaTime);
 		virtual void IntegratePosition(double deltaTime);
 		virtual bool ConstraintVelocityWithGround();
-		virtual void OnBipedDied();
+		virtual bool OnBipedDied();
 		virtual void OnBipedFatalLanding();
 		virtual void OnBipedAbyssFalling();
 		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
@@ -77,7 +77,7 @@ namespace Imzadi
 
 		void SetAnimationMode(AnimationMode newMode);
 
-		virtual void ManageAnimation(double deltaTime);
+		virtual bool ManageAnimation(double deltaTime);
 
 		void HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* collisionResult);
 
