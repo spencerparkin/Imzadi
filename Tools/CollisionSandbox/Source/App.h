@@ -15,6 +15,7 @@ public:
 	virtual bool OnInit(void) override;
 	virtual int OnExit(void) override;
 
+	Frame* GetFrame() { return this->frame; }
 	Imzadi::Collision::System* GetCollisionSystem() { return this->collisionSystem; }
 	std::vector<Imzadi::Polygon>& GetPolygonArray() { return this->polygonArray; }
 

@@ -14,7 +14,7 @@ XInput::XInput(int playerNumber) : Input(playerNumber)
 {
 }
 
-/*virtual*/ bool XInput::Setup()
+/*virtual*/ bool XInput::Setup(HWND windowHandle)
 {
 	XINPUT_STATE state;
 	DWORD result = XInputGetState(this->playerNumber, &state);
@@ -169,6 +169,8 @@ DWORD XInput::GetButtonFlagForButton(Button button)
 		return XINPUT_GAMEPAD_RIGHT_THUMB;
 	case Button::START:
 		return XINPUT_GAMEPAD_START;
+	case Button::BACK:
+		return XINPUT_GAMEPAD_BACK;
 	}
 
 	return 0;

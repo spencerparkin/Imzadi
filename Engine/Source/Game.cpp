@@ -182,16 +182,16 @@ DebugLines* Game::GetDebugLines()
 		return false;
 	}
 
-	if (!this->inputSystem.Setup())
-	{
-		IMZADI_LOG_ERROR("Failed to initialize input system.");
-		MessageBox(NULL, TEXT("Failed to initialize input system!"), TEXT("Error!"), MB_ICONERROR | MB_OK);
-		return false;
-	}
-
 	if (!this->CreateRenderWindow())
 	{
 		IMZADI_LOG_ERROR("Failed to create (or acquire) render window.");
+		return false;
+	}
+
+	if (!this->inputSystem.Setup(this->mainWindowHandle))
+	{
+		IMZADI_LOG_ERROR("Failed to initialize input system.");
+		MessageBox(NULL, TEXT("Failed to initialize input system!"), TEXT("Error!"), MB_ICONERROR | MB_OK);
 		return false;
 	}
 
@@ -480,10 +480,10 @@ bool Game::RecreateViews()
 
 	this->debugLines->Clear();
 
-	this->PumpWindowsMessages();
-
 	this->inputSystem.Tick(this->deltaTimeSeconds);
 	this->audioSystem.Tick(this->deltaTimeSeconds);
+
+	this->PumpWindowsMessages();
 
 	this->Tick(TickPass::MOVE_UNCONSTRAINTED);
 	this->collisionSystem.FlushAllTasks();
@@ -681,6 +681,11 @@ void Game::AdvanceEntities(TickPass tickPass)
 				this->ToggleCollisionStats();
 			else if (wParam == VK_F7)
 				this->ToggleConsole();
+			break;
+		}
+		case WM_INPUT:
+		{
+			this->inputSystem.HandleInputMessage(wParam, lParam);
 			break;
 		}
 		case WM_DESTROY:

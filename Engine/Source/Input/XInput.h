@@ -1,10 +1,6 @@
 #pragma once
 
 #include "Input.h"
-#if !defined WIN32_LEAN_AND_MEAN
-#	define WIN32_LEAN_AND_MEAN
-#endif
-#include <Windows.h>
 #include <Xinput.h>
 
 namespace Imzadi
@@ -18,7 +14,7 @@ namespace Imzadi
 		XInput(int playerNumber);
 		virtual ~XInput();
 
-		virtual bool Setup() override;
+		virtual bool Setup(HWND windowHandle) override;
 		virtual bool Shutdown() override;
 		virtual void Update(double deltaTime) override;
 		virtual Vector2 GetAnalogJoyStick(Button button) override;

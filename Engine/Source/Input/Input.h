@@ -2,6 +2,10 @@
 
 #include "Defines.h"
 #include "Math/Vector2.h"
+#if !defined WIN32_LEAN_AND_MEAN
+#	define WIN32_LEAN_AND_MEAN
+#endif
+#include <Windows.h>
 
 namespace Imzadi
 {
@@ -28,7 +32,7 @@ namespace Imzadi
 		R_SHOULDER,
 		L_TRIGGER,
 		R_TRIGGER,
-		SELECT,
+		BACK,
 		START
 	};
 
@@ -42,14 +46,26 @@ namespace Imzadi
 		Input(int playerNumber);
 		virtual ~Input();
 
-		virtual bool Setup() = 0;
+		/**
+		 * This is where the input class derivative should try to detect and possibly
+		 * connect to the a specific kind of input device, if present.
+		 */
+		virtual bool Setup(HWND windowHandle) = 0;
 
+		/**
+		 * Any clean-up should happen here.
+		 */
 		virtual bool Shutdown() = 0;
 
 		/**
 		 * This is called by the input system class each tick.
 		 */
 		virtual void Update(double deltaTime) = 0;
+
+		/**
+		 * Optionally override this if applicable.  This is where you can handle the WM_INPUT message.
+		 */
+		virtual void HandleInputMessage(WPARAM wparam, LPARAM lParam);
 
 		/**
 		 * Get the XY location of a thumb-stick on a controller.

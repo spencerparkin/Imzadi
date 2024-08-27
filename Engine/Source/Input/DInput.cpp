@@ -10,7 +10,7 @@ DInput::DInput(int playerNumber) : Input(playerNumber)
 {
 }
 
-/*virtual*/ bool DInput::Setup()
+/*virtual*/ bool DInput::Setup(HWND windowHandle)
 {
 	return false;
 }

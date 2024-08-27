@@ -14,18 +14,18 @@ InputSystem::InputSystem()
 {
 }
 
-bool InputSystem::Setup()
+bool InputSystem::Setup(HWND windowHandle)
 {
 	int playerNumber = 0;
 	while (true)
 	{
-		Player* player = this->MakePlayer<DInput>(playerNumber);
+		Player* player = this->MakePlayer<DInput>(playerNumber, windowHandle);
 		if (!player)
 		{
-			player = this->MakePlayer<XInput>(playerNumber);
+			player = this->MakePlayer<XInput>(playerNumber, windowHandle);
 			if (!player)
 			{
-				player = this->MakePlayer<PCInput>(playerNumber);
+				player = this->MakePlayer<PCInput>(playerNumber, windowHandle);
 				if (!player)
 					break;
 			}
@@ -56,6 +56,15 @@ void InputSystem::Tick(double deltaTime)
 	{
 		Player* player = pair.second;
 		player->input->Update(deltaTime);
+	}
+}
+
+void InputSystem::HandleInputMessage(WPARAM wParam, LPARAM lParam)
+{
+	for (auto pair : this->playerMap)
+	{
+		Player* player = pair.second;
+		player->input->HandleInputMessage(wParam, lParam);
 	}
 }
 

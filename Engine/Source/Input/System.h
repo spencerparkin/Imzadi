@@ -19,11 +19,13 @@ namespace Imzadi
 		InputSystem();
 		virtual ~InputSystem();
 
-		bool Setup();
+		bool Setup(HWND windowHandle);
 
 		bool Shutdown();
 
 		void Tick(double deltaTime);
+
+		void HandleInputMessage(WPARAM wParam, LPARAM lParam);
 
 		Input* GetInput(int playerNumber, const std::string& user = "");
 
@@ -48,11 +50,11 @@ namespace Imzadi
 		};
 
 		template<typename T>
-		Player* MakePlayer(int playerNumber)
+		Player* MakePlayer(int playerNumber, HWND windowHandle)
 		{
 			auto player = new Player();
 			player->input = new T(playerNumber);
-			if (!player->input->Setup())
+			if (!player->input->Setup(windowHandle))
 			{
 				delete player->input;
 				delete player;

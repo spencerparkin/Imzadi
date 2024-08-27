@@ -10,3 +10,7 @@ Input::Input(int playerNumber)
 /*virtual*/ Input::~Input()
 {
 }
+
+/*virtual*/ void Input::HandleInputMessage(WPARAM wparam, LPARAM lParam)
+{
+}

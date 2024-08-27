@@ -13,7 +13,7 @@ namespace Imzadi
 		DInput(int playerNumber);
 		virtual ~DInput();
 
-		virtual bool Setup() override;
+		virtual bool Setup(HWND windowHandle) override;
 		virtual bool Shutdown() override;
 		virtual void Update(double deltaTime) override;
 		virtual Vector2 GetAnalogJoyStick(Button button) override;

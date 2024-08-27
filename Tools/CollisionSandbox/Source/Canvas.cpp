@@ -1,5 +1,6 @@
 #include "Canvas.h"
 #include "App.h"
+#include "Frame.h"
 #include "Collision/System.h"
 #include "Collision/Command.h"
 #include "Collision/Query.h"
@@ -15,7 +16,7 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
-	this->inputSystem.Setup();
+	this->inputSystem.Setup(wxGetApp().GetFrame()->GetHWND());
 
 	this->targetShapes = false;
 	this->targetShapeHitLine = nullptr;
