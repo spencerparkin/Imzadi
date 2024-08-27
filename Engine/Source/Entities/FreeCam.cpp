@@ -47,7 +47,7 @@ void FreeCam::SetCamera(Camera* camera)
 	if (tickPass != TickPass::PARALLEL_WORK)
 		return true;
 
-	Controller* controller = Game::Get()->GetController("FreeCam");
+	Input* controller = Game::Get()->GetController("FreeCam");
 	if (!controller)
 		return true;
 
@@ -56,17 +56,17 @@ void FreeCam::SetCamera(Camera* camera)
 	Vector3 xAxis, yAxis, zAxis;
 	cameraToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
 	
-	if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
+	if (controller->ButtonPressed(Button::START, true))
 		this->SetEnabled(false);
 
-	if (controller->ButtonPressed(XINPUT_GAMEPAD_RIGHT_THUMB))
+	if (controller->ButtonPressed(Button::R_JOY_STICK))
 	{
 		auto event = new FreeCamTeleportEvent();
 		event->transform = cameraToWorld;
 		Game::Get()->GetEventSystem()->SendEvent("FreeCam", event);
 	}
 
-	if (controller->ButtonPressed(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	if (controller->ButtonPressed(Button::R_SHOULDER))
 	{
 		switch (this->strafeMode)
 		{
@@ -79,7 +79,7 @@ void FreeCam::SetCamera(Camera* camera)
 		}
 	}
 
-	if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+	if (controller->ButtonPressed(Button::L_SHOULDER))
 	{
 		switch (this->speed)
 		{
@@ -95,8 +95,7 @@ void FreeCam::SetCamera(Camera* camera)
 		}
 	}
 
-	Vector2 leftStick;
-	controller->GetAnalogJoyStick(Controller::Side::LEFT, leftStick.x, leftStick.y);
+	Vector2 leftStick = controller->GetAnalogJoyStick(Button::L_JOY_STICK);
 
 	Vector3 strafeDelta(0.0, 0.0, 0.0);
 
@@ -112,8 +111,7 @@ void FreeCam::SetCamera(Camera* camera)
 
 	cameraToWorld.translation += strafeDelta;
 
-	Vector2 rightStick;
-	controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
+	Vector2 rightStick = controller->GetAnalogJoyStick(Button::R_JOY_STICK);
 
 	double headingDelta = -rightStick.x * this->GetRotationRate() * deltaTime;
 	double pitchDelta = rightStick.y * this->GetRotationRate() * deltaTime;

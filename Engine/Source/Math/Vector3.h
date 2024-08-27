@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.h"
+#include "Vector2.h"
 #include <math.h>
 #include <vector>
 #include <istream>
@@ -42,6 +43,13 @@ namespace Imzadi
 			this->z = vector.z;
 		}
 
+		Vector3(const Vector2& vector)
+		{
+			this->x = vector.x;
+			this->y = vector.y;
+			this->z = 0.0;
+		}
+
 		virtual ~Vector3()
 		{
 		}
@@ -51,6 +59,13 @@ namespace Imzadi
 			this->x = vector.x;
 			this->y = vector.y;
 			this->z = vector.z;
+		}
+
+		void operator=(const Vector2& vector)
+		{
+			this->x = vector.x;
+			this->y = vector.y;
+			this->z = 0.0;
 		}
 
 		void operator+=(const Vector3& vector)

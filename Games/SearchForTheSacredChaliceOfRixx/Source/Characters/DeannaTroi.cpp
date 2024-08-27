@@ -112,7 +112,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				{
 					auto action = new TeleportToLevelAction(this);
 					action->targetLevel = triggerBoxName.substr(6);
-					this->actionManager.BindAction(XINPUT_GAMEPAD_A, action);
+					this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
 				}
 
 				break;
@@ -122,7 +122,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				IMZADI_LOG_INFO("Exited trigger box \"%s\".", triggerBoxName.c_str());
 
 				if (triggerBoxName.find("JumpTo") == 0)
-					this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
+					this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
 
 				break;
 			}
@@ -134,11 +134,11 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
 	Character::AccumulateForces(netForce);
 
-	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 	if (!controller)
 		return;
 
-	if (this->inContactWithGround && controller->ButtonPressed(XINPUT_GAMEPAD_Y))
+	if (this->inContactWithGround && controller->ButtonPressed(Imzadi::Button::Y_BUTTON))
 	{
 		Imzadi::Vector3 jumpForce(0.0, 1000.0, 0.0);
 		netForce += jumpForce;
@@ -156,9 +156,9 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			return;
 
 		Imzadi::Vector2 leftStick(0.0, 0.0);
-		Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+		Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 		if (controller)
-			controller->GetAnalogJoyStick(Imzadi::Controller::Side::LEFT, leftStick.x, leftStick.y);
+			leftStick = controller->GetAnalogJoyStick(Imzadi::Button::L_JOY_STICK);
 
 		Imzadi::Camera* camera = followCam->GetCamera();
 		if (!camera)
@@ -244,18 +244,18 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 								{
 									unbindTalkActionIfAny = false;
 
-									if (!this->actionManager.IsBound(XINPUT_GAMEPAD_A))
+									if (!this->actionManager.IsBound(Imzadi::Button::A_BUTTON))
 									{
 										auto action = new TalkToEntityAction(this);
 										action->targetEntity = entity->GetName();
-										this->actionManager.BindAction(XINPUT_GAMEPAD_A, action);
+										this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
 									}
 								}
 							}
 						}
 
-						if (unbindTalkActionIfAny && dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(XINPUT_GAMEPAD_A)))
-							this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
+						if (unbindTalkActionIfAny && dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(Imzadi::Button::A_BUTTON)))
+							this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
 					}
 
 					delete result;
@@ -293,13 +293,13 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 
 /*virtual*/ bool DeannaTroi::HangingOnToZipLine()
 {
-	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 	if (!controller)
 		return false;
 
 	// A player jumps to grab a zip-line and then remains attached
 	// to it until they let go of the jump button.
-	return controller->ButtonDown(XINPUT_GAMEPAD_Y);		// TODO: Create a bindings system where we use the "jump" button instead of a controller-specitic button?
+	return controller->ButtonDown(Imzadi::Button::Y_BUTTON);
 }
 
 /*virtual*/ std::string DeannaTroi::GetZipLineAnimationName()

@@ -14,7 +14,7 @@
 #include "Math/Vector3.h"
 #include "Math/Vector4.h"
 #include "Math/Quaternion.h"
-#include "Controller.h"
+#include "Input/System.h"
 #include "Collision/System.h"
 #include "Audio/System.h"
 #include "EventSystem.h"
@@ -193,7 +193,7 @@ namespace Imzadi
 		 * @param[in] controllerUser This is who's asking for the controller interface.
 		 * @return A pointer to the controller interface is returned if the given user is allowed to use it; null, otherwise.
 		 */
-		Controller* GetController(const std::string& controllerUser);
+		Input* GetController(const std::string& controllerUser);
 
 		/**
 		 * Make the given user the current user that is allowed to get access
@@ -345,8 +345,7 @@ namespace Imzadi
 		LightParams lightParams;
 		std::list<Reference<Entity>> spawnedEntityQueue;
 		std::list<Reference<Entity>> tickingEntityList;
-		Controller controller;
-		std::vector<std::string> controllerUserStack;
+		InputSystem inputSystem;
 		Collision::System collisionSystem;
 		AudioSystem audioSystem;
 		EventSystem eventSystem;

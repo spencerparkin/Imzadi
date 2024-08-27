@@ -19,7 +19,7 @@ using namespace Imzadi;
 
 Game* Game::gameSingleton = nullptr;
 
-Game::Game(HINSTANCE instance) : controller(0)
+Game::Game(HINSTANCE instance)
 {
 	this->accelerationDuetoGravity = 40.0;
 	this->collisionSystemDebugDrawFlags = 0;
@@ -179,6 +179,13 @@ DebugLines* Game::GetDebugLines()
 	if (!this->PreInit())
 	{
 		IMZADI_LOG_ERROR("Pre-initialization failed.");
+		return false;
+	}
+
+	if (!this->inputSystem.Setup())
+	{
+		IMZADI_LOG_ERROR("Failed to initialize input system.");
+		MessageBox(NULL, TEXT("Failed to initialize input system!"), TEXT("Error!"), MB_ICONERROR | MB_OK);
 		return false;
 	}
 
@@ -475,7 +482,7 @@ bool Game::RecreateViews()
 
 	this->PumpWindowsMessages();
 
-	this->controller.Update();
+	this->inputSystem.Tick(this->deltaTimeSeconds);
 	this->audioSystem.Tick(this->deltaTimeSeconds);
 
 	this->Tick(TickPass::MOVE_UNCONSTRAINTED);
@@ -749,34 +756,24 @@ void Game::ToggleRenderObject(const std::string& name, std::function<RenderObjec
 	}
 }
 
-Controller* Game::GetController(const std::string& controllerUser)
+Input* Game::GetController(const std::string& controllerUser)
 {
-	if (controllerUser == this->GetControllerUser())
-		return &this->controller;
-
-	return nullptr;
+	return this->inputSystem.GetInput(0, controllerUser);
 }
 
 void Game::PushControllerUser(const std::string& controllerUser)
 {
-	if (this->GetControllerUser() != controllerUser)
-		this->controllerUserStack.push_back(controllerUser);
+	this->inputSystem.PushUser(0, controllerUser);
 }
 
 std::string Game::GetControllerUser()
 {
-	if (this->controllerUserStack.size() == 0)
-		return "";
-
-	return this->controllerUserStack[this->controllerUserStack.size() - 1];
+	return this->inputSystem.GetCurrentUser(0);
 }
 
 std::string Game::PopControllerUser()
 {
-	std::string controllerUser = this->GetControllerUser();
-	if (this->controllerUserStack.size() > 0)
-		this->controllerUserStack.pop_back();
-	return controllerUser;
+	return this->inputSystem.PopUser(0);
 }
 
 /*virtual*/ void Game::Tick(TickPass tickPass)
@@ -823,6 +820,8 @@ void Game::ShutdownAllEntities()
 
 	// Make sure audio stops before all audio assets are freed.
 	this->audioSystem.Shutdown();
+
+	this->inputSystem.Shutdown();
 
 	this->ShutdownAllEntities();
 

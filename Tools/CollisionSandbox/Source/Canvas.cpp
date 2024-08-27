@@ -13,8 +13,10 @@ using namespace Imzadi;
 
 int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
-Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize), controller(0)
+Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
+	this->inputSystem.Setup();
+
 	this->targetShapes = false;
 	this->targetShapeHitLine = nullptr;
 	this->debugDrawFlags = IMZADI_DRAW_FLAG_SHAPES;
@@ -38,6 +40,8 @@ Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, w
 {
 	delete this->renderContext;
 	delete this->targetShapeHitLine;
+	
+	this->inputSystem.Shutdown();
 }
 
 void Canvas::OnPaint(wxPaintEvent& event)
@@ -277,12 +281,16 @@ void Canvas::OnKeyPressed(wxKeyEvent& event)
 
 void Canvas::Tick()
 {
-	this->controller.Update();
+	this->inputSystem.Tick(0.0);
 
-	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_X))
+	Imzadi::Input* controller = this->inputSystem.GetInput(0);
+	if (!controller)
+		return;
+
+	if (controller->ButtonPressed(Imzadi::Button::X_BUTTON))
 		this->targetShapes = !this->targetShapes;
 
-	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_RIGHT_SHOULDER))
+	if (controller->ButtonPressed(Imzadi::Button::R_SHOULDER))
 	{
 		switch (this->strafeMode)
 		{
@@ -295,7 +303,7 @@ void Canvas::Tick()
 		}
 	}
 
-	if (this->controller.ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+	if (controller->ButtonPressed(Imzadi::Button::L_SHOULDER))
 	{
 		switch (this->controllerSensativity)
 		{
@@ -314,11 +322,8 @@ void Canvas::Tick()
 	SensativityParams sensativityParams;
 	this->GetSensativityParams(sensativityParams);
 
-	Vector3 leftStickVector;
-	this->controller.GetAnalogJoyStick(Controller::Side::LEFT, leftStickVector.x, leftStickVector.y);
-
-	Vector3 rightStickVector;
-	this->controller.GetAnalogJoyStick(Controller::Side::RIGHT, rightStickVector.x, rightStickVector.y);
+	Vector3 leftStickVector = controller->GetAnalogJoyStick(Imzadi::Button::L_JOY_STICK);
+	Vector3 rightStickVector = controller->GetAnalogJoyStick(Imzadi::Button::R_JOY_STICK);
 
 	Vector3 xAxis, yAxis, zAxis;
 	this->camera.GetCameraFrame(xAxis, yAxis, zAxis);
@@ -391,7 +396,7 @@ void Canvas::Tick()
 			delete result;
 		}
 
-		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_Y))
+		if (controller->ButtonPressed(Imzadi::Button::Y_BUTTON))
 		{
 			this->SetSelectedShape(hitShapeID);
 		}
@@ -399,10 +404,10 @@ void Canvas::Tick()
 
 	if (this->selectedShapeID != 0)
 	{
-		bool dpadDown = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_DOWN);
-		bool dpadUp = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_UP);
-		bool dpadLeft = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_LEFT);
-		bool dpadRight = this->controller.ButtonDown(XINPUT_GAMEPAD_DPAD_RIGHT);
+		bool dpadDown = controller->ButtonDown(Imzadi::Button::DPAD_DOWN);
+		bool dpadUp = controller->ButtonDown(Imzadi::Button::DPAD_UP);
+		bool dpadLeft = controller->ButtonDown(Imzadi::Button::DPAD_LEFT);
+		bool dpadRight = controller->ButtonDown(Imzadi::Button::DPAD_RIGHT);
 
 		if (dpadDown || dpadUp || dpadLeft || dpadRight)
 		{
@@ -454,7 +459,7 @@ void Canvas::Tick()
 			}
 		}
 
-		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_A))
+		if (controller->ButtonPressed(Imzadi::Button::A_BUTTON))
 		{
 			this->dragSelectedShape = !this->dragSelectedShape;
 
@@ -495,7 +500,7 @@ void Canvas::Tick()
 			system->IssueCommand(command);
 		}
 
-		if (this->controller.ButtonPressed(XINPUT_GAMEPAD_B))
+		if (controller->ButtonPressed(Imzadi::Button::B_BUTTON))
 		{
 			Collision::System* system = wxGetApp().GetCollisionSystem();
 

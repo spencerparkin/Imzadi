@@ -35,16 +35,16 @@ ActionManager::ActionManager()
 {
 }
 
-void ActionManager::BindAction(uint32_t inputKey, Action* action)
+void ActionManager::BindAction(Button inputKey, Action* action)
 {
 	this->UnbindAction(inputKey);
 
 	action->Init();
 
-	this->actionMap.insert(std::pair<uint32_t, Reference<Action>>(inputKey, action));
+	this->actionMap.insert(std::pair<Button, Reference<Action>>(inputKey, action));
 }
 
-void ActionManager::UnbindAction(uint32_t inputKey)
+void ActionManager::UnbindAction(Button inputKey)
 {
 	ActionMap::iterator iter = this->actionMap.find(inputKey);
 	if (iter != this->actionMap.end())
@@ -55,13 +55,13 @@ void ActionManager::UnbindAction(uint32_t inputKey)
 	}
 }
 
-bool ActionManager::IsBound(uint32_t inputKey)
+bool ActionManager::IsBound(Button inputKey)
 {
 	ActionMap::iterator iter = this->actionMap.find(inputKey);
 	return iter != this->actionMap.end();
 }
 
-Action* ActionManager::GetBoundAction(uint32_t inputKey)
+Action* ActionManager::GetBoundAction(Button inputKey)
 {
 	ActionMap::iterator iter = this->actionMap.find(inputKey);
 	if (iter == this->actionMap.end())
@@ -72,16 +72,16 @@ Action* ActionManager::GetBoundAction(uint32_t inputKey)
 
 void ActionManager::Tick(double deltaTime)
 {
-	Imzadi::Controller* controller = Game::Get()->GetController(this->controllerUser);
+	Imzadi::Input* controller = Game::Get()->GetController(this->controllerUser);
 	if (!controller)
 		return;
 
-	std::vector<uint32_t> unbindArray;
+	std::vector<Button> unbindArray;
 
 	for (auto pair : this->actionMap)
 	{
 		Action* action = pair.second;
-		uint32_t inputKey = pair.first;
+		Button inputKey = pair.first;
 
 		action->Tick(deltaTime);
 
@@ -92,7 +92,7 @@ void ActionManager::Tick(double deltaTime)
 		}
 	}
 
-	for (uint32_t inputKey : unbindArray)
+	for (Button inputKey : unbindArray)
 		this->UnbindAction(inputKey);
 }
 

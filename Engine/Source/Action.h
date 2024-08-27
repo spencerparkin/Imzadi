@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Reference.h"
+#include "Input/Input.h"
 #include <unordered_map>
 
 namespace Imzadi
@@ -54,22 +55,22 @@ namespace Imzadi
 		 * Bind the given action to the given controller button.
 		 * Anything that was already bound to that key is unbound.
 		 */
-		void BindAction(uint32_t inputKey, Action* action);
+		void BindAction(Button inputKey, Action* action);
 
 		/**
 		 * Unbind anything bound to the given controller button.
 		 */
-		void UnbindAction(uint32_t inputKey);
+		void UnbindAction(Button inputKey);
 
 		/**
 		 * Return true if and only if the given input key is already bound to an action.
 		 */
-		bool IsBound(uint32_t inputKey);
+		bool IsBound(Button inputKey);
 
 		/**
 		 * Get the action, if any, bound to the given input key.
 		 */
-		Action* GetBoundAction(uint32_t inputKey);
+		Action* GetBoundAction(Button inputKey);
 
 		/**
 		 * This doesn't just tick the currently bound actions.  It also
@@ -89,7 +90,7 @@ namespace Imzadi
 	private:
 		std::string controllerUser;
 
-		typedef std::unordered_map<uint32_t, Reference<Action>> ActionMap;
+		typedef std::unordered_map<Button, Reference<Action>> ActionMap;
 		ActionMap actionMap;
 	};
 }

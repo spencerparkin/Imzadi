@@ -14,8 +14,6 @@ set(GAME_ENGINE_SOURCES
     Source/Reference.h
     Source/Scene.cpp
     Source/Scene.h
-    Source/Controller.cpp
-    Source/Controller.h
     Source/Log.cpp
     Source/Log.h
     Source/Action.cpp
@@ -30,6 +28,16 @@ set(GAME_ENGINE_SOURCES
     Source/Clock.h
     Source/Command.cpp
     Source/Command.h
+    Source/Input/Input.cpp
+    Source/Input/Input.h
+    Source/Input/DInput.cpp
+    Source/Input/DInput.h
+    Source/Input/PCInput.cpp
+    Source/Input/PCInput.h
+    Source/Input/XInput.cpp
+    Source/Input/XInput.h
+    Source/Input/System.cpp
+    Source/Input/System.h
     Source/Entities/FollowCam.cpp
     Source/Entities/FollowCam.h
     Source/Entities/FreeCam.cpp
