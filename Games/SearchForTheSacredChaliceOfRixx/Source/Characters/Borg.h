@@ -18,6 +18,9 @@ public:
 	virtual void AdjustFacingDirection(double deltaTime) override;
 	virtual void OnBipedAbyssFalling() override;
 
+public:
+	bool assimulatedHuman;
+
 private:
 	void HandlePlatformRayCast(double deltaTime);
 	void HandleAttackRayCast();

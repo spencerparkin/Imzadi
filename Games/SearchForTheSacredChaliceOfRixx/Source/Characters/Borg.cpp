@@ -17,6 +17,7 @@ Borg::Borg()
 	this->meanderingRotationRate = 1.0;
 	this->meanderingMoveSpeed = 10.0;
 	this->attackMoveSpeed = 20.0;
+	this->assimulatedHuman = false;
 }
 
 /*virtual*/ Borg::~Borg()
@@ -279,7 +280,8 @@ void Borg::HandleAttackRayCast()
 
 /*virtual*/ void Borg::OnBipedAbyssFalling()
 {
-	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("ResistanceIsNotFutile");
+	if (!this->assimulatedHuman)
+		Imzadi::Game::Get()->GetAudioSystem()->PlaySound("ResistanceIsNotFutile");
 }
 
 /*virtual*/ std::string Borg::GetAnimName(Imzadi::Biped::AnimType animType)

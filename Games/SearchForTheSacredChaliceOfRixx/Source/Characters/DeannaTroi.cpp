@@ -1,6 +1,7 @@
 #include "DeannaTroi.h"
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
+#include "Characters/Borg.h"
 #include "EventSystem.h"
 #include "DialogSystem.h"
 #include "Collision/Result.h"
@@ -224,7 +225,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			{
 				auto baddyHitQuery = new Imzadi::Collision::CollisionQuery();
 				baddyHitQuery->SetShapeID(this->collisionShapeID);
-				baddyHitQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_BADDY);
+				baddyHitQuery->SetUserFlagsMask(SHAPE_FLAG_BADDY);
 				collisionSystem->MakeQuery(baddyHitQuery, this->baddyHitQueryTaskID);
 			}
 
@@ -281,7 +282,21 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				{
 					auto collisionResult = dynamic_cast<Imzadi::Collision::CollisionQueryResult*>(result);
 					if (collisionResult && collisionResult->GetCollisionStatusArray().size() > 0)
+					{
 						this->SetAnimationMode(Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT);
+
+						for (auto& collisionPair : collisionResult->GetCollisionStatusArray())
+						{
+							Imzadi::Collision::ShapeID shapeID = collisionPair->GetOtherShape(this->collisionShapeID);
+							Imzadi::Reference<Imzadi::Entity> foundEntity;
+							if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
+							{
+								auto borg = dynamic_cast<Borg*>(foundEntity.Get());
+								if (borg)
+									borg->assimulatedHuman = true;
+							}
+						}
+					}
 
 					delete result;
 				}
