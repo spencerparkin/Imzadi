@@ -4,6 +4,7 @@
 #include "Math/Ray.h"
 #include "Collision/Query.h"
 #include "Collision/Result.h"
+#include "Audio/System.h"
 
 Borg::Borg()
 {
@@ -57,7 +58,7 @@ Borg::Borg()
 	capsule->SetVertex(0, Imzadi::Vector3(0.0, 2.5, 0.0));
 	capsule->SetVertex(1, Imzadi::Vector3(0.0, 6.5, 0.0));
 	capsule->SetRadius(2.5);
-	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER | SHAPE_FLAG_BADDY);
 }
 
 /*virtual*/ bool Borg::Tick(Imzadi::TickPass tickPass, double deltaTime)
@@ -272,6 +273,13 @@ void Borg::HandleAttackRayCast()
 	Imzadi::Transform worldToPlatform;
 	worldToPlatform.Invert(this->platformToWorld);
 	this->velocity = worldToPlatform.TransformVector(this->velocity);
+
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("ResistanceIsFutile");
+}
+
+/*virtual*/ void Borg::OnBipedAbyssFalling()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("ResistanceIsNotFutile");
 }
 
 /*virtual*/ std::string Borg::GetAnimName(Imzadi::Biped::AnimType animType)

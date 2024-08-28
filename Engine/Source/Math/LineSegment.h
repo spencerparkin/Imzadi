@@ -94,13 +94,21 @@ namespace Imzadi
 
 		/**
 		 * Set this line segment as the shortest line segment connecting the two given line segments.
-		 * Note that we can fail here in cases where there is no single shortest connector.
+		 * Note that we can fail here in cases where there is no single shortest connector.  For example,
+		 * consider two distinct yet parallel line-segments, side-by-side.  Many shortest connectors
+		 * exist in this case, and we fail in this case.
 		 * 
 		 * @param[in] lineSegmentA The first point of this segment will be on this given line segment.
 		 * @param[in] lineSegmentB The second point of this segment will be on this given line segment.
 		 * @return True is returned on success; false, otherwise, and this line segment is left undefined.
 		 */
 		bool SetAsShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB);
+
+		/**
+		 * This method handles the fail-case of the @ref SetAsShortestConnector function involving
+		 * two line segments.  It is possible to produce a degenerate line-segment here.
+		 */
+		bool SetAsAnyShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB);
 
 		/**
 		 * Set this line segment as the shortest line segment connecting the given line segment

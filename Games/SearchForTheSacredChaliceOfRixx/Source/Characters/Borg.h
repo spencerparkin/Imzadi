@@ -16,6 +16,7 @@ public:
 	virtual void ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule) override;
 	virtual void IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime) override;
 	virtual void AdjustFacingDirection(double deltaTime) override;
+	virtual void OnBipedAbyssFalling() override;
 
 private:
 	void HandlePlatformRayCast(double deltaTime);

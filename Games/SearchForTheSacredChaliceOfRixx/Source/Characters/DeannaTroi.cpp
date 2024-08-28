@@ -4,6 +4,7 @@
 #include "EventSystem.h"
 #include "DialogSystem.h"
 #include "Collision/Result.h"
+#include "Collision/CollisionCache.h"
 #include "Log.h"
 #include "Audio/System.h"
 
@@ -15,6 +16,7 @@ DeannaTroi::DeannaTroi()
 	this->maxMoveSpeed = 20.0;
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
+	this->baddyHitQueryTaskID = 0;
 	this->SetName("Deanna");
 }
 
@@ -92,6 +94,8 @@ void DeannaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* caps
 		return "DeannaTroiAbyssFalling";
 	case Imzadi::Biped::AnimType::FATAL_LANDING:
 		return "DeannaTroiFatalLanding";
+	case Imzadi::Biped::AnimType::HIT_FALLING:
+		return "DeannaTroiHitFalling";
 	}
 
 	return "";
@@ -216,6 +220,14 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			debugLines->AddLine(line);
 #endif
 
+			if (this->animationMode != Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT)
+			{
+				auto baddyHitQuery = new Imzadi::Collision::CollisionQuery();
+				baddyHitQuery->SetShapeID(this->collisionShapeID);
+				baddyHitQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_BADDY);
+				collisionSystem->MakeQuery(baddyHitQuery, this->baddyHitQueryTaskID);
+			}
+
 			break;
 		}
 		case Imzadi::TickPass::RESOLVE_COLLISIONS:
@@ -257,6 +269,19 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						if (unbindTalkActionIfAny && dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(Imzadi::Button::A_BUTTON)))
 							this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
 					}
+
+					delete result;
+				}
+			}
+
+			if (this->baddyHitQueryTaskID)
+			{
+				Imzadi::Collision::Result* result = collisionSystem->ObtainQueryResult(this->baddyHitQueryTaskID);
+				if (result)
+				{
+					auto collisionResult = dynamic_cast<Imzadi::Collision::CollisionQueryResult*>(result);
+					if (collisionResult && collisionResult->GetCollisionStatusArray().size() > 0)
+						this->SetAnimationMode(Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT);
 
 					delete result;
 				}
@@ -325,6 +350,11 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 /*virtual*/ void DeannaTroi::OnBipedAbyssFalling()
 {
 	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("HelpMeAhhh");
+}
+
+/*virtual*/ void DeannaTroi::OnBipedBaddyHit()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("BorgNanoProbesUgh");
 }
 
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------

@@ -315,11 +315,20 @@ Biped::Biped()
 			animationRate = 0.2;
 			break;
 		}
+		case AnimationMode::DEATH_BY_BADDY_HIT:
+		{
+			animatedMesh->SetAnimation(this->GetAnimName(AnimType::HIT_FALLING));
+			canLoop = false;
+			animationRate = 0.2;
+			break;
+		}
 	}
 
 	if (!animatedMesh->AdvanceAnimation(deltaTime * animationRate, canLoop))
 	{
-		if (this->animationMode == AnimationMode::DEATH_BY_FATAL_LANDING || this->animationMode == AnimationMode::DEATH_BY_ABYSS_FALLING)
+		if (this->animationMode == AnimationMode::DEATH_BY_FATAL_LANDING ||
+			this->animationMode == AnimationMode::DEATH_BY_ABYSS_FALLING ||
+			this->animationMode == AnimationMode::DEATH_BY_BADDY_HIT)
 		{
 			if (!this->OnBipedDied())
 				return false;
@@ -344,6 +353,10 @@ Biped::Biped()
 {
 }
 
+/*virtual*/ void Biped::OnBipedBaddyHit()
+{
+}
+
 /*virtual*/ void Biped::OnBipedAbyssFalling()
 {
 }
@@ -365,6 +378,11 @@ void Biped::SetAnimationMode(AnimationMode newMode)
 		case AnimationMode::DEATH_BY_ABYSS_FALLING:
 		{
 			this->OnBipedAbyssFalling();
+			break;
+		}
+		case AnimationMode::DEATH_BY_BADDY_HIT:
+		{
+			this->OnBipedBaddyHit();
 			break;
 		}
 	}

@@ -27,6 +27,7 @@ public:
 	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
 	virtual void OnBipedFatalLanding() override;
 	virtual void OnBipedAbyssFalling() override;
+	virtual void OnBipedBaddyHit() override;
 	virtual void ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule) override;
 
 private:
@@ -86,4 +87,5 @@ private:
 	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;
 	Imzadi::Collision::TaskID rayCastQueryTaskID;
+	Imzadi::Collision::TaskID baddyHitQueryTaskID;
 };

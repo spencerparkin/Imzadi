@@ -30,7 +30,8 @@ namespace Imzadi
 			RUN,
 			JUMP,
 			FATAL_LANDING,
-			ABYSS_FALLING
+			ABYSS_FALLING,
+			HIT_FALLING
 		};
 
 		virtual bool Setup() override;
@@ -47,6 +48,7 @@ namespace Imzadi
 		virtual bool ConstraintVelocityWithGround();
 		virtual bool OnBipedDied();
 		virtual void OnBipedFatalLanding();
+		virtual void OnBipedBaddyHit();
 		virtual void OnBipedAbyssFalling();
 		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
@@ -73,6 +75,7 @@ namespace Imzadi
 		{
 			BASIC_PLATFORMING,
 			DEATH_BY_ABYSS_FALLING,
+			DEATH_BY_BADDY_HIT,
 			DEATH_BY_FATAL_LANDING
 		};
 
