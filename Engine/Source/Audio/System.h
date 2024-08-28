@@ -77,7 +77,7 @@ namespace Imzadi
 	private:
 		IXAudio2* audio;
 		IXAudio2MasteringVoice* masteringVoice;
-		typedef std::map<std::string, Reference<Audio>> AudioMap;
+		typedef std::map<std::string, Reference<AudioSystemAsset>> AudioMap;
 		AudioMap audioMap;
 
 		struct AmbientSound

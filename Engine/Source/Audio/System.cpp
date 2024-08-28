@@ -127,43 +127,54 @@ bool AudioSystem::PlaySound(const std::string& sound, float volume /*= 1.0f*/)
 		return false;
 	}
 
-	const Audio* audioAsset = iter->second.Get();
+	const AudioSystemAsset* audioSystemAsset = iter->second.Get();
 
-	AudioSourceList* audioSourceList = this->GetOrCreateAudioSourceList(audioAsset->GetWaveFormat());
-	if (!audioSourceList)
+	auto audioAsset = dynamic_cast<const Audio*>(audioSystemAsset);
+	if (audioAsset)
 	{
-		IMZADI_LOG_ERROR("Failed to get or create audio source list.");
-		return false;
+		AudioSourceList* audioSourceList = this->GetOrCreateAudioSourceList(audioAsset->GetWaveFormat());
+		if (!audioSourceList)
+		{
+			IMZADI_LOG_ERROR("Failed to get or create audio source list.");
+			return false;
+		}
+
+		AudioSource* audioSource = audioSourceList->GetOrCreateUnusedAudioSource(audioAsset->GetWaveFormat());
+		if (!audioSource)
+		{
+			IMZADI_LOG_ERROR("Failed to get or create audio source.");
+			return false;
+		}
+
+		const AudioDataLib::AudioData* audioData = audioAsset->GetAudioData();
+
+		XAUDIO2_BUFFER audioBuffer{};
+		audioBuffer.Flags = XAUDIO2_END_OF_STREAM;
+		audioBuffer.AudioBytes = audioData->GetAudioBufferSize();
+		audioBuffer.pAudioData = audioData->GetAudioBuffer();
+
+		audioSource->inUse = true;
+
+		HRESULT result = audioSource->sourceVoice->SubmitSourceBuffer(&audioBuffer);
+		if (FAILED(result))
+		{
+			IMZADI_LOG_ERROR("Failed to submit audio buffer to source voice.");
+			audioSource->inUse = false;
+			return false;
+		}
+
+		audioSource->sourceVoice->SetVolume(volume);
+		audioSource->sourceVoice->Start();
+		return true;
 	}
 
-	AudioSource* audioSource = audioSourceList->GetOrCreateUnusedAudioSource(audioAsset->GetWaveFormat());
-	if (!audioSource)
+	auto midiAsset = dynamic_cast<const MidiSong*>(audioSystemAsset);
+	if (midiAsset)
 	{
-		IMZADI_LOG_ERROR("Failed to get or create audio source.");
-		return false;
+		//...
 	}
 
-	const AudioDataLib::AudioData* audioData = audioAsset->GetAudioData();
-
-	XAUDIO2_BUFFER audioBuffer{};
-	audioBuffer.Flags = XAUDIO2_END_OF_STREAM;
-	audioBuffer.AudioBytes = audioData->GetAudioBufferSize();
-	audioBuffer.pAudioData = audioData->GetAudioBuffer();
-
-	audioSource->inUse = true;
-
-	HRESULT result = audioSource->sourceVoice->SubmitSourceBuffer(&audioBuffer);
-	if (FAILED(result))
-	{
-		IMZADI_LOG_ERROR("Failed to submit audio buffer to source voice.");
-		audioSource->inUse = false;
-		return false;
-	}
-
-	audioSource->sourceVoice->SetVolume(volume);
-	audioSource->sourceVoice->Start();
-
-	return true;
+	return false;
 }
 
 bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool recursive)
@@ -186,21 +197,21 @@ bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool rec
 		{
 			std::string assetFile = dirEntry.path().string();
 			std::string ext = std::filesystem::path(assetFile).extension().string();
-			if (ext == ".audio")
+			if (ext == ".audio" || ext == ".song")
 			{
 				Reference<Asset> asset;
 				if (!assetCache->LoadAsset(assetFile, asset))
 					return false;
 
-				Reference<Audio> audioAsset;
-				audioAsset.SafeSet(asset.Get());
-				if (!audioAsset)
+				Reference<AudioSystemAsset> audioSystemAsset;
+				audioSystemAsset.SafeSet(asset.Get());
+				if (!audioSystemAsset)
 				{
 					IMZADI_LOG_ERROR("Loaded something, but it wasn't audio!");
 					return false;
 				}
 
-				std::string audioName = audioAsset->GetName();
+				std::string audioName = audioSystemAsset->GetName();
 				if (audioName.length() == 0)
 				{
 					IMZADI_LOG_ERROR("Audio asset (%s) has blank name.", assetFile.c_str());
@@ -212,7 +223,7 @@ bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool rec
 					IMZADI_LOG_WARNING("Audio with name \"%s\" already loaded!  Loading over it.", audioName.c_str());
 				}
 
-				this->audioMap.insert(std::pair<std::string, Reference<Audio>>(audioName, audioAsset));
+				this->audioMap.insert(std::pair<std::string, Reference<AudioSystemAsset>>(audioName, audioSystemAsset));
 			}
 		}
 	}

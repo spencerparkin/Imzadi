@@ -6,36 +6,57 @@
 
 using namespace Imzadi;
 
-Audio::Audio()
-{
-	this->looped = false;
-	this->audioData = nullptr;
-	::memset(&this->waveFormat, 0, sizeof(this->waveFormat));
-}
+//------------------------------------- AudioSystemAsset -------------------------------------
 
-/*virtual*/ Audio::~Audio()
+AudioSystemAsset::AudioSystemAsset()
 {
 }
 
-/*virtual*/ bool Audio::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+/*virtual*/ AudioSystemAsset::~AudioSystemAsset()
+{
+}
+
+/*virtual*/ bool AudioSystemAsset::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	if (!jsonDoc.IsObject())
 	{
-		IMZADI_LOG_ERROR("Expected JSON object at root of JSON audio asset data.");
+		IMZADI_LOG_ERROR("Expected JSON object at root of JSON audio system asset data.");
 		return false;
 	}
 
-	if (!jsonDoc.HasMember("audio_data_file") || !jsonDoc["audio_data_file"].IsString())
+	if (jsonDoc.HasMember("name") && jsonDoc["name"].IsString())
+		this->name = jsonDoc["name"].GetString();
+
+	return true;
+}
+
+/*virtual*/ bool AudioSystemAsset::Unload()
+{
+	this->name = "";
+	return true;
+}
+
+bool AudioSystemAsset::LoadAudioFileData(const rapidjson::Document& jsonDoc, AssetCache* assetCache, const std::string& fileKey, AudioDataLib::FileData*& fileData)
+{
+	fileData = nullptr;
+
+	if (!jsonDoc.HasMember(fileKey.c_str()) || !jsonDoc[fileKey.c_str()].IsString())
 	{
-		IMZADI_LOG_ERROR("Did not find \"audio_data_file\" member, or it wasn't a string.");
+		IMZADI_LOG_ERROR("Did not find \"%s\" member, or it wasn't a string.", fileKey.c_str());
 		return false;
 	}
 
-	std::string audioDataFile = jsonDoc["audio_data_file"].GetString();
+	std::string audioDataFile = jsonDoc[fileKey.c_str()].GetString();
 	if (!assetCache->ResolveAssetPath(audioDataFile))
 	{
 		IMZADI_LOG_ERROR("Failed to resolve path to audio data file: %s", audioDataFile.c_str());
 		return false;
+	}
+
+	if (this->name.length() == 0)
+	{
+		std::filesystem::path path(audioDataFile);
+		this->name = path.stem().string();
 	}
 
 	std::shared_ptr<AudioDataLib::FileFormat> fileFormat = AudioDataLib::FileFormat::CreateForFile(audioDataFile);
@@ -53,17 +74,41 @@ Audio::Audio()
 	}
 
 	AudioDataLib::Error error;
-	AudioDataLib::FileData* fileData = nullptr;
 	if (!fileFormat->ReadFromStream(fileStream, fileData, error))
 	{
 		IMZADI_LOG_ERROR("Failed to parse audio file \"%s\" with error: %s", audioDataFile.c_str(), error.GetErrorMessage().c_str());
 		return false;
 	}
 
+	return true;
+}
+
+//------------------------------------- Audio -------------------------------------
+
+Audio::Audio()
+{
+	this->looped = false;
+	this->audioData = nullptr;
+	::memset(&this->waveFormat, 0, sizeof(this->waveFormat));
+}
+
+/*virtual*/ Audio::~Audio()
+{
+}
+
+/*virtual*/ bool Audio::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+{
+	if (!AudioSystemAsset::Load(jsonDoc, assetCache))
+		return false;
+
+	AudioDataLib::FileData* fileData = nullptr;
+	if (!this->LoadAudioFileData(jsonDoc, assetCache, "audio_data_file", fileData))
+		return false;
+
 	this->audioData = dynamic_cast<AudioDataLib::AudioData*>(fileData);
 	if (!this->audioData)
 	{
-		IMZADI_LOG_ERROR("Didn't load audio data from file \"%s\".  Loaded something else?!", audioDataFile.c_str());
+		IMZADI_LOG_ERROR("Didn't load audio data from file.  Loaded something else?!");
 		delete fileData;
 		return false;
 	}
@@ -72,14 +117,6 @@ Audio::Audio()
 		this->looped = jsonDoc["looped"].GetBool();
 	else
 		this->looped = false;
-
-	if (jsonDoc.HasMember("name") && jsonDoc["name"].IsString())
-		this->name = jsonDoc["name"].GetString();
-	else
-	{
-		std::filesystem::path path(audioDataFile);
-		this->name = path.stem().string();
-	}
 
 	AudioDataLib::AudioData::Format& format = this->audioData->GetFormat();
 	
@@ -114,13 +151,57 @@ Audio::Audio()
 
 /*virtual*/ bool Audio::Unload()
 {
+	AudioSystemAsset::Unload();
+
 	if (this->audioData)
 	{
 		AudioDataLib::AudioData::Destroy(this->audioData);
 		this->audioData = nullptr;
 	}
 
-	this->name = "";
+	return true;
+}
+
+//------------------------------------- MidiSong -------------------------------------
+
+MidiSong::MidiSong()
+{
+	this->midiData = nullptr;
+}
+
+/*virtual*/ MidiSong::~MidiSong()
+{
+}
+
+/*virtual*/ bool MidiSong::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
+{
+	if (!AudioSystemAsset::Load(jsonDoc, assetCache))
+		return false;
+
+	AudioDataLib::FileData* fileData = nullptr;
+	if (!this->LoadAudioFileData(jsonDoc, assetCache, "midi_file", fileData))
+		return false;
+
+	this->midiData = dynamic_cast<AudioDataLib::MidiData*>(fileData);
+	if (!this->midiData)
+	{
+		IMZADI_LOG_ERROR("Didn't load MIDI data from file.  Loaded something else?!");
+		delete fileData;
+		return false;
+	}
+
+	return true;
+}
+
+/*virtual*/ bool MidiSong::Unload()
+{
+	AudioSystemAsset::Unload();
+
+	if (this->midiData)
+	{
+		AudioDataLib::MidiData::Destroy(this->midiData);
+		this->midiData = nullptr;
+	}
 
 	return true;
 }
