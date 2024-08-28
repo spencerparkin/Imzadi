@@ -4,9 +4,11 @@
 #include "Assets/Audio.h"
 #include "Math/Interval.h"
 #include <xaudio2.h>
+#include <RtMidi.h>
 #include <string>
 #include <map>
 #include <set>
+#include <semaphore>
 
 template<>
 struct std::hash<WAVEFORMATEX>
@@ -129,5 +131,33 @@ namespace Imzadi
 
 		void ClearSourceCache();
 		AudioSourceList* GetOrCreateAudioSourceList(const WAVEFORMATEX& waveFormat);
+
+		class MidiThread
+		{
+		public:
+			MidiThread();
+			virtual ~MidiThread();
+
+			bool Startup();
+			bool Shutdown();
+
+			void EnqueueMidiSong(MidiSong* midiSong);
+
+		private:
+			static void ThreadEntryProc(MidiThread* midiThread);
+
+			void Run();
+
+			void PlayMidiSong(MidiSong* midiSong);
+
+			std::list<Reference<MidiSong>> midiSongQueue;
+			std::mutex midiSongQueueMutex;
+			std::counting_semaphore<std::numeric_limits<uint32_t>::max()> midiSongQueueSemaphore;
+			std::thread* thread;
+			bool exitSignaled;
+			RtMidiOut* midiOut;
+		};
+
+		MidiThread* midiThread;
 	};
 }

@@ -62,6 +62,8 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 
+		AudioDataLib::MidiData* GetMidiData() { return this->midiData; }
+
 	protected:
 		AudioDataLib::MidiData* midiData;
 	};

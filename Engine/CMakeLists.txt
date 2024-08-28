@@ -190,6 +190,7 @@ add_library(ImzadiGameEngine SHARED
 
 target_link_libraries(ImzadiGameEngine PUBLIC
     AudioDataLib
+    RtMidi
 )
 
 target_compile_definitions(ImzadiGameEngine PRIVATE
