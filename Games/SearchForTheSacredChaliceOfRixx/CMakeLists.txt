@@ -31,6 +31,8 @@ set(RIXX_SOURCES
     Source/Assets/ZipLine.h
     Source/Assets/GameLevelData.cpp
     Source/Assets/GameLevelData.h
+    Source/RenderObjects/HUDRenderObject.cpp
+    Source/RenderObjects/HUDRenderObject.h
     Assets/Icons/Icon.rc
 )
 

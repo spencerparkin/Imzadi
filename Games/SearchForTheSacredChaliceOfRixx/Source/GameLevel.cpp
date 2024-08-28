@@ -7,6 +7,7 @@
 #include "Entities/ZipLineEntity.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
+#include "RenderObjects/HUDRenderObject.h"
 
 GameLevel::GameLevel()
 {
@@ -37,6 +38,9 @@ GameLevel::GameLevel()
 	audioSystem->AddAmbientSound({ "BlowingWind", "HowlingWind" }, Imzadi::Interval(25, 29), true, 0.1f);
 	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false, 1.0f);
 
+	auto hud = new HUDRenderObject();
+	hud->SetFont("UbuntuMono_R");
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(hud);
 	return true;
 }
 

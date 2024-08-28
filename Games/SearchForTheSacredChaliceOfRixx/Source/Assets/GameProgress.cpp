@@ -3,6 +3,7 @@
 GameProgress::GameProgress()
 {
 	this->levelName = "Level1";
+	this->numLives = 3;
 }
 
 /*virtual*/ GameProgress::~GameProgress()
@@ -16,33 +17,47 @@ GameProgress::GameProgress()
 	else
 		this->levelName = "Level1";
 
-	this->mileStoneSet.clear();
-	if (jsonDoc.HasMember("mile_stone_array") && jsonDoc["mile_stone_array"].IsArray())
-	{
-		const rapidjson::Value& mileStoneArrayValue = jsonDoc["mile_stone_array"];
-		for (int i = 0; i < mileStoneArrayValue.Size(); i++)
-		{
-			const rapidjson::Value& mileStoneValue = mileStoneArrayValue[i];
-			if (!mileStoneValue.IsString())
-				return false;
+	if (jsonDoc.HasMember("num_lives") && jsonDoc["num_lives"].IsInt())
+		this->numLives = jsonDoc["num_lives"].GetInt();
+	else
+		this->numLives = 3;
 
-			this->mileStoneSet.insert(mileStoneValue.GetString());
+	this->mileStoneSet.clear();
+	this->inventoryMap.clear();
+
+	if (this->numLives > 0)
+	{
+		if (jsonDoc.HasMember("mile_stone_array") && jsonDoc["mile_stone_array"].IsArray())
+		{
+			const rapidjson::Value& mileStoneArrayValue = jsonDoc["mile_stone_array"];
+			for (int i = 0; i < mileStoneArrayValue.Size(); i++)
+			{
+				const rapidjson::Value& mileStoneValue = mileStoneArrayValue[i];
+				if (!mileStoneValue.IsString())
+					return false;
+
+				this->mileStoneSet.insert(mileStoneValue.GetString());
+			}
+		}
+
+		if (jsonDoc.HasMember("inventory_map") && jsonDoc["inventory_map"].IsObject())
+		{
+			const rapidjson::Value& inventoryMapValue = jsonDoc["inventory_map"];
+			for (auto iter = inventoryMapValue.MemberBegin(); iter != inventoryMapValue.MemberEnd(); iter++)
+			{
+				if (!iter->value.IsUint())
+					return false;
+
+				std::string itemName = iter->name.GetString();
+				uint32_t itemCount = iter->value.GetUint();
+				this->inventoryMap.insert(std::pair<std::string, uint32_t>(itemName, itemCount));
+			}
 		}
 	}
-
-	this->inventoryMap.clear();
-	if (jsonDoc.HasMember("inventory_map") && jsonDoc["inventory_map"].IsObject())
+	else
 	{
-		const rapidjson::Value& inventoryMapValue = jsonDoc["inventory_map"];
-		for (auto iter = inventoryMapValue.MemberBegin(); iter != inventoryMapValue.MemberEnd(); iter++)
-		{
-			if (!iter->value.IsUint())
-				return false;
-
-			std::string itemName = iter->name.GetString();
-			uint32_t itemCount = iter->value.GetUint();
-			this->inventoryMap.insert(std::pair<std::string, uint32_t>(itemName, itemCount));
-		}
+		this->numLives = 3;
+		this->levelName = "Level1";
 	}
 
 	return true;
@@ -52,6 +67,7 @@ GameProgress::GameProgress()
 {
 	jsonDoc.SetObject();
 	jsonDoc.AddMember("level_name", rapidjson::Value().SetString(this->levelName.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+	jsonDoc.AddMember("num_lives", rapidjson::Value().SetInt(this->numLives), jsonDoc.GetAllocator());
 
 	rapidjson::Value mileStoneArrayValue;
 	mileStoneArrayValue.SetArray();
@@ -110,4 +126,14 @@ void GameProgress::SetLevelName(const std::string& levelName)
 const std::string& GameProgress::GetLevelName() const
 {
 	return this->levelName;
+}
+
+void GameProgress::SetNumLives(int numLives)
+{
+	this->numLives = numLives;
+}
+
+int GameProgress::GetNumLives() const
+{
+	return this->numLives;
 }

@@ -25,6 +25,7 @@ public:
 	virtual bool HangingOnToZipLine() override;
 	virtual std::string GetZipLineAnimationName() override;
 	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
+	virtual bool OnBipedDied() override;
 	virtual void OnBipedFatalLanding() override;
 	virtual void OnBipedAbyssFalling() override;
 	virtual void OnBipedBaddyHit() override;

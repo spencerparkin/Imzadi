@@ -309,10 +309,20 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	return true;
 }
 
+/*virtual*/ bool DeannaTroi::OnBipedDied()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* gameProgress = game->GetGameProgress();
+	int numLives = gameProgress->GetNumLives();
+	numLives--;
+	gameProgress->SetNumLives(numLives);
+	if (numLives <= 0)
+		return false;
+	return Character::OnBipedDied();
+}
+
 /*virtual*/ void DeannaTroi::Reset()
 {
-	// TODO: This is where we might incur a penalty for dying.
-
 	Character::Reset();
 }
 
