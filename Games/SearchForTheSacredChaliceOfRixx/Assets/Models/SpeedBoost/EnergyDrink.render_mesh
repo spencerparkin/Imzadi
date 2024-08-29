@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\SpeedBoost\\EnergyDrink_Indices.buffer",
+    "vertex_buffer": "Models\\SpeedBoost\\EnergyDrink_Vertices.buffer",
+    "texture": "Textures\\Lightning.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.4917660057544708,
+            "y": -2.1495774049640205e-8,
+            "z": -0.4917660653591156
+        },
+        "max": {
+            "x": 0.4917660057544708,
+            "y": 1.2294150590896607,
+            "z": 0.4917660057544708
+        }
+    }
+}

@@ -1,0 +1,8 @@
+{
+    "width": 128,
+    "height": 128,
+    "data": "Textures\\Lightning.texture_data",
+    "num_mips": 1,
+    "format": "RGBA",
+    "compressed": true
+}
