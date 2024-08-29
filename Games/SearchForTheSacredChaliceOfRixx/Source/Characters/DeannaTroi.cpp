@@ -7,6 +7,7 @@
 #include "Collision/Result.h"
 #include "Collision/CollisionCache.h"
 #include "Log.h"
+#include "Pickup.h"
 #include "Audio/System.h"
 
 //------------------------------------ DeannaTroi ------------------------------------
@@ -17,7 +18,7 @@ DeannaTroi::DeannaTroi()
 	this->maxMoveSpeed = 20.0;
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
-	this->baddyHitQueryTaskID = 0;
+	this->entityOverlapQueryTaskID = 0;
 	this->SetName("Deanna");
 }
 
@@ -224,10 +225,10 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 			if (this->animationMode != Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT)
 			{
-				auto baddyHitQuery = new Imzadi::Collision::CollisionQuery();
-				baddyHitQuery->SetShapeID(this->collisionShapeID);
-				baddyHitQuery->SetUserFlagsMask(SHAPE_FLAG_BADDY);
-				collisionSystem->MakeQuery(baddyHitQuery, this->baddyHitQueryTaskID);
+				auto entityOverlapQuery = new Imzadi::Collision::CollisionQuery();
+				entityOverlapQuery->SetShapeID(this->collisionShapeID);
+				entityOverlapQuery->SetUserFlagsMask(SHAPE_FLAG_BADDY | SHAPE_FLAG_PICKUP);
+				collisionSystem->MakeQuery(entityOverlapQuery, this->entityOverlapQueryTaskID);
 			}
 
 			break;
@@ -277,38 +278,73 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				}
 			}
 
-			if (this->baddyHitQueryTaskID)
-			{
-				Imzadi::Collision::Result* result = collisionSystem->ObtainQueryResult(this->baddyHitQueryTaskID);
-				if (result)
-				{
-					auto collisionResult = dynamic_cast<Imzadi::Collision::CollisionQueryResult*>(result);
-					if (collisionResult && collisionResult->GetCollisionStatusArray().size() > 0)
-					{
-						this->SetAnimationMode(Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT);
-
-						for (auto& collisionPair : collisionResult->GetCollisionStatusArray())
-						{
-							Imzadi::Collision::ShapeID shapeID = collisionPair->GetOtherShape(this->collisionShapeID);
-							Imzadi::Reference<Imzadi::Entity> foundEntity;
-							if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
-							{
-								auto borg = dynamic_cast<Borg*>(foundEntity.Get());
-								if (borg)
-									borg->assimulatedHuman = true;
-							}
-						}
-					}
-
-					delete result;
-				}
-			}
+			this->HandleEntityOverlapResults();
 
 			break;
 		}
 	}
 
 	return true;
+}
+
+void DeannaTroi::HandleEntityOverlapResults()
+{
+	if (!this->entityOverlapQueryTaskID)
+		return;
+
+	Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+	std::unique_ptr<Imzadi::Collision::Result> result(collisionSystem->ObtainQueryResult(this->entityOverlapQueryTaskID));
+	if (!result)
+		return;
+
+	auto collisionResult = dynamic_cast<Imzadi::Collision::CollisionQueryResult*>(result.get());
+	if (!collisionResult)
+		return;
+	
+	bool unbindPickupActionIfAny = true;
+
+	for (auto& collisionPair : collisionResult->GetCollisionStatusArray())
+	{
+		Imzadi::Collision::ShapeID shapeID = collisionPair->GetOtherShape(this->collisionShapeID);
+		const Imzadi::Collision::Shape* shape = collisionPair->GetShape(shapeID);
+		uint64_t userFlags = shape->GetUserFlags();
+		if ((userFlags & SHAPE_FLAG_BADDY) != 0)
+		{
+			this->SetAnimationMode(Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT);
+
+			Imzadi::Reference<Imzadi::Entity> foundEntity;
+			if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
+			{
+				auto borg = dynamic_cast<Borg*>(foundEntity.Get());
+				if (borg)
+					borg->assimulatedHuman = true;
+			}
+
+			break;
+		}
+		else if ((userFlags & SHAPE_FLAG_PICKUP) != 0)
+		{
+			Imzadi::Reference<Imzadi::Entity> foundEntity;
+			if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
+			{
+				auto pickup = dynamic_cast<Pickup*>(foundEntity.Get());
+				if (pickup)
+				{
+					unbindPickupActionIfAny = false;
+
+					if (!this->actionManager.IsBound(Imzadi::Button::B_BUTTON))
+					{
+						auto action = new CollectPickupAction(this);
+						action->pickup = pickup;
+						this->actionManager.BindAction(Imzadi::Button::B_BUTTON, action);
+					}
+				}
+			}
+		}
+	}
+
+	if (unbindPickupActionIfAny && dynamic_cast<CollectPickupAction*>(this->actionManager.GetBoundAction(Imzadi::Button::B_BUTTON)))
+		this->actionManager.UnbindAction(Imzadi::Button::B_BUTTON);
 }
 
 /*virtual*/ bool DeannaTroi::OnBipedDied()
@@ -494,4 +530,25 @@ DeannaTroi::TalkToEntityAction::TalkToEntityAction(DeannaTroi* troi) : LabeledAc
 /*virtual*/ std::string DeannaTroi::TalkToEntityAction::GetActionLabel() const
 {
 	return std::format("Press \"A\" to talk to {}.", this->targetEntity.c_str());
+}
+
+//------------------------------------ DeannaTroi::TalkToEntityAction ------------------------------------
+
+DeannaTroi::CollectPickupAction::CollectPickupAction(DeannaTroi* troi) : LabeledAction(troi)
+{
+}
+
+/*virtual*/ DeannaTroi::CollectPickupAction::~CollectPickupAction()
+{
+}
+
+/*virtual*/ bool DeannaTroi::CollectPickupAction::Perform()
+{
+	this->pickup->Collect();
+	return true;
+}
+
+/*virtual*/ std::string DeannaTroi::CollectPickupAction::GetActionLabel() const
+{
+	return std::format("Press \"B\" to pickup {}.", this->pickup->GetLabel().c_str());
 }

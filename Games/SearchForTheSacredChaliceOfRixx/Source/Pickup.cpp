@@ -10,7 +10,7 @@
 
 Pickup::Pickup()
 {
-	this->shapeID = 0;
+	this->pickupShapeID = 0;
 }
 
 /*virtual*/ Pickup::~Pickup()
@@ -66,10 +66,11 @@ Pickup::Pickup()
 
 	auto sphere = new Imzadi::Collision::SphereShape();
 	sphere->SetRadius(2.0);		// All pickups are assumed to be the same general size, so we can hard-code this, I think.
-	this->shapeID = game->GetCollisionSystem()->AddShape(sphere, SHAPE_FLAG_PICKUP);
+	sphere->SetUserFlags(SHAPE_FLAG_PICKUP);
+	this->pickupShapeID = game->GetCollisionSystem()->AddShape(sphere, 0);
 	
 	auto command = new Imzadi::Collision::ObjectToWorldCommand();
-	command->SetShapeID(this->shapeID);
+	command->SetShapeID(this->pickupShapeID);
 	command->objectToWorld = this->initialTransform;
 	game->GetCollisionSystem()->IssueCommand(command);
 
@@ -81,8 +82,8 @@ Pickup::Pickup()
 	auto* game = Imzadi::Game::Get();
 
 	game->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
-	game->GetCollisionSystem()->RemoveShape(this->shapeID);
-	this->shapeID = 0;
+	game->GetCollisionSystem()->RemoveShape(this->pickupShapeID);
+	this->pickupShapeID = 0;
 
 	return true;
 }
@@ -91,6 +92,11 @@ Pickup::Pickup()
 {
 	this->initialTransform = transform;
 	return true;
+}
+
+/*virtual*/ bool Pickup::OwnsCollisionShape(Imzadi::Collision::ShapeID shapeID) const
+{
+	return this->pickupShapeID == shapeID;
 }
 
 /*virtual*/ bool Pickup::Tick(Imzadi::TickPass tickPass, double deltaTime)
@@ -137,6 +143,11 @@ ExtraLifePickup::ExtraLifePickup()
 	Pickup::Collect();
 }
 
+/*virtual*/ std::string ExtraLifePickup::GetLabel() const
+{
+	return "extra life";
+}
+
 //----------------------------------- SpeedBoostPickup -----------------------------------
 
 SpeedBoostPickup::SpeedBoostPickup()
@@ -153,4 +164,9 @@ SpeedBoostPickup::SpeedBoostPickup()
 	// TODO: Write this.
 
 	Pickup::Collect();
+}
+
+/*virtual*/ std::string SpeedBoostPickup::GetLabel() const
+{
+	return "speed-booster";
 }

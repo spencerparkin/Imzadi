@@ -9,6 +9,8 @@
 
 #define MAX_PLATFORM_LANDING_SPEED		60.0
 
+class Pickup;
+
 class DeannaTroi : public Character
 {
 public:
@@ -36,6 +38,7 @@ private:
 #if defined _DEBUG
 	void HandleFreeCamEvent(const Imzadi::Event* event);
 #endif
+	void HandleEntityOverlapResults();
 
 	class LabeledAction : public Imzadi::Action
 	{
@@ -79,7 +82,17 @@ private:
 		std::string targetEntity;
 	};
 
-	// TODO: Add action for being able to collect an item and put it in your inventory.
+	class CollectPickupAction : public LabeledAction
+	{
+	public:
+		CollectPickupAction(DeannaTroi* troi);
+		virtual ~CollectPickupAction();
+
+		virtual bool Perform() override;
+		virtual std::string GetActionLabel() const override;
+
+		Imzadi::Reference<Pickup> pickup;
+	};
 
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
@@ -87,5 +100,5 @@ private:
 	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;
 	Imzadi::Collision::TaskID rayCastQueryTaskID;
-	Imzadi::Collision::TaskID baddyHitQueryTaskID;
+	Imzadi::Collision::TaskID entityOverlapQueryTaskID;
 };

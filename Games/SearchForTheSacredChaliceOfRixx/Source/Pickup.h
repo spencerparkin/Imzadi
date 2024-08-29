@@ -38,6 +38,12 @@ public:
 	virtual bool SetTransform(const Imzadi::Transform& transform) override;
 
 	/**
+	 * Tell the caller if we own the given collision shape.  This will be
+	 * needed during the collision detection process for getting the pickup.
+	 */
+	virtual bool OwnsCollisionShape(Imzadi::Collision::ShapeID shapeID) const override;
+
+	/**
 	 * Derivatives must override this to perform the collection process.
 	 * That is, to add something to the user's inventory, or do whatever
 	 * else makes sense when the pickup is collected.  By default, here
@@ -46,10 +52,16 @@ public:
 	 */
 	virtual void Collect();
 
+	/**
+	 * Get a label meant to be presented to the player that identifies
+	 * what kind of pickup this is.
+	 */
+	virtual std::string GetLabel() const = 0;
+
 protected:
-	Imzadi::Transform initialTransform;		///< Where the pickup is initially placed.
-	std::string renderMeshFile;				///< Derivative should fill this out with the applicable render mesh asset to use.
-	Imzadi::Collision::ShapeID shapeID;		///< This is how we track our collision shape in the collision system.
+	Imzadi::Transform initialTransform;			///< Where the pickup is initially placed.
+	std::string renderMeshFile;					///< Derivative should fill this out with the applicable render mesh asset to use.
+	Imzadi::Collision::ShapeID pickupShapeID;	///< This is how we track our collision shape in the collision system.
 	Imzadi::Reference<Imzadi::RenderMeshInstance> renderMesh;	///< This is what we're rendering in the scene.
 };
 
@@ -63,6 +75,7 @@ public:
 	virtual ~ExtraLifePickup();
 
 	virtual void Collect() override;
+	virtual std::string GetLabel() const override;
 };
 
 /**
@@ -80,4 +93,5 @@ public:
 	virtual ~SpeedBoostPickup();
 
 	virtual void Collect() override;
+	virtual std::string GetLabel() const override;
 };
