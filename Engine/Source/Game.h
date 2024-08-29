@@ -292,6 +292,7 @@ namespace Imzadi
 
 		void AddEntity(Entity* entity);
 		void AdvanceEntities(TickPass tickPass);
+		void CreateOrDestroyEntities();
 
 		/**
 		 * This performse the typical Win32 API of grabbing and dispatching windows messages.

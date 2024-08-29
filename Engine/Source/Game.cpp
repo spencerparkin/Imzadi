@@ -485,6 +485,8 @@ bool Game::RecreateViews()
 
 	this->PumpWindowsMessages();
 
+	this->CreateOrDestroyEntities();
+
 	this->Tick(TickPass::MOVE_UNCONSTRAINTED);
 	this->collisionSystem.FlushAllTasks();
 	this->Tick(TickPass::SUBMIT_COLLISION_QUERIES);
@@ -571,9 +573,9 @@ bool Game::FindEntityByShapeID(Collision::ShapeID shapeID, Reference<Entity>& fo
 	return false;
 }
 
-void Game::AdvanceEntities(TickPass tickPass)
+void Game::CreateOrDestroyEntities()
 {
-	uint32_t tickingEntityListSize = (uint32_t)this->tickingEntityList.size();
+	bool resortNeeded = false;
 
 	while (this->spawnedEntityQueue.size() > 0)
 	{
@@ -581,32 +583,45 @@ void Game::AdvanceEntities(TickPass tickPass)
 		Reference<Entity> entity = *iter;
 		this->spawnedEntityQueue.erase(iter);
 		if (entity->Setup())
-			this->tickingEntityList.push_back(entity);
-	}
-
-	if ((uint32_t)this->tickingEntityList.size() != tickingEntityListSize)
-	{
-		this->tickingEntityList.sort([](const Entity* entityA, const Entity* entityB) -> bool
 		{
-			return entityA->TickOrder() < entityB->TickOrder();
-		});
+			this->tickingEntityList.push_back(entity);
+			resortNeeded = true;
+		}
 	}
 
-	std::list<Reference<Entity>>::iterator iter = this->tickingEntityList.begin();
+	auto iter = this->tickingEntityList.begin();
 	while (iter != this->tickingEntityList.end())
 	{
-		std::list<Reference<Entity>>::iterator nextIter(iter);
+		auto nextIter = iter;
 		nextIter++;
 
 		Entity* entity = *iter;
-
-		if (!entity->Tick(tickPass, this->deltaTimeSeconds))
+		if (entity->IsDoomed())
 		{
 			entity->Shutdown();
 			this->tickingEntityList.erase(iter);
 		}
 
 		iter = nextIter;
+	}
+
+	if (resortNeeded)
+	{
+		this->tickingEntityList.sort([](const Entity* entityA, const Entity* entityB) -> bool
+			{
+				return entityA->TickOrder() < entityB->TickOrder();
+			});
+	}
+}
+
+void Game::AdvanceEntities(TickPass tickPass)
+{
+	for (Entity* entity : this->tickingEntityList)
+	{
+		if (!entity->Tick(tickPass, this->deltaTimeSeconds))
+		{
+			entity->DoomEntity();
+		}
 	}
 }
 
@@ -757,7 +772,8 @@ void Game::ToggleRenderObject(const std::string& name, std::function<RenderObjec
 	else
 	{
 		renderObj = renderObjectCreatorFunc();
-		this->scene->AddRenderObject(name, renderObj);
+		renderObj->SetName(name);
+		this->scene->AddRenderObject(renderObj);
 	}
 }
 

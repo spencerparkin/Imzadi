@@ -13,6 +13,8 @@ set(RIXX_SOURCES
     Source/Character.h
     Source/CustomAssetCache.cpp
     Source/CustomAssetCache.h
+    Source/Pickup.cpp
+    Source/Pickup.h
     Source/Characters/DeannaTroi.cpp
     Source/Characters/DeannaTroi.h
     Source/Characters/LwaxanaTroi.cpp

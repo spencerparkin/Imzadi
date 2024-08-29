@@ -3,6 +3,7 @@
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
 #include "Characters/Borg.h"
+#include "Pickup.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
 #include "Audio/System.h"
@@ -75,11 +76,32 @@ GameLevel::GameLevel()
 
 /*virtual*/ void GameLevel::SpawnNPC(const std::string& type, const Imzadi::Vector3& position, const Imzadi::Quaternion& orientation)
 {
+	Imzadi::Game* game = Imzadi::Game::Get();
+
 	if (type == "borg")
 	{
-		Borg* borg = Imzadi::Game::Get()->SpawnEntity<Borg>();
-		borg->SetRestartLocation(position);
-		borg->SetRestartOrientation(orientation);
-		borg->SetCanRestart(false);
+		Character* character = nullptr;
+
+		if (type == "borg")
+			character = game->SpawnEntity<Borg>();
+
+		if (character)
+		{
+			character->SetRestartLocation(position);
+			character->SetRestartOrientation(orientation);
+			character->SetCanRestart(false);
+		}
+	}
+	else if (type == "heart" || type == "speed_boost")
+	{
+		Pickup* pickup = nullptr;
+
+		if (type == "heart")
+			pickup = game->SpawnEntity<ExtraLifePickup>();
+		else if (type == "speed_boost")
+			pickup = game->SpawnEntity<SpeedBoostPickup>();
+
+		if (pickup)
+			pickup->SetTransform(Imzadi::Transform(orientation, position));
 	}
 }

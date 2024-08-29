@@ -77,10 +77,28 @@ namespace Imzadi
 		 */
 		virtual std::string GetInfo() const;
 
+		/**
+		 * Set a name for this entity that can be used to look it up in the system.
+		 */
 		void SetName(const std::string& name) { this->name = name; }
+
+		/**
+		 * Get the name by which this entity can be found in the system.
+		 */
 		const std::string& GetName() const { return this->name; }
+
+		/**
+		 * This can be used to mark an entity for immediate removal and deletion from the game.
+		 */
+		void DoomEntity();
+
+		/**
+		 * Tell the caller if this entity has been marked for removal and deletion from the game.
+		 */
+		bool IsDoomed() const { return this->blackSpot; }
 
 	protected:
 		std::string name;
+		bool blackSpot;
 	};
 }
