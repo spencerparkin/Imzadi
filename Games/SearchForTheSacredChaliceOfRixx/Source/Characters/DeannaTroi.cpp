@@ -153,7 +153,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 /*virtual*/ void DeannaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
-	if (this->inContactWithGround)
+	if (this->inContactWithGround && this->animationMode != Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT)
 	{
 		Imzadi::Reference<ReferenceCounted> followCamRef;
 		Imzadi::HandleManager::Get()->GetObjectFromHandle(this->cameraHandle, followCamRef);

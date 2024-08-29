@@ -33,7 +33,7 @@ Borg::Borg()
 	{
 		if (renderMeshAsset->MakeRenderInstance(renderObj))
 		{
-			this->renderObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(renderObj);
+			Imzadi::Game::Get()->GetScene()->AddRenderObject(renderObj);
 			this->renderMesh.SafeSet(renderObj);
 		}
 	}
@@ -46,9 +46,6 @@ Borg::Borg()
 
 /*virtual*/ bool Borg::Shutdown()
 {
-	Imzadi::Game::Get()->GetScene()->RemoveRenderObject(this->renderObjName);
-	this->renderObjName = "";
-
 	Character::Shutdown();
 
 	return true;

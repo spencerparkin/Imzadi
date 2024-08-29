@@ -63,6 +63,10 @@ Biped::Biped()
 
 /*virtual*/ bool Biped::Shutdown()
 {
+	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+	Game::Get()->GetCollisionSystem()->RemoveShape(this->collisionShapeID);
+	this->collisionShapeID = 0;
+
 	Entity::Shutdown();
 	return true;
 }
