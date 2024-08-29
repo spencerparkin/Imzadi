@@ -305,7 +305,7 @@ void BoundingBoxNode::DebugRender(DebugRenderResult* renderResult) const
 		childNode->DebugRender(renderResult);
 }
 
-bool BoundingBoxNode::RayCast(const Ray& ray, const AxisAlignedBoundingBox* boundingBox, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const
+bool BoundingBoxNode::RayCast(const Ray& ray, const AxisAlignedBoundingBox* boundingBox, uint64_t userFlagsMask, RayCastResult::HitData& hitData) const
 {
 	struct ChildHit
 	{

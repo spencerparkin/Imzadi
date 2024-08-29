@@ -210,6 +210,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 			auto rayCastQuery = new Imzadi::Collision::RayCastQuery();
 			rayCastQuery->SetRay(ray);
+			rayCastQuery->SetUserFlagsMask(SHAPE_FLAG_TALKER);
 			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
 
 #if 0
@@ -249,8 +250,9 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						if (hitData.shape)
 						{
 							auto gameApp = (GameApp*)Imzadi::Game::Get();
-							uint64_t userFlags = hitData.shape->GetUserFlags();
-							if ((userFlags & SHAPE_FLAG_TALKER) != 0 && hitData.alpha < 10.0 && !gameApp->GetDialogSystem()->PresentlyEngagedInConversation())
+							IMZADI_ASSERT((hitData.shape->GetUserFlags() & SHAPE_FLAG_TALKER) != 0);
+							static double maxTalkingDistance = 10.0;
+							if (hitData.alpha < maxTalkingDistance && !gameApp->GetDialogSystem()->PresentlyEngagedInConversation())
 							{
 								Imzadi::Reference<Imzadi::Entity> entity;
 								if (Imzadi::Game::Get()->FindEntityByShapeID(hitData.shapeID, entity))

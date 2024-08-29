@@ -174,7 +174,7 @@ private:
 	 * @param[out] hitData This will contain info about what shape was hit and how, if any.
 	 * @return True is returned if and only if a hit ocurred in this node of the tree.
 	 */
-	bool RayCast(const Ray& ray, const AxisAlignedBoundingBox* boundingBox, uint32_t userFlagsMask, RayCastResult::HitData& hitData) const;
+	bool RayCast(const Ray& ray, const AxisAlignedBoundingBox* boundingBox, uint64_t userFlagsMask, RayCastResult::HitData& hitData) const;
 
 private:
 	AxisAlignedBoundingBox box;							///< This is the space represented by this node.
