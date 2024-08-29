@@ -53,7 +53,6 @@ private:
 
 		uint32_t entityHandle;
 		Imzadi::Reference<Imzadi::TextRenderObject> textRenderObject;
-		std::string sceneObjectName;
 	};
 
 	class TeleportToLevelAction : public LabeledAction

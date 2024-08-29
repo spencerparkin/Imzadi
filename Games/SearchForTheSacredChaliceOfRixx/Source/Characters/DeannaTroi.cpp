@@ -409,13 +409,13 @@ DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
 	this->UpdateTransform();
 
 	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
-	this->sceneObjectName = scene->AddRenderObject(this->textRenderObject.Get());
+	scene->AddRenderObject(this->textRenderObject.Get());
 }
 
 /*virtual*/ void DeannaTroi::LabeledAction::Deinit()
 {
 	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
-	scene->RemoveRenderObject(this->sceneObjectName);
+	scene->RemoveRenderObject(this->textRenderObject->GetName());
 	this->textRenderObject.Reset();
 }
 
