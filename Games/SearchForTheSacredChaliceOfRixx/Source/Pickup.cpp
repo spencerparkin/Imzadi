@@ -5,6 +5,7 @@
 #include "Collision/Command.h"
 #include "Assets/RenderMesh.h"
 #include "Log.h"
+#include "Audio/System.h"
 
 //----------------------------------- Pickup -----------------------------------
 
@@ -121,6 +122,8 @@ Pickup::Pickup()
 /*virtual*/ void Pickup::Collect()
 {
 	this->DoomEntity();
+	auto* game = Imzadi::Game::Get();
+	game->GetAudioSystem()->PlaySound("Yay");
 }
 
 //----------------------------------- ExtraLifePickup -----------------------------------
