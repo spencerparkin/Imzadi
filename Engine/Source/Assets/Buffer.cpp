@@ -13,10 +13,17 @@ Buffer::Buffer()
 	this->strideBytes = 0;
 	this->numElements = 0;
 	this->componentFormat = DXGI_FORMAT_UNKNOWN;
+	this->canBeCached = true;
 }
 
 /*virtual*/ Buffer::~Buffer()
 {
+	this->Unload();
+}
+
+/*virtual*/ bool Buffer::CanBeCached() const
+{
+	return this->canBeCached;
 }
 
 /*virtual*/ bool Buffer::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
@@ -117,6 +124,7 @@ Buffer::Buffer()
 		{
 			bufferDesc.Usage = D3D11_USAGE_DYNAMIC;
 			bufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+			this->canBeCached = false;
 		}
 	}
 

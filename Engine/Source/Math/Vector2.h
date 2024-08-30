@@ -153,17 +153,18 @@ namespace Imzadi
 		}
 
 		/**
-		 * Return the cross-product of this vector and the given vector.  This is not
-		 * to be confused with the outer product, because we don't return a blade of
-		 * higher grade here; we return a scalar (which is a blade of lower grade.)
+		 * Return the cross-product of this vector and the given vector, in that
+		 * order.  This is not to be confused with the outer product, because we
+		 * don't return a blade of higher grade here; we return a scalar (which
+		 * is a blade of lower grade.)  This is also the signed area of the parallelagram
+		 * formed by the two vectors taken in the product.
 		 *
-		 * @param[in] vectorA This first vector to be taken in the cross product.
-		 * @param[in] vectorB The second vector to be taken in the cross product.
-		 * @return The determinant of a 2x2 matrix having first column vectorA and second column vectorB is returned.
+		 * @param[in] vector The second vector to be taken in the cross product.
+		 * @return The determinant of a 2x2 matrix, having first column this vector and second column the given vector, is returned.
 		 */
-		double Cross(const Vector2& vectorA, const Vector2& vectorB)
+		double Cross(const Vector2& vector)
 		{
-			return vectorA.x * vectorB.y - vectorA.y * vectorB.x;
+			return this->x * vector.y - this->y * vector.x;
 		}
 
 		/**

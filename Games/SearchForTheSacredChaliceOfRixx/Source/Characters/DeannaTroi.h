@@ -9,6 +9,8 @@
 
 #define MAX_PLATFORM_LANDING_SPEED		60.0
 
+class Pickup;
+
 class DeannaTroi : public Character
 {
 public:
@@ -25,8 +27,10 @@ public:
 	virtual bool HangingOnToZipLine() override;
 	virtual std::string GetZipLineAnimationName() override;
 	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
+	virtual bool OnBipedDied() override;
 	virtual void OnBipedFatalLanding() override;
 	virtual void OnBipedAbyssFalling() override;
+	virtual void OnBipedBaddyHit() override;
 	virtual void ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule) override;
 
 private:
@@ -34,6 +38,7 @@ private:
 #if defined _DEBUG
 	void HandleFreeCamEvent(const Imzadi::Event* event);
 #endif
+	void HandleEntityOverlapResults();
 
 	class LabeledAction : public Imzadi::Action
 	{
@@ -51,7 +56,6 @@ private:
 
 		uint32_t entityHandle;
 		Imzadi::Reference<Imzadi::TextRenderObject> textRenderObject;
-		std::string sceneObjectName;
 	};
 
 	class TeleportToLevelAction : public LabeledAction
@@ -78,7 +82,17 @@ private:
 		std::string targetEntity;
 	};
 
-	// TODO: Add action for being able to collect an item and put it in your inventory.
+	class CollectPickupAction : public LabeledAction
+	{
+	public:
+		CollectPickupAction(DeannaTroi* troi);
+		virtual ~CollectPickupAction();
+
+		virtual bool Perform() override;
+		virtual std::string GetActionLabel() const override;
+
+		Imzadi::Reference<Pickup> pickup;
+	};
 
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
@@ -86,4 +100,5 @@ private:
 	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;
 	Imzadi::Collision::TaskID rayCastQueryTaskID;
+	Imzadi::Collision::TaskID entityOverlapQueryTaskID;
 };

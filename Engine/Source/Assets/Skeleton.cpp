@@ -17,6 +17,11 @@ Skeleton::Skeleton()
 	this->SetRootBone(nullptr);
 }
 
+/*virtual*/ bool Skeleton::CanBeCached() const
+{
+	return false;
+}
+
 /*virtual*/ bool Skeleton::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	if (!jsonDoc.IsObject())

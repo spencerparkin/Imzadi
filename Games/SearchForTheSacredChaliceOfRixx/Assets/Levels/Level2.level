@@ -38,5 +38,65 @@
     ],
     "zip_lines": [
         "Levels/Level2_ZL1.zip_line"
+    ],
+    "npc_array": [
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -39.763525,
+                "y": 1.0,
+                "z": -57.232542674
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 79.024238788,
+                "y": 80.0,
+                "z": -2.254969245
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -30.86686,
+                "y": 49.0,
+                "z": -113.26977
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": -188.27008,
+                "y": 14.0,
+                "z": -65.29247
+            }
+        },
+        {
+            "type": "song",
+            "start_position": {
+                "x": -187.270085,
+                "y": 27.0,
+                "z": 41.352375
+            },
+            "config": {
+                "song": "GGMOZH"
+            }
+        }
     ]
 }

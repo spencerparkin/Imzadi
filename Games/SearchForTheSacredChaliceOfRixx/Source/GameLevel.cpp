@@ -3,10 +3,12 @@
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
 #include "Characters/Borg.h"
+#include "Pickup.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
+#include "RenderObjects/HUDRenderObject.h"
 
 GameLevel::GameLevel()
 {
@@ -37,6 +39,9 @@ GameLevel::GameLevel()
 	audioSystem->AddAmbientSound({ "BlowingWind", "HowlingWind" }, Imzadi::Interval(25, 29), true, 0.1f);
 	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false, 1.0f);
 
+	auto hud = new HUDRenderObject();
+	hud->SetFont("UbuntuMono_R");
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(hud);
 	return true;
 }
 
@@ -69,13 +74,39 @@ GameLevel::GameLevel()
 	return true;
 }
 
-/*virtual*/ void GameLevel::SpawnNPC(const std::string& type, const Imzadi::Vector3& position, const Imzadi::Quaternion& orientation)
+/*virtual*/ void GameLevel::SpawnNPC(const Imzadi::LevelData::NPC* npc)
 {
-	if (type == "borg")
+	Imzadi::Game* game = Imzadi::Game::Get();
+
+	if (npc->type == "borg")
 	{
-		Borg* borg = Imzadi::Game::Get()->SpawnEntity<Borg>();
-		borg->SetRestartLocation(position);
-		borg->SetRestartOrientation(orientation);
-		borg->SetCanRestart(false);
+		Character* character = nullptr;
+
+		if (npc->type == "borg")
+			character = game->SpawnEntity<Borg>();
+
+		if (character)
+		{
+			character->SetRestartLocation(npc->startPosition);
+			character->SetRestartOrientation(npc->startOrientation);
+			character->SetCanRestart(false);
+		}
+	}
+	else if (npc->type == "heart" || npc->type == "speed_boost" || npc->type == "song")
+	{
+		Pickup* pickup = nullptr;
+
+		if (npc->type == "heart")
+			pickup = game->SpawnEntity<ExtraLifePickup>();
+		else if (npc->type == "speed_boost")
+			pickup = game->SpawnEntity<SpeedBoostPickup>();
+		else if (npc->type == "song")
+			pickup = game->SpawnEntity<SongPickup>();
+
+		if (pickup)
+		{
+			pickup->SetTransform(Imzadi::Transform(npc->startOrientation, npc->startPosition));
+			pickup->Configure(npc->configMap);
+		}
 	}
 }

@@ -17,6 +17,12 @@ SkinnedRenderMesh::SkinnedRenderMesh()
 {
 }
 
+/*virtual*/ bool SkinnedRenderMesh::CanBeCached() const
+{
+	// We can't be cached, because each load needs to be its own instance.
+	return false;
+}
+
 /*virtual*/ bool SkinnedRenderMesh::Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache)
 {
 	if (!RenderMeshAsset::Load(jsonDoc, assetCache))

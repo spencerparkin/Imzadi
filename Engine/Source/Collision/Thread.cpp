@@ -6,6 +6,7 @@
 #include <format>
 #include <ostream>
 #include <istream>
+#include <Windows.h>
 
 using namespace Imzadi;
 using namespace Imzadi::Collision;
@@ -59,6 +60,8 @@ bool Thread::Shutdown()
 
 void Thread::Run()
 {
+	SetThreadDescription(GetCurrentThread(), L"Collision");
+
 	while (!this->signaledToExit)
 	{
 		// Don't eat up any CPU resources if there are no tasks queued.

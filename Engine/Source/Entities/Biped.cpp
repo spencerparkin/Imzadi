@@ -63,6 +63,10 @@ Biped::Biped()
 
 /*virtual*/ bool Biped::Shutdown()
 {
+	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+	Game::Get()->GetCollisionSystem()->RemoveShape(this->collisionShapeID);
+	this->collisionShapeID = 0;
+
 	Entity::Shutdown();
 	return true;
 }
@@ -73,6 +77,15 @@ Biped::Biped()
 	capsule->SetVertex(1, Vector3(0.0, 5.0, 0.0));
 	capsule->SetRadius(1.0);
 	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
+}
+
+/*virtual*/ std::string Biped::GetInfo() const
+{
+	Transform transform;
+	this->GetTransform(transform);
+
+	std::string info = std::format("Position: <{}, {}, {}>", transform.translation.x, transform.translation.y, transform.translation.z);
+	return info;
 }
 
 /*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)
@@ -193,7 +206,9 @@ Biped::Biped()
 		}
 		case TickPass::PARALLEL_WORK:
 		{
-			this->ManageAnimation(deltaTime);
+			if (!this->ManageAnimation(deltaTime))
+				return false;
+
 			break;
 		}
 		case TickPass::RESOLVE_COLLISIONS:
@@ -253,13 +268,13 @@ Biped::Biped()
 	return true;
 }
 
-/*virtual*/ void Biped::ManageAnimation(double deltaTime)
+/*virtual*/ bool Biped::ManageAnimation(double deltaTime)
 {
 	// Make sure we're playing an appropriate animation and pump the animation system.
 
 	auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 	if (!animatedMesh)
-		return;
+		return true;
 	
 	bool canLoop = true;
 	double animationRate = 1.0;
@@ -304,24 +319,45 @@ Biped::Biped()
 			animationRate = 0.2;
 			break;
 		}
+		case AnimationMode::DEATH_BY_BADDY_HIT:
+		{
+			animatedMesh->SetAnimation(this->GetAnimName(AnimType::HIT_FALLING));
+			canLoop = false;
+			animationRate = 0.2;
+			break;
+		}
 	}
 
 	if (!animatedMesh->AdvanceAnimation(deltaTime * animationRate, canLoop))
 	{
-		if (this->animationMode == AnimationMode::DEATH_BY_FATAL_LANDING || this->animationMode == AnimationMode::DEATH_BY_ABYSS_FALLING)
+		if (this->animationMode == AnimationMode::DEATH_BY_FATAL_LANDING ||
+			this->animationMode == AnimationMode::DEATH_BY_ABYSS_FALLING ||
+			this->animationMode == AnimationMode::DEATH_BY_BADDY_HIT)
 		{
-			this->OnBipedDied();
+			if (!this->OnBipedDied())
+				return false;
 		}
 	}
+
+	return true;
 }
 
-/*virtual*/ void Biped::OnBipedDied()
+/*virtual*/ bool Biped::OnBipedDied()
 {
 	if (this->canRestart)
+	{
 		this->Reset();
+		return true;
+	}
+
+	return false;
 }
 
 /*virtual*/ void Biped::OnBipedFatalLanding()
+{
+}
+
+/*virtual*/ void Biped::OnBipedBaddyHit()
 {
 }
 
@@ -346,6 +382,11 @@ void Biped::SetAnimationMode(AnimationMode newMode)
 		case AnimationMode::DEATH_BY_ABYSS_FALLING:
 		{
 			this->OnBipedAbyssFalling();
+			break;
+		}
+		case AnimationMode::DEATH_BY_BADDY_HIT:
+		{
+			this->OnBipedBaddyHit();
 			break;
 		}
 	}

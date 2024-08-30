@@ -4,9 +4,11 @@
 #include "Assets/Audio.h"
 #include "Math/Interval.h"
 #include <xaudio2.h>
+#include <RtMidi.h>
 #include <string>
 #include <map>
 #include <set>
+#include <semaphore>
 
 template<>
 struct std::hash<WAVEFORMATEX>
@@ -69,15 +71,21 @@ namespace Imzadi
 
 		/**
 		 * Simply play the given sound until it terminates.
+		 * This could be a cached WAVE sound or MIDI song.
 		 * 
 		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
 		 */
 		bool PlaySound(const std::string& sound, float volume = 1.0f);
 
+		/**
+		 * Tell the caller if any MIDI song is currently playing.
+		 */
+		bool IsMidiSongPlaying();
+
 	private:
 		IXAudio2* audio;
 		IXAudio2MasteringVoice* masteringVoice;
-		typedef std::map<std::string, Reference<Audio>> AudioMap;
+		typedef std::map<std::string, Reference<AudioSystemAsset>> AudioMap;
 		AudioMap audioMap;
 
 		struct AmbientSound
@@ -129,5 +137,36 @@ namespace Imzadi
 
 		void ClearSourceCache();
 		AudioSourceList* GetOrCreateAudioSourceList(const WAVEFORMATEX& waveFormat);
+
+		class MidiThread
+		{
+		public:
+			MidiThread();
+			virtual ~MidiThread();
+
+			bool Startup();
+			bool Shutdown();
+
+			void EnqueueMidiSong(MidiSong* midiSong);
+
+		public:
+			volatile bool playing;
+
+		private:
+			static void ThreadEntryProc(MidiThread* midiThread);
+
+			void Run();
+
+			void PlayMidiSong(MidiSong* midiSong);
+
+			std::list<Reference<MidiSong>> midiSongQueue;
+			std::mutex midiSongQueueMutex;
+			std::counting_semaphore<std::numeric_limits<uint32_t>::max()> midiSongQueueSemaphore;
+			std::thread* thread;
+			bool exitSignaled;
+			RtMidiOut* midiOut;
+		};
+
+		MidiThread* midiThread;
 	};
 }

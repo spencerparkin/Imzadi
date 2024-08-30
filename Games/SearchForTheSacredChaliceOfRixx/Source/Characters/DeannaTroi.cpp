@@ -1,10 +1,13 @@
 #include "DeannaTroi.h"
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
+#include "Characters/Borg.h"
 #include "EventSystem.h"
 #include "DialogSystem.h"
 #include "Collision/Result.h"
+#include "Collision/CollisionCache.h"
 #include "Log.h"
+#include "Pickup.h"
 #include "Audio/System.h"
 
 //------------------------------------ DeannaTroi ------------------------------------
@@ -15,6 +18,7 @@ DeannaTroi::DeannaTroi()
 	this->maxMoveSpeed = 20.0;
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
+	this->entityOverlapQueryTaskID = 0;
 	this->SetName("Deanna");
 }
 
@@ -92,6 +96,8 @@ void DeannaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* caps
 		return "DeannaTroiAbyssFalling";
 	case Imzadi::Biped::AnimType::FATAL_LANDING:
 		return "DeannaTroiFatalLanding";
+	case Imzadi::Biped::AnimType::HIT_FALLING:
+		return "DeannaTroiHitFalling";
 	}
 
 	return "";
@@ -112,7 +118,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				{
 					auto action = new TeleportToLevelAction(this);
 					action->targetLevel = triggerBoxName.substr(6);
-					this->actionManager.BindAction(XINPUT_GAMEPAD_A, action);
+					this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
 				}
 
 				break;
@@ -122,7 +128,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				IMZADI_LOG_INFO("Exited trigger box \"%s\".", triggerBoxName.c_str());
 
 				if (triggerBoxName.find("JumpTo") == 0)
-					this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
+					this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
 
 				break;
 			}
@@ -134,11 +140,11 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
 	Character::AccumulateForces(netForce);
 
-	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 	if (!controller)
 		return;
 
-	if (this->inContactWithGround && controller->ButtonPressed(XINPUT_GAMEPAD_Y))
+	if (this->inContactWithGround && controller->ButtonPressed(Imzadi::Button::Y_BUTTON))
 	{
 		Imzadi::Vector3 jumpForce(0.0, 1000.0, 0.0);
 		netForce += jumpForce;
@@ -147,7 +153,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 /*virtual*/ void DeannaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
-	if (this->inContactWithGround)
+	if (this->inContactWithGround && this->animationMode != Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT)
 	{
 		Imzadi::Reference<ReferenceCounted> followCamRef;
 		Imzadi::HandleManager::Get()->GetObjectFromHandle(this->cameraHandle, followCamRef);
@@ -156,9 +162,9 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			return;
 
 		Imzadi::Vector2 leftStick(0.0, 0.0);
-		Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+		Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 		if (controller)
-			controller->GetAnalogJoyStick(Imzadi::Controller::Side::LEFT, leftStick.x, leftStick.y);
+			leftStick = controller->GetAnalogJoyStick(Imzadi::Button::L_JOY_STICK);
 
 		Imzadi::Camera* camera = followCam->GetCamera();
 		if (!camera)
@@ -174,9 +180,12 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		zAxis = zAxis.RejectedFrom(upVector).Normalized();
 
 		Imzadi::Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
+		double speed = moveDelta.Length();
 
 		// We can stomp this when we're on the ground, because no "physics" is happening.
 		this->velocity = moveDelta.RejectedFrom(this->groundSurfaceNormal);
+		if (this->velocity.Normalize())
+			this->velocity *= speed;
 	}
 
 	Character::IntegrateVelocity(acceleration, deltaTime);
@@ -205,6 +214,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 			auto rayCastQuery = new Imzadi::Collision::RayCastQuery();
 			rayCastQuery->SetRay(ray);
+			rayCastQuery->SetUserFlagsMask(SHAPE_FLAG_TALKER);
 			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
 
 #if 0
@@ -215,6 +225,14 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			line.segment.point[1] = ray.origin + ray.unitDirection * 100.0;
 			debugLines->AddLine(line);
 #endif
+
+			if (this->animationMode != Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT)
+			{
+				auto entityOverlapQuery = new Imzadi::Collision::CollisionQuery();
+				entityOverlapQuery->SetShapeID(this->collisionShapeID);
+				entityOverlapQuery->SetUserFlagsMask(SHAPE_FLAG_BADDY | SHAPE_FLAG_PICKUP);
+				collisionSystem->MakeQuery(entityOverlapQuery, this->entityOverlapQueryTaskID);
+			}
 
 			break;
 		}
@@ -236,31 +254,34 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						if (hitData.shape)
 						{
 							auto gameApp = (GameApp*)Imzadi::Game::Get();
-							uint64_t userFlags = hitData.shape->GetUserFlags();
-							if ((userFlags & SHAPE_FLAG_TALKER) != 0 && hitData.alpha < 10.0 && !gameApp->GetDialogSystem()->PresentlyEngagedInConversation())
+							IMZADI_ASSERT((hitData.shape->GetUserFlags() & SHAPE_FLAG_TALKER) != 0);
+							static double maxTalkingDistance = 10.0;
+							if (hitData.alpha < maxTalkingDistance && !gameApp->GetDialogSystem()->PresentlyEngagedInConversation())
 							{
 								Imzadi::Reference<Imzadi::Entity> entity;
 								if (Imzadi::Game::Get()->FindEntityByShapeID(hitData.shapeID, entity))
 								{
 									unbindTalkActionIfAny = false;
 
-									if (!this->actionManager.IsBound(XINPUT_GAMEPAD_A))
+									if (!this->actionManager.IsBound(Imzadi::Button::A_BUTTON))
 									{
 										auto action = new TalkToEntityAction(this);
 										action->targetEntity = entity->GetName();
-										this->actionManager.BindAction(XINPUT_GAMEPAD_A, action);
+										this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
 									}
 								}
 							}
 						}
 
-						if (unbindTalkActionIfAny && dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(XINPUT_GAMEPAD_A)))
-							this->actionManager.UnbindAction(XINPUT_GAMEPAD_A);
+						if (unbindTalkActionIfAny && dynamic_cast<TalkToEntityAction*>(this->actionManager.GetBoundAction(Imzadi::Button::A_BUTTON)))
+							this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
 					}
 
 					delete result;
 				}
 			}
+
+			this->HandleEntityOverlapResults();
 
 			break;
 		}
@@ -269,10 +290,80 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	return true;
 }
 
+void DeannaTroi::HandleEntityOverlapResults()
+{
+	if (!this->entityOverlapQueryTaskID)
+		return;
+
+	Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+	std::unique_ptr<Imzadi::Collision::Result> result(collisionSystem->ObtainQueryResult(this->entityOverlapQueryTaskID));
+	if (!result)
+		return;
+
+	auto collisionResult = dynamic_cast<Imzadi::Collision::CollisionQueryResult*>(result.get());
+	if (!collisionResult)
+		return;
+	
+	bool unbindPickupActionIfAny = true;
+
+	for (auto& collisionPair : collisionResult->GetCollisionStatusArray())
+	{
+		Imzadi::Collision::ShapeID shapeID = collisionPair->GetOtherShape(this->collisionShapeID);
+		const Imzadi::Collision::Shape* shape = collisionPair->GetShape(shapeID);
+		uint64_t userFlags = shape->GetUserFlags();
+		if ((userFlags & SHAPE_FLAG_BADDY) != 0)
+		{
+			this->SetAnimationMode(Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT);
+
+			Imzadi::Reference<Imzadi::Entity> foundEntity;
+			if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
+			{
+				auto borg = dynamic_cast<Borg*>(foundEntity.Get());
+				if (borg)
+					borg->assimulatedHuman = true;
+			}
+
+			break;
+		}
+		else if ((userFlags & SHAPE_FLAG_PICKUP) != 0)
+		{
+			Imzadi::Reference<Imzadi::Entity> foundEntity;
+			if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
+			{
+				auto pickup = dynamic_cast<Pickup*>(foundEntity.Get());
+				if (pickup && pickup->CanBePickedUp())
+				{
+					unbindPickupActionIfAny = false;
+
+					if (!this->actionManager.IsBound(Imzadi::Button::B_BUTTON))
+					{
+						auto action = new CollectPickupAction(this);
+						action->pickup = pickup;
+						this->actionManager.BindAction(Imzadi::Button::B_BUTTON, action);
+					}
+				}
+			}
+		}
+	}
+
+	if (unbindPickupActionIfAny && dynamic_cast<CollectPickupAction*>(this->actionManager.GetBoundAction(Imzadi::Button::B_BUTTON)))
+		this->actionManager.UnbindAction(Imzadi::Button::B_BUTTON);
+}
+
+/*virtual*/ bool DeannaTroi::OnBipedDied()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* gameProgress = game->GetGameProgress();
+	int numLives = gameProgress->GetNumLives();
+	numLives--;
+	gameProgress->SetNumLives(numLives);
+	if (numLives <= 0)
+		return false;
+	return Character::OnBipedDied();
+}
+
 /*virtual*/ void DeannaTroi::Reset()
 {
-	// TODO: This is where we might incur a penalty for dying.
-
 	Character::Reset();
 }
 
@@ -293,13 +384,13 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 
 /*virtual*/ bool DeannaTroi::HangingOnToZipLine()
 {
-	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
 	if (!controller)
 		return false;
 
 	// A player jumps to grab a zip-line and then remains attached
 	// to it until they let go of the jump button.
-	return controller->ButtonDown(XINPUT_GAMEPAD_Y);		// TODO: Create a bindings system where we use the "jump" button instead of a controller-specitic button?
+	return controller->ButtonDown(Imzadi::Button::Y_BUTTON);
 }
 
 /*virtual*/ std::string DeannaTroi::GetZipLineAnimationName()
@@ -325,6 +416,11 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 /*virtual*/ void DeannaTroi::OnBipedAbyssFalling()
 {
 	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("HelpMeAhhh");
+}
+
+/*virtual*/ void DeannaTroi::OnBipedBaddyHit()
+{
+	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("BorgNanoProbesUgh");
 }
 
 //------------------------------------ DeannaTroi::LabeledAction ------------------------------------
@@ -354,13 +450,13 @@ DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
 	this->UpdateTransform();
 
 	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
-	this->sceneObjectName = scene->AddRenderObject(this->textRenderObject.Get());
+	scene->AddRenderObject(this->textRenderObject.Get());
 }
 
 /*virtual*/ void DeannaTroi::LabeledAction::Deinit()
 {
 	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
-	scene->RemoveRenderObject(this->sceneObjectName);
+	scene->RemoveRenderObject(this->textRenderObject->GetName());
 	this->textRenderObject.Reset();
 }
 
@@ -437,4 +533,25 @@ DeannaTroi::TalkToEntityAction::TalkToEntityAction(DeannaTroi* troi) : LabeledAc
 /*virtual*/ std::string DeannaTroi::TalkToEntityAction::GetActionLabel() const
 {
 	return std::format("Press \"A\" to talk to {}.", this->targetEntity.c_str());
+}
+
+//------------------------------------ DeannaTroi::TalkToEntityAction ------------------------------------
+
+DeannaTroi::CollectPickupAction::CollectPickupAction(DeannaTroi* troi) : LabeledAction(troi)
+{
+}
+
+/*virtual*/ DeannaTroi::CollectPickupAction::~CollectPickupAction()
+{
+}
+
+/*virtual*/ bool DeannaTroi::CollectPickupAction::Perform()
+{
+	this->pickup->Collect();
+	return true;
+}
+
+/*virtual*/ std::string DeannaTroi::CollectPickupAction::GetActionLabel() const
+{
+	return std::format("Press \"B\" to {} {}.", this->pickup->GetVerb().c_str(), this->pickup->GetLabel().c_str());
 }

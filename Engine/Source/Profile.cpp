@@ -51,20 +51,21 @@ void ProfileData::Reset()
 
 std::string ProfileData::PrintStats() const
 {
-	std::vector<std::string> blockNameArray;
+	std::vector<Block> blockArray;
 	for (auto pair : this->blockMap)
-		blockNameArray.push_back(pair.first);
+		blockArray.push_back(pair.second);
 
-	std::sort(blockNameArray.begin(), blockNameArray.end());
+	std::sort(blockArray.begin(), blockArray.end(), [](const Block& blockA, const Block& blockB) -> bool
+		{
+			return blockA.totalTimeMS < blockB.totalTimeMS;
+		});
 
 	std::string stats;
 	stats += "======================================\n";
-	stats += std::format("Num. profile blocks: {}\n", blockNameArray.size());
+	stats += std::format("Num. profile blocks: {}\n", blockArray.size());
 
-	for (const std::string& blockName : blockNameArray)
+	for (const Block& block : blockArray)
 	{
-		BlockMap::const_iterator iter = this->blockMap.find(blockName);
-		const Block& block = iter->second;
 		stats += "---------------------------------\n";
 		stats += std::format("Name: {}\n", block.name.c_str());
 		stats += std::format("Hit Count: {}\n", block.hitCount);

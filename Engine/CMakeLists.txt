@@ -14,8 +14,6 @@ set(GAME_ENGINE_SOURCES
     Source/Reference.h
     Source/Scene.cpp
     Source/Scene.h
-    Source/Controller.cpp
-    Source/Controller.h
     Source/Log.cpp
     Source/Log.h
     Source/Action.cpp
@@ -30,6 +28,16 @@ set(GAME_ENGINE_SOURCES
     Source/Clock.h
     Source/Command.cpp
     Source/Command.h
+    Source/Input/Input.cpp
+    Source/Input/Input.h
+    Source/Input/DInput.cpp
+    Source/Input/DInput.h
+    Source/Input/PCInput.cpp
+    Source/Input/PCInput.h
+    Source/Input/XInput.cpp
+    Source/Input/XInput.h
+    Source/Input/System.cpp
+    Source/Input/System.h
     Source/Entities/FollowCam.cpp
     Source/Entities/FollowCam.h
     Source/Entities/FreeCam.cpp
@@ -74,6 +82,8 @@ set(GAME_ENGINE_SOURCES
     Source/Collision/Shapes/Sphere.h
     Source/Commands/CollisionSystemCommand.cpp
     Source/Commands/CollisionSystemCommand.h
+    Source/Commands/InfoCommand.cpp
+    Source/Commands/InfoCommand.h
     Source/Physics/System.cpp
     Source/Physics/System.h
     Source/Audio/System.cpp
@@ -122,6 +132,8 @@ set(GAME_ENGINE_SOURCES
     Source/Math/PolygonMesh.h
     Source/Math/Graph.cpp
     Source/Math/Graph.h
+    Source/Math/Random.cpp
+    Source/Math/Random.h
     Source/RenderObjects/AnimatedMeshInstance.cpp
     Source/RenderObjects/AnimatedMeshInstance.h
     Source/RenderObjects/DebugLines.cpp
@@ -178,6 +190,7 @@ add_library(ImzadiGameEngine SHARED
 
 target_link_libraries(ImzadiGameEngine PUBLIC
     AudioDataLib
+    RtMidi
 )
 
 target_compile_definitions(ImzadiGameEngine PRIVATE

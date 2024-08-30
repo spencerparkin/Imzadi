@@ -52,7 +52,7 @@ FollowCam::FollowCam()
 
 /*virtual*/ bool FollowCam::Tick(TickPass tickPass, double deltaTime)
 {
-	Controller* controller = Game::Get()->GetController(this->cameraUser);
+	Input* controller = Game::Get()->GetController(this->cameraUser);
 	if (!controller)
 		return true;
 
@@ -61,15 +61,14 @@ FollowCam::FollowCam()
 		case TickPass::MOVE_UNCONSTRAINTED:
 		{
 #if defined _DEBUG
-			if (controller->ButtonPressed(XINPUT_GAMEPAD_START, true))
+			if (controller->ButtonPressed(Button::START, true))
 				this->freeCam->SetEnabled(true);
 #endif
 
-			if (controller->ButtonPressed(XINPUT_GAMEPAD_LEFT_SHOULDER))
+			if (controller->ButtonPressed(Button::L_SHOULDER))
 				this->MoveCameraOrbitBehindSubject(false);
 
-			Vector2 rightStick;
-			controller->GetAnalogJoyStick(Controller::Side::RIGHT, rightStick.x, rightStick.y);
+			Vector2 rightStick = controller->GetAnalogJoyStick(Button::R_JOY_STICK);
 
 			double longitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * rightStick.x;
 			double latitudeAngleDelta = this->followParams.maxRotationRate * deltaTime * -rightStick.y;

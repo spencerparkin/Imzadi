@@ -21,17 +21,9 @@ void Scene::Clear()
 	this->renderObjectMap.clear();
 }
 
-std::string Scene::AddRenderObject(Reference<RenderObject> renderObject)
+bool Scene::AddRenderObject(Reference<RenderObject> renderObject)
 {
-	std::string name = std::format("{:#010x}", uintptr_t(renderObject.Get()));
-	if (!this->AddRenderObject(name, renderObject))
-		return "";
-
-	return name;
-}
-
-bool Scene::AddRenderObject(const std::string& name, Reference<RenderObject> renderObject)
-{
+	std::string name = renderObject->GetName();
 	if (this->renderObjectMap.find(name) != this->renderObjectMap.end())
 		return false;
 
@@ -112,6 +104,7 @@ void Scene::PreRender()
 RenderObject::RenderObject()
 {
 	this->hide = false;
+	this->name = std::format("{:#010x}", uintptr_t(this));
 }
 
 /*virtual*/ RenderObject::~RenderObject()

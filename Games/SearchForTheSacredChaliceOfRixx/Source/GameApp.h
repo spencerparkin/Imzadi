@@ -5,6 +5,8 @@
 #include "Assets/GameProgress.h"
 
 #define SHAPE_FLAG_TALKER			0x0000000100000000
+#define SHAPE_FLAG_BADDY			0x0000000200000000
+#define SHAPE_FLAG_PICKUP			0x0000000400000000
 
 class GameApp : public Imzadi::Game
 {

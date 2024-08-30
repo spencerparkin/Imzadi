@@ -5,6 +5,7 @@
 #include "AxisAlignedBoundingBox.h"
 #include "Plane.h"
 #include "Ray.h"
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -166,6 +167,28 @@ bool LineSegment::SetAsShortestConnector(const LineSegment& lineSegmentA, const 
 
 	this->point[0] = lineSegmentA.Lerp(alpha);
 	this->point[1] = lineSegmentB.Lerp(beta);
+
+	return true;
+}
+
+bool LineSegment::SetAsAnyShortestConnector(const LineSegment& lineSegmentA, const LineSegment& lineSegmentB)
+{
+	if (this->SetAsShortestConnector(lineSegmentA, lineSegmentB))
+		return true;
+
+	std::vector<LineSegment> lineSegmentArray;
+
+	lineSegmentArray.push_back(LineSegment(lineSegmentA.point[0], lineSegmentB.ClosestPointTo(lineSegmentA.point[0])));
+	lineSegmentArray.push_back(LineSegment(lineSegmentA.point[1], lineSegmentB.ClosestPointTo(lineSegmentA.point[1])));
+	lineSegmentArray.push_back(LineSegment(lineSegmentB.point[0], lineSegmentA.ClosestPointTo(lineSegmentB.point[0])));
+	lineSegmentArray.push_back(LineSegment(lineSegmentB.point[1], lineSegmentA.ClosestPointTo(lineSegmentB.point[1])));
+
+	std::sort(lineSegmentArray.begin(), lineSegmentArray.end(), [](const LineSegment& lineSegA, const LineSegment& lineSegB) -> bool
+		{
+			return lineSegA.SquareLength() < lineSegB.SquareLength();
+		});
+
+	*this = lineSegmentArray[0];
 
 	return true;
 }

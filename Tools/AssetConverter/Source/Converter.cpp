@@ -608,6 +608,8 @@ bool Converter::GenerateVertexBuffer(rapidjson::Document& verticesDoc, const aiM
 
 bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh)
 {
+	// TODO: Add LOD support.  The engine already has some work done on this front.
+
 	IMZADI_LOG_INFO("Processing mesh: %s", mesh->mName.C_Str());
 
 	wxFileName meshFileName;
@@ -643,7 +645,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
 	if (material->GetTextureCount(aiTextureType_DIFFUSE) != 1)
 	{
-		IMZADI_LOG_ERROR("Error: Material does not have exactly one diffuse texture.");
+		IMZADI_LOG_ERROR("Error: Material does not have exactly one diffuse texture.  It has %d of them.", material->GetTextureCount(aiTextureType_DIFFUSE));
 		return false;
 	}
 
@@ -654,14 +656,13 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		return false;
 	}
 
-	wxString textureFullPath = this->assetFolder + wxString::Format("/%s", texturePath.C_Str());
+	wxFileName textureFileName(texturePath.C_Str());
+	wxString textureFullPath;
+	if (!textureFileName.IsAbsolute())
+		textureFileName.SetPath(this->assetFolder.c_str());
+	textureFullPath = textureFileName.GetFullPath();
 	IMZADI_LOG_INFO("Found texture: %s", (const char*)textureFullPath.c_str());
-	if (!this->textureMaker.MakeTexture(textureFullPath,
-					TextureMaker::Flag::COLOR |
-					TextureMaker::Flag::ALPHA |
-					TextureMaker::Flag::COMPRESS |
-					TextureMaker::Flag::MAKE_ALPHA |
-					TextureMaker::Flag::FLIP_VERTICAL))
+	if (!this->textureMaker.MakeTexture(textureFullPath, this->textureMakerFlags))
 	{
 		IMZADI_LOG_ERROR("Failed to make texture!");
 		return false;

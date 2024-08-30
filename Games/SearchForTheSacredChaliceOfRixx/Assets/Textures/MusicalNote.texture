@@ -1,0 +1,8 @@
+{
+    "width": 16,
+    "height": 16,
+    "data": "Textures\\MusicalNote.texture_data",
+    "num_mips": 5,
+    "format": "RGBA",
+    "compressed": true
+}

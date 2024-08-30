@@ -24,6 +24,7 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 		virtual bool MakeRenderInstance(Reference<RenderObject>& renderObject) override;
+		virtual bool CanBeCached() const override;
 
 		Skeleton* GetSkeleton() { return this->skeleton.Get(); }
 

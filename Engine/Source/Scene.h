@@ -41,18 +41,9 @@ namespace Imzadi
 		 * Add a RenderObject instance to the scene.  It will get drawn if it intersects the view frustum.
 		 * 
 		 * @param[in] renderObject This is the render object to add to the scene.
-		 * @return A name for the render object is returned that can be used to refer to it in other calls.  An empty string is returned on failure.
+		 * @return True is returned on success; false, otherwise.  Failure can occur here if a render object by the same name already exists in the scene.
 		 */
-		std::string AddRenderObject(Reference<RenderObject> renderObject);
-
-		/**
-		 * Add a RenderObject instance to the scene by name.
-		 * 
-		 * @param[in] name The render object will be referred to in this call and others by this name.
-		 * @param[in] renderObject This is the render object to add to the scene.
-		 * @return True is returned on success; false, otherwise.  Failure can occur if there is a name collision.
-		 */
-		bool AddRenderObject(const std::string& name, Reference<RenderObject> renderObject);
+		bool AddRenderObject(Reference<RenderObject> renderObject);
 
 		/**
 		 * Remove a RenderObject instance from the scene by name.
@@ -171,7 +162,11 @@ namespace Imzadi
 		bool IsHidden() const { return this->hide; }
 		void SetHidden(bool hide) { this->hide = hide; }
 
+		void SetName(const std::string& name) { this->name = name; }
+		const std::string& GetName() const { return this->name; }
+
 	private:
 		bool hide;
+		std::string name;
 	};
 }

@@ -4,6 +4,7 @@ using namespace Imzadi;
 
 Entity::Entity()
 {
+	this->blackSpot = false;
 }
 
 /*virtual*/ Entity::~Entity()
@@ -48,4 +49,14 @@ Entity::Entity()
 /*virtual*/ bool Entity::OwnsCollisionShape(Collision::ShapeID shapeID) const
 {
 	return false;
+}
+
+/*virtual*/ std::string Entity::GetInfo() const
+{
+	return "";
+}
+
+void Entity::DoomEntity()
+{
+	this->blackSpot = true;
 }

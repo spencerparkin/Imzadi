@@ -153,6 +153,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new TriggerBoxData();
 	else if (ext == ".audio")
 		return new Audio();
+	else if (ext == ".song")
+		return new MidiSong();
 
 	return nullptr;
 }
@@ -261,6 +263,11 @@ Asset::Asset()
 
 /*virtual*/ Asset::~Asset()
 {
+}
+
+/*virtual*/ bool Asset::CanBeCached() const
+{
+	return true;
 }
 
 /*virtual*/ bool Asset::Save(rapidjson::Document& jsonDoc) const

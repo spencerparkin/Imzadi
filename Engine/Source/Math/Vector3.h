@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Defines.h"
+#include "Vector2.h"
 #include <math.h>
 #include <vector>
 #include <istream>
@@ -42,6 +43,13 @@ namespace Imzadi
 			this->z = vector.z;
 		}
 
+		Vector3(const Vector2& vector)
+		{
+			this->x = vector.x;
+			this->y = vector.y;
+			this->z = 0.0;
+		}
+
 		virtual ~Vector3()
 		{
 		}
@@ -51,6 +59,13 @@ namespace Imzadi
 			this->x = vector.x;
 			this->y = vector.y;
 			this->z = vector.z;
+		}
+
+		void operator=(const Vector2& vector)
+		{
+			this->x = vector.x;
+			this->y = vector.y;
+			this->z = 0.0;
 		}
 
 		void operator+=(const Vector3& vector)
@@ -369,14 +384,26 @@ namespace Imzadi
 		Vector3 MoveTo(const Vector3& vector, double stepSize) const;
 
 		/**
-		 * Compute Barycentric coordinates for this vector against the triangle having the three
-		 * given vertices.
+		 * Compute and return coordinates for this vector against the given axes.  The given
+		 * coordinate frame need not be orthogonal or orthonormal.
 		 * 
-		 * @param[in] vertexA The first triangle vertex.
-		 * @param[in] vertexB The second triangle vertex.
-		 * @param[in] vertexC The third triangle vertex.
-		 * @param[out] coordinates The components of this vector give the linear combination the vector in question inside the given triangle.
+		 * @param[in] xAxis The axis along-which the X-coordinate is measured.
+		 * @param[in] yAxis The axis along-which the Y-coordinate is measured.
+		 * @param[in] zAxis The axis along-which the Z-coordinate is measured.
+		 * @param[out] coordinates This will be set to the linear combination of the given axes equaling this vector instance.
 		 * @return True is returned on success; false, otherwise.
+		 */
+		bool CalcCoords(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis, Vector3& coordinates) const;
+
+		/**
+		 * Compute and return Barycentric coordinates for this vector against the given triangle.
+		 * The order of the vertices will matter.  Specifically, (0,0,1) will correspond to the
+		 * first vertex, (1,0,0) to the second, and (0,1,0) to the third.  If this vector is not
+		 * a point interior to the given triangle, we leave the result undefined.
+		 * 
+		 * @param[in] vertexA The first vertex of the triangle.
+		 * @param[in] vertexB The second vertex of the triangle.
+		 * @param[in] vertexC The third vertex of the triangle.
 		 */
 		bool CalcBarycentricCoords(const Vector3& vertexA, const Vector3& vertexB, const Vector3& vertexC, Vector3& coordinates) const;
 

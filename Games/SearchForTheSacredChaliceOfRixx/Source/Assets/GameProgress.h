@@ -29,8 +29,12 @@ public:
 	void SetLevelName(const std::string& levelName);
 	const std::string& GetLevelName() const;
 
+	void SetNumLives(int numLives);
+	int GetNumLives() const;
+
 private:
 	std::unordered_map<std::string, uint32_t> inventoryMap;
 	std::unordered_set<std::string> mileStoneSet;
 	std::string levelName;
+	int numLives;
 };

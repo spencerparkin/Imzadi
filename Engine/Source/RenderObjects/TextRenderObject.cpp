@@ -47,6 +47,9 @@ uint32_t TextRenderObject::GetMaxCharsPerLine() const
 
 	if (!this->vertexBuffer)
 	{
+		if (!this->font)
+			return;
+
 		D3D11_BUFFER_DESC indexBufferDesc{};
 		this->font->GetIndexBuffer()->GetDesc(&indexBufferDesc);
 

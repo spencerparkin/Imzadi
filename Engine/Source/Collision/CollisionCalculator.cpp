@@ -100,7 +100,7 @@ ShapePairCollisionStatus* CollisionCalculator<SphereShape, SphereShape>::Calcula
 	LineSegment spineB = capsuleB->GetObjectToWorldTransform().TransformLineSegment(capsuleB->GetSpine());
 
 	LineSegment shortestConnector;
-	if (shortestConnector.SetAsShortestConnector(spineA, spineB))
+	if (shortestConnector.SetAsAnyShortestConnector(spineA, spineB))
 	{
 		double distance = shortestConnector.Length();
 		double radiiSum = capsuleA->GetRadius() + capsuleB->GetRadius();

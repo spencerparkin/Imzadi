@@ -36,6 +36,7 @@ namespace Imzadi
 		virtual bool Load(const rapidjson::Document& jsonDoc, AssetCache* assetCache) override;
 		virtual bool Unload() override;
 		virtual bool Save(rapidjson::Document& jsonDoc) const override;
+		virtual bool CanBeCached() const override;
 
 		void SetRootBone(Bone* bone);
 		Bone* GetRootBone() { return this->rootBone; }

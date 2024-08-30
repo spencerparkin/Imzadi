@@ -2,7 +2,7 @@
 
 #include <wx/app.h>
 #include "Camera.h"
-#include "Controller.h"
+#include "Input/System.h"
 #include "Collision/Shape.h"
 #include "Math/LineSegment.h"
 #include <wx/glcanvas.h>
@@ -54,7 +54,7 @@ private:
 	wxGLContext* renderContext;
 	static int attributeList[];
 	Camera camera;
-	Imzadi::Controller controller;
+	Imzadi::InputSystem inputSystem;
 	std::list<double> renderTimeArray;
 	unsigned int renderTimeArrayMax;
 	StrafeMode strafeMode;

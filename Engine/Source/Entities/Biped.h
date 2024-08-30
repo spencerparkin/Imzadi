@@ -30,7 +30,8 @@ namespace Imzadi
 			RUN,
 			JUMP,
 			FATAL_LANDING,
-			ABYSS_FALLING
+			ABYSS_FALLING,
+			HIT_FALLING
 		};
 
 		virtual bool Setup() override;
@@ -45,12 +46,14 @@ namespace Imzadi
 		virtual void IntegrateVelocity(const Vector3& acceleration, double deltaTime);
 		virtual void IntegratePosition(double deltaTime);
 		virtual bool ConstraintVelocityWithGround();
-		virtual void OnBipedDied();
+		virtual bool OnBipedDied();
 		virtual void OnBipedFatalLanding();
+		virtual void OnBipedBaddyHit();
 		virtual void OnBipedAbyssFalling();
 		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
 		virtual uint32_t TickOrder() const override;
+		virtual std::string GetInfo() const override;
 
 		void SetRestartLocation(const Vector3& restartLocation);
 		void SetRestartOrientation(const Quaternion& restartOrientation);
@@ -72,12 +75,13 @@ namespace Imzadi
 		{
 			BASIC_PLATFORMING,
 			DEATH_BY_ABYSS_FALLING,
+			DEATH_BY_BADDY_HIT,
 			DEATH_BY_FATAL_LANDING
 		};
 
 		void SetAnimationMode(AnimationMode newMode);
 
-		virtual void ManageAnimation(double deltaTime);
+		virtual bool ManageAnimation(double deltaTime);
 
 		void HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* collisionResult);
 

@@ -139,9 +139,25 @@ public:
 	 */
 	uint64_t GetUserFlagsMask() const { return this->userFlagsMask; }
 
+	/**
+	 * Associate a bounding-box with the ray-cast query.  By default, none is associated.
+	 * If one is associated, then the ray-cast is limited to this box.  (Clearly, you'll
+	 * want to make sure the box contains the origin of the ray.)  Not only is limiting
+	 * the ray-cast in this way occationally useful, but it can also speed up the ray-cast
+	 * algorithm.
+	 */
+	void SetBoundingBox(const AxisAlignedBoundingBox& boundingBox) { this->boundingBox = boundingBox; }
+
+	/**
+	 * Get the bounding-box associated with this ray-cast query.  If it is invalid, then
+	 * we consider there to be no association here.
+	 */
+	const AxisAlignedBoundingBox& GetBoundingBox() const { return this->boundingBox; }
+
 private:
 	Ray ray;
 	uint64_t userFlagsMask;
+	AxisAlignedBoundingBox boundingBox;
 };
 
 /**

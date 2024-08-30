@@ -77,6 +77,7 @@ DebugRenderQuery::DebugRenderQuery()
 RayCastQuery::RayCastQuery()
 {
 	this->userFlagsMask = 0xFFFFFFFFFFFFFFFF;
+	this->boundingBox.MakeReadyForExpansion();
 }
 
 /*virtual*/ RayCastQuery::~RayCastQuery()
@@ -92,7 +93,7 @@ RayCastQuery::RayCastQuery()
 	IMZADI_COLLISION_PROFILE("Ray Cast Query");
 	const BoundingBoxTree& boxTree = thread->GetBoundingBoxTree();
 	auto result = new RayCastResult();
-	boxTree.RayCast(this->ray, this->userFlagsMask, result);
+	boxTree.RayCast(this->ray, this->boundingBox, this->userFlagsMask, result);
 	return result;
 }
 

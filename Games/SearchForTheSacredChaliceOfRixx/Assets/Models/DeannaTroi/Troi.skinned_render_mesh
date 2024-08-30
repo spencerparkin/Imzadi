@@ -43,6 +43,7 @@
         "Animations\\DeannaZipLine.animation",
         "Animations\\DeannaTroiAbyssFalling.animation",
         "Animations\\DeannaTroiFatalLanding.animation",
+        "Animations\\DeannaTroiHitFalling.animation",
         "Animations\\Idle.animation",
         "Animations\\Jumping.animation",
         "Animations\\Run.animation"

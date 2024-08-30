@@ -170,7 +170,11 @@ void ConsoleRenderObject::ExecuteCommand()
 			}
 			else
 			{
-				for (const std::string& outputLine : results)
+				std::vector<std::string> outputLineArray;
+				for (const std::string& result : results)
+					this->SplitString(result, outputLineArray, "\n");
+
+				for (const std::string& outputLine : outputLineArray)
 					this->consoleOutput.push_back(outputLine);
 			}
 		}

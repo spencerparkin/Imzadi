@@ -13,6 +13,8 @@ set(RIXX_SOURCES
     Source/Character.h
     Source/CustomAssetCache.cpp
     Source/CustomAssetCache.h
+    Source/Pickup.cpp
+    Source/Pickup.h
     Source/Characters/DeannaTroi.cpp
     Source/Characters/DeannaTroi.h
     Source/Characters/LwaxanaTroi.cpp
@@ -31,6 +33,8 @@ set(RIXX_SOURCES
     Source/Assets/ZipLine.h
     Source/Assets/GameLevelData.cpp
     Source/Assets/GameLevelData.h
+    Source/RenderObjects/HUDRenderObject.cpp
+    Source/RenderObjects/HUDRenderObject.h
     Assets/Icons/Icon.rc
 )
 

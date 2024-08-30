@@ -1,5 +1,6 @@
 #include "Vector3.h"
 #include "Matrix3x3.h"
+#include "Vector2.h"
 
 using namespace Imzadi;
 
@@ -145,26 +146,44 @@ Vector3 Vector3::MoveTo(const Vector3& vector, double stepSize) const
 	return *this + delta * (stepSize / distance);
 }
 
-bool Vector3::CalcBarycentricCoords(const Vector3& vertexA, const Vector3& vertexB, const Vector3& vertexC, Vector3& coordinates) const
+bool Vector3::CalcCoords(const Vector3& xAxis, const Vector3& yAxis, const Vector3& zAxis, Vector3& coordinates) const
 {
 	Matrix3x3 matrix;
-
-	matrix.ele[0][0] = vertexA.x;
-	matrix.ele[0][1] = vertexB.x;
-	matrix.ele[0][2] = vertexC.x;
-
-	matrix.ele[1][0] = vertexA.y;
-	matrix.ele[1][1] = vertexB.y;
-	matrix.ele[1][2] = vertexC.y;
-
-	matrix.ele[2][0] = vertexA.z;
-	matrix.ele[2][1] = vertexB.z;
-	matrix.ele[2][2] = vertexC.z;
+	matrix.SetColumnVectors(xAxis, yAxis, zAxis);
 
 	Matrix3x3 matrixInv;
 	if (!matrixInv.Invert(matrix))
 		return false;
 
 	coordinates = matrixInv * *this;
+	return true;
+}
+
+bool Vector3::CalcBarycentricCoords(const Vector3& vertexA, const Vector3& vertexB, const Vector3& vertexC, Vector3& coordinates) const
+{
+	Vector3 edgeU = vertexB - vertexA;
+	Vector3 edgeV = vertexC - vertexA;
+	Vector3 interiorPoint = *this - vertexA;
+	Vector3 xAxis = edgeU;
+	Vector3 yAxis = edgeV;
+	if (!xAxis.Normalize() || !yAxis.Normalize())
+		return false;
+
+	Vector2 point(interiorPoint.Dot(xAxis), interiorPoint.Dot(yAxis));
+	Vector2 uAxis(edgeU.Dot(xAxis), edgeU.Dot(yAxis));
+	Vector2 vAxis(edgeV.Dot(xAxis), edgeV.Dot(yAxis));
+	double area = uAxis.Cross(vAxis);
+	if (area == 0.0)
+		return false;
+
+	double areaReciprical = 1.0 / area;
+	if (::isnan(areaReciprical) || ::isinf(areaReciprical))
+		return false;
+
+	coordinates.x = uAxis.Cross(point) * areaReciprical;
+	coordinates.y = -vAxis.Cross(point) * areaReciprical;
+	coordinates.x = IMZADI_CLAMP(coordinates.x, 0.0, 1.0);
+	coordinates.y = IMZADI_CLAMP(coordinates.y, 0.0, 1.0);
+	coordinates.z = 1.0 - coordinates.x - coordinates.y;
 	return true;
 }

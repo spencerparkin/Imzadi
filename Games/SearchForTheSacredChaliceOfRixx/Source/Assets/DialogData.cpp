@@ -187,7 +187,8 @@ DialogBasicElement::DialogBasicElement()
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
 	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
 	textRenderObject->SetTransform(transform);
-	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	this->sceneObjName = textRenderObject->GetName();
 
 	return true;
 }
@@ -202,11 +203,11 @@ DialogBasicElement::DialogBasicElement()
 
 /*virtual*/ bool DialogBasicElement::Tick(std::string& nextSequence, int& nextSequencePosition)
 {
-	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DialogSystem");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DialogSystem");
 	if (!controller)
 		return false;
 
-	if (controller->ButtonPressed(XINPUT_GAMEPAD_A, true))
+	if (controller->ButtonPressed(Imzadi::Button::A_BUTTON, true))
 	{
 		nextSequencePosition++;
 		return false;
@@ -304,7 +305,8 @@ DialogChoiceElement::DialogChoiceElement()
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
 	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
 	textRenderObject->SetTransform(transform);
-	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	this->sceneObjName = textRenderObject->GetName();
 
 	return true;
 }
@@ -319,32 +321,32 @@ DialogChoiceElement::DialogChoiceElement()
 
 /*virtual*/ bool DialogChoiceElement::Tick(std::string& nextSequence, int& nextSequencePosition)
 {
-	Imzadi::Controller* controller = Imzadi::Game::Get()->GetController("DialogSystem");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DialogSystem");
 	if (!controller)
 		return false;
 
-	if (this->choiceArray.size() > 0 && controller->ButtonPressed(XINPUT_GAMEPAD_A, true))
+	if (this->choiceArray.size() > 0 && controller->ButtonPressed(Imzadi::Button::A_BUTTON, true))
 	{
 		nextSequence = this->choiceArray[0].sequenceName;
 		nextSequencePosition = 0;
 		return false;
 	}
 
-	if (this->choiceArray.size() > 1 && controller->ButtonPressed(XINPUT_GAMEPAD_B, true))
+	if (this->choiceArray.size() > 1 && controller->ButtonPressed(Imzadi::Button::B_BUTTON, true))
 	{
 		nextSequence = this->choiceArray[1].sequenceName;
 		nextSequencePosition = 0;
 		return false;
 	}
 
-	if (this->choiceArray.size() > 2 && controller->ButtonPressed(XINPUT_GAMEPAD_X, true))
+	if (this->choiceArray.size() > 2 && controller->ButtonPressed(Imzadi::Button::X_BUTTON, true))
 	{
 		nextSequence = this->choiceArray[2].sequenceName;
 		nextSequencePosition = 0;
 		return false;
 	}
 
-	if (this->choiceArray.size() > 3 && controller->ButtonPressed(XINPUT_GAMEPAD_Y, true))
+	if (this->choiceArray.size() > 3 && controller->ButtonPressed(Imzadi::Button::Y_BUTTON, true))
 	{
 		nextSequence = this->choiceArray[3].sequenceName;
 		nextSequencePosition = 0;

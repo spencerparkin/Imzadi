@@ -1,0 +1,8 @@
+{
+    "width": 64,
+    "height": 64,
+    "data": "Textures\\Heart.texture_data",
+    "num_mips": 1,
+    "format": "RGBA",
+    "compressed": true
+}
