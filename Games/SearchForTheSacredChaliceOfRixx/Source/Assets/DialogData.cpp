@@ -187,7 +187,8 @@ DialogBasicElement::DialogBasicElement()
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
 	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
 	textRenderObject->SetTransform(transform);
-	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	this->sceneObjName = textRenderObject->GetName();
 
 	return true;
 }
@@ -304,7 +305,8 @@ DialogChoiceElement::DialogChoiceElement()
 	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
 	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
 	textRenderObject->SetTransform(transform);
-	this->sceneObjName = Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	this->sceneObjName = textRenderObject->GetName();
 
 	return true;
 }
