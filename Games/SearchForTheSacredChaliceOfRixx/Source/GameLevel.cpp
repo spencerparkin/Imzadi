@@ -74,34 +74,39 @@ GameLevel::GameLevel()
 	return true;
 }
 
-/*virtual*/ void GameLevel::SpawnNPC(const std::string& type, const Imzadi::Vector3& position, const Imzadi::Quaternion& orientation)
+/*virtual*/ void GameLevel::SpawnNPC(const Imzadi::LevelData::NPC* npc)
 {
 	Imzadi::Game* game = Imzadi::Game::Get();
 
-	if (type == "borg")
+	if (npc->type == "borg")
 	{
 		Character* character = nullptr;
 
-		if (type == "borg")
+		if (npc->type == "borg")
 			character = game->SpawnEntity<Borg>();
 
 		if (character)
 		{
-			character->SetRestartLocation(position);
-			character->SetRestartOrientation(orientation);
+			character->SetRestartLocation(npc->startPosition);
+			character->SetRestartOrientation(npc->startOrientation);
 			character->SetCanRestart(false);
 		}
 	}
-	else if (type == "heart" || type == "speed_boost")
+	else if (npc->type == "heart" || npc->type == "speed_boost" || npc->type == "song")
 	{
 		Pickup* pickup = nullptr;
 
-		if (type == "heart")
+		if (npc->type == "heart")
 			pickup = game->SpawnEntity<ExtraLifePickup>();
-		else if (type == "speed_boost")
+		else if (npc->type == "speed_boost")
 			pickup = game->SpawnEntity<SpeedBoostPickup>();
+		else if (npc->type == "song")
+			pickup = game->SpawnEntity<SongPickup>();
 
 		if (pickup)
-			pickup->SetTransform(Imzadi::Transform(orientation, position));
+		{
+			pickup->SetTransform(Imzadi::Transform(npc->startOrientation, npc->startPosition));
+			pickup->Configure(npc->configMap);
+		}
 	}
 }

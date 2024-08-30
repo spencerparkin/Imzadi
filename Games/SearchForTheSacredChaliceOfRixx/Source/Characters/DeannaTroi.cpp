@@ -331,7 +331,7 @@ void DeannaTroi::HandleEntityOverlapResults()
 			if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
 			{
 				auto pickup = dynamic_cast<Pickup*>(foundEntity.Get());
-				if (pickup)
+				if (pickup && pickup->CanBePickedUp())
 				{
 					unbindPickupActionIfAny = false;
 
@@ -553,5 +553,5 @@ DeannaTroi::CollectPickupAction::CollectPickupAction(DeannaTroi* troi) : Labeled
 
 /*virtual*/ std::string DeannaTroi::CollectPickupAction::GetActionLabel() const
 {
-	return std::format("Press \"B\" to pickup {}.", this->pickup->GetLabel().c_str());
+	return std::format("Press \"B\" to {} {}.", this->pickup->GetVerb().c_str(), this->pickup->GetLabel().c_str());
 }

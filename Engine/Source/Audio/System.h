@@ -71,10 +71,16 @@ namespace Imzadi
 
 		/**
 		 * Simply play the given sound until it terminates.
+		 * This could be a cached WAVE sound or MIDI song.
 		 * 
 		 * @param True is returned on success; false, otherwise.  Failure can occur if a sound by the given name isn't loaded.
 		 */
 		bool PlaySound(const std::string& sound, float volume = 1.0f);
+
+		/**
+		 * Tell the caller if any MIDI song is currently playing.
+		 */
+		bool IsMidiSongPlaying();
 
 	private:
 		IXAudio2* audio;
@@ -142,6 +148,9 @@ namespace Imzadi
 			bool Shutdown();
 
 			void EnqueueMidiSong(MidiSong* midiSong);
+
+		public:
+			volatile bool playing;
 
 		private:
 			static void ThreadEntryProc(MidiThread* midiThread);

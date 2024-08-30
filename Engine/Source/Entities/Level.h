@@ -1,11 +1,11 @@
 #pragma once
 
 #include "Entity.h"
+#include "Assets/LevelData.h"
 
 namespace Imzadi
 {
 	class Biped;
-	class LevelData;
 
 	/**
 	 * An instance of this class represents the level being played in the game.
@@ -42,7 +42,7 @@ namespace Imzadi
 		/**
 		 * Override this to spawn NPC specified in the level.
 		 */
-		virtual void SpawnNPC(const std::string& type, const Vector3& position, const Quaternion& orientation);
+		virtual void SpawnNPC(const LevelData::NPC* npc);
 
 		/**
 		 * Make sure we're the last entity to get shutdown when the level goes down.

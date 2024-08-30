@@ -38,6 +38,11 @@ public:
 	virtual bool SetTransform(const Imzadi::Transform& transform) override;
 
 	/**
+	 * This can be optionally overridden to provide more information about the pickup.
+	 */
+	virtual void Configure(const std::unordered_map<std::string, std::string>& configMap);
+
+	/**
 	 * Tell the caller if we own the given collision shape.  This will be
 	 * needed during the collision detection process for getting the pickup.
 	 */
@@ -48,7 +53,8 @@ public:
 	 * That is, to add something to the user's inventory, or do whatever
 	 * else makes sense when the pickup is collected.  By default, here
 	 * we just destroy the entity so that it can be removed from the scene.
-	 * Overrides should call this base class method.
+	 * Overrides should call this base class method unless they're not
+	 * supposed to disappear when "collected".
 	 */
 	virtual void Collect();
 
@@ -57,6 +63,19 @@ public:
 	 * what kind of pickup this is.
 	 */
 	virtual std::string GetLabel() const = 0;
+
+	/**
+	 * By default, this returns "pickup".  But some pickups don't
+	 * disappear when when you "collect" them.
+	 */
+	virtual std::string GetVerb() const;
+
+	/**
+	 * There can be reasons why a pick-up can't be collected.
+	 * Think "the sword and the stone", for instance.  By default,
+	 * we return true here.
+	 */
+	virtual bool CanBePickedUp() const;
 
 protected:
 	Imzadi::Transform initialTransform;			///< Where the pickup is initially placed.
@@ -94,4 +113,24 @@ public:
 
 	virtual void Collect() override;
 	virtual std::string GetLabel() const override;
+};
+
+/**
+ * This pickup simply kicks-off a MIDI song.  That's mostly for fun,
+ * but I think I can also make it part of solving a level.
+ */
+class SongPickup : public Pickup
+{
+public:
+	SongPickup();
+	virtual ~SongPickup();
+
+	virtual void Collect() override;
+	virtual std::string GetLabel() const override;
+	virtual std::string GetVerb() const override;
+	virtual void Configure(const std::unordered_map<std::string, std::string>& configMap) override;
+	virtual bool CanBePickedUp() const override;
+
+private:
+	std::string song;
 };

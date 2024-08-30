@@ -90,21 +90,35 @@ LevelData::LevelData()
 				return false;
 			}
 
-			NPC npc;
-			npc.startPosition.SetComponents(0.0, 0.0, 0.0);
-			npc.startOrientation.SetIdentity();
-			npc.type = "?";
+			std::unique_ptr<NPC> npc(new NPC());
+			npc->startPosition.SetComponents(0.0, 0.0, 0.0);
+			npc->startOrientation.SetIdentity();
+			npc->type = "?";
 
 			if (npcValue.HasMember("type") && npcValue["type"].IsString())
-				npc.type = npcValue["type"].GetString();
+				npc->type = npcValue["type"].GetString();
 
-			if (npcValue.HasMember("start_position") && !this->LoadVector(npcValue["start_position"], npc.startPosition))
+			if (npcValue.HasMember("start_position") && !this->LoadVector(npcValue["start_position"], npc->startPosition))
 				return false;
 
-			if (npcValue.HasMember("start_orientation") && !this->LoadEulerAngles(npcValue["start_orientation"], npc.startOrientation))
+			if (npcValue.HasMember("start_orientation") && !this->LoadEulerAngles(npcValue["start_orientation"], npc->startOrientation))
 				return false;
 
-			this->npcArray.push_back(npc);
+			if (npcValue.HasMember("config") && npcValue["config"].IsObject())
+			{
+				const rapidjson::Value& configValue = npcValue["config"];
+				for (auto iter = configValue.MemberBegin(); iter != configValue.MemberEnd(); ++iter)
+				{
+					if (!iter->value.IsString())
+						return false;
+
+					std::string key = iter->name.GetString();
+					std::string value = iter->value.GetString();
+					npc->configMap.insert(std::pair(key, value));
+				}
+			}
+
+			this->npcArray.push_back(npc.release());
 		}
 	}
 
@@ -113,10 +127,14 @@ LevelData::LevelData()
 
 /*virtual*/ bool LevelData::Unload()
 {
+	for (NPC* npc : this->npcArray)
+		delete npc;
+
 	this->modelFilesArray.clear();
 	this->collisionFilesArray.clear();
 	this->movingPlatformFilesArray.clear();
 	this->triggerBoxFilesArray.clear();
+	this->npcArray.clear();
 
 	return true;
 }

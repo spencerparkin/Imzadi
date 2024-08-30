@@ -274,6 +274,14 @@ AudioSystem::AudioSourceList* AudioSystem::GetOrCreateAudioSourceList(const WAVE
 	return audioSourceList;
 }
 
+bool AudioSystem::IsMidiSongPlaying()
+{
+	if (!this->midiThread)
+		return false;
+
+	return this->midiThread->playing;
+}
+
 //------------------------------------- AudioSystem::AudioSource -------------------------------------
 
 AudioSystem::AudioSource::AudioSource()
@@ -368,6 +376,7 @@ AudioSystem::MidiThread::MidiThread() : midiSongQueueSemaphore(0)
 	this->thread = nullptr;
 	this->exitSignaled = false;
 	this->midiOut = nullptr;
+	this->playing = false;
 }
 
 /*virtual*/ AudioSystem::MidiThread::~MidiThread()
@@ -474,7 +483,9 @@ void AudioSystem::MidiThread::Run()
 		if (!midiSong.Get())
 			break;
 
+		this->playing = true;
 		this->PlayMidiSong(midiSong.Get());
+		this->playing = false;
 	}
 
 	// Clear the song queue in a thread-safe manner.

@@ -95,6 +95,10 @@ Pickup::Pickup()
 	return true;
 }
 
+/*virtual*/ void Pickup::Configure(const std::unordered_map<std::string, std::string>& configMap)
+{
+}
+
 /*virtual*/ bool Pickup::OwnsCollisionShape(Imzadi::Collision::ShapeID shapeID) const
 {
 	return this->pickupShapeID == shapeID;
@@ -122,8 +126,16 @@ Pickup::Pickup()
 /*virtual*/ void Pickup::Collect()
 {
 	this->DoomEntity();
-	auto* game = Imzadi::Game::Get();
-	game->GetAudioSystem()->PlaySound("Yay");
+}
+
+/*virtual*/ std::string Pickup::GetVerb() const
+{
+	return "pickup";
+}
+
+/*virtual*/ bool Pickup::CanBePickedUp() const
+{
+	return true;
 }
 
 //----------------------------------- ExtraLifePickup -----------------------------------
@@ -142,6 +154,8 @@ ExtraLifePickup::ExtraLifePickup()
 	auto game = (GameApp*)Imzadi::Game::Get();
 	GameProgress* gameProgress = game->GetGameProgress();
 	gameProgress->SetNumLives(gameProgress->GetNumLives() + 1);
+	
+	game->GetAudioSystem()->PlaySound("Yay");
 
 	Pickup::Collect();
 }
@@ -164,7 +178,11 @@ SpeedBoostPickup::SpeedBoostPickup()
 
 /*virtual*/ void SpeedBoostPickup::Collect()
 {
-	// TODO: Write this.
+	// TODO: Write this.  Maybe there should be a class attached to the actor that
+	//       returns certain parameters of how it behaves.  E.g., how high it can
+	//       jump, how fast it runs, etc.  We could then generalize the idea of a
+	//       modifier being applied to the actor which has a life-time and can temporarily
+	//       inhance what values come out of the said class.
 
 	Pickup::Collect();
 }
@@ -172,4 +190,54 @@ SpeedBoostPickup::SpeedBoostPickup()
 /*virtual*/ std::string SpeedBoostPickup::GetLabel() const
 {
 	return "speed-booster";
+}
+
+//----------------------------------- SongPickup -----------------------------------
+
+SongPickup::SongPickup()
+{
+	this->renderMeshFile = "Models/MusicalNote/MusicalNote.render_mesh";
+}
+
+/*virtual*/ SongPickup::~SongPickup()
+{
+}
+
+/*virtual*/ void SongPickup::Collect()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	auto audioSystem = game->GetAudioSystem();
+
+	if (!audioSystem->IsMidiSongPlaying())
+	{
+		if (!audioSystem->PlaySound(this->song))
+		{
+			IMZADI_LOG_WARNING("Could not play: %s", this->song.c_str());
+		}
+	}
+}
+
+/*virtual*/ std::string SongPickup::GetLabel() const
+{
+	return "music";
+}
+
+/*virtual*/ std::string SongPickup::GetVerb() const
+{
+	return "play";
+}
+
+/*virtual*/ void SongPickup::Configure(const std::unordered_map<std::string, std::string>& configMap)
+{
+	auto iter = configMap.find("song");
+	if (iter != configMap.end())
+		this->song = iter->second;
+}
+
+/*virtual*/ bool SongPickup::CanBePickedUp() const
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	auto audioSystem = game->GetAudioSystem();
+
+	return !audioSystem->IsMidiSongPlaying();
 }

@@ -78,6 +78,25 @@
                 "pitch": 0.0,
                 "roll": 0.0
             }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": -188.27008,
+                "y": 14.0,
+                "z": -65.29247
+            }
+        },
+        {
+            "type": "song",
+            "start_position": {
+                "x": -187.270085,
+                "y": 27.0,
+                "z": 41.352375
+            },
+            "config": {
+                "song": "GGMOZH"
+            }
         }
     ]
 }
