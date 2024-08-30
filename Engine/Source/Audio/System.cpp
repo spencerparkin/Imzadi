@@ -514,8 +514,9 @@ void AudioSystem::MidiThread::PlayMidiSong(MidiSong* midiSong)
 			{
 				this->midiOut->sendMessage(message, messageSize);
 			}
-			catch (RtMidiError& error)
+			catch (RtMidiError& midiError)
 			{
+				error.Add(midiError.getMessage());
 				return false;
 			}
 
