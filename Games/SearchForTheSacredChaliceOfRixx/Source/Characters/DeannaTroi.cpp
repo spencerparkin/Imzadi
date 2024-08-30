@@ -180,9 +180,12 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		zAxis = zAxis.RejectedFrom(upVector).Normalized();
 
 		Imzadi::Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
+		double speed = moveDelta.Length();
 
 		// We can stomp this when we're on the ground, because no "physics" is happening.
 		this->velocity = moveDelta.RejectedFrom(this->groundSurfaceNormal);
+		if (this->velocity.Normalize())
+			this->velocity *= speed;
 	}
 
 	Character::IntegrateVelocity(acceleration, deltaTime);
