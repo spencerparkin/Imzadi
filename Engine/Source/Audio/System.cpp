@@ -49,13 +49,13 @@ bool AudioSystem::Initialize()
 	this->audio->SetDebugConfiguration(&debugConfig);
 #endif _DEBUG
 
-	// I'm not going to let MIDI failure be fatal here.  If it doesn't work, then we just don't hear MIDI music.
 	this->midiThread = new MidiThread();
 	if (!this->midiThread->Startup())
 	{
 		delete this->midiThread;
 		this->midiThread = nullptr;
-		IMZADI_LOG_WARNING("Failed to start MIDI thread.  No MIDI music will play.");
+		IMZADI_LOG_ERROR("Failed to start MIDI thread.");
+		return false;
 	}
 
 	return true;
