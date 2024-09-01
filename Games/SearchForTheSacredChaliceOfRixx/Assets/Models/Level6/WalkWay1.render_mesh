@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\WalkWay1_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\WalkWay1_Vertices.buffer",
+    "texture": "Textures\\AstroTurf.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -7.452162265777588,
+            "y": 50.06707000732422,
+            "z": 0.9255596399307251
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -31.929094314575197,
+            "y": -11.508882522583008,
+            "z": -28.034122467041017
+        },
+        "max": {
+            "x": 32.080711364746097,
+            "y": 9.609755516052246,
+            "z": 35.01835632324219
+        }
+    }
+}

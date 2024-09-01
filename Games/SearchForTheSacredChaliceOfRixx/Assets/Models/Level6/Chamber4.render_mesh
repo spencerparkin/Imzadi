@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\Chamber4_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\Chamber4_Vertices.buffer",
+    "texture": "Textures\\CreepyBlobs.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -12.574408531188965,
+            "y": 33.84416198730469,
+            "z": 249.67623901367188
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -42.098045349121097,
+            "y": -33.85405731201172,
+            "z": -43.27152633666992
+        },
+        "max": {
+            "x": 42.169700622558597,
+            "y": 43.1000862121582,
+            "z": 41.18804931640625
+        }
+    }
+}

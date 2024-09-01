@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\Chamber3_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\Chamber3_Vertices.buffer",
+    "texture": "Textures\\Weirdo.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 227.36468505859376,
+            "y": 33.957855224609378,
+            "z": 249.67205810546876
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -42.17954635620117,
+            "y": -33.957855224609378,
+            "z": -43.2673454284668
+        },
+        "max": {
+            "x": 42.10054397583008,
+            "y": 42.986392974853519,
+            "z": 41.192230224609378
+        }
+    }
+}

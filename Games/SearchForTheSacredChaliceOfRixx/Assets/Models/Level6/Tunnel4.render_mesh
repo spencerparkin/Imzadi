@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\Tunnel4_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\Tunnel4_Vertices.buffer",
+    "texture": "Textures\\Wood.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -201.94674682617188,
+            "y": 9.790359497070313,
+            "z": 136.076171875
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -31.60708236694336,
+            "y": -9.797370910644532,
+            "z": -69.96541595458985
+        },
+        "max": {
+            "x": 42.147212982177737,
+            "y": 14.848291397094727,
+            "z": 62.895545959472659
+        }
+    }
+}

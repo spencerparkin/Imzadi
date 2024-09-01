@@ -1,0 +1,38 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\Chamber2_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\Chamber2_Vertices.buffer",
+    "texture": "Textures\\MetalPlating.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 228.20486450195313,
+            "y": 34.67979431152344,
+            "z": -7.703338623046875
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -43.03947067260742,
+            "y": -34.67979431152344,
+            "z": -43.17448043823242
+        },
+        "max": {
+            "x": 41.24802017211914,
+            "y": 42.26445007324219,
+            "z": 41.28509521484375
+        }
+    }
+}
