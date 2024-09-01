@@ -659,7 +659,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	wxFileName textureFileName(texturePath.C_Str());
 	wxString textureFullPath;
 	if (!textureFileName.IsAbsolute())
-		textureFileName.SetPath(this->assetFolder.c_str());
+		textureFileName.Normalize(wxPATH_NORM_ALL, this->assetFolder);
 	textureFullPath = textureFileName.GetFullPath();
 	IMZADI_LOG_INFO("Found texture: %s", (const char*)textureFullPath.c_str());
 	if (!this->textureMaker.MakeTexture(textureFullPath, this->textureMakerFlags))
