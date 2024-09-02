@@ -55,23 +55,8 @@ GamePreview::GamePreview(HINSTANCE instance) : Game(instance)
 	{
 		Imzadi::DebugLines* debugLines = Game::Get()->GetDebugLines();
 
-		Imzadi::DebugLines::Line xAxis;
-		xAxis.color.SetComponents(1.0, 0.0, 0.0);
-		xAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
-		xAxis.segment.point[1].SetComponents(1.0, 0.0, 0.0);
-		debugLines->AddLine(xAxis);
-
-		Imzadi::DebugLines::Line yAxis;
-		yAxis.color.SetComponents(0.0, 1.0, 0.0);
-		yAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
-		yAxis.segment.point[1].SetComponents(0.0, 1.0, 0.0);
-		debugLines->AddLine(yAxis);
-
-		Imzadi::DebugLines::Line zAxis;
-		zAxis.color.SetComponents(0.0, 0.0, 1.0);
-		zAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
-		zAxis.segment.point[1].SetComponents(0.0, 0.0, 1.0);
-		debugLines->AddLine(zAxis);
+		Imzadi::Transform identity;
+		debugLines->AddTransform(identity);
 
 		if (this->animatedMesh && this->animationMode == AnimationMode::PLAY)
 			this->animatedMesh->AdvanceAnimation(this->GetDeltaTime(), true);

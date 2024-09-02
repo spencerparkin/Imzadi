@@ -27,6 +27,7 @@ namespace Imzadi
 		};
 
 		bool AddLine(const Line& line);
+		bool AddTransform(const Transform& transform);
 		void Clear();
 
 	private:

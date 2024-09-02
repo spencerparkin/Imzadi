@@ -16,7 +16,8 @@ public:
 
 	enum
 	{
-		ID_ContextMenu_PlayAnimation
+		ID_ContextMenu_PlayAnimation,
+		ID_ContextMenu_DrawPorts
 	};
 
 protected:
@@ -25,6 +26,8 @@ protected:
 	void OnItemSelected(wxListEvent& event);
 	void OnItemRightClicked(wxListEvent& event);
 	void OnPlayAnimation(wxCommandEvent& event);
+	void OnDrawPorts(wxCommandEvent& event);
+	void OnUpdateUI(wxUpdateUIEvent& event);
 
 private:
 	std::vector<Imzadi::Reference<Imzadi::RenderObject>> renderObjectArray;
