@@ -187,17 +187,6 @@ public:
 	virtual bool Restore(std::istream& stream);
 
 	/**
-	 * Free the memory used by the given shape.  You should never allocate or free a shape yourself,
-	 * because the calling code may be using a different heap than that of the collision system.
-	 * You should also never free a shape of which you do not have ownership.  In most cases, ownership
-	 * of shapes is passed to the collision system when you add the shape to the collision world, at
-	 * which point the system owns the memory, and you will likely never need to free it yourself.
-	 *
-	 * @param[in] shape This is the shape who's memory is to be reclaimed.
-	 */
-	static void Free(Shape* shape);
-
-	/**
 	 * This is a shape class factory creating the shape corresponding to the given type.
 	 */
 	static Shape* Create(TypeID typeID);

@@ -54,6 +54,7 @@ private:
 	bool ProcessSceneGraph(const aiScene* scene, const aiNode* node);
 	bool ProcessMesh(const aiScene* scene, const aiNode* node, const aiMesh* mesh);
 	bool ProcessTriggerBox(const aiScene* scene, const aiNode* node, const aiMesh* mesh);
+	bool ProcessMeshPorts(const aiScene* scene, const aiNode* node, const Imzadi::Transform& worldToObject, rapidjson::Document& meshDoc);
 	bool GenerateSkeleton(Imzadi::Skeleton& skeleton, const aiMesh* mesh);
 	bool GenerateSkeleton(Imzadi::Bone* bone, const aiNode* boneNode, const std::unordered_set<const aiNode*>& boneSet);
 	bool GenerateSkinWeights(Imzadi::SkinWeights& skinWeights, const aiMesh* mesh);

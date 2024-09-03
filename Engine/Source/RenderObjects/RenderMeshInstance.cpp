@@ -8,6 +8,7 @@
 #include "Game.h"
 #include "Math/Matrix4x4.h"
 #include "Math/Vector4.h"
+#include "RenderObjects/DebugLines.h"
 
 using namespace Imzadi;
 
@@ -15,6 +16,7 @@ RenderMeshInstance::RenderMeshInstance()
 {
 	this->objectToWorld.SetIdentity();
 	this->surfaceProperties.shininessExponent = 50.0;
+	this->drawPorts = false;
 }
 
 /*virtual*/ RenderMeshInstance::~RenderMeshInstance()
@@ -35,7 +37,25 @@ RenderMeshAsset* RenderMeshInstance::GetRenderMesh(int lodNumber /*= 0*/)
 	return iter->second.Get();
 }
 
-void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
+/*virtual*/ void RenderMeshInstance::PreRender()
+{
+	if (this->drawPorts)
+	{
+		RenderMeshAsset* mesh = this->GetRenderMesh();
+		if (mesh)
+		{
+			DebugLines* debugLines = Game::Get()->GetDebugLines();
+			for (auto pair : mesh->GetPortMap())
+			{
+				const Transform& portToObject = pair.second;
+				Transform portToWorld = this->objectToWorld * portToObject;
+				debugLines->AddTransform(portToWorld);
+			}
+		}
+	}
+}
+
+/*virtual*/ void RenderMeshInstance::Render(Camera* camera, RenderPass renderPass)
 {
 	ID3D11DeviceContext* deviceContext = Game::Get()->GetDeviceContext();
 

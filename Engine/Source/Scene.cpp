@@ -21,11 +21,24 @@ void Scene::Clear()
 	this->renderObjectMap.clear();
 }
 
-bool Scene::AddRenderObject(Reference<RenderObject> renderObject)
+bool Scene::AddRenderObject(Reference<RenderObject> renderObject, bool adjustNameIfNecessary /*= true*/)
 {
 	std::string name = renderObject->GetName();
 	if (this->renderObjectMap.find(name) != this->renderObjectMap.end())
-		return false;
+	{
+		if (!adjustNameIfNecessary)
+			return false;
+
+		int i = 0;
+		std::string alternativeName;
+		do
+		{
+			alternativeName = std::format("{}_{}", name.c_str(), i++);
+		} while (this->renderObjectMap.find(alternativeName) != this->renderObjectMap.end());
+
+		name = alternativeName;
+		renderObject->SetName(name);
+	}
 
 	this->renderObjectMap.insert(std::pair<std::string, Reference<RenderObject>>(name, renderObject));
 	renderObject->OnPostAdded();

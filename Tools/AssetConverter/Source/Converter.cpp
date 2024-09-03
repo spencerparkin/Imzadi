@@ -385,7 +385,7 @@ bool Converter::GetNodeToWorldTransform(const aiNode* node, Imzadi::Transform& n
 
 bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 {
-	IMZADI_LOG_INFO("Procesing node: %s", node->mName.C_Str());
+	IMZADI_LOG_INFO("Processing node: %s", node->mName.C_Str());
 
 	if (node->mNumMeshes > 0)
 	{
@@ -397,6 +397,11 @@ bool Converter::ProcessSceneGraph(const aiScene* scene, const aiNode* node)
 			const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
 
 			std::string meshName(mesh->mName.C_Str());
+
+			// Ignore port meshes, because these are processed when a mesh is processed.
+			if (meshName.find("Port") == 0)
+				continue;
+
 			if (meshName.find("TriggerBox") == 0)
 			{
 				if (!this->ProcessTriggerBox(scene, node, mesh))
@@ -636,6 +641,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	meshDoc.AddMember("index_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(indexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("vertex_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(vertexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
+	wxString meshName = meshFileName.GetName();
+	meshDoc.AddMember("name", rapidjson::Value().SetString((const char*)meshName.c_str(), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+
 	if (scene->mNumMaterials <= mesh->mMaterialIndex)
 	{
 		IMZADI_LOG_ERROR("Error: Bad material index: %d", mesh->mMaterialIndex);
@@ -659,7 +667,7 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	wxFileName textureFileName(texturePath.C_Str());
 	wxString textureFullPath;
 	if (!textureFileName.IsAbsolute())
-		textureFileName.SetPath(this->assetFolder.c_str());
+		textureFileName.Normalize(wxPATH_NORM_ALL, this->assetFolder);
 	textureFullPath = textureFileName.GetFullPath();
 	IMZADI_LOG_INFO("Found texture: %s", (const char*)textureFullPath.c_str());
 	if (!this->textureMaker.MakeTexture(textureFullPath, this->textureMakerFlags))
@@ -871,6 +879,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 		meshDoc.AddMember("animations", animationsArrayValue, meshDoc.GetAllocator());
 	}
 
+	if (!this->ProcessMeshPorts(scene, node, worldToObject, meshDoc))
+		return false;
+
 	if (!JsonUtils::WriteJsonFile(meshDoc, meshFileName.GetFullPath()))
 		return false;
 
@@ -879,6 +890,51 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 	if (!JsonUtils::WriteJsonFile(indicesDoc, indexBufferFileName.GetFullPath()))
 		return false;
+
+	return true;
+}
+
+bool Converter::ProcessMeshPorts(const aiScene* scene, const aiNode* node, const Imzadi::Transform& worldToObject, rapidjson::Document& meshDoc)
+{
+	std::unordered_map<std::string, Imzadi::Transform> portMap;
+
+	for (int i = 0; i < node->mNumChildren; i++)
+	{
+		const aiNode* portNode = node->mChildren[i];
+		wxString portName(portNode->mName.C_Str());
+		if (portName.find("Port") != 0)
+			continue;
+
+		Imzadi::Transform nodeToWorld;
+		if (!this->GetNodeToWorldTransform(portNode, nodeToWorld))
+		{
+			IMZADI_LOG_ERROR("Error: Failed to get node-to-world transform for port node: %s", (const char*)portName.c_str());
+			return false;
+		}
+
+		Imzadi::Transform nodeToObject = worldToObject * nodeToWorld;
+		nodeToObject.matrix = nodeToObject.matrix.Orthonormalized(IMZADI_AXIS_FLAG_X);
+		portMap.insert(std::pair(portName, nodeToObject));
+	}
+
+	if (portMap.size() > 0)
+	{
+		rapidjson::Value portMapObject;
+		portMapObject.SetObject();
+
+		for (auto pair : portMap)
+		{
+			const std::string& portName = pair.first;
+			const Imzadi::Transform& nodeToWorld = pair.second;
+
+			rapidjson::Value transformValue;
+			Imzadi::Asset::SaveTransform(transformValue, nodeToWorld, &meshDoc);
+
+			portMapObject.AddMember(rapidjson::Value().SetString(portName.c_str(), meshDoc.GetAllocator()), transformValue, meshDoc.GetAllocator());
+		}
+
+		meshDoc.AddMember("port_map", portMapObject, meshDoc.GetAllocator());
+	}
 
 	return true;
 }

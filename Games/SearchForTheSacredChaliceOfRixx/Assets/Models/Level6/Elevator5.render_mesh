@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\Elevator5_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\Elevator5_Vertices.buffer",
+    "name": "Elevator5",
+    "texture": "Textures\\Spiral.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 259.76025390625,
+            "y": 39.90782165527344,
+            "z": 281.44610595703127
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -7.540523529052734,
+            "y": -0.6107169389724731,
+            "z": -7.233112335205078
+        },
+        "max": {
+            "x": 7.540523529052734,
+            "y": 0.6107169389724731,
+            "z": 7.233112335205078
+        }
+    }
+}

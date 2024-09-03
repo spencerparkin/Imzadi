@@ -50,8 +50,17 @@ namespace Imzadi
 		virtual uint32_t ShutdownOrder() const override;
 
 		/**
+		 * This is called during setup and can be optionally overridden to do more with the data.
 		 */
 		virtual bool SetupWithLevelData(LevelData* levelData);
+
+		/**
+		 * Some levels may need custom collision world extents.
+		 * The given box will fit the collision objects loaded during
+		 * the level load, but a marge shoudl be added to the box.
+		 * Some levels need an extra large margin.
+		 */
+		virtual void AdjustCollisionWorldExtents(AxisAlignedBoundingBox& collisionWorldBox);
 
 		void SetLevelName(const std::string& levelName) { this->levelName = levelName; }
 		const std::string& GetLevelName() const { return this->levelName; }

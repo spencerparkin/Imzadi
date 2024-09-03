@@ -35,6 +35,7 @@ namespace Imzadi
 		const std::vector<std::string>& GetModelFilesArray() { return this->modelFilesArray; }
 		const std::vector<std::string>& GetCollisionFilesArray() { return this->collisionFilesArray; }
 		const std::vector<std::string>& GetMovingPlatformFilesArray() { return this->movingPlatformFilesArray; }
+		const std::vector<std::string>& GetWarpTunnelFilesArray() { return this->warpTunnelFilesArray; }
 		const std::vector<std::string>& GetTriggerBoxFilesArray() { return this->triggerBoxFilesArray; }
 		const std::vector<NPC*>& GetNPCArray() { return this->npcArray; }
 		const std::string& GetSkyDomeFile() { return this->skyDomeFile; }
@@ -46,6 +47,7 @@ namespace Imzadi
 		std::vector<std::string> modelFilesArray;
 		std::vector<std::string> collisionFilesArray;
 		std::vector<std::string> movingPlatformFilesArray;
+		std::vector<std::string> warpTunnelFilesArray;
 		std::vector<std::string> triggerBoxFilesArray;
 		std::vector<NPC*> npcArray;
 		std::string skyDomeFile;

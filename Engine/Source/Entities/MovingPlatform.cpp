@@ -80,6 +80,11 @@ MovingPlatform::MovingPlatform()
 
 /*virtual*/ bool MovingPlatform::Shutdown()
 {
+	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+
+	for (Collision::ShapeID shapeID : this->collisionShapeArray)
+		Game::Get()->GetCollisionSystem()->RemoveShape(shapeID);
+
 	this->collisionShapeArray.clear();
 
 	return true;

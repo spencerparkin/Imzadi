@@ -43,11 +43,6 @@ ShapeID Shape::GetShapeID() const
 	return this->shapeID;
 }
 
-/*static*/ void Shape::Free(Shape* shape)
-{
-	delete shape;
-}
-
 /*static*/ Shape* Shape::Create(TypeID typeID)
 {
 	switch (typeID)

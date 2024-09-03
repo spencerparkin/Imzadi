@@ -21,12 +21,15 @@ namespace Imzadi
 
 		virtual void Render(Camera* camera, RenderPass renderPass) override;
 		virtual void GetWorldBoundingSphere(Vector3& center, double& radius) const override;
+		virtual void PreRender() override;
 
 		void SetRenderMesh(Reference<RenderMeshAsset> mesh, int lodNumber = 0);
 		RenderMeshAsset* GetRenderMesh(int lodNumber = 0);
 		void SetBoundingBox(const AxisAlignedBoundingBox& boundingBox) { this->objectSpaceBoundingBox = boundingBox; }
 		void SetObjectToWorldTransform(const Transform& objectToWorld) { this->objectToWorld = objectToWorld; }
 		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
+		void SetDrawPorts(bool drawPorts) { this->drawPorts = drawPorts; }
+		bool GetDrawPorts() const { return this->drawPorts; }
 
 		/**
 		 * These parameters are used in the lighting calculations of the surface of the mesh.
@@ -45,5 +48,6 @@ namespace Imzadi
 		AxisAlignedBoundingBox objectSpaceBoundingBox;
 		Transform objectToWorld;
 		SurfaceProperties surfaceProperties;
+		bool drawPorts;
 	};
 }

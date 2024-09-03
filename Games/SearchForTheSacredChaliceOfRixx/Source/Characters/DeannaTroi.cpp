@@ -153,7 +153,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 /*virtual*/ void DeannaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
-	if (this->inContactWithGround && this->animationMode != Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT)
+	if (this->inContactWithGround)
 	{
 		Imzadi::Reference<ReferenceCounted> followCamRef;
 		Imzadi::HandleManager::Get()->GetObjectFromHandle(this->cameraHandle, followCamRef);
@@ -181,11 +181,21 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 		Imzadi::Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
 		double speed = moveDelta.Length();
+		
+		if (this->animationMode == Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT ||
+			this->animationMode == Imzadi::Biped::AnimationMode::DEATH_BY_FATAL_LANDING)
+		{
+			speed = 0.0;
+		}
 
 		// We can stomp this when we're on the ground, because no "physics" is happening.
 		this->velocity = moveDelta.RejectedFrom(this->groundSurfaceNormal);
 		if (this->velocity.Normalize())
 			this->velocity *= speed;
+
+		// Transform the velocity vector from world space to platform space.
+		Imzadi::Transform worldToPlatform = this->platformToWorld.Inverted();
+		this->velocity = worldToPlatform.TransformVector(this->velocity);
 	}
 
 	Character::IntegrateVelocity(acceleration, deltaTime);

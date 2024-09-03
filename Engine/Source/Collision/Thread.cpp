@@ -140,7 +140,7 @@ void Thread::AddShape(Shape* shape, uint32_t flags)
 	ShapeID shapeID = shape->GetShapeID();
 
 	if (!this->boxTree.Insert(shape, flags))
-		Shape::Free(shape);
+		delete shape;
 }
 
 void Thread::RemoveShape(ShapeID shapeID)

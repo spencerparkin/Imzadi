@@ -9,6 +9,7 @@
 #include "Assets/LevelData.h"
 #include "RenderObjects/SkyDomeRenderObject.h"
 #include "MovingPlatform.h"
+#include "WarpTunnel.h"
 #include "TriggerBox.h"
 #include "Log.h"
 #include <format>
@@ -105,8 +106,7 @@ Level::Level()
 		collisionWorldBox.Expand(boundingBox);
 	}
 
-	collisionWorldBox.Scale(1.5);
-	collisionWorldBox.Scale(1.0, 3.0, 1.0);
+	this->AdjustCollisionWorldExtents(collisionWorldBox);
 
 	if (!Game::Get()->GetCollisionSystem()->Initialize(collisionWorldBox))
 		return false;
@@ -123,6 +123,12 @@ Level::Level()
 	{
 		auto movingPlatform = Game::Get()->SpawnEntity<MovingPlatform>();
 		movingPlatform->SetMovingPlatformFile(movingPlatformFile);
+	}
+
+	for (const std::string& warpTunnelFile : levelData->GetWarpTunnelFilesArray())
+	{
+		auto warpTunnel = Game::Get()->SpawnEntity<WarpTunnel>();
+		warpTunnel->SetWarpTunnelFile(warpTunnelFile);
 	}
 
 	for (const std::string& triggerBoxFile : levelData->GetTriggerBoxFilesArray())
@@ -146,6 +152,12 @@ Level::Level()
 	}
 
 	return true;
+}
+
+/*virtual*/ void Level::AdjustCollisionWorldExtents(AxisAlignedBoundingBox& collisionWorldBox)
+{
+	collisionWorldBox.Scale(1.5);
+	collisionWorldBox.Scale(1.0, 3.0, 1.0);
 }
 
 /*virtual*/ bool Level::Shutdown()

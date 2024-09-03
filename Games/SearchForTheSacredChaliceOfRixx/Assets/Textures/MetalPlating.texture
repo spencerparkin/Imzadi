@@ -1,8 +1,8 @@
 {
-    "width": 796,
-    "height": 797,
+    "width": 512,
+    "height": 512,
     "data": "Textures\\MetalPlating.texture_data",
-    "num_mips": 1,
+    "num_mips": 10,
     "format": "RGBA",
     "compressed": true
 }

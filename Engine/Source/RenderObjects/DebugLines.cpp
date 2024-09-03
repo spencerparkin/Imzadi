@@ -163,6 +163,35 @@ bool DebugLines::AddLine(const Line& line)
 	return true;
 }
 
+bool DebugLines::AddTransform(const Transform& transform)
+{
+	Line xAxis;
+	xAxis.color.SetComponents(1.0, 0.0, 0.0);
+	xAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
+	xAxis.segment.point[1].SetComponents(1.0, 0.0, 0.0);
+	xAxis.segment = transform.TransformLineSegment(xAxis.segment);
+	if (!this->AddLine(xAxis))
+		return false;
+
+	Line yAxis;
+	yAxis.color.SetComponents(0.0, 1.0, 0.0);
+	yAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
+	yAxis.segment.point[1].SetComponents(0.0, 1.0, 0.0);
+	yAxis.segment = transform.TransformLineSegment(yAxis.segment);
+	if (!this->AddLine(yAxis))
+		return false;
+
+	Line zAxis;
+	zAxis.color.SetComponents(0.0, 0.0, 1.0);
+	zAxis.segment.point[0].SetComponents(0.0, 0.0, 0.0);
+	zAxis.segment.point[1].SetComponents(0.0, 0.0, 1.0);
+	zAxis.segment = transform.TransformLineSegment(zAxis.segment);
+	if (!this->AddLine(zAxis))
+		return false;
+
+	return true;
+}
+
 void DebugLines::Clear()
 {
 	this->lineArray.clear();

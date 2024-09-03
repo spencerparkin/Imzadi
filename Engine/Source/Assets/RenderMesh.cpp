@@ -30,6 +30,9 @@ RenderMeshAsset::RenderMeshAsset()
 		return false;
 	}
 
+	if (jsonDoc.HasMember("name") && jsonDoc["name"].IsString())
+		this->name = jsonDoc["name"].GetString();
+
 	if (jsonDoc.HasMember("bounding_box"))
 	{
 		if (!this->LoadBoundingBox(jsonDoc["bounding_box"], this->objectSpaceBoundingBox))
@@ -152,6 +155,25 @@ RenderMeshAsset::RenderMeshAsset()
 		}
 	}
 
+	this->portMap.clear();
+	if (jsonDoc.HasMember("port_map") && jsonDoc["port_map"].IsObject())
+	{
+		const rapidjson::Value& portMapValue = jsonDoc["port_map"];
+		for (auto iter = portMapValue.MemberBegin(); iter != portMapValue.MemberEnd(); iter++)
+		{
+			std::string portName = iter->name.GetString();
+			const rapidjson::Value& transformValue = iter->value;
+			Transform nodeToObject;
+			if (!Asset::LoadTransform(transformValue, nodeToObject))
+			{
+				IMZADI_LOG_ERROR("Failed to load transform for port: %s", portName.c_str());
+				return false;
+			}
+
+			this->portMap.insert(std::pair(portName, nodeToObject));
+		}
+	}
+
 	return true;
 }
 
@@ -163,7 +185,18 @@ RenderMeshAsset::RenderMeshAsset()
 	this->shadowPassShader.Set(nullptr);
 	this->texture.Set(nullptr);
 	this->nextLOD.Set(nullptr);
+	this->portMap.clear();
 
+	return true;
+}
+
+bool RenderMeshAsset::GetPort(const std::string& portName, Transform& portToObject) const
+{
+	PortMap::const_iterator iter = this->portMap.find(portName);
+	if (iter == this->portMap.end())
+		return false;
+
+	portToObject = iter->second;
 	return true;
 }
 
@@ -182,5 +215,9 @@ RenderMeshAsset::RenderMeshAsset()
 
 	instance->SetBoundingBox(this->objectSpaceBoundingBox);
 	instance->SetObjectToWorldTransform(this->objectToWorld);
+
+	if (this->GetName().length() > 0)
+		instance->SetName(this->GetName());
+
 	return true;
 }

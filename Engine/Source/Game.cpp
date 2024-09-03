@@ -582,7 +582,9 @@ void Game::CreateOrDestroyEntities()
 		std::list<Reference<Entity>>::iterator iter = this->spawnedEntityQueue.begin();
 		Reference<Entity> entity = *iter;
 		this->spawnedEntityQueue.erase(iter);
-		if (entity->Setup())
+		if (!entity->Setup())
+			entity->Shutdown();
+		else
 		{
 			this->tickingEntityList.push_back(entity);
 			resortNeeded = true;

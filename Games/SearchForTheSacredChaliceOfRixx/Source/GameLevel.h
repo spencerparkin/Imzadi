@@ -13,4 +13,5 @@ public:
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 	virtual Imzadi::Biped* SpawnMainCharacter() override;
 	virtual void SpawnNPC(const Imzadi::LevelData::NPC* npc) override;
+	virtual void AdjustCollisionWorldExtents(Imzadi::AxisAlignedBoundingBox& collisionWorldBox) override;
 };

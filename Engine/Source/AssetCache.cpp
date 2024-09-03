@@ -6,6 +6,7 @@
 #include "Assets/CollisionShapeSet.h"
 #include "Assets/LevelData.h"
 #include "Assets/MovingPlatformData.h"
+#include "Assets/WarpTunnelData.h"
 #include "Assets/Animation.h"
 #include "Assets/SkinnedRenderMesh.h"
 #include "Assets/SkinWeights.h"
@@ -135,6 +136,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new LevelData();
 	else if (ext == ".mov_plat")
 		return new MovingPlatformData();
+	else if (ext == ".warp_tunnel")
+		return new WarpTunnelData();
 	else if (ext == ".skinned_render_mesh")
 		return new SkinnedRenderMesh();
 	else if (ext == ".animation")

@@ -87,7 +87,7 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 			break;
 
 		// The shape was split!  Destroy the original shape and insert the sub-shapes.
-		Shape::Free(shape);
+		delete shape;
 		shape = nullptr;
 		node->BindToShape(shapeBack);
 		node->BindToShape(shapeFront);
@@ -97,13 +97,13 @@ bool BoundingBoxTree::Insert(Shape* shape, uint32_t flags)
 
 		if (!this->Insert(shapeBack, flags))
 		{
-			Shape::Free(shapeBack);
+			delete shapeBack;
 			return false;
 		}
 
 		if (!this->Insert(shapeFront, flags))
 		{
-			Shape::Free(shapeFront);
+			delete shapeFront;
 			return false;
 		}
 
@@ -130,7 +130,7 @@ bool BoundingBoxTree::Remove(ShapeID shapeID)
 	if (shape->node)
 		shape->node->UnbindFromShape(shape);
 	this->shapeMap.erase(shape->GetShapeID());
-	Shape::Free(shape);
+	delete shape;
 	return true;
 }
 
@@ -171,7 +171,7 @@ void BoundingBoxTree::Clear()
 	{
 		std::unordered_map<ShapeID, Shape*>::iterator iter = this->shapeMap.begin();
 		Shape* shape = iter->second;
-		Shape::Free(shape);
+		delete shape;
 		this->shapeMap.erase(iter);
 	}
 }

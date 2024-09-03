@@ -106,7 +106,7 @@ void CollisionShapeSet::Clear(bool deleteShapes)
 {
 	if (deleteShapes)
 		for (Collision::Shape* shape : this->collisionShapeArray)
-			Collision::Shape::Free(shape);
+			delete shape;
 
 	this->collisionShapeArray.clear();
 }

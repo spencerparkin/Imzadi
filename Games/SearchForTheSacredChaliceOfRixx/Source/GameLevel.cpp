@@ -110,3 +110,14 @@ GameLevel::GameLevel()
 		}
 	}
 }
+
+/*virtual*/ void GameLevel::AdjustCollisionWorldExtents(Imzadi::AxisAlignedBoundingBox& collisionWorldBox)
+{
+	Level::AdjustCollisionWorldExtents(collisionWorldBox);
+
+	if (this->GetLevelName() == "Level6")
+	{
+		// We do this to accomedate the warp-tunnels.
+		collisionWorldBox.Scale(1.5, 1.0, 1.5);
+	}
+}

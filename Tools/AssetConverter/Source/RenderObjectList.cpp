@@ -22,6 +22,8 @@ RenderObjectList::RenderObjectList(wxWindow* parent) : wxListCtrl(parent, wxID_A
 	this->Bind(wxEVT_LIST_ITEM_SELECTED, &RenderObjectList::OnItemSelected, this);
 	this->Bind(wxEVT_LIST_ITEM_RIGHT_CLICK, &RenderObjectList::OnItemRightClicked, this);
 	this->Bind(wxEVT_MENU, &RenderObjectList::OnPlayAnimation, this);
+	this->Bind(wxEVT_MENU, &RenderObjectList::OnDrawPorts, this);
+	this->Bind(wxEVT_UPDATE_UI, &RenderObjectList::OnUpdateUI, this);
 }
 
 /*virtual*/ RenderObjectList::~RenderObjectList()
@@ -46,6 +48,7 @@ void RenderObjectList::OnItemRightClicked(wxListEvent& event)
 
 	wxMenu contextMenu;
 	contextMenu.Append(new wxMenuItem(&contextMenu, ID_ContextMenu_PlayAnimation, "Play Animation", "Play an animation on this render object."));
+	contextMenu.Append(new wxMenuItem(&contextMenu, ID_ContextMenu_DrawPorts, "Draw Ports", "Toggle the display of any ports authored on the render object.", wxITEM_CHECK));
 
 	wxPoint pos = event.GetPoint();
 	this->PopupMenu(&contextMenu, pos);
@@ -67,6 +70,30 @@ void RenderObjectList::OnPlayAnimation(wxCommandEvent& event)
 			{
 				((GamePreview*)Imzadi::Game::Get())->SetAnimatingMesh(animatedMesh);
 			}
+		}
+	}
+}
+
+void RenderObjectList::OnDrawPorts(wxCommandEvent& event)
+{
+	Imzadi::RenderObject* renderObject = this->renderObjectArray[this->contextMenuItem];
+	auto renderMesh = dynamic_cast<Imzadi::RenderMeshInstance*>(renderObject);
+	if (renderMesh)
+		renderMesh->SetDrawPorts(!renderMesh->GetDrawPorts());
+}
+
+void RenderObjectList::OnUpdateUI(wxUpdateUIEvent& event)
+{
+	switch (event.GetId())
+	{
+		case ID_ContextMenu_DrawPorts:
+		{
+			Imzadi::RenderObject* renderObject = this->renderObjectArray[this->contextMenuItem];
+			auto renderMesh = dynamic_cast<Imzadi::RenderMeshInstance*>(renderObject);
+			if (renderMesh)
+				event.Check(renderMesh->GetDrawPorts());
+
+			break;
 		}
 	}
 }
