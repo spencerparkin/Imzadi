@@ -5,6 +5,7 @@
 #include "Math/SphericalCoords.h"
 #include "Collision/System.h"
 #include "Collision/Query.h"
+#include "WarpTunnel.h"
 
 namespace Imzadi
 {
@@ -45,6 +46,7 @@ namespace Imzadi
 	private:
 		void CalculateDesiredCameraPositionAndOrientation();
 		void MoveCameraOrbitBehindSubject(bool immediate);
+		void HandleWarpTunnelEvent(const WarpTunnelEvent* event);
 
 		Reference<Entity> subject;
 		Reference<Camera> camera;
@@ -56,5 +58,7 @@ namespace Imzadi
 		Vector3 worldSpaceFocalPoint;
 		Transform desiredCameraObjectToWorld;
 		Collision::TaskID rayCastQueryTaskID;
+		Transform relativeTransform;
+		bool fixOrbitLocation;
 	};
 }

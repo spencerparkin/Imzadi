@@ -5,6 +5,7 @@
 #include "FreeCam.h"
 #include "Math/Angle.h"
 #include "Collision/Result.h"
+#include "EventSystem.h"
 
 using namespace Imzadi;
 
@@ -16,6 +17,7 @@ FollowCam::FollowCam()
 	this->orbitLocation.radius = 20.0;
 	this->orbitLocation.longitudeAngle = 0.0;
 	this->orbitLocation.latitudeAngle = 0.0;
+	this->fixOrbitLocation = false;
 }
 
 /*virtual*/ FollowCam::~FollowCam()
@@ -35,6 +37,10 @@ FollowCam::FollowCam()
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
 	this->freeCam->SetCamera(this->camera);
 
+	Game::Get()->GetEventSystem()->RegisterEventListener("WarpTunnel", new LambdaEventListener([=](const Event* event) {
+		this->HandleWarpTunnelEvent(dynamic_cast<const WarpTunnelEvent*>(event));
+	}));
+
 	return true;
 }
 
@@ -43,6 +49,16 @@ FollowCam::FollowCam()
 	Entity::Shutdown();
 
 	return true;
+}
+
+void FollowCam::HandleWarpTunnelEvent(const WarpTunnelEvent* event)
+{
+	Transform cameraToWorld = this->camera->GetCameraToWorldTransform();
+	Transform subjectObjectToWorld;
+	this->subject->GetTransform(subjectObjectToWorld);
+	Transform subjectWorldToObject = subjectObjectToWorld.Inverted();
+	this->relativeTransform = cameraToWorld * subjectWorldToObject;
+	this->fixOrbitLocation = true;
 }
 
 /*virtual*/ uint32_t FollowCam::TickOrder() const
@@ -64,6 +80,14 @@ FollowCam::FollowCam()
 			if (controller->ButtonPressed(Button::START, true))
 				this->freeCam->SetEnabled(true);
 #endif
+			if (this->fixOrbitLocation)
+			{
+				Transform subjectObjectToWorld;
+				this->subject->GetTransform(subjectObjectToWorld);
+				Transform cameraToWorld = this->relativeTransform * subjectObjectToWorld;
+				this->orbitLocation.SetFromVector(cameraToWorld.translation);
+				this->fixOrbitLocation = false;
+			}
 
 			if (controller->ButtonPressed(Button::L_SHOULDER))
 				this->MoveCameraOrbitBehindSubject(false);

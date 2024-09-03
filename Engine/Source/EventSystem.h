@@ -50,6 +50,14 @@ namespace Imzadi
 		bool SendEvent(const std::string& channelName, Event* event);
 
 		/**
+		 * This will send the given event synchronously.  That is, the event
+		 * will have been sent and processed by all listeners before this call
+		 * returns.  Care must be taken to prevent infinite recursion into the
+		 * event system.
+		 */
+		bool SendEventNow(const std::string& channelName, Event* event);
+
+		/**
 		 * Register an event listener with the system.
 		 * 
 		 * @param[in] channelName The given listener will receive events from this channel.  If the channel doesn't exist, it is created.
@@ -97,6 +105,7 @@ namespace Imzadi
 		bool RemoveSubscriber(EventListenerHandle eventListenerHandle);
 		void EnqueueEvent(Event* event);
 		void GenerateDispatches(std::vector<EventDispatch>& eventDispatchArray);
+		void DispatchEventNow(Event* event);
 		void Clear();
 
 	private:

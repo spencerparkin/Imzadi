@@ -3,6 +3,7 @@
 #include "Entity.h"
 #include "Collision/Shape.h"
 #include "RenderObjects/RenderMeshInstance.h"
+#include "EventSystem.h"
 
 namespace Imzadi
 {
@@ -48,5 +49,20 @@ namespace Imzadi
 		uint32_t mainCharacterHandle;
 		int currentlyBoundPortNumber;
 		int coolDownCount;
+	};
+
+	/**
+	 * This let's other systems know
+	 */
+	class WarpTunnelEvent : public Event
+	{
+	public:
+		WarpTunnelEvent()
+		{
+		}
+
+		virtual ~WarpTunnelEvent()
+		{
+		}
 	};
 }

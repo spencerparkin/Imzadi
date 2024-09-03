@@ -24,6 +24,17 @@ bool EventSystem::SendEvent(const std::string& channelName, Event* event)
 	return true;
 }
 
+bool EventSystem::SendEventNow(const std::string& channelName, Event* event)
+{
+	EventChannel* channel = this->GetOrCreateChannel(channelName, false);
+	if (!channel)
+		return false;
+
+	channel->DispatchEventNow(event);
+	delete event;
+	return true;
+}
+
 EventListenerHandle EventSystem::RegisterEventListener(const std::string& channelName, Reference<EventListener> eventListener)
 {
 	EventListenerHandle handle = this->nextHandle++;
@@ -135,6 +146,15 @@ void EventChannel::GenerateDispatches(std::vector<EventDispatch>& eventDispatchA
 		}
 
 		this->eventQueue.erase(iter);
+	}
+}
+
+void EventChannel::DispatchEventNow(Event* event)
+{
+	for (auto pair : this->eventListenerMap)
+	{
+		EventListener* eventListener = pair.second;
+		eventListener->ProcessEvent(event);
 	}
 }
 

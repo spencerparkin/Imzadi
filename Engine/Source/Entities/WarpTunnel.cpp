@@ -174,6 +174,9 @@ WarpTunnel::WarpTunnel()
 	if (portNumber != this->currentlyBoundPortNumber)
 	{
 		IMZADI_LOG_INFO("Warp tunnel binding to port %d.", portNumber);
+
+		Game::Get()->GetEventSystem()->SendEventNow("WarpTunnel", new WarpTunnelEvent());
+
 		if (this->BindPort(portNumber))
 		{
 			// This is to prevent us from flipping back and forth rappedly due
@@ -236,5 +239,6 @@ bool WarpTunnel::BindPort(int portNumber)
 	}
 
 	this->currentlyBoundPortNumber = portNumber;
+
 	return true;
 }
