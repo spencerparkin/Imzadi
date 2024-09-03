@@ -73,6 +73,11 @@ WarpTunnel::WarpTunnel()
 
 /*virtual*/ bool WarpTunnel::Tick(TickPass tickPass, double deltaTime)
 {
+	// TODO: This is where we monitor the main entity to rebind the tunnel
+	//       depending on which port we're closest to.  Note that we must
+	//       make sure that the entity is in contact with the tunnel when
+	//       a warp occurs.
+
 	return true;
 }
 
