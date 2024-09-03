@@ -47,5 +47,6 @@ namespace Imzadi
 		std::string warpTunnelFile;
 		uint32_t mainCharacterHandle;
 		int currentlyBoundPortNumber;
+		int coolDownCount;
 	};
 }

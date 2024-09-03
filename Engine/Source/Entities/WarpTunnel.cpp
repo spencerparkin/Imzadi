@@ -11,6 +11,7 @@ WarpTunnel::WarpTunnel()
 {
 	this->mainCharacterHandle = 0;
 	this->currentlyBoundPortNumber = -1;
+	this->coolDownCount = 0;
 }
 
 /*virtual*/ WarpTunnel::~WarpTunnel()
@@ -131,6 +132,12 @@ WarpTunnel::WarpTunnel()
 	if (tickPass != TickPass::MOVE_UNCONSTRAINTED)
 		return true;
 
+	if (this->coolDownCount > 0)
+	{
+		this->coolDownCount--;
+		return true;
+	}
+
 	Collision::ShapeID groundShapeID = this->targetEntity->GetGroundContactShape();
 	if (this->collisionShapeSet.find(groundShapeID) == this->collisionShapeSet.end())
 		return true;
@@ -140,7 +147,7 @@ WarpTunnel::WarpTunnel()
 		return false;
 
 	double smallestSquareDistance = std::numeric_limits<double>::max();
-	int j = -1;
+	int portNumber = -1;
 
 	const auto& portBindArray = this->data->GetPortBindArray();
 	for (int i = 0; i < (int)portBindArray.size(); i++)
@@ -157,17 +164,26 @@ WarpTunnel::WarpTunnel()
 		double squareDistance = delta.SquareLength();
 		if (squareDistance < smallestSquareDistance)
 		{
-			j = i;
+			portNumber = i;
 			smallestSquareDistance = squareDistance;
 		}
 	}
 
-	IMZADI_ASSERT(j != -1);
+	IMZADI_ASSERT(portNumber != -1);
 
-	if (j != this->currentlyBoundPortNumber)
+	if (portNumber != this->currentlyBoundPortNumber)
 	{
-		IMZADI_LOG_INFO("Warp tunnel binding to port %d.", j);
-		if (!this->BindPort(j))
+		IMZADI_LOG_INFO("Warp tunnel binding to port %d.", portNumber);
+		if (this->BindPort(portNumber))
+		{
+			// This is to prevent us from flipping back and forth rappedly due
+			// possibly to round-off error.  This seems hacky, but it's not that
+			// bad, I think.  Something bad happens when we rappidly flip back
+			// and forth and it causes the character to get abandoned in outer
+			// space and then die.
+			this->coolDownCount = 20;
+		}
+		else
 		{
 			IMZADI_LOG_ERROR("Warp tunnel bind failed!");
 			return false;
