@@ -128,6 +128,9 @@ WarpTunnel::WarpTunnel()
 
 /*virtual*/ bool WarpTunnel::Tick(TickPass tickPass, double deltaTime)
 {
+	if (tickPass != TickPass::MOVE_UNCONSTRAINTED)
+		return true;
+
 	Collision::ShapeID groundShapeID = this->targetEntity->GetGroundContactShape();
 	if (this->collisionShapeSet.find(groundShapeID) == this->collisionShapeSet.end())
 		return true;
