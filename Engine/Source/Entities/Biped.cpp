@@ -37,6 +37,11 @@ Biped::Biped()
 	return shapeID == this->collisionShapeID;
 }
 
+/*virtual*/ Collision::ShapeID Biped::GetGroundContactShape() const
+{
+	return this->groundShapeID;
+}
+
 /*virtual*/ bool Biped::Setup()
 {
 	if (!this->renderMesh.Get())

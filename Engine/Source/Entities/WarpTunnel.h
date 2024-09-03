@@ -31,13 +31,21 @@ namespace Imzadi
 		 */
 		void SetWarpTunnelFile(const std::string& file) { this->warpTunnelFile = file; }
 
+		/**
+		 * Specify the entity to track in this warp tunnel.
+		 */
+		void SetMainCharacterHandle(uint32_t handle) { this->mainCharacterHandle = handle; }
+
 	private:
 
 		bool BindPort(int portNumber);
 
 		Reference<WarpTunnelData> data;
 		Reference<RenderMeshInstance> renderMesh;
-		std::vector<Collision::ShapeID> collisionShapeArray;
+		Reference<Entity> targetEntity;
+		std::set<Collision::ShapeID> collisionShapeSet;
 		std::string warpTunnelFile;
+		uint32_t mainCharacterHandle;
+		int currentlyBoundPortNumber;
 	};
 }

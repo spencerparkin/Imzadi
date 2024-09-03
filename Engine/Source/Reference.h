@@ -183,7 +183,7 @@ namespace Imzadi
 	};
 
 	/**
-	 * 
+	 * This class is used to book-keep reference-countables without holding references to them.
 	 */
 	class IMZADI_API HandleManager
 	{

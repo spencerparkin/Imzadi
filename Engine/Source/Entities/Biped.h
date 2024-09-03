@@ -52,6 +52,7 @@ namespace Imzadi
 		virtual void OnBipedAbyssFalling();
 		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
+		virtual Collision::ShapeID GetGroundContactShape() const override;
 		virtual uint32_t TickOrder() const override;
 		virtual std::string GetInfo() const override;
 

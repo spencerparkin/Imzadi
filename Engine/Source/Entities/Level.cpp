@@ -76,11 +76,13 @@ Level::Level()
 		}
 	}
 
+	uint32_t mainCharacterHandle = 0;
 	Biped* biped = this->SpawnMainCharacter();
 	if (biped)
 	{
 		biped->SetRestartLocation(levelData->GetPlayerStartPosition());
 		biped->SetRestartOrientation(levelData->GetPlayerStartOrientation());
+		mainCharacterHandle = biped->GetHandle();
 	}
 
 	for (const LevelData::NPC* npc : levelData->GetNPCArray())
@@ -129,6 +131,7 @@ Level::Level()
 	{
 		auto warpTunnel = Game::Get()->SpawnEntity<WarpTunnel>();
 		warpTunnel->SetWarpTunnelFile(warpTunnelFile);
+		warpTunnel->SetMainCharacterHandle(mainCharacterHandle);
 	}
 
 	for (const std::string& triggerBoxFile : levelData->GetTriggerBoxFilesArray())
