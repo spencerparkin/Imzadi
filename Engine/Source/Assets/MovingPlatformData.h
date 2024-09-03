@@ -10,7 +10,6 @@ namespace Imzadi
 	 */
 	class IMZADI_API MovingPlatformData : public Asset
 	{
-		// TODO: Can we also animate the orientation of the platforms?
 	public:
 		MovingPlatformData();
 		virtual ~MovingPlatformData();

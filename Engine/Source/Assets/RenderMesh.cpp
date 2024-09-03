@@ -30,6 +30,9 @@ RenderMeshAsset::RenderMeshAsset()
 		return false;
 	}
 
+	if (jsonDoc.HasMember("name") && jsonDoc["name"].IsString())
+		this->name = jsonDoc["name"].GetString();
+
 	if (jsonDoc.HasMember("bounding_box"))
 	{
 		if (!this->LoadBoundingBox(jsonDoc["bounding_box"], this->objectSpaceBoundingBox))
@@ -212,5 +215,9 @@ bool RenderMeshAsset::GetPort(const std::string& portName, Transform& portToObje
 
 	instance->SetBoundingBox(this->objectSpaceBoundingBox);
 	instance->SetObjectToWorldTransform(this->objectToWorld);
+
+	if (this->GetName().length() > 0)
+		instance->SetName(this->GetName());
+
 	return true;
 }

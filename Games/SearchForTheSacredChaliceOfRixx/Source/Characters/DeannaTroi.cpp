@@ -192,6 +192,10 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		this->velocity = moveDelta.RejectedFrom(this->groundSurfaceNormal);
 		if (this->velocity.Normalize())
 			this->velocity *= speed;
+
+		// Transform the velocity vector from world space to platform space.
+		Imzadi::Transform worldToPlatform = this->platformToWorld.Inverted();
+		this->velocity = worldToPlatform.TransformVector(this->velocity);
 	}
 
 	Character::IntegrateVelocity(acceleration, deltaTime);

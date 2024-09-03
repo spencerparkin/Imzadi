@@ -31,5 +31,9 @@
         "Levels/Level6_Elevator3.mov_plat",
         "Levels/Level6_Elevator4.mov_plat",
         "Levels/Level6_Elevator5.mov_plat"
+    ],
+    "warp_tunnels": [
+        "Levels/Level6_WarpTunnel1.warp_tunnel",
+        "Levels/Level6_WarpTunnel2.warp_tunnel"
     ]
 }

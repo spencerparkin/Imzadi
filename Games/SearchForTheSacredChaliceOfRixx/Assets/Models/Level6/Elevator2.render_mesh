@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level6\\Elevator2_Indices.buffer",
     "vertex_buffer": "Models\\Level6\\Elevator2_Vertices.buffer",
+    "name": "Elevator2",
     "texture": "Textures\\Spiral.texture",
     "object_to_world": {
         "matrix": [

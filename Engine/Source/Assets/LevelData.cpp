@@ -64,6 +64,13 @@ LevelData::LevelData()
 		return false;
 	}
 
+	this->warpTunnelFilesArray.clear();
+	if (jsonDoc.HasMember("warp_tunnels") && !this->LoadStringArray(jsonDoc["warp_tunnels"], this->warpTunnelFilesArray))
+	{
+		IMZADI_LOG_ERROR("The \"warp_tunnels\" member did not load.");
+		return false;
+	}
+
 	if (jsonDoc.HasMember("sky_dome") && jsonDoc["sky_dome"].IsString())
 		this->skyDomeFile = jsonDoc["sky_dome"].GetString();
 
@@ -133,6 +140,7 @@ LevelData::LevelData()
 	this->modelFilesArray.clear();
 	this->collisionFilesArray.clear();
 	this->movingPlatformFilesArray.clear();
+	this->warpTunnelFilesArray.clear();
 	this->triggerBoxFilesArray.clear();
 	this->npcArray.clear();
 

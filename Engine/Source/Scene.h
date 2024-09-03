@@ -41,9 +41,10 @@ namespace Imzadi
 		 * Add a RenderObject instance to the scene.  It will get drawn if it intersects the view frustum.
 		 * 
 		 * @param[in] renderObject This is the render object to add to the scene.
-		 * @return True is returned on success; false, otherwise.  Failure can occur here if a render object by the same name already exists in the scene.
+		 * @param[in] adjustNameIfNecessary If true (the default), a number is tacked on to the name of the given object in order to avoid a name collision, if necessary.
+		 * @return True is returned on success; false, otherwise.
 		 */
-		bool AddRenderObject(Reference<RenderObject> renderObject);
+		bool AddRenderObject(Reference<RenderObject> renderObject, bool adjustNameIfNecessary = true);
 
 		/**
 		 * Remove a RenderObject instance from the scene by name.

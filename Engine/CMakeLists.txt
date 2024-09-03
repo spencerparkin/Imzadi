@@ -48,6 +48,8 @@ set(GAME_ENGINE_SOURCES
     Source/Entities/Level.h
     Source/Entities/MovingPlatform.cpp
     Source/Entities/MovingPlatform.h
+    Source/Entities/WarpTunnel.cpp
+    Source/Entities/WarpTunnel.h
     Source/Entities/TriggerBox.cpp
     Source/Entities/TriggerBox.h
     Source/Collision/System.cpp
@@ -158,6 +160,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/LevelData.h
     Source/Assets/MovingPlatformData.cpp
     Source/Assets/MovingPlatformData.h
+    Source/Assets/WarpTunnelData.cpp
+    Source/Assets/WarpTunnelData.h
     Source/Assets/RenderMesh.cpp
     Source/Assets/RenderMesh.h
     Source/Assets/Shader.cpp

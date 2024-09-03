@@ -10,7 +10,7 @@ namespace Imzadi
 	class CollisionShapeSet;
 
 	/**
-	 * These are element of the level that make platforming a bit more challenging and fun.
+	 * These are elements of the level that make platforming a bit more challenging and fun.
 	 */
 	class MovingPlatform : public Entity
 	{

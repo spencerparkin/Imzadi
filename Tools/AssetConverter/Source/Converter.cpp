@@ -641,6 +641,9 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 	meshDoc.AddMember("index_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(indexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 	meshDoc.AddMember("vertex_buffer", rapidjson::Value().SetString(wxGetApp().MakeAssetFileReference(vertexBufferFileName.GetFullPath()), meshDoc.GetAllocator()), meshDoc.GetAllocator());
 
+	wxString meshName = meshFileName.GetName();
+	meshDoc.AddMember("name", rapidjson::Value().SetString((const char*)meshName.c_str(), meshDoc.GetAllocator()), meshDoc.GetAllocator());
+
 	if (scene->mNumMaterials <= mesh->mMaterialIndex)
 	{
 		IMZADI_LOG_ERROR("Error: Bad material index: %d", mesh->mMaterialIndex);

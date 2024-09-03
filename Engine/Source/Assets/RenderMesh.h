@@ -33,6 +33,7 @@ namespace Imzadi
 		Texture* GetTexture() { return this->texture.Get(); }
 		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
 		double GetLODRadius() const { return this->lodRadius; }
+		const std::string& GetName() const { return this->name; }
 
 		typedef std::unordered_map<std::string, Transform> PortMap;
 
@@ -67,5 +68,6 @@ namespace Imzadi
 		Transform objectToWorld;
 		double lodRadius;
 		PortMap portMap;
+		std::string name;
 	};
 }

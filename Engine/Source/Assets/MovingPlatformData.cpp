@@ -109,5 +109,6 @@ MovingPlatformData::MovingPlatformData()
 
 /*virtual*/ bool MovingPlatformData::Unload()
 {
+	this->splineDeltas.clear();
 	return true;
 }
