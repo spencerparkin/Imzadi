@@ -12,7 +12,6 @@ WarpTunnel::WarpTunnel()
 	this->mainCharacterHandle = 0;
 	this->currentlyBoundPortNumber = -1;
 	this->coolDownCount = 0;
-	this->eventListenerHandle = 0;
 }
 
 /*virtual*/ WarpTunnel::~WarpTunnel()
@@ -105,28 +104,11 @@ WarpTunnel::WarpTunnel()
 
 	collisionShapeSet->Clear(false);
 
-	if (!this->BindPort(0))
-	{
-		IMZADI_LOG_ERROR("Initial port bind failed.");
-		return false;
-	}
-
-	this->eventListenerHandle = Game::Get()->GetEventSystem()->RegisterEventListener("Biped", new LambdaEventListener([=](const Event* event) {
-		this->HandleBipedResetEvent(dynamic_cast<const BipedResetEvent*>(event));
-	}));
-
 	return true;
 }
 
 /*virtual*/ bool WarpTunnel::Shutdown()
 {
-	if (this->eventListenerHandle != 0)
-	{
-		// We don't want the event listener to hang on to a lambda having a capture value that is a stale pointer.
-		Game::Get()->GetEventSystem()->UnregisterEventListener(this->eventListenerHandle);
-		this->eventListenerHandle = 0;
-	}
-
 	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
 
 	for (Collision::ShapeID shapeID : this->collisionShapeSet)
@@ -137,17 +119,6 @@ WarpTunnel::WarpTunnel()
 	this->currentlyBoundPortNumber = -1;
 
 	return true;
-}
-
-void WarpTunnel::HandleBipedResetEvent(const BipedResetEvent* event)
-{
-	if (!event)
-		return;
-
-	if (event->handle != this->targetEntity->GetHandle())
-		return;
-
-	this->BindPort(0);
 }
 
 /*virtual*/ bool WarpTunnel::Tick(TickPass tickPass, double deltaTime)
@@ -161,29 +132,46 @@ void WarpTunnel::HandleBipedResetEvent(const BipedResetEvent* event)
 		return true;
 	}
 
+	bool isOccupied = false;
 	Collision::ShapeID groundShapeID = this->targetEntity->GetGroundContactShape();
-	if (this->collisionShapeSet.find(groundShapeID) == this->collisionShapeSet.end())
-		return true;
+	if (this->collisionShapeSet.find(groundShapeID) != this->collisionShapeSet.end())
+		isOccupied = true;
 
 	Transform objectToWorld;
 	if (!this->targetEntity->GetTransform(objectToWorld))
 		return false;
 
+	Vector3 targetEntityLocation = objectToWorld.translation;
 	double smallestSquareDistance = std::numeric_limits<double>::max();
 	int portNumber = -1;
+	Transform domesticObjectToWorld = this->renderMesh->GetObjectToWorldTransform();
 
 	const auto& portBindArray = this->data->GetPortBindArray();
 	for (int i = 0; i < (int)portBindArray.size(); i++)
 	{
 		const WarpTunnelData::PortBind& portBind = portBindArray[i];
 
-		Transform domesticPortToObject;
-		this->renderMesh->GetRenderMesh()->GetPort(portBind.domesticPort, domesticPortToObject);
+		Vector3 portLocation;
 
-		Transform domesticObjectToWorld = this->renderMesh->GetObjectToWorldTransform();
-		Transform domesticPortToWorld = domesticObjectToWorld * domesticPortToObject;
+		if (isOccupied)
+		{
+			Transform domesticPortToObject;
+			this->renderMesh->GetRenderMesh()->GetPort(portBind.domesticPort, domesticPortToObject);
+			Transform domesticPortToWorld = domesticObjectToWorld * domesticPortToObject;
+			portLocation = domesticPortToWorld.translation;
+		}
+		else
+		{
+			Transform foreignPortToObject;
+			this->renderMesh->GetRenderMesh()->GetPort(portBind.foreignPort, foreignPortToObject);
+			Transform foreignPortToWorld;
+			if (!this->GetForeignPortTransform(portBind.foreignMesh, portBind.foreignPort, foreignPortToWorld))
+				return false;
 
-		Vector3 delta = domesticPortToWorld.translation - objectToWorld.translation;
+			portLocation = foreignPortToWorld.translation;
+		}
+
+		Vector3 delta = portLocation - targetEntityLocation;
 		double squareDistance = delta.SquareLength();
 		if (squareDistance < smallestSquareDistance)
 		{
@@ -196,13 +184,13 @@ void WarpTunnel::HandleBipedResetEvent(const BipedResetEvent* event)
 
 	if (portNumber != this->currentlyBoundPortNumber)
 	{
-		IMZADI_LOG_INFO("Warp tunnel binding to port %d.", portNumber);
+		IMZADI_LOG_INFO("Warp tunnel %s binding to port %d.", this->renderMesh->GetRenderMesh()->GetName().c_str(), portNumber);
 
-		Game::Get()->GetEventSystem()->SendEventNow("WarpTunnel", new WarpTunnelEvent());
+		Game::Get()->GetEventSystem()->SendEventNow("WarpTunnel", new WarpTunnelEvent(isOccupied));
 
 		if (this->BindPort(portNumber))
 		{
-			// This is to prevent us from flipping back and forth rappedly due
+			// This is to prevent us from thrashing back and forth rappedly due
 			// possibly to round-off error.  This seems hacky, but it's not that
 			// bad, I think.  Something bad happens when we rappidly flip back
 			// and forth and it causes the character to get abandoned in outer
@@ -233,15 +221,6 @@ bool WarpTunnel::BindPort(int portNumber)
 	if (!this->renderMesh->GetRenderMesh()->GetPort(portBind.domesticPort, domesticPortToObject))
 		return false;
 
-	Reference<RenderObject> foreignRenderObject;
-	if (!Game::Get()->GetScene()->FindRenderObject(portBind.foreignMesh, foreignRenderObject))
-		return false;
-
-	auto foreignRenderMesh = dynamic_cast<RenderMeshInstance*>(foreignRenderObject.Get());
-	Transform foreignPortToObject;
-	if (!foreignRenderMesh->GetRenderMesh()->GetPort(portBind.foreignPort, foreignPortToObject))
-		return false;
-
 	Transform rotation;
 	rotation.translation.SetComponents(0.0, 0.0, 0.0);
 	rotation.matrix.SetFromAxisAngle(Vector3(0.0, 1.0, 0.0), M_PI);
@@ -250,10 +229,11 @@ bool WarpTunnel::BindPort(int portNumber)
 	if (!domesticObjectToPort.Invert(domesticPortToObject))
 		return false;
 
-	Transform foreignObjectToWorld = foreignRenderMesh->GetObjectToWorldTransform();
-	Transform foreignPortToWorld = foreignObjectToWorld * foreignPortToObject;
+	Transform foreignPortToWorld;
+	if (!this->GetForeignPortTransform(portBind.foreignMesh, portBind.foreignPort, foreignPortToWorld))
+		return false;
+	
 	Transform domesticObjectToWorld = foreignPortToWorld * rotation * domesticObjectToPort;
-
 	this->renderMesh->SetObjectToWorldTransform(domesticObjectToWorld);
 
 	for (Collision::ShapeID shapeID : this->collisionShapeSet)
@@ -265,6 +245,21 @@ bool WarpTunnel::BindPort(int portNumber)
 	}
 
 	this->currentlyBoundPortNumber = portNumber;
+	return true;
+}
 
+bool WarpTunnel::GetForeignPortTransform(const std::string& foreignMeshName, const std::string& foreignPortName, Transform& foreignPortToWorld)
+{
+	Reference<RenderObject> foreignRenderObject;
+	if (!Game::Get()->GetScene()->FindRenderObject(foreignMeshName, foreignRenderObject))
+		return false;
+
+	auto foreignRenderMesh = dynamic_cast<RenderMeshInstance*>(foreignRenderObject.Get());
+	Transform foreignPortToObject;
+	if (!foreignRenderMesh->GetRenderMesh()->GetPort(foreignPortName, foreignPortToObject))
+		return false;
+
+	Transform foreignObjectToWorld = foreignRenderMesh->GetObjectToWorldTransform();
+	foreignPortToWorld = foreignObjectToWorld * foreignPortToObject;
 	return true;
 }

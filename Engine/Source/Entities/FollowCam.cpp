@@ -53,14 +53,17 @@ FollowCam::FollowCam()
 
 void FollowCam::HandleWarpTunnelEvent(const WarpTunnelEvent* event)
 {
-	Transform cameraToWorld = this->camera->GetCameraToWorldTransform();
-	Transform subjectObjectToWorld;
-	this->subject->GetTransform(subjectObjectToWorld);
-	this->worldSpaceFocalPoint = subjectObjectToWorld.TransformPoint(this->followParams.objectSpaceFocalPoint);
-	this->preservedCameraOffset = cameraToWorld.translation - this->worldSpaceFocalPoint;
-	Transform subjectWorldToObject = subjectObjectToWorld.Inverted();
-	this->preservedCameraOffset = subjectWorldToObject.TransformVector(this->preservedCameraOffset);
-	this->fixOrbitLocation = true;
+	if (event->isOccupied)
+	{
+		Transform cameraToWorld = this->camera->GetCameraToWorldTransform();
+		Transform subjectObjectToWorld;
+		this->subject->GetTransform(subjectObjectToWorld);
+		this->worldSpaceFocalPoint = subjectObjectToWorld.TransformPoint(this->followParams.objectSpaceFocalPoint);
+		this->preservedCameraOffset = cameraToWorld.translation - this->worldSpaceFocalPoint;
+		Transform subjectWorldToObject = subjectObjectToWorld.Inverted();
+		this->preservedCameraOffset = subjectWorldToObject.TransformVector(this->preservedCameraOffset);
+		this->fixOrbitLocation = true;
+	}
 }
 
 /*virtual*/ uint32_t FollowCam::TickOrder() const

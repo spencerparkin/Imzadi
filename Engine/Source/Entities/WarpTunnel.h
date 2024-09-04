@@ -41,7 +41,7 @@ namespace Imzadi
 	private:
 
 		bool BindPort(int portNumber);
-		void HandleBipedResetEvent(const BipedResetEvent* event);
+		bool GetForeignPortTransform(const std::string& foreignMeshName, const std::string& foreignPortName, Transform& foreignPortToWorld);
 
 		Reference<WarpTunnelData> data;
 		Reference<RenderMeshInstance> renderMesh;
@@ -51,7 +51,6 @@ namespace Imzadi
 		uint32_t mainCharacterHandle;
 		int currentlyBoundPortNumber;
 		int coolDownCount;
-		EventListenerHandle eventListenerHandle;
 	};
 
 	/**
@@ -60,12 +59,15 @@ namespace Imzadi
 	class WarpTunnelEvent : public Event
 	{
 	public:
-		WarpTunnelEvent()
+		WarpTunnelEvent(bool isOccupied)
 		{
+			this->isOccupied = isOccupied;
 		}
 
 		virtual ~WarpTunnelEvent()
 		{
 		}
+
+		bool isOccupied;
 	};
 }
