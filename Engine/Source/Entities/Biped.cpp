@@ -39,6 +39,9 @@ Biped::Biped()
 
 /*virtual*/ Collision::ShapeID Biped::GetGroundContactShape() const
 {
+	if (!this->inContactWithGround)
+		return 0;
+
 	return this->groundShapeID;
 }
 
