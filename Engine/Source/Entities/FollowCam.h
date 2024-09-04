@@ -58,7 +58,7 @@ namespace Imzadi
 		Vector3 worldSpaceFocalPoint;
 		Transform desiredCameraObjectToWorld;
 		Collision::TaskID rayCastQueryTaskID;
-		Transform relativeTransform;
+		Vector3 preservedCameraOffset;
 		bool fixOrbitLocation;
 	};
 }
