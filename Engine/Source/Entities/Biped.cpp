@@ -520,4 +520,6 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 	if (animatedMesh)
 		animatedMesh->ClearTransition();
+
+	Game::Get()->GetEventSystem()->SendEvent("Biped", new BipedResetEvent(this->GetHandle()));
 }

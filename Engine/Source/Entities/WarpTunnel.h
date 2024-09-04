@@ -4,6 +4,7 @@
 #include "Collision/Shape.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "EventSystem.h"
+#include "Entities/Biped.h"
 
 namespace Imzadi
 {
@@ -40,6 +41,7 @@ namespace Imzadi
 	private:
 
 		bool BindPort(int portNumber);
+		void HandleBipedResetEvent(const BipedResetEvent* event);
 
 		Reference<WarpTunnelData> data;
 		Reference<RenderMeshInstance> renderMesh;
@@ -49,6 +51,7 @@ namespace Imzadi
 		uint32_t mainCharacterHandle;
 		int currentlyBoundPortNumber;
 		int coolDownCount;
+		EventListenerHandle eventListenerHandle;
 	};
 
 	/**

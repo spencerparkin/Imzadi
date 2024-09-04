@@ -12,6 +12,7 @@ WarpTunnel::WarpTunnel()
 	this->mainCharacterHandle = 0;
 	this->currentlyBoundPortNumber = -1;
 	this->coolDownCount = 0;
+	this->eventListenerHandle = 0;
 }
 
 /*virtual*/ WarpTunnel::~WarpTunnel()
@@ -110,11 +111,22 @@ WarpTunnel::WarpTunnel()
 		return false;
 	}
 
+	this->eventListenerHandle = Game::Get()->GetEventSystem()->RegisterEventListener("Biped", new LambdaEventListener([=](const Event* event) {
+		this->HandleBipedResetEvent(dynamic_cast<const BipedResetEvent*>(event));
+	}));
+
 	return true;
 }
 
 /*virtual*/ bool WarpTunnel::Shutdown()
 {
+	if (this->eventListenerHandle != 0)
+	{
+		// We don't want the event listener to hang on to a lambda having a capture value that is a stale pointer.
+		Game::Get()->GetEventSystem()->UnregisterEventListener(this->eventListenerHandle);
+		this->eventListenerHandle = 0;
+	}
+
 	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
 
 	for (Collision::ShapeID shapeID : this->collisionShapeSet)
@@ -125,6 +137,17 @@ WarpTunnel::WarpTunnel()
 	this->currentlyBoundPortNumber = -1;
 
 	return true;
+}
+
+void WarpTunnel::HandleBipedResetEvent(const BipedResetEvent* event)
+{
+	if (!event)
+		return;
+
+	if (event->handle != this->targetEntity->GetHandle())
+		return;
+
+	this->BindPort(0);
 }
 
 /*virtual*/ bool WarpTunnel::Tick(TickPass tickPass, double deltaTime)
@@ -198,6 +221,9 @@ WarpTunnel::WarpTunnel()
 
 bool WarpTunnel::BindPort(int portNumber)
 {
+	if (this->currentlyBoundPortNumber == portNumber)
+		return true;
+
 	const auto& portBindArray = this->data->GetPortBindArray();
 	if (portNumber < 0 || portNumber >= portBindArray.size())
 		return false;

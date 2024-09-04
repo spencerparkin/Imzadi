@@ -10,6 +10,7 @@
 #include "Collision/Task.h"
 #include "Collision/Result.h"
 #include "Collision/Shapes/Capsule.h"
+#include "EventSystem.h"
 
 namespace Imzadi
 {
@@ -103,5 +104,23 @@ namespace Imzadi
 		Vector3 groundSurfaceNormal;
 		Vector3 groundSurfacePoint;
 		AnimationMode animationMode;
+	};
+
+	/**
+	 * This event gets sent on the "Biped" channel whenever a biped is reset.
+	 */
+	class BipedResetEvent : public Event
+	{
+	public:
+		BipedResetEvent(uint32_t handle)
+		{
+			this->handle = handle;
+		}
+
+		virtual ~BipedResetEvent()
+		{
+		}
+
+		uint32_t handle;	///< This is a handle to the biped that was reset.
 	};
 }
