@@ -34,6 +34,10 @@
     ],
     "warp_tunnels": [
         "Levels/Level6_WarpTunnel1.warp_tunnel",
-        "Levels/Level6_WarpTunnel2.warp_tunnel"
+        "Levels/Level6_WarpTunnel2.warp_tunnel",
+        "Levels/Level6_WarpTunnel3.warp_tunnel",
+        "Levels/Level6_WarpTunnel4.warp_tunnel",
+        "Levels/Level6_WarpTunnel5.warp_tunnel",
+        "Levels/Level6_WarpTunnel6.warp_tunnel"
     ]
 }

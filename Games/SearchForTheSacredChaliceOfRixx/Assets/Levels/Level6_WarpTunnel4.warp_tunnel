@@ -1,0 +1,16 @@
+{
+    "mesh": "Models/Level6/Tunnel4.render_mesh",
+    "collision": "Models/Level6/Tunnel4.collision",
+    "port_binds": [
+        {
+            "domestic_port": "Port20",
+            "foreign_port": "Port10",
+            "foreign_mesh": "Chamber2"
+        },
+        {
+            "domestic_port": "Port21",
+            "foreign_port": "Port7",
+            "foreign_mesh": "Chamber3"
+        }
+    ]
+}

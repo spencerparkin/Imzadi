@@ -92,7 +92,7 @@ WarpTunnel::WarpTunnel()
 	this->collisionShapeSet.clear();
 	for (Collision::Shape* shape : collisionShapeSet->GetCollisionShapeArray())
 	{
-		Collision::ShapeID shapeID = Game::Get()->GetCollisionSystem()->AddShape(shape, 0);
+		Collision::ShapeID shapeID = Game::Get()->GetCollisionSystem()->AddShape(shape->Clone(), 0);
 		if (this->collisionShapeSet.find(shapeID) != this->collisionShapeSet.end())
 		{
 			IMZADI_LOG_ERROR("Duplicate shape ID encountered.");
@@ -101,8 +101,6 @@ WarpTunnel::WarpTunnel()
 
 		this->collisionShapeSet.insert(shapeID);
 	}
-
-	collisionShapeSet->Clear(false);
 
 	return true;
 }
