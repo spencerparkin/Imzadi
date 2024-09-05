@@ -5,6 +5,7 @@
     "index_buffer": "Models\\Level6\\Tunnel1_Indices.buffer",
     "vertex_buffer": "Models\\Level6\\Tunnel1_Vertices.buffer",
     "name": "Tunnel1",
+    "shadow_scale": 1.0,
     "texture": "Textures\\Wood.texture",
     "object_to_world": {
         "matrix": [

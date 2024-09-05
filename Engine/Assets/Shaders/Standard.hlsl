@@ -35,6 +35,7 @@ cbuffer constants : register(b0)
     float lightCameraHeight;
     float lightCameraNear;
     float lightCameraFar;
+    float shadowScale;
 };
 
 struct VS_Input
@@ -86,7 +87,7 @@ float4 PS_Main(VS_Output input) : SV_TARGET
             float surfacePointDistance = abs(lambda);
             float tolerance = 0.5;
             if(shadowBufferDistance + tolerance < surfacePointDistance)
-                shadowFactor = 0.5;
+                shadowFactor = shadowScale;
         }
     }
 

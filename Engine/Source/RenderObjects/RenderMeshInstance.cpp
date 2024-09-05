@@ -199,6 +199,7 @@ RenderMeshAsset* RenderMeshInstance::GetRenderMesh(int lodNumber /*= 0*/)
 				Vector3 lightCameraXAxis, lightCameraYAxis, lightCameraZAxis;
 				double lightCameraWidth = 0.0, lightCameraHeight = 0.0;
 				double lightCameraNear = 0.0, lightCameraFar = 0.0;
+				double shadowScale = this->GetRenderMesh()->GetShadowScale();
 
 				lightCameraToWorld.matrix.GetColumnVectors(lightCameraXAxis, lightCameraYAxis, lightCameraZAxis);
 				lightCameraWidth = orthoParams.width;
@@ -226,6 +227,9 @@ RenderMeshAsset* RenderMeshInstance::GetRenderMesh(int lodNumber /*= 0*/)
 
 				if (shader->GetConstantInfo("lightCameraFar", constant))
 					StoreShaderConstant(&mappedSubresource, constant, &lightCameraFar);
+
+				if (shader->GetConstantInfo("shadowScale", constant))
+					StoreShaderConstant(&mappedSubresource, constant, &shadowScale);
 			}
 		}
 

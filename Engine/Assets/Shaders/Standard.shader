@@ -65,6 +65,11 @@
             "size": 64,
             "type": "float"
         },
+        "shadowScale": {
+            "offset": 236,
+            "size": 4,
+            "type": "float"
+        },
         "shininessExponent": {
             "offset": 148,
             "size": 4,

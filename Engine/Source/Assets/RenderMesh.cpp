@@ -14,6 +14,7 @@ RenderMeshAsset::RenderMeshAsset()
 {
 	this->primType = D3D_PRIMITIVE_TOPOLOGY_UNDEFINED;
 	this->lodRadius = std::numeric_limits<double>::max();
+	this->shadowScale = 0.5;
 }
 
 /*virtual*/ RenderMeshAsset::~RenderMeshAsset()
@@ -32,6 +33,9 @@ RenderMeshAsset::RenderMeshAsset()
 
 	if (jsonDoc.HasMember("name") && jsonDoc["name"].IsString())
 		this->name = jsonDoc["name"].GetString();
+
+	if (jsonDoc.HasMember("shadow_scale") && jsonDoc["shadow_scale"].IsFloat())
+		this->shadowScale = jsonDoc["shadow_scale"].GetFloat();
 
 	if (jsonDoc.HasMember("bounding_box"))
 	{
