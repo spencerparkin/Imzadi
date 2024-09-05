@@ -38,6 +38,8 @@ namespace Imzadi
 		 */
 		void SetMainCharacterHandle(uint32_t handle) { this->mainCharacterHandle = handle; }
 
+		WarpTunnelData* GetData() { return this->data.Get(); }
+
 	private:
 
 		bool BindPort(int portNumber);

@@ -6,9 +6,11 @@
 #include "Pickup.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
+#include "Entities/WarpTunnel.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
 #include "RenderObjects/HUDRenderObject.h"
+#include "Assets/WarpTunnelData.h"
 
 GameLevel::GameLevel()
 {
@@ -33,6 +35,12 @@ GameLevel::GameLevel()
 		auto lwaxana = Imzadi::Game::Get()->SpawnEntity<LwaxanaTroi>();
 		lwaxana->SetRestartLocation(Imzadi::Vector3(-6.814, 1.6, -105.338));
 		lwaxana->SetRestartOrientation(Imzadi::Quaternion());
+	}
+	else if (this->GetLevelName() == "Level6")
+	{
+		Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("MIDI", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+			this->HandleLevel6MIDIEvent(dynamic_cast<const Imzadi::MidiSongEvent*>(event));
+		}));
 	}
 
 	Imzadi::AudioSystem* audioSystem = Imzadi::Game::Get()->GetAudioSystem();
@@ -119,5 +127,33 @@ GameLevel::GameLevel()
 	{
 		// We do this to accomedate the warp-tunnels.
 		collisionWorldBox.Scale(1.5, 1.0, 1.5);
+	}
+}
+
+void GameLevel::HandleLevel6MIDIEvent(const Imzadi::MidiSongEvent* event)
+{
+	Imzadi::Reference<Imzadi::WarpTunnel> warpTunnel;
+	if (Imzadi::Game::Get()->FindEntityByNameAndType<Imzadi::WarpTunnel>("Tunnel2", warpTunnel))
+	{
+		Imzadi::WarpTunnelData* data = warpTunnel->GetData();
+		Imzadi::WarpTunnelData::PortBind* portBind = data->GetPortBind(1);
+		if (portBind)
+		{
+			switch (event->type)
+			{
+				case Imzadi::MidiSongEvent::SONG_STARTED:
+				{
+					portBind->foreignMesh = "FinalChamber";
+					portBind->foreignPort = "Port24";
+					break;
+				}
+				case Imzadi::MidiSongEvent::SONG_FINISHED:
+				{
+					portBind->foreignMesh = "Chamber2";
+					portBind->foreignPort = "Port13";
+					break;
+				}
+			}
+		}
 	}
 }

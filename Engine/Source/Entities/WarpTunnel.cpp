@@ -75,6 +75,8 @@ WarpTunnel::WarpTunnel()
 		return false;
 	}
 
+	this->SetName(this->renderMesh->GetName());
+
 	std::string collisionFile = this->data->GetCollisionFile();
 	if (!Game::Get()->GetAssetCache()->LoadAsset(collisionFile, asset))
 	{

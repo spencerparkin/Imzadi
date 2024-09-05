@@ -257,6 +257,20 @@ namespace Imzadi
 		bool FindEntityByName(const std::string& name, Reference<Entity>& foundEntity);
 
 		/**
+		 * This is a convenience routine for finding an entity by the given name and type.
+		 */
+		template<typename T>
+		bool FindEntityByNameAndType(const std::string& name, Reference<T>& foundEntity)
+		{
+			Reference<Entity> foundEntityBase;
+			if (!this->FindEntityByName(name, foundEntityBase))
+				return false;
+
+			foundEntity.SafeSet(foundEntityBase.Get());
+			return foundEntity.Get() != nullptr;
+		}
+
+		/**
 		 * Return the first entity found having the given shape.
 		 * 
 		 * @param[in] shapeID An entity owning this shape ID is saught after.
