@@ -79,7 +79,7 @@ Borg::Borg()
 				objectToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
 
 				Imzadi::Ray ray;
-				ray.unitDirection.SetComponents(0.0, -1.0, 0.0);
+				ray.unitDirection = (-yAxis - 0.5 * zAxis).Normalized();
 				ray.origin = objectToWorld.translation + 2.0 * yAxis - 4.0 * zAxis;
 
 				Imzadi::Vector3 boxExtent(8.0, 8.0, 8.0);
@@ -93,7 +93,14 @@ Borg::Borg()
 				rayCastQuery->SetBoundingBox(boundingBox);
 				rayCastQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
 				collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
-
+#if 0
+				Imzadi::DebugLines* debugLines = Imzadi::Game::Get()->GetDebugLines();
+				Imzadi::DebugLines::Line line;
+				line.color.SetComponents(1.0, 0.0, 0.0);
+				line.segment.point[0] = ray.origin;
+				line.segment.point[1] = ray.origin + ray.unitDirection * 100.0;
+				debugLines->AddLine(line);
+#endif
 				ray.unitDirection = -zAxis;
 				ray.origin = objectToWorld.translation + 4.0 * yAxis - 3.0 * zAxis;
 
@@ -107,14 +114,7 @@ Borg::Borg()
 				rayCastAttackQuery->SetBoundingBox(boundingBox);
 				rayCastAttackQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 				collisionSystem->MakeQuery(rayCastAttackQuery, this->rayCastAttackQueryTaskID);
-#if 0
-				Imzadi::DebugLines* debugLines = Imzadi::Game::Get()->GetDebugLines();
-				Imzadi::DebugLines::Line line;
-				line.color.SetComponents(1.0, 0.0, 0.0);
-				line.segment.point[0] = ray.origin;
-				line.segment.point[1] = ray.origin + ray.unitDirection * 100.0;
-				debugLines->AddLine(line);
-#endif
+
 				break;
 			}
 			case Imzadi::TickPass::RESOLVE_COLLISIONS:
@@ -197,8 +197,19 @@ void Borg::HandlePlatformRayCast(double deltaTime)
 	if (!rayCastResult)
 		return;
 	
+	bool foundCliffEdgeOrWall = false;
 	const Imzadi::Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
+
 	if (hitData.shapeID == 0)
+		foundCliffEdgeOrWall = true;
+	else
+	{
+		double angle = hitData.surfaceNormal.AngleBetween(Imzadi::Vector3(0.0, 1.0, 0.0));
+		if (angle > M_PI / 4.0)
+			foundCliffEdgeOrWall = true;
+	}
+
+	if (foundCliffEdgeOrWall)
 	{
 		switch (this->meanderState)
 		{

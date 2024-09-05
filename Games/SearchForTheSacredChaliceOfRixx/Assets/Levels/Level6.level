@@ -94,6 +94,19 @@
             "config": {
                 "song": "GGMOZH"
             }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 226.2038,
+                "y": 2.0,
+                "z": 251.4555
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
         }
     ]
 }
