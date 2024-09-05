@@ -271,6 +271,15 @@ namespace Imzadi
 		}
 
 		/**
+		 * Some entities might have the same name.  Find all such entities of a given type.
+		 * 
+		 * @param[in] name Entities with this name are search for.
+		 * @param[out] foundEntityArray Entities that we find are put in this array.
+		 * @return True is returned if and only if one or more entities are found.
+		 */
+		bool FindAllEntitiesWithName(const std::string& name, std::vector<Entity*>& foundEntityArray);
+
+		/**
 		 * Return the first entity found having the given shape.
 		 * 
 		 * @param[in] shapeID An entity owning this shape ID is saught after.

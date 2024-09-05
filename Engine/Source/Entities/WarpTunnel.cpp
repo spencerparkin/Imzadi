@@ -75,6 +75,7 @@ WarpTunnel::WarpTunnel()
 		return false;
 	}
 
+	// Oops!  The name won't be unique here, because warp-tunnels can share render meshes.
 	this->SetName(this->renderMesh->GetName());
 
 	std::string collisionFile = this->data->GetCollisionFile();

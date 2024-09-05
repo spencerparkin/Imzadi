@@ -132,8 +132,28 @@ GameLevel::GameLevel()
 
 void GameLevel::HandleLevel6MIDIEvent(const Imzadi::MidiSongEvent* event)
 {
+	std::vector<Imzadi::Entity*> entityArray;
+	if (!Imzadi::Game::Get()->FindAllEntitiesWithName("Tunnel2", entityArray))
+		return;
+
 	Imzadi::Reference<Imzadi::WarpTunnel> warpTunnel;
-	if (Imzadi::Game::Get()->FindEntityByNameAndType<Imzadi::WarpTunnel>("Tunnel2", warpTunnel))
+	bool warpTunnelFound = false;
+	for (auto entity : entityArray)
+	{
+		warpTunnel.SafeSet(entity);
+		if (warpTunnel.Get())
+		{
+			const Imzadi::WarpTunnelData* data = warpTunnel->GetData();
+			const Imzadi::WarpTunnelData::PortBind* portBind = data->GetPortBind(0);
+			if (portBind && portBind->foreignMesh == "Chamber1" && portBind->foreignPort == "Port2")
+			{
+				warpTunnelFound = true;
+				break;
+			}
+		}
+	}
+
+	if (warpTunnelFound)
 	{
 		Imzadi::WarpTunnelData* data = warpTunnel->GetData();
 		Imzadi::WarpTunnelData::PortBind* portBind = data->GetPortBind(1);

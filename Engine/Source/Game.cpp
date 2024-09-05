@@ -559,6 +559,17 @@ bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEnt
 	return false;
 }
 
+bool Game::FindAllEntitiesWithName(const std::string& name, std::vector<Entity*>& foundEntityArray)
+{
+	foundEntityArray.clear();
+
+	for (auto& entity : this->tickingEntityList)
+		if (entity->GetName() == name)
+			foundEntityArray.push_back(entity);
+
+	return foundEntityArray.size() > 0;
+}
+
 bool Game::FindEntityByShapeID(Collision::ShapeID shapeID, Reference<Entity>& foundEntity)
 {
 	for (auto& entity : this->tickingEntityList)
