@@ -40,7 +40,8 @@ namespace Imzadi
 		 * Return true if and only if the given sphere non-trivially overlaps this frustum.
 		 * That is, if the overlapping area is non-zero.
 		 * 
-		 * @param[in] sphere This should be a sphere in camera-space.
+		 * @param[in] center This is the center of the given sphere in camera space.
+		 * @param[in] radius This is the radius of the given sphere.
 		 */
 		bool IntersectedBySphere(const Vector3& center, double radius) const;
 

@@ -212,14 +212,19 @@ namespace Imzadi
 
 		/**
 		 * Calculate and return the tightest sphere containing this AABB.
-		 * One application here is to check the returned sphere (once transformed
-		 * into camera space) against a frustum.  If it intersects, then we
-		 * approximate the AABB as also intersecting the frustum.
 		 * 
 		 * @param[out] center This is the center of the returned sphere.
 		 * @param[out] radius This is the radius of the returned sphere.
 		 */
-		void GetSphere(Vector3& center, double& radius) const;
+		void GetToSphere(Vector3& center, double& radius) const;
+
+		/**
+		 * Calculate this AABB as the smallest one containing the given sphere.
+		 * 
+		 * @param[in] center This is the center of the given sphere.
+		 * @param[in] radius This is the radius of the given sphere.
+		 */
+		void SetFromSphere(const Vector3& center, double radius);
 
 		/**
 		 * Calculate and return the point on this box's boundary that is closest

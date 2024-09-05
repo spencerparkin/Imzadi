@@ -280,14 +280,9 @@ RenderMeshAsset* RenderMeshInstance::GetRenderMesh(int lodNumber /*= 0*/)
 	}
 }
 
-/*virtual*/ bool RenderMeshInstance::GetWorldBoundingBox(AxisAlignedBoundingBox& worldBoundingBox) const
+/*virtual*/ bool RenderMeshInstance::GetWorldBoundingSphere(Vector3& center, double& radius) const
 {
-	worldBoundingBox.MakeReadyForExpansion();
-
-	std::vector<Vector3> vertexArray;
-	this->objectSpaceBoundingBox.GetVertices(vertexArray);
-	for (const Vector3& vertex : vertexArray)
-		worldBoundingBox.Expand(this->objectToWorld.TransformPoint(vertex));
-
+	this->objectSpaceBoundingBox.GetToSphere(center, radius);
+	center = this->objectToWorld.TransformPoint(center);
 	return true;
 }

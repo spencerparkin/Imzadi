@@ -136,7 +136,7 @@ namespace Imzadi
 		 * If false is returned here (the default), then we just assume that
 		 * the render object is visible.
 		 */
-		virtual bool GetWorldBoundingBox(AxisAlignedBoundingBox& worldBoundingBox) const;
+		virtual bool GetWorldBoundingSphere(Vector3& center, double& radius) const;
 
 		/**
 		 * This can be optionally overridden to do any calculations necessary

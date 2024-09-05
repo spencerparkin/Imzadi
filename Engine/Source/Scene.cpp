@@ -80,10 +80,13 @@ void Scene::DrawVisibilityBoxes()
 		RenderObject* renderObject = pair.second.Get();
 		if (!renderObject->IsHidden())
 		{
-			AxisAlignedBoundingBox worldBoundingBox;
-			if (renderObject->GetWorldBoundingBox(worldBoundingBox))
+			Vector3 center;
+			double radius = 0.0;
+			if (renderObject->GetWorldBoundingSphere(center, radius))
 			{
-				debugLines->AddBox(worldBoundingBox, Vector3(0.0, 0.0, 1.0));
+				AxisAlignedBoundingBox box;
+				box.SetFromSphere(center, radius);
+				debugLines->AddBox(box, Vector3(0.0, 0.0, 1.0));
 			}
 		}
 	}
@@ -164,7 +167,7 @@ RenderObject::RenderObject()
 {
 }
 
-/*virtual*/ bool RenderObject::GetWorldBoundingBox(AxisAlignedBoundingBox& worldBoundingBox) const
+/*virtual*/ bool RenderObject::GetWorldBoundingSphere(Vector3& center, double& radius) const
 {
 	return false;
 }
