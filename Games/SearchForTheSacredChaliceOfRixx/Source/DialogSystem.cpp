@@ -35,10 +35,6 @@ bool DialogSystem::Initialize()
 		return false;
 	}
 
-	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("Conversation", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
-		this->InitiateConversation(dynamic_cast<const ConversationEvent*>(event));
-	}));
-
 	return true;
 }
 
@@ -48,6 +44,13 @@ bool DialogSystem::Shutdown()
 	this->currentDialogSequence.Reset();
 	this->currentDialogSequencePosition = -1;
 	return true;
+}
+
+void DialogSystem::LevelSetup()
+{
+	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("Conversation", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+		this->InitiateConversation(dynamic_cast<const ConversationEvent*>(event));
+	}));
 }
 
 bool DialogSystem::PresentlyEngagedInConversation()

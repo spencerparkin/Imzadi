@@ -47,6 +47,10 @@
         "Levels/Level6_WarpTunnel6.warp_tunnel",
         "Levels/Level6_WarpTunnel7.warp_tunnel"
     ],
+    "trigger_boxes": [
+        "Models/Level6/JumpToLevel1.trigger_box",
+        "Models/Level6/JumpToLevel7.trigger_box"
+    ],
     "npc_array": [
         {
             "type": "heart",
