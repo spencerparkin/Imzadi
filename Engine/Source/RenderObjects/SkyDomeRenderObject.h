@@ -17,7 +17,6 @@ namespace Imzadi
 		virtual ~SkyDomeRenderObject();
 
 		virtual void Render(Camera* camera, RenderPass renderPass) override;
-		virtual void GetWorldBoundingSphere(Vector3& center, double& radius) const override;
 		virtual int SortKey() const override;
 
 		void SetSkyDome(SkyDome* skyDome) { this->skyDome.Set(skyDome); }

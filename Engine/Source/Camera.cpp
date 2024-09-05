@@ -22,10 +22,14 @@ Camera::Camera()
 
 bool Camera::IsApproximatelyVisible(const RenderObject* renderObject) const
 {
-	Vector3 center;
-	double radius = 0.0;
-	renderObject->GetWorldBoundingSphere(center, radius);
-	return this->frustum.IntersectedBySphere(center, radius);
+	AxisAlignedBoundingBox worldBoundingBox;
+	if (!renderObject->GetWorldBoundingBox(worldBoundingBox))
+		return true;
+
+	//return this->frustum.IntersectedBySphere(center, radius);
+	// TODO: Write this.
+
+	return true;
 }
 
 void Camera::SetCameraToWorldTransform(const Imzadi::Transform& cameraToWorld)

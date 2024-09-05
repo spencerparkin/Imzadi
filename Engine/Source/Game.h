@@ -376,6 +376,7 @@ namespace Imzadi
 		double accelerationDuetoGravity;
 		Reference<DebugLines> debugLines;
 		uint32_t collisionSystemDebugDrawFlags;
+		bool debugDrawVisibilityBoxes;
 		double deltaTimeSeconds;
 		Clock frameClock;
 		static Game* gameSingleton;

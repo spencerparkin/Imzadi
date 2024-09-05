@@ -20,7 +20,7 @@ namespace Imzadi
 		virtual ~RenderMeshInstance();
 
 		virtual void Render(Camera* camera, RenderPass renderPass) override;
-		virtual void GetWorldBoundingSphere(Vector3& center, double& radius) const override;
+		virtual bool GetWorldBoundingBox(AxisAlignedBoundingBox& worldBoundingBox) const override;
 		virtual void PreRender() override;
 
 		void SetRenderMesh(Reference<RenderMeshAsset> mesh, int lodNumber = 0);

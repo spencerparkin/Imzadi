@@ -99,6 +99,12 @@ namespace Imzadi
 		 */
 		void PreRender();
 
+		/**
+		 * This is used for debugging purposes so that we can visualize the bounding
+		 * boxes used to cull render objects against the view frustum.
+		 */
+		void DrawVisibilityBoxes();
+
 	private:
 		typedef std::unordered_map<std::string, Reference<RenderObject>> RenderObjectMap;
 		RenderObjectMap renderObjectMap;
@@ -126,8 +132,11 @@ namespace Imzadi
 		 * This is used to perform a frustum culling check.  If this render
 		 * object can't be seen by a frustum, then it is not rendered in
 		 * the associated view.
+		 * 
+		 * If false is returned here (the default), then we just assume that
+		 * the render object is visible.
 		 */
-		virtual void GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const = 0;
+		virtual bool GetWorldBoundingBox(AxisAlignedBoundingBox& worldBoundingBox) const;
 
 		/**
 		 * This can be optionally overridden to do any calculations necessary

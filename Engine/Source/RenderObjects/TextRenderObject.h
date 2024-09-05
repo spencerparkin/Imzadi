@@ -14,7 +14,6 @@ namespace Imzadi
 		virtual ~TextRenderObject();
 
 		virtual void Render(Camera* camera, RenderPass renderPass) override;
-		virtual void GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const override;
 		virtual int SortKey() const override;
 		virtual void Prepare() override;
 

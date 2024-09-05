@@ -465,11 +465,6 @@ AxisAlignedBoundingBox TextRenderObject::CalculateStringBox(const std::string& g
 	deviceContext->DrawIndexed(this->numElements, 0, 0);
 }
 
-/*virtual*/ void TextRenderObject::GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const
-{
-	// TODO: Write this.
-}
-
 /*virtual*/ int TextRenderObject::SortKey() const
 {
 	return 1;

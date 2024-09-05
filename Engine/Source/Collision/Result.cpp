@@ -68,53 +68,14 @@ void DebugRenderResult::AddLinesForBox(const AxisAlignedBoundingBox& box, const 
 	RenderLine renderLine;
 	renderLine.color = color;
 
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.minCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.minCorner.y, box.minCorner.z);
-	this->AddRenderLine(renderLine);
+	std::vector<LineSegment> edgeSegmentArray;
+	box.GetEdgeSegments(edgeSegmentArray);
 
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.minCorner.y, box.maxCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.minCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.maxCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.maxCorner.y, box.minCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.maxCorner.y, box.maxCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.maxCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.minCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.minCorner.x, box.maxCorner.y, box.minCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.minCorner.y, box.maxCorner.z);
-	renderLine.line.point[1] = Vector3(box.minCorner.x, box.maxCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.maxCorner.x, box.minCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.maxCorner.y, box.minCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.maxCorner.x, box.minCorner.y, box.maxCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.maxCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.minCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.minCorner.x, box.minCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.minCorner.x, box.maxCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.minCorner.x, box.maxCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.maxCorner.x, box.minCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.minCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
-
-	renderLine.line.point[0] = Vector3(box.maxCorner.x, box.maxCorner.y, box.minCorner.z);
-	renderLine.line.point[1] = Vector3(box.maxCorner.x, box.maxCorner.y, box.maxCorner.z);
-	this->AddRenderLine(renderLine);
+	for (const auto& segment : edgeSegmentArray)
+	{
+		renderLine.line = segment;
+		this->AddRenderLine(renderLine);
+	}
 }
 
 //-------------------------------- RayCastResult --------------------------------

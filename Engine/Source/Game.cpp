@@ -23,6 +23,7 @@ Game::Game(HINSTANCE instance)
 {
 	this->accelerationDuetoGravity = 40.0;
 	this->collisionSystemDebugDrawFlags = 0;
+	this->debugDrawVisibilityBoxes = false;
 	this->deltaTimeSeconds = 0.0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
@@ -520,6 +521,9 @@ bool Game::RecreateViews()
 		}
 	}
 
+	if (this->debugDrawVisibilityBoxes)
+		this->scene->DrawVisibilityBoxes();
+
 	this->Render();
 
 	return this->keepRunning;
@@ -709,6 +713,8 @@ void Game::AdvanceEntities(TickPass tickPass)
 				this->ToggleCollisionStats();
 			else if (wParam == VK_F7)
 				this->ToggleConsole();
+			else if (wParam == VK_F8)
+				this->debugDrawVisibilityBoxes = !debugDrawVisibilityBoxes;
 			break;
 		}
 		case WM_INPUT:
