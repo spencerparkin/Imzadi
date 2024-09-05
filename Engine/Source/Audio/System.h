@@ -3,6 +3,7 @@
 #include "Defines.h"
 #include "Assets/Audio.h"
 #include "Math/Interval.h"
+#include "EventSystem.h"
 #include <xaudio2.h>
 #include <RtMidi.h>
 #include <string>
@@ -168,5 +169,32 @@ namespace Imzadi
 		};
 
 		MidiThread* midiThread;
+	};
+
+	/**
+	 * These events are sent whenever a MIDI song begins or ends.
+	 */
+	class IMZADI_API MidiSongEvent : public Event
+	{
+	public:
+		enum Type
+		{
+			SONG_STARTED,
+			SONG_FINISHED,
+		};
+
+		MidiSongEvent(Type type, const std::string& name)
+		{
+			this->type = type;
+			this->name = name;
+		}
+
+		virtual ~MidiSongEvent()
+		{
+		}
+
+	public:
+		Type type;
+		std::string name;
 	};
 }
