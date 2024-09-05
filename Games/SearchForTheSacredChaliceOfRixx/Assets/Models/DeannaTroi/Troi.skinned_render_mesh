@@ -1,4 +1,5 @@
 {
+    "shadow_scale": 1.0,
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
     "shadow_shader": "Shaders/StandardShadow.shader",
