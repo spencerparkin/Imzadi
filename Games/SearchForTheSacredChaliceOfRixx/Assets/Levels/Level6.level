@@ -38,6 +38,44 @@
         "Levels/Level6_WarpTunnel3.warp_tunnel",
         "Levels/Level6_WarpTunnel4.warp_tunnel",
         "Levels/Level6_WarpTunnel5.warp_tunnel",
-        "Levels/Level6_WarpTunnel6.warp_tunnel"
+        "Levels/Level6_WarpTunnel6.warp_tunnel",
+        "Levels/Level6_WarpTunnel7.warp_tunnel"
+    ],
+    "npc_array": [
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 200.3,
+                "y": 65.5,
+                "z": 279.65525
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 254.7715,
+                "y": 60.0,
+                "z": -33.422606
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 24.01775,
+                "y": 2.0,
+                "z": 282.86445
+            }
+        },
+        {
+            "type": "song",
+            "start_position": {
+                "x": 261.548299,
+                "y": 2.0,
+                "z": 23.720995
+            },
+            "config": {
+                "song": "GGMOZH"
+            }
+        }
     ]
 }
