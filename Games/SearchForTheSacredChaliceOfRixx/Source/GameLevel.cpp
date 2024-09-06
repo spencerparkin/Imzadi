@@ -48,8 +48,6 @@ GameLevel::GameLevel()
 	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false, 1.0f);
 
 	auto game = (GameApp*)Imzadi::Game::Get();
-	game->GetDialogSystem()->LevelSetup();
-
 	auto hud = new HUDRenderObject();
 	hud->SetFont("UbuntuMono_R");
 	game->GetScene()->AddRenderObject(hud);
