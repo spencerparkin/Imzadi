@@ -38,20 +38,20 @@ void Frustum::operator=(const Frustum& frustum)
 
 void Frustum::GetPlanes(std::vector<Plane>& planeArray) const
 {
-	planeArray.push_back(Plane(Vector3(0.0, 0.0, this->nearClip), Vector3(0.0, 0.0, 1.0)));
-	planeArray.push_back(Plane(Vector3(0.0, 0.0, this->farClip), Vector3(0.0, 0.0, -1.0)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, -this->nearClip), Vector3(0.0, 0.0, 1.0)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, -this->farClip), Vector3(0.0, 0.0, -1.0)));
 
 	double cosPhi = ::cos(this->hfovi / 2.0);
 	double sinPhi = ::sin(this->hfovi / 2.0);
 
-	planeArray.push_back(Plane(Vector3(sinPhi, 0.0, -cosPhi), Vector3(cosPhi, 0.0, sinPhi)));
-	planeArray.push_back(Plane(Vector3(-sinPhi, 0.0, -cosPhi), Vector3(-cosPhi, 0.0, sinPhi)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(cosPhi, 0.0, sinPhi)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(-cosPhi, 0.0, sinPhi)));
 
 	cosPhi = ::cos(this->vfovi / 2.0);
 	sinPhi = ::sin(this->vfovi / 2.0);
 
-	planeArray.push_back(Plane(Vector3(0.0, sinPhi, -cosPhi), Vector3(0.0, cosPhi, sinPhi)));
-	planeArray.push_back(Plane(Vector3(0.0, -sinPhi, -cosPhi), Vector3(0.0, -cosPhi, sinPhi)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(0.0, cosPhi, sinPhi)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(0.0, -cosPhi, sinPhi)));
 }
 
 bool Frustum::IntersectedBySphere(const Vector3& center, double radius) const
