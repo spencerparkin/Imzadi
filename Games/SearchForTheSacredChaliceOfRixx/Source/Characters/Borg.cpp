@@ -64,6 +64,50 @@ Borg::Borg()
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
 
+	switch (tickPass)
+	{
+		case Imzadi::TickPass::SUBMIT_COLLISION_QUERIES:
+		{
+			Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
+
+			Imzadi::Transform objectToWorld;
+			this->GetTransform(objectToWorld);
+
+			Imzadi::Vector3 xAxis, yAxis, zAxis;
+			objectToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
+
+			Imzadi::Ray ray;
+			ray.unitDirection = (-yAxis - 0.5 * zAxis).Normalized();
+			ray.origin = objectToWorld.translation + 2.0 * yAxis - 4.0 * zAxis;
+
+			Imzadi::Vector3 boxExtent(8.0, 8.0, 8.0);
+			Imzadi::AxisAlignedBoundingBox boundingBox;
+			boundingBox.MakeReadyForExpansion();
+			boundingBox.Expand(objectToWorld.translation + boxExtent);
+			boundingBox.Expand(objectToWorld.translation - boxExtent);
+
+			auto rayCastQuery = new Imzadi::Collision::RayCastQuery();
+			rayCastQuery->SetRay(ray);
+			rayCastQuery->SetBoundingBox(boundingBox);
+			rayCastQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
+			collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
+#if 0
+			Imzadi::DebugLines* debugLines = Imzadi::Game::Get()->GetDebugLines();
+			Imzadi::DebugLines::Line line;
+			line.color.SetComponents(1.0, 0.0, 0.0);
+			line.segment.point[0] = ray.origin;
+			line.segment.point[1] = ray.origin + ray.unitDirection * 100.0;
+			debugLines->AddLine(line);
+#endif
+			break;
+		}
+		case Imzadi::TickPass::RESOLVE_COLLISIONS:
+		{
+			this->HandlePlatformRayCast(deltaTime);
+			break;
+		}
+	}
+
 	if (this->disposition == Disposition::MEANDERING)
 	{
 		switch (tickPass)
@@ -77,34 +121,13 @@ Borg::Borg()
 
 				Imzadi::Vector3 xAxis, yAxis, zAxis;
 				objectToWorld.matrix.GetColumnVectors(xAxis, yAxis, zAxis);
-
+				
 				Imzadi::Ray ray;
-				ray.unitDirection = (-yAxis - 0.5 * zAxis).Normalized();
-				ray.origin = objectToWorld.translation + 2.0 * yAxis - 4.0 * zAxis;
-
-				Imzadi::Vector3 boxExtent(8.0, 8.0, 8.0);
-				Imzadi::AxisAlignedBoundingBox boundingBox;
-				boundingBox.MakeReadyForExpansion();
-				boundingBox.Expand(objectToWorld.translation + boxExtent);
-				boundingBox.Expand(objectToWorld.translation - boxExtent);
-
-				auto rayCastQuery = new Imzadi::Collision::RayCastQuery();
-				rayCastQuery->SetRay(ray);
-				rayCastQuery->SetBoundingBox(boundingBox);
-				rayCastQuery->SetUserFlagsMask(IMZADI_SHAPE_FLAG_WORLD_SURFACE);
-				collisionSystem->MakeQuery(rayCastQuery, this->rayCastQueryTaskID);
-#if 0
-				Imzadi::DebugLines* debugLines = Imzadi::Game::Get()->GetDebugLines();
-				Imzadi::DebugLines::Line line;
-				line.color.SetComponents(1.0, 0.0, 0.0);
-				line.segment.point[0] = ray.origin;
-				line.segment.point[1] = ray.origin + ray.unitDirection * 100.0;
-				debugLines->AddLine(line);
-#endif
 				ray.unitDirection = -zAxis;
 				ray.origin = objectToWorld.translation + 4.0 * yAxis - 3.0 * zAxis;
 
-				boxExtent.SetComponents(20.0, 20.0, 20.0);
+				Imzadi::Vector3 boxExtent(20.0, 20.0, 20.0);
+				Imzadi::AxisAlignedBoundingBox boundingBox;
 				boundingBox.MakeReadyForExpansion();
 				boundingBox.Expand(objectToWorld.translation + boxExtent);
 				boundingBox.Expand(objectToWorld.translation - boxExtent);
@@ -119,9 +142,7 @@ Borg::Borg()
 			}
 			case Imzadi::TickPass::RESOLVE_COLLISIONS:
 			{
-				this->HandlePlatformRayCast(deltaTime);
 				this->HandleAttackRayCast();
-
 				break;
 			}
 		}
@@ -200,16 +221,26 @@ void Borg::HandlePlatformRayCast(double deltaTime)
 	bool foundCliffEdgeOrWall = false;
 	const Imzadi::Collision::RayCastResult::HitData& hitData = rayCastResult->GetHitData();
 
+	bool foundCliffEdge = false;
+	bool foundWall = false;
 	if (hitData.shapeID == 0)
-		foundCliffEdgeOrWall = true;
+		foundCliffEdge = true;
 	else
 	{
 		double angle = hitData.surfaceNormal.AngleBetween(Imzadi::Vector3(0.0, 1.0, 0.0));
 		if (angle > M_PI / 4.0)
-			foundCliffEdgeOrWall = true;
+			foundWall = true;
 	}
 
-	if (foundCliffEdgeOrWall)
+	if (this->disposition == Disposition::ATTACKING)
+	{
+		if (foundWall)
+			this->disposition = Disposition::MEANDERING;
+		else
+			return;
+	}
+
+	if (foundCliffEdge || foundWall)
 	{
 		switch (this->meanderState)
 		{
