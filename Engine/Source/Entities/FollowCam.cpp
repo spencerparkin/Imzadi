@@ -37,7 +37,7 @@ FollowCam::FollowCam()
 	this->freeCam = Game::Get()->SpawnEntity<FreeCam>();
 	this->freeCam->SetCamera(this->camera);
 
-	Game::Get()->GetEventSystem()->RegisterEventListener("WarpTunnel", new LambdaEventListener([=](const Event* event) {
+	Game::Get()->GetEventSystem()->RegisterEventListener("WarpTunnel", Imzadi::EventListenerType::TRANSITORY, new LambdaEventListener([=](const Event* event) {
 		this->HandleWarpTunnelEvent(dynamic_cast<const WarpTunnelEvent*>(event));
 	}));
 

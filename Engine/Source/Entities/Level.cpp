@@ -168,7 +168,7 @@ Level::Level()
 	Game::Get()->GetCollisionSystem()->Clear();
 	Game::Get()->GetCollisionSystem()->Shutdown();
 	Game::Get()->GetScene()->Clear();
-	Game::Get()->GetEventSystem()->Clear();
+	Game::Get()->GetEventSystem()->ResetForNextLevel();
 
 	return true;
 }

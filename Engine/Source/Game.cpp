@@ -863,6 +863,8 @@ void Game::ShutdownAllEntities()
 
 	this->inputSystem.Shutdown();
 
+	this->eventSystem.Clear();
+
 	this->ShutdownAllEntities();
 
 	this->debugLines.Reset();

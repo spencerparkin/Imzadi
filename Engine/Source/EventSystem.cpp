@@ -39,10 +39,11 @@ bool EventSystem::SendEventNow(const std::string& channelName, Event* event)
 	return true;
 }
 
-EventListenerHandle EventSystem::RegisterEventListener(const std::string& channelName, Reference<EventListener> eventListener)
+EventListenerHandle EventSystem::RegisterEventListener(const std::string& channelName, EventListenerType eventListenerType, Reference<EventListener> eventListener)
 {
 	std::scoped_lock lock(this->mutex);
 
+	eventListener->eventListenerType = eventListenerType;
 	EventListenerHandle handle = this->nextHandle++;
 	EventChannel* channel = this->GetOrCreateChannel(channelName, true);
 	IMZADI_ASSERT(channel);
@@ -88,6 +89,17 @@ void EventSystem::Clear()
 {
 	std::scoped_lock lock(this->mutex);
 	this->eventChannelMap.clear();
+}
+
+void EventSystem::ResetForNextLevel()
+{
+	std::scoped_lock lock(this->mutex);
+
+	for (auto pair : this->eventChannelMap)
+	{
+		EventChannel* channel = pair.second;
+		channel->ResetForNextLevel();
+	}
 }
 
 EventChannel* EventSystem::GetOrCreateChannel(const std::string& channelName, bool canCreateIfNoneExistent)
@@ -176,6 +188,23 @@ void EventChannel::Clear()
 	this->eventQueue.clear();
 }
 
+void EventChannel::ResetForNextLevel()
+{
+	this->Clear();
+
+	std::vector<EventListenerHandle> doomedListenersArray;
+
+	for (auto pair : this->eventListenerMap)
+	{
+		EventListener* eventListener = pair.second;
+		if (eventListener->eventListenerType == EventListenerType::TRANSITORY)
+			doomedListenersArray.push_back(pair.first);
+	}
+
+	for (auto handle : doomedListenersArray)
+		this->eventListenerMap.erase(handle);
+}
+
 //-------------------------------------- Event --------------------------------------
 
 Event::Event()
@@ -196,6 +225,7 @@ Event::Event(const std::string& name)
 
 EventListener::EventListener()
 {
+	this->eventListenerType = EventListenerType::TRANSITORY;
 }
 
 /*virtual*/ EventListener::~EventListener()

@@ -38,7 +38,7 @@ GameLevel::GameLevel()
 	}
 	else if (this->GetLevelName() == "Level6")
 	{
-		Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("MIDI", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+		Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("MIDI", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 			this->HandleLevel6MIDIEvent(dynamic_cast<const Imzadi::MidiSongEvent*>(event));
 		}));
 	}

@@ -35,7 +35,7 @@ bool DialogSystem::Initialize()
 		return false;
 	}
 
-	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("Conversation", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("Conversation", Imzadi::EventListenerType::PERMINANT, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->InitiateConversation(dynamic_cast<const ConversationEvent*>(event));
 	}));
 

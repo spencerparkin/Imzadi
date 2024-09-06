@@ -44,12 +44,12 @@ DeannaTroi::DeannaTroi()
 
 	this->cameraHandle = followCam->GetHandle();
 
-	this->triggerBoxListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("TriggerBox", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+	this->triggerBoxListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("TriggerBox", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->HandleTriggerBoxEvent((const Imzadi::TriggerBoxEvent*)event);
 	}));
 
 #if defined _DEBUG
-	this->freeCamListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("FreeCam", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+	this->freeCamListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("FreeCam", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->HandleFreeCamEvent(event);
 	}));
 #endif

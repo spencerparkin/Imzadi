@@ -55,7 +55,7 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 		this->gameProgress.Set(new GameProgress());
 
 	Imzadi::EventSystem* eventSystem = Imzadi::Game::Get()->GetEventSystem();
-	eventSystem->RegisterEventListener("LevelTransition", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+	eventSystem->RegisterEventListener("LevelTransition", Imzadi::EventListenerType::PERMINANT, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->PerformLevelTransition(event->GetName());
 	}));
 
