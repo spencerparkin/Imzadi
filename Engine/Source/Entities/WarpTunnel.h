@@ -3,6 +3,8 @@
 #include "Entity.h"
 #include "Collision/Shape.h"
 #include "RenderObjects/RenderMeshInstance.h"
+#include "EventSystem.h"
+#include "Entities/Biped.h"
 
 namespace Imzadi
 {
@@ -31,13 +33,43 @@ namespace Imzadi
 		 */
 		void SetWarpTunnelFile(const std::string& file) { this->warpTunnelFile = file; }
 
+		/**
+		 * Specify the entity to track in this warp tunnel.
+		 */
+		void SetMainCharacterHandle(uint32_t handle) { this->mainCharacterHandle = handle; }
+
+		WarpTunnelData* GetData() { return this->data.Get(); }
+
 	private:
 
 		bool BindPort(int portNumber);
+		bool GetForeignPortTransform(const std::string& foreignMeshName, const std::string& foreignPortName, Transform& foreignPortToWorld);
 
 		Reference<WarpTunnelData> data;
 		Reference<RenderMeshInstance> renderMesh;
-		std::vector<Collision::ShapeID> collisionShapeArray;
+		Reference<Entity> targetEntity;
+		std::set<Collision::ShapeID> collisionShapeSet;
 		std::string warpTunnelFile;
+		uint32_t mainCharacterHandle;
+		int currentlyBoundPortNumber;
+		int coolDownCount;
+	};
+
+	/**
+	 * This let's other systems know
+	 */
+	class WarpTunnelEvent : public Event
+	{
+	public:
+		WarpTunnelEvent(bool isOccupied)
+		{
+			this->isOccupied = isOccupied;
+		}
+
+		virtual ~WarpTunnelEvent()
+		{
+		}
+
+		bool isOccupied;
 	};
 }

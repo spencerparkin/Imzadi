@@ -24,6 +24,7 @@ public:
 
 	bool Initialize();
 	bool Shutdown();
+	void LevelSetup();
 	void Tick();
 	bool InitiateConversation(const ConversationEvent* convoEvent);
 	bool PresentlyEngagedInConversation();

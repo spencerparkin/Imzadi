@@ -51,6 +51,11 @@ Entity::Entity()
 	return false;
 }
 
+/*virtual*/ Collision::ShapeID Entity::GetGroundContactShape() const
+{
+	return 0;
+}
+
 /*virtual*/ std::string Entity::GetInfo() const
 {
 	return "";

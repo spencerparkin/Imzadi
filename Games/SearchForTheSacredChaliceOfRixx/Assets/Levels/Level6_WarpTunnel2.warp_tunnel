@@ -8,7 +8,7 @@
             "foreign_mesh": "Chamber1"
         },
         {
-            "domestic_port": "Port14",
+            "domestic_port": "Port16",
             "foreign_port": "Port13",
             "foreign_mesh": "Chamber2"
         }

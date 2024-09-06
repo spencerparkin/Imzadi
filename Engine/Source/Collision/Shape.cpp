@@ -83,6 +83,7 @@ ShapeID Shape::GetShapeID() const
 	// Everything else should be unique to the shape instance.
 	this->objectToWorld = shape->objectToWorld;
 	this->debugColor = shape->debugColor;
+	this->userFlags = shape->userFlags;
 
 	return true;
 }

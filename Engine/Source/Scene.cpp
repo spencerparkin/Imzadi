@@ -1,5 +1,7 @@
 #include "Scene.h"
 #include "Camera.h"
+#include "Game.h"
+#include "RenderObjects/DebugLines.h"
 #include <algorithm>
 #include <format>
 
@@ -69,6 +71,27 @@ bool Scene::FindRenderObject(const std::string& name, Reference<RenderObject>& r
 	return true;
 }
 
+void Scene::DrawVisibilityBoxes()
+{
+	DebugLines* debugLines = Game::Get()->GetDebugLines();
+
+	for (auto pair : this->renderObjectMap)
+	{
+		RenderObject* renderObject = pair.second.Get();
+		if (!renderObject->IsHidden())
+		{
+			Vector3 center;
+			double radius = 0.0;
+			if (renderObject->GetWorldBoundingSphere(center, radius))
+			{
+				AxisAlignedBoundingBox box;
+				box.SetFromSphere(center, radius);
+				debugLines->AddBox(box, Vector3(0.0, 0.0, 1.0));
+			}
+		}
+	}
+}
+
 void Scene::Render(Camera* camera, RenderPass renderPass)
 {
 	std::vector<RenderObject*> visibleObjects;
@@ -79,9 +102,8 @@ void Scene::Render(Camera* camera, RenderPass renderPass)
 		if (renderObject->IsHidden())
 			continue;
 
-		// TODO: Activate this code when ready.
-		//if (!camera->IsApproximatelyVisible(renderObject))
-		//	continue;
+		if (!camera->IsApproximatelyVisible(renderObject))
+			continue;
 			
 		visibleObjects.push_back(renderObject);
 	}
@@ -143,4 +165,9 @@ RenderObject::RenderObject()
 
 /*virtual*/ void RenderObject::OnPreRemoved()
 {
+}
+
+/*virtual*/ bool RenderObject::GetWorldBoundingSphere(Vector3& center, double& radius) const
+{
+	return false;
 }

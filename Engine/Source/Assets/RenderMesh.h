@@ -34,6 +34,7 @@ namespace Imzadi
 		const Transform& GetObjectToWorldTransform() const { return this->objectToWorld; }
 		double GetLODRadius() const { return this->lodRadius; }
 		const std::string& GetName() const { return this->name; }
+		double GetShadowScale() const { return this->shadowScale; }
 
 		typedef std::unordered_map<std::string, Transform> PortMap;
 
@@ -69,5 +70,6 @@ namespace Imzadi
 		double lodRadius;
 		PortMap portMap;
 		std::string name;
+		double shadowScale;
 	};
 }

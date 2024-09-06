@@ -112,11 +112,6 @@ SkyDomeRenderObject::SkyDomeRenderObject()
 	deviceContext->DrawIndexed(numElements, 0, 0);
 }
 
-/*virtual*/ void SkyDomeRenderObject::GetWorldBoundingSphere(Vector3& center, double& radius) const
-{
-	// TODO: Write this.
-}
-
 /*virtual*/ int SkyDomeRenderObject::SortKey() const
 {
 	// We need to render before anything else, and when we

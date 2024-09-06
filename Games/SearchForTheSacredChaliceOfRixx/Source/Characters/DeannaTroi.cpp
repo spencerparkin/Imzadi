@@ -488,6 +488,7 @@ void DeannaTroi::LabeledAction::UpdateTransform()
 			troi->GetTransform(transform);
 			transform.matrix.SetIdentity();
 			transform.matrix.SetUniformScale(20.0);
+			transform.translation += Imzadi::Vector3(0.0, 4.0, 0.0);
 			this->textRenderObject->SetTransform(transform);
 		}
 	}

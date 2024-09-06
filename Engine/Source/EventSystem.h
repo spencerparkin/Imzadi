@@ -30,6 +30,9 @@ namespace Imzadi
 	 * Further, a system shouldn't necessarily care who responds to events it
 	 * generates.  Conversely, a system shouldn't necessarily care where events
 	 * it processes come from.  The event system is a message broker.
+	 * 
+	 * Note that this class *should* be thread-safe, but you probably don't want
+	 * any event listener to be dispatched on any thread other than the main thread.
 	 */
 	class IMZADI_API EventSystem
 	{
@@ -50,6 +53,19 @@ namespace Imzadi
 		bool SendEvent(const std::string& channelName, Event* event);
 
 		/**
+		 * This will send the given event synchronously.  That is, the event
+		 * will have been sent and processed by all listeners before this call
+		 * returns.  Care must be taken to prevent infinite recursion into the
+		 * event system.
+		 * 
+		 * Note that thread-safety can't be guarenteed here as far as the
+		 * event listeners are concerned, because that is clearly out of the
+		 * hands of this system.  It's probably best to only call this from
+		 * the main thread.
+		 */
+		bool SendEventNow(const std::string& channelName, Event* event);
+
+		/**
 		 * Register an event listener with the system.
 		 * 
 		 * @param[in] channelName The given listener will receive events from this channel.  If the channel doesn't exist, it is created.
@@ -68,6 +84,9 @@ namespace Imzadi
 
 		/**
 		 * This should get called once per frame to send all queued events.
+		 * This should probably only get called from the main thread, because
+		 * event listeners are called here and they can't be expected to be
+		 * thread-safe.
 		 */
 		void DispatchAllPendingEvents();
 
@@ -77,6 +96,8 @@ namespace Imzadi
 		void Clear();
 
 	private:
+
+		std::recursive_mutex mutex;
 
 		EventChannel* GetOrCreateChannel(const std::string& channelName, bool canCreateIfNoneExistent);
 
@@ -97,6 +118,7 @@ namespace Imzadi
 		bool RemoveSubscriber(EventListenerHandle eventListenerHandle);
 		void EnqueueEvent(Event* event);
 		void GenerateDispatches(std::vector<EventDispatch>& eventDispatchArray);
+		void DispatchEventNow(Event* event);
 		void Clear();
 
 	private:

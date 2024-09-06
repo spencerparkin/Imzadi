@@ -97,7 +97,7 @@ public:
 	virtual ~DebugRenderResult();
 
 	/**
-	 * An instance of this structure are used to generate wire-frame
+	 * Instances of this structure are used to generate wire-frame
 	 * representations of shapes and other things in the collision system.
 	 */
 	struct RenderLine

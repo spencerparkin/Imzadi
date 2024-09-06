@@ -73,6 +73,12 @@ namespace Imzadi
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const;
 
 		/**
+		 * Again, only if applicable, return here the collision shape representing the
+		 * ground with which this entity is in contact.
+		 */
+		virtual Collision::ShapeID GetGroundContactShape() const;
+
+		/**
 		 * This can be implimented to provide info for the info command.
 		 */
 		virtual std::string GetInfo() const;

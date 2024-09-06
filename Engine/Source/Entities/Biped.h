@@ -10,6 +10,7 @@
 #include "Collision/Task.h"
 #include "Collision/Result.h"
 #include "Collision/Shapes/Capsule.h"
+#include "EventSystem.h"
 
 namespace Imzadi
 {
@@ -52,6 +53,7 @@ namespace Imzadi
 		virtual void OnBipedAbyssFalling();
 		virtual void ConfigureCollisionCapsule(Collision::CapsuleShape* capsule);
 		virtual bool OwnsCollisionShape(Collision::ShapeID shapeID) const override;
+		virtual Collision::ShapeID GetGroundContactShape() const override;
 		virtual uint32_t TickOrder() const override;
 		virtual std::string GetInfo() const override;
 
@@ -102,5 +104,23 @@ namespace Imzadi
 		Vector3 groundSurfaceNormal;
 		Vector3 groundSurfacePoint;
 		AnimationMode animationMode;
+	};
+
+	/**
+	 * This event gets sent on the "Biped" channel whenever a biped is reset.
+	 */
+	class BipedResetEvent : public Event
+	{
+	public:
+		BipedResetEvent(uint32_t handle)
+		{
+			this->handle = handle;
+		}
+
+		virtual ~BipedResetEvent()
+		{
+		}
+
+		uint32_t handle;	///< This is a handle to the biped that was reset.
 	};
 }

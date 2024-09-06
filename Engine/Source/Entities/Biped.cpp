@@ -37,6 +37,14 @@ Biped::Biped()
 	return shapeID == this->collisionShapeID;
 }
 
+/*virtual*/ Collision::ShapeID Biped::GetGroundContactShape() const
+{
+	if (!this->inContactWithGround)
+		return 0;
+
+	return this->groundShapeID;
+}
+
 /*virtual*/ bool Biped::Setup()
 {
 	if (!this->renderMesh.Get())
@@ -515,4 +523,6 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	auto animatedMesh = dynamic_cast<AnimatedMeshInstance*>(this->renderMesh.Get());
 	if (animatedMesh)
 		animatedMesh->ClearTransition();
+
+	Game::Get()->GetEventSystem()->SendEvent("Biped", new BipedResetEvent(this->GetHandle()));
 }

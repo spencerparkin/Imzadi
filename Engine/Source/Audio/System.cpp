@@ -534,6 +534,8 @@ void AudioSystem::MidiThread::PlayMidiSong(MidiSong* midiSong)
 	AudioDataLib::Error error;
 	if (player.Setup(error))
 	{
+		Game::Get()->GetEventSystem()->SendEvent("MIDI", new MidiSongEvent(MidiSongEvent::Type::SONG_STARTED, midiSong->GetName()));
+
 		while (!player.NoMoreToPlay() && !this->exitSignaled)
 		{
 			if (!player.Process(error))
@@ -541,5 +543,7 @@ void AudioSystem::MidiThread::PlayMidiSong(MidiSong* midiSong)
 		}
 
 		player.Shutdown(error);
+
+		Game::Get()->GetEventSystem()->SendEvent("MIDI", new MidiSongEvent(MidiSongEvent::Type::SONG_FINISHED, midiSong->GetName()));
 	}
 }

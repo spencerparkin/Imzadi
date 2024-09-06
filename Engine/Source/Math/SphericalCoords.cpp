@@ -47,11 +47,10 @@ void SphericalCoords::SetFromVector(const Vector3& vector)
 	else
 	{
 		this->latitudeAngle = ::asin(unitVector.y);
-		
-		if (unitVector.y != 0.0)
-			this->longitudeAngle = ::acos(unitVector.z / unitVector.y);
-		else
-			this->longitudeAngle = ::atan2(unitVector.z, unitVector.x);
+		double cosLattitudeAngle = ::cos(this->latitudeAngle);
+		double cosLongitudeAngle = unitVector.x / cosLattitudeAngle;
+		double sinLongitudeAngle = unitVector.z / cosLattitudeAngle;
+		this->longitudeAngle = ::atan2(sinLongitudeAngle, cosLongitudeAngle);
 	}
 }
 

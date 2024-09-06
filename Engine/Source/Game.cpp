@@ -23,6 +23,7 @@ Game::Game(HINSTANCE instance)
 {
 	this->accelerationDuetoGravity = 40.0;
 	this->collisionSystemDebugDrawFlags = 0;
+	this->debugDrawVisibilityBoxes = false;
 	this->deltaTimeSeconds = 0.0;
 	this->instance = instance;
 	this->mainWindowHandle = NULL;
@@ -520,6 +521,9 @@ bool Game::RecreateViews()
 		}
 	}
 
+	if (this->debugDrawVisibilityBoxes)
+		this->scene->DrawVisibilityBoxes();
+
 	this->Render();
 
 	return this->keepRunning;
@@ -557,6 +561,17 @@ bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEnt
 	}
 
 	return false;
+}
+
+bool Game::FindAllEntitiesWithName(const std::string& name, std::vector<Entity*>& foundEntityArray)
+{
+	foundEntityArray.clear();
+
+	for (auto& entity : this->tickingEntityList)
+		if (entity->GetName() == name)
+			foundEntityArray.push_back(entity);
+
+	return foundEntityArray.size() > 0;
 }
 
 bool Game::FindEntityByShapeID(Collision::ShapeID shapeID, Reference<Entity>& foundEntity)
@@ -698,6 +713,8 @@ void Game::AdvanceEntities(TickPass tickPass)
 				this->ToggleCollisionStats();
 			else if (wParam == VK_F7)
 				this->ToggleConsole();
+			else if (wParam == VK_F8)
+				this->debugDrawVisibilityBoxes = !debugDrawVisibilityBoxes;
 			break;
 		}
 		case WM_INPUT:

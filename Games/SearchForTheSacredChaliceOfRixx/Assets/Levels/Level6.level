@@ -4,14 +4,20 @@
         "Models/Level6/Chamber2.render_mesh",
         "Models/Level6/Chamber3.render_mesh",
         "Models/Level6/Chamber4.render_mesh",
-        "Models/Level6/WalkWay1.render_mesh"
+        "Models/Level6/FinalChamber.render_mesh",
+        "Models/Level6/WalkWay1.render_mesh",
+        "Models/Level6/Cylinder001.render_mesh",
+        "Models/Level6/Cylinder002.render_mesh"
     ],
     "static_collision": [
         "Models/Level6/Chamber1.collision",
         "Models/Level6/Chamber2.collision",
         "Models/Level6/Chamber3.collision",
         "Models/Level6/Chamber4.collision",
-        "Models/Level6/WalkWay1.collision"
+        "Models/Level6/FinalChamber.collision",
+        "Models/Level6/WalkWay1.collision",
+        "Models/Level6/Cylinder001.collision",
+        "Models/Level6/Cylinder002.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
     "cube_texture": "Textures/OceanSkyBox/SkyBox.cube_texture",
@@ -34,6 +40,73 @@
     ],
     "warp_tunnels": [
         "Levels/Level6_WarpTunnel1.warp_tunnel",
-        "Levels/Level6_WarpTunnel2.warp_tunnel"
+        "Levels/Level6_WarpTunnel2.warp_tunnel",
+        "Levels/Level6_WarpTunnel3.warp_tunnel",
+        "Levels/Level6_WarpTunnel4.warp_tunnel",
+        "Levels/Level6_WarpTunnel5.warp_tunnel",
+        "Levels/Level6_WarpTunnel6.warp_tunnel",
+        "Levels/Level6_WarpTunnel7.warp_tunnel"
+    ],
+    "trigger_boxes": [
+        "Models/Level6/JumpToLevel1.trigger_box",
+        "Models/Level6/JumpToLevel7.trigger_box"
+    ],
+    "npc_array": [
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 200.3,
+                "y": 65.5,
+                "z": 279.65525
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 254.7715,
+                "y": 60.0,
+                "z": -33.422606
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 24.01775,
+                "y": 2.0,
+                "z": 282.86445
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": -61.0050,
+                "y": 34.5,
+                "z": 483.04311
+            }
+        },
+        {
+            "type": "song",
+            "start_position": {
+                "x": 261.548299,
+                "y": 6.0,
+                "z": 23.720995
+            },
+            "config": {
+                "song": "GGMOZH"
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 226.2038,
+                "y": 2.0,
+                "z": 251.4555
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        }
     ]
 }

@@ -111,7 +111,7 @@ public:
 	template<typename T>
 	const T* Cast() const
 	{
-		return (T::StaticTypeID() == this->GetShapeID()) ? (const T*)this : nullptr;
+		return (T::StaticTypeID() == this->GetShapeTypeID()) ? (const T*)this : nullptr;
 	}
 
 	/**

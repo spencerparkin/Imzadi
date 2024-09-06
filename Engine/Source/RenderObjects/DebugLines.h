@@ -17,7 +17,6 @@ namespace Imzadi
 		virtual ~DebugLines();
 
 		virtual void Render(Camera* camera, RenderPass renderPass) override;
-		virtual void GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const override;
 		virtual int SortKey() const override;
 
 		struct Line
@@ -27,6 +26,7 @@ namespace Imzadi
 		};
 
 		bool AddLine(const Line& line);
+		bool AddBox(const AxisAlignedBoundingBox& box, const Vector3& color);
 		bool AddTransform(const Transform& transform);
 		void Clear();
 

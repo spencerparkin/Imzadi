@@ -24,8 +24,24 @@ bool Camera::IsApproximatelyVisible(const RenderObject* renderObject) const
 {
 	Vector3 center;
 	double radius = 0.0;
-	renderObject->GetWorldBoundingSphere(center, radius);
-	return this->frustum.IntersectedBySphere(center, radius);
+	if (!renderObject->GetWorldBoundingSphere(center, radius))
+		return true;
+
+	switch (this->viewMode)
+	{
+		case ViewMode::ORTHOGRAPHIC:
+		{
+			// TODO: Handle this case later.
+			return true;
+		}
+		case ViewMode::PERSPECTIVE:
+		{
+			center = this->GetWorldToCameraTransform().TransformPoint(center);
+			return this->frustum.IntersectedBySphere(center, radius);
+		}
+	}
+
+	return true;
 }
 
 void Camera::SetCameraToWorldTransform(const Imzadi::Transform& cameraToWorld)

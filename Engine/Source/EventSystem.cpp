@@ -16,6 +16,8 @@ EventSystem::EventSystem()
 
 bool EventSystem::SendEvent(const std::string& channelName, Event* event)
 {
+	std::scoped_lock lock(this->mutex);
+
 	EventChannel* channel = this->GetOrCreateChannel(channelName, false);
 	if (!channel)
 		return false;
@@ -24,8 +26,23 @@ bool EventSystem::SendEvent(const std::string& channelName, Event* event)
 	return true;
 }
 
+bool EventSystem::SendEventNow(const std::string& channelName, Event* event)
+{
+	std::scoped_lock lock(this->mutex);
+
+	EventChannel* channel = this->GetOrCreateChannel(channelName, false);
+	if (!channel)
+		return false;
+
+	channel->DispatchEventNow(event);
+	delete event;
+	return true;
+}
+
 EventListenerHandle EventSystem::RegisterEventListener(const std::string& channelName, Reference<EventListener> eventListener)
 {
+	std::scoped_lock lock(this->mutex);
+
 	EventListenerHandle handle = this->nextHandle++;
 	EventChannel* channel = this->GetOrCreateChannel(channelName, true);
 	IMZADI_ASSERT(channel);
@@ -36,6 +53,8 @@ EventListenerHandle EventSystem::RegisterEventListener(const std::string& channe
 
 bool EventSystem::UnregisterEventListener(EventListenerHandle eventListenerHandle)
 {
+	std::scoped_lock lock(this->mutex);
+
 	for (auto pair : this->eventChannelMap)
 	{
 		EventChannel* channel = pair.second;
@@ -48,8 +67,9 @@ bool EventSystem::UnregisterEventListener(EventListenerHandle eventListenerHandl
 
 void EventSystem::DispatchAllPendingEvents()
 {
-	std::vector<EventDispatch> eventDispatchArray;
+	std::scoped_lock lock(this->mutex);
 
+	std::vector<EventDispatch> eventDispatchArray;
 	for (auto pair : this->eventChannelMap)
 	{
 		EventChannel* channel = pair.second;
@@ -66,6 +86,7 @@ void EventSystem::DispatchAllPendingEvents()
 
 void EventSystem::Clear()
 {
+	std::scoped_lock lock(this->mutex);
 	this->eventChannelMap.clear();
 }
 
@@ -135,6 +156,15 @@ void EventChannel::GenerateDispatches(std::vector<EventDispatch>& eventDispatchA
 		}
 
 		this->eventQueue.erase(iter);
+	}
+}
+
+void EventChannel::DispatchEventNow(Event* event)
+{
+	for (auto pair : this->eventListenerMap)
+	{
+		EventListener* eventListener = pair.second;
+		eventListener->ProcessEvent(event);
 	}
 }
 

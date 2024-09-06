@@ -70,3 +70,16 @@ WarpTunnelData::WarpTunnelData()
 
 	return true;
 }
+
+const WarpTunnelData::PortBind* WarpTunnelData::GetPortBind(int i) const
+{
+	return const_cast<WarpTunnelData*>(this)->GetPortBind(i);
+}
+
+WarpTunnelData::PortBind* WarpTunnelData::GetPortBind(int i)
+{
+	if (i < 0 || i >= (signed)this->portBindArray.size())
+		return nullptr;
+
+	return &this->portBindArray[i];
+}

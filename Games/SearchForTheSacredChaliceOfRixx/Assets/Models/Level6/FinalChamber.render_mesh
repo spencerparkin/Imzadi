@@ -1,0 +1,59 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level6\\FinalChamber_Indices.buffer",
+    "vertex_buffer": "Models\\Level6\\FinalChamber_Vertices.buffer",
+    "name": "FinalChamber",
+    "texture": "Textures\\Wood.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 109.31281280517578,
+            "y": 20.749237060546876,
+            "z": 503.6298828125
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -176.61947631835938,
+            "y": -20.749238967895509,
+            "z": -136.5570831298828
+        },
+        "max": {
+            "x": 175.4547119140625,
+            "y": 62.63663864135742,
+            "z": 225.45358276367188
+        }
+    },
+    "port_map": {
+        "Port24": {
+            "matrix": [
+                6.715443419125222e-7,
+                -4.371138828673793e-8,
+                -1.0,
+                4.371138828673793e-8,
+                1.0,
+                -4.37113598650285e-8,
+                1.0,
+                -4.37113598650285e-8,
+                6.715443419125222e-7
+            ],
+            "translation": {
+                "x": 189.488037109375,
+                "y": 14.253362655639649,
+                "z": -124.80194854736328
+            }
+        }
+    }
+}

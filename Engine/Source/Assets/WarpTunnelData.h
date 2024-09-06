@@ -24,6 +24,8 @@ namespace Imzadi
 		};
 
 		const std::vector<PortBind>& GetPortBindArray() const { return this->portBindArray; }
+		const PortBind* GetPortBind(int i) const;
+		PortBind* GetPortBind(int i);
 		const std::string& GetMeshFile() const { return this->meshFile; }
 		const std::string& GetCollisionFile() const { return this->collisionFile; }
 

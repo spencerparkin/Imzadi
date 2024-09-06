@@ -149,17 +149,29 @@ DebugLines::DebugLines()
 	deviceContext->Draw(this->lineArray.size() * 2, 0);
 }
 
-/*virtual*/ void DebugLines::GetWorldBoundingSphere(Imzadi::Vector3& center, double& radius) const
-{
-	// TODO: Write this.
-}
-
 bool DebugLines::AddLine(const Line& line)
 {
 	if (this->lineArray.size() >= this->maxLines)
 		return false;
 
 	this->lineArray.push_back(line);
+	return true;
+}
+
+bool DebugLines::AddBox(const AxisAlignedBoundingBox& box, const Vector3& color)
+{
+	Line line;
+	line.color = color;
+
+	std::vector<LineSegment> edgeSegmentArray;
+	box.GetEdgeSegments(edgeSegmentArray);
+
+	for (const auto& segment : edgeSegmentArray)
+	{
+		line.segment = segment;
+		this->lineArray.push_back(line);
+	}
+
 	return true;
 }
 

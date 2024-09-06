@@ -38,13 +38,35 @@ void Frustum::operator=(const Frustum& frustum)
 
 void Frustum::GetPlanes(std::vector<Plane>& planeArray) const
 {
-	// TODO: Write this.
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, -this->nearClip), Vector3(0.0, 0.0, 1.0)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, -this->farClip), Vector3(0.0, 0.0, -1.0)));
+
+	double cosPhi = ::cos(this->hfovi / 2.0);
+	double sinPhi = ::sin(this->hfovi / 2.0);
+
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(cosPhi, 0.0, sinPhi)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(-cosPhi, 0.0, sinPhi)));
+
+	cosPhi = ::cos(this->vfovi / 2.0);
+	sinPhi = ::sin(this->vfovi / 2.0);
+
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(0.0, cosPhi, sinPhi)));
+	planeArray.push_back(Plane(Vector3(0.0, 0.0, 0.0), Vector3(0.0, -cosPhi, sinPhi)));
 }
 
 bool Frustum::IntersectedBySphere(const Vector3& center, double radius) const
 {
-	// TODO: Write this.
-	return false;
+	std::vector<Plane> planeArray;
+	this->GetPlanes(planeArray);
+
+	for (const Plane& plane : planeArray)
+	{
+		double signedDistance = plane.SignedDistanceTo(center);
+		if (signedDistance >= radius)
+			return false;
+	}
+
+	return true;
 }
 
 void Frustum::GetToProjectionMatrix(Matrix4x4& matrix) const

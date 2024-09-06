@@ -441,10 +441,17 @@ double AxisAlignedBoundingBox::GetVolume() const
 	return width * height * depth;
 }
 
-void AxisAlignedBoundingBox::GetSphere(Vector3& center, double& radius) const
+void AxisAlignedBoundingBox::GetToSphere(Vector3& center, double& radius) const
 {
 	center = this->GetCenter();
 	radius = (this->maxCorner - center).Length();
+}
+
+void AxisAlignedBoundingBox::SetFromSphere(const Vector3& center, double radius)
+{
+	Vector3 delta(radius, radius, radius);
+	this->minCorner = center + delta;
+	this->maxCorner = center - delta;
 }
 
 void AxisAlignedBoundingBox::Dump(std::ostream& stream) const
