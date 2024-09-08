@@ -1,0 +1,158 @@
+{
+    "static_meshes": [
+        "Models/Level7/CenterPlatform.render_mesh",
+        "Models/Level7/Cubie000.render_mesh",
+        "Models/Level7/Cubie001.render_mesh",
+        "Models/Level7/Cubie002.render_mesh",
+        "Models/Level7/Cubie003.render_mesh",
+        "Models/Level7/Cubie004.render_mesh",
+        "Models/Level7/Cubie005.render_mesh",
+        "Models/Level7/Cubie006.render_mesh",
+        "Models/Level7/Cubie007.render_mesh",
+        "Models/Level7/Cubie008.render_mesh",
+        "Models/Level7/Cubie009.render_mesh",
+        "Models/Level7/Cubie010.render_mesh",
+        "Models/Level7/Cubie011.render_mesh",
+        "Models/Level7/Cubie012.render_mesh",
+        "Models/Level7/Cubie014.render_mesh",
+        "Models/Level7/Cubie015.render_mesh",
+        "Models/Level7/Cubie016.render_mesh",
+        "Models/Level7/Cubie017.render_mesh",
+        "Models/Level7/Cubie018.render_mesh",
+        "Models/Level7/Cubie019.render_mesh",
+        "Models/Level7/Cubie020.render_mesh",
+        "Models/Level7/Cubie021.render_mesh",
+        "Models/Level7/Cubie022.render_mesh",
+        "Models/Level7/Cubie023.render_mesh",
+        "Models/Level7/Cubie024.render_mesh",
+        "Models/Level7/Cubie025.render_mesh",
+        "Models/Level7/Cubie026.render_mesh",
+        "Models/Level7/Cylinder001.render_mesh",
+        "Models/Level7/Cylinder002.render_mesh",
+        "Models/Level7/Cylinder003.render_mesh",
+        "Models/Level7/Cylinder004.render_mesh",
+        "Models/Level7/Pyramid001.render_mesh",
+        "Models/Level7/Tube001.render_mesh"
+    ],
+    "static_collision": [
+        "Models/Level7/CenterPlatform.collision",
+        "Models/Level7/Cubie000.collision",
+        "Models/Level7/Cubie001.collision",
+        "Models/Level7/Cubie002.collision",
+        "Models/Level7/Cubie003.collision",
+        "Models/Level7/Cubie004.collision",
+        "Models/Level7/Cubie005.collision",
+        "Models/Level7/Cubie006.collision",
+        "Models/Level7/Cubie007.collision",
+        "Models/Level7/Cubie008.collision",
+        "Models/Level7/Cubie009.collision",
+        "Models/Level7/Cubie010.collision",
+        "Models/Level7/Cubie011.collision",
+        "Models/Level7/Cubie012.collision",
+        "Models/Level7/Cubie014.collision",
+        "Models/Level7/Cubie015.collision",
+        "Models/Level7/Cubie016.collision",
+        "Models/Level7/Cubie017.collision",
+        "Models/Level7/Cubie018.collision",
+        "Models/Level7/Cubie019.collision",
+        "Models/Level7/Cubie020.collision",
+        "Models/Level7/Cubie021.collision",
+        "Models/Level7/Cubie022.collision",
+        "Models/Level7/Cubie023.collision",
+        "Models/Level7/Cubie024.collision",
+        "Models/Level7/Cubie025.collision",
+        "Models/Level7/Cubie026.collision",
+        "Models/Level7/Cylinder001.collision",
+        "Models/Level7/Cylinder002.collision",
+        "Models/Level7/Cylinder003.collision",
+        "Models/Level7/Cylinder004.collision",
+        "Models/Level7/Pyramid001.collision",
+        "Models/Level7/Tube001.collision"
+    ],
+    "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
+    "cube_texture": "Textures/OceanSkyBox/SkyBox.cube_texture",
+    "player_start_location": {
+        "x": 0.0,
+        "y": -708.041,
+        "z": 2986.85
+    },
+    "player_start_orientation": {
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0
+    },
+    "moving_platforms": [
+        "Levels/Level7_MainFloater.mov_plat",
+        "Levels/Level7_RingA.mov_plat",
+        "Levels/Level7_RingB.mov_plat",
+        "Levels/Level7_RingC.mov_plat",
+        "Levels/Level7_RingD.mov_plat"
+    ],
+    "npc_array": [
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 6.27,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -25.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -60.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 25.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 60.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        }
+    ]
+}

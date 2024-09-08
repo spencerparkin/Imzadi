@@ -1,0 +1,59 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level7\\CenterPlatform_Indices.buffer",
+    "vertex_buffer": "Models\\Level7\\CenterPlatform_Vertices.buffer",
+    "name": "CenterPlatform",
+    "texture": "Textures\\Funky.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 0.00000762939453125,
+            "y": 0.0000015102561974345008,
+            "z": -0.034349020570516589
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -10.0,
+            "y": -1.1183247566223145,
+            "z": -10.0
+        },
+        "max": {
+            "x": 10.0,
+            "y": 1.1183247566223145,
+            "z": 10.0
+        }
+    },
+    "port_map": {
+        "Port1": {
+            "matrix": [
+                1.0,
+                0.0,
+                0.0,
+                0.0,
+                -4.371138828673793e-8,
+                1.0,
+                0.0,
+                -1.0,
+                -4.371138828673793e-8
+            ],
+            "translation": {
+                "x": 0.9469146728515625,
+                "y": 5.922985076904297,
+                "z": 0.1402890533208847
+            }
+        }
+    }
+}

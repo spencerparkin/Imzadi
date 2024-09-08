@@ -1,0 +1,38 @@
+{
+    "mesh": "Models/Level7/WeirdHoveringPlatform.render_mesh",
+    "collision": "Models/Level7/WeirdHoveringPlatform.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "linger": 10.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 1162.0
+        },
+        {
+            "x": 0.0,
+            "y": -519.0,
+            "z": 1820.0,
+            "pitch": 0.0,
+            "roll": 0.0,
+            "yaw": 90.0
+        },
+        {
+            "x": 0.0,
+            "y": -519.0,
+            "z": 1820.0,
+            "pitch": 0.0,
+            "roll": 0.0,
+            "yaw": 90.0,
+            "linger": 10.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "bounce",
+    "move_speed": 100.0,
+    "rotation_speed": 30.0
+}

@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level7\\Tube001_Indices.buffer",
+    "vertex_buffer": "Models\\Level7\\Tube001_Vertices.buffer",
+    "name": "Tube001",
+    "texture": "Textures\\MetalPlating.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -2.4691593647003176,
+            "y": -81.79273986816406,
+            "z": 299.1561279296875
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -198.29617309570313,
+            "y": -73.84368133544922,
+            "z": -501.21746826171877
+        },
+        "max": {
+            "x": 205.0303192138672,
+            "y": 63.50699234008789,
+            "z": 243.03346252441407
+        }
+    }
+}

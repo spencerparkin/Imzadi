@@ -1,0 +1,40 @@
+{
+    "mesh": "Models/Level7/Torus001.render_mesh",
+    "collision": "Models/Level7/Torus001.collision",
+    "ignore_collision": true,
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "roll": 90.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "roll": 180.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0,
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "roll": 270.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "cycle",
+    "move_speed": 0.0,
+    "rotation_speed": 20.0
+}

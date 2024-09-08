@@ -1,0 +1,8 @@
+{
+    "width": 512,
+    "height": 512,
+    "data": "Textures\\Galaxy4.texture_data",
+    "num_mips": 10,
+    "format": "RGBA",
+    "compressed": true
+}

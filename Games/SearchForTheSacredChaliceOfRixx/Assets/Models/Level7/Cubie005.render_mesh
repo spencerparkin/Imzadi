@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level7\\Cubie005_Indices.buffer",
+    "vertex_buffer": "Models\\Level7\\Cubie005_Vertices.buffer",
+    "name": "Cubie005",
+    "texture": "Textures\\RubiksCube\\CubeAtlas.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 22.063495635986329,
+            "y": -14.0460205078125,
+            "z": 0.07940629869699478
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -10.0,
+            "y": -10.0,
+            "z": -10.0
+        },
+        "max": {
+            "x": 10.0,
+            "y": 10.0,
+            "z": 10.0
+        }
+    }
+}
