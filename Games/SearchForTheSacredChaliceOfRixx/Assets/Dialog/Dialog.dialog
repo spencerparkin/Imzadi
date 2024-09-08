@@ -206,21 +206,23 @@
             ]
         },
         "lwaxana_turns_into_q": {
-            {
-                "type": "basic",
-                "speaker": "Q",
-                "text": "Surprise!!"
-            },
-            {
-                "type": "basic",
-                "speaker": "Deanna",
-                "text": "Q?!  You were pretending to me my mother this whole time?"
-            },
-            {
-                "type": "basic",
-                "speaker": "Deanna",
-                "text": "Sure was!"
-            }
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "Surprise!!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Q?!  You were pretending to me my mother this whole time?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Sure was!"
+                }
+            ]
         },
         "q_and_deanna_final_pep_talk": {
             "sequence": [
