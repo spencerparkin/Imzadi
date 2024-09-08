@@ -140,6 +140,55 @@
                     "text": "We are the Borg.  We will add your biological and technological distinctiveness to our own.  Resistance if futile."
                 }
             ]
+        },
+        "q_and_deanna_final_pep_talk": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "All right, Q.  Enough of this!  I've restored the challice and brought order to the universe.  Now end this."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "You just don't get it, do you, Deanna.  The chalice was always nothing more than an old clay pot with mold growing in it."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "What do you mean?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "It's you, Deanna!  Your bloodline.  This is why the Q have taken such an interest in you, and have been keeping an eye on you."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "The members of the 5th house are more than telepaths, but none of them know this, nor can they take advantage of it, until they believe it.  The challice only served to help them believe in themselves."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "You simply don't grasp the power of belief.  Belief is everything.  Nothing moves, nothing happens, nothing exists!...until you a belief is formed...  and then acted upon!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "I'll tell you what I believe, Q!  I believe you're crazy, and I want out of this insane, poorly written, poorly conceived video game!  End all this now, Q.  I'm done with your little game here."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "[Q smiles.]  As you wish, Deanna.  My work here is done..."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "And so is yours."
+                }
+            ]
         }
     }
 }
