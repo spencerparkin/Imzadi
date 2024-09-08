@@ -215,7 +215,7 @@
                 {
                     "type": "basic",
                     "speaker": "Q",
-                    "text": "You just don't get it, do you, Deanna.  The chalice was always nothing more than an old clay pot with mold growing in it."
+                    "text": "You just don't get it, do you, Deanna.  The chalice is, and always was, nothing more than an old clay pot with mold growing in it."
                 },
                 {
                     "type": "basic",
@@ -225,22 +225,32 @@
                 {
                     "type": "basic",
                     "speaker": "Q",
-                    "text": "It's you, Deanna!  Your bloodline.  This is why the Q have taken such an interest in you, and have been keeping an eye on you."
+                    "text": "It's _you_, Deanna!  Your bloodline.  This is why the Q have taken such an interest in you, and have been keeping an eye on you."
                 },
                 {
                     "type": "basic",
                     "speaker": "Q",
-                    "text": "The members of the 5th house are more than telepaths, but none of them know this, nor can they take advantage of it, until they believe it.  The challice only served to help them believe in themselves."
+                    "text": "The members of the 5th house are more than telepaths, but none of them know this, nor can they take advantage of it, until they believe it.  The challice only served to help them believe in the power that was already inside them."
                 },
                 {
                     "type": "basic",
                     "speaker": "Q",
-                    "text": "You simply don't grasp the power of belief.  Belief is everything.  Nothing moves, nothing happens, nothing exists!...until you a belief is formed...  and then acted upon!"
+                    "text": "You simply don't grasp the power of faith."
                 },
                 {
                     "type": "basic",
                     "speaker": "Deanna",
-                    "text": "I'll tell you what I believe, Q!  I believe you're crazy, and I want out of this insane, poorly written, poorly conceived video game!  End all this now, Q.  I'm done with your little game here."
+                    "text": "I'm not a religious person, Q."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "I'm not talking about religion!  I'm talking about the force behind all action: belief!  And conversly, belief without action is meaningless.  Combined, these constitute the principle of faith, a word with universal applicability, not merely confined to Worf's primitive notions of Stovocore.  How do you think the Q rule the universe?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "I'll tell you what I believe, Q!  I believe you're crazy, and I want out of this insane, poorly written, poorly conceived video game!  End all this now, Q.  I'm done with your little game."
                 },
                 {
                     "type": "basic",
@@ -250,7 +260,7 @@
                 {
                     "type": "basic",
                     "speaker": "Q",
-                    "text": "And so is yours."
+                    "text": "And so is yours...if you can believe it."
                 }
             ]
         }
