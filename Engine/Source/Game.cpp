@@ -257,7 +257,7 @@ DebugLines* Game::GetDebugLines()
 
 	Camera::OrthographicParams orthoParams{};
 	orthoParams.nearClip = 0.0;
-	orthoParams.farClip = 1000.0;
+	orthoParams.farClip = 10000.0;
 	orthoParams.width = 400.0;
 	orthoParams.height = 400.0;
 
@@ -448,7 +448,7 @@ bool Game::RecreateViews()
 	double aspectRatio = double(this->mainPassViewport.Width) / double(this->mainPassViewport.Height);
 
 	Frustum frustum;
-	frustum.SetFromAspectRatio(aspectRatio, M_PI / 3.0, 0.1, 1000.0);
+	frustum.SetFromAspectRatio(aspectRatio, M_PI / 3.0, 0.1, 10000.0);
 	this->camera->SetFrustum(frustum);
 	Camera::OrthographicParams orthoParams = this->camera->GetOrthographicParameters();
 	orthoParams.desiredAspectRatio = aspectRatio;

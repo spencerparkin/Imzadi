@@ -11,7 +11,7 @@ Camera::Camera()
 	this->orthoParams.width = 20.0;
 	this->orthoParams.height = 20.0;
 	this->orthoParams.nearClip = 0.0;
-	this->orthoParams.farClip = 1000.0;
+	this->orthoParams.farClip = 10000.0;
 	this->orthoParams.desiredAspectRatio = 0.0;
 	this->orthoParams.adjustWidth = true;
 }

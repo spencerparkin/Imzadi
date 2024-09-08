@@ -62,6 +62,7 @@ void FollowCam::HandleWarpTunnelEvent(const WarpTunnelEvent* event)
 		this->preservedCameraOffset = cameraToWorld.translation - this->worldSpaceFocalPoint;
 		Transform subjectWorldToObject = subjectObjectToWorld.Inverted();
 		this->preservedCameraOffset = subjectWorldToObject.TransformVector(this->preservedCameraOffset);
+		// TODO: May need to adjust length of offset vector here to match our usual distance to camera.
 		this->fixOrbitLocation = true;
 	}
 }
@@ -81,10 +82,10 @@ void FollowCam::HandleWarpTunnelEvent(const WarpTunnelEvent* event)
 	{
 		case TickPass::MOVE_UNCONSTRAINTED:
 		{
-#if defined _DEBUG
+//#if defined _DEBUG
 			if (controller->ButtonPressed(Button::START, true))
 				this->freeCam->SetEnabled(true);
-#endif
+//#endif
 			if (this->fixOrbitLocation)
 			{
 				Transform subjectObjectToWorld;

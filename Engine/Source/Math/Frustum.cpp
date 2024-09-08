@@ -13,7 +13,7 @@ Frustum::Frustum()
 	this->vfovi = M_PI / 3.0;
 	this->hfovi = M_PI / 3.0;
 	this->nearClip = 0.1;
-	this->farClip = 1000.0;
+	this->farClip = 10000.0;
 }
 
 Frustum::Frustum(const Frustum& frustum)

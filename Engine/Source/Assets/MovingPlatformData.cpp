@@ -8,6 +8,7 @@ MovingPlatformData::MovingPlatformData()
 {
 	this->moveSpeedUnitsPerSecond = 0.0;
 	this->rotationSpeedDegreesPerSecond = 0.0;
+	this->ignoreCollision = false;
 }
 
 /*virtual*/ MovingPlatformData::~MovingPlatformData()
@@ -37,6 +38,9 @@ MovingPlatformData::MovingPlatformData()
 		IMZADI_LOG_ERROR("No \"spline_deltas\" member found or it's not an array.");
 		return false;
 	}
+
+	if (jsonDoc.HasMember("ignore_collision") && jsonDoc["ignore_collision"].IsBool())
+		this->ignoreCollision = jsonDoc["ignore_collision"].GetBool();
 
 	this->splineDeltas.clear();
 	for (int i = 0; i < jsonDoc["spline_deltas"].Size(); i++)
