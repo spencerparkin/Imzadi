@@ -38,7 +38,7 @@ namespace Imzadi
 		 */
 		void SetMovingPlatformFile(const std::string& file) { this->movingPlatformFile = file; }
 
-	private:
+	protected:
 
 		enum State
 		{

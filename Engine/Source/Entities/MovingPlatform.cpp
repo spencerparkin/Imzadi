@@ -80,7 +80,11 @@ MovingPlatform::MovingPlatform()
 
 /*virtual*/ bool MovingPlatform::Shutdown()
 {
-	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+	if (this->renderMesh)
+	{
+		Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+		this->renderMesh.Reset();
+	}
 
 	for (Collision::ShapeID shapeID : this->collisionShapeArray)
 		Game::Get()->GetCollisionSystem()->RemoveShape(shapeID);
@@ -125,6 +129,12 @@ MovingPlatform::MovingPlatform()
 				case MovingPlatformData::SplineMode::CYCLE:
 				{
 					this->targetDeltaIndex = (this->targetDeltaIndex + 1) % this->data->GetSplineDeltaArray().size();
+					break;
+				}
+				case MovingPlatformData::SplineMode::ONCE:
+				{
+					if (this->targetDeltaIndex + 1 < this->data->GetSplineDeltaArray().size())
+						this->targetDeltaIndex++;
 					break;
 				}
 			}

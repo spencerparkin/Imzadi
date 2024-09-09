@@ -7,6 +7,7 @@
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
 #include "Entities/WarpTunnel.h"
+#include "Entities/RubiksCubie.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
 #include "RenderObjects/HUDRenderObject.h"
@@ -68,6 +69,12 @@ GameLevel::GameLevel()
 		ZipLine* zipLine = const_cast<ZipLine*>(gameLevelData->GetZipLineArray()[i].Get());
 		ZipLineEntity* zipLineEntity = Imzadi::Game::Get()->SpawnEntity<ZipLineEntity>();
 		zipLineEntity->SetZipLine(zipLine);
+	}
+
+	for (const std::string& cubieFile : gameLevelData->GetCubieFilesArray())
+	{
+		auto rubiksCubie = Imzadi::Game::Get()->SpawnEntity<RubiksCubie>();
+		rubiksCubie->SetMovingPlatformFile(cubieFile);
 	}
 
 	return true;

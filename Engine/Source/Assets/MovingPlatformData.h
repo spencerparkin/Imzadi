@@ -26,7 +26,8 @@ namespace Imzadi
 		enum SplineMode
 		{
 			BOUNCE,
-			CYCLE
+			CYCLE,
+			ONCE
 		};
 
 		void SetSplineType(SplineType type) { this->splineType = type; }

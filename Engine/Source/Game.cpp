@@ -560,6 +560,15 @@ bool Game::FindEntityByName(const std::string& name, Reference<Entity>& foundEnt
 		}
 	}
 
+	for (auto& entity : this->spawnedEntityQueue)
+	{
+		if (entity->GetName() == name)
+		{
+			foundEntity = entity;
+			return true;
+		}
+	}
+
 	return false;
 }
 

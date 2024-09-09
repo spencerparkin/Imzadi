@@ -1,5 +1,6 @@
 #include "GameLevelData.h"
 #include "Assets/ZipLine.h"
+#include "Log.h"
 
 GameLevelData::GameLevelData()
 {
@@ -14,6 +15,7 @@ GameLevelData::GameLevelData()
 	if (!LevelData::Load(jsonDoc, assetCache))
 		return false;
 
+	this->zipLineArray.clear();
 	if (jsonDoc.HasMember("zip_lines"))
 	{
 		const rapidjson::Value& zipLinesValue = jsonDoc["zip_lines"];
@@ -40,6 +42,13 @@ GameLevelData::GameLevelData()
 		}
 	}
 
+	this->cubieFilesArray.clear();
+	if (jsonDoc.HasMember("cubies") && !this->LoadStringArray(jsonDoc["cubies"], this->cubieFilesArray))
+	{
+		IMZADI_LOG_ERROR("Failed to load \"cubies\" array.");
+		return false;
+	}
+
 	return true;
 }
 
@@ -48,6 +57,7 @@ GameLevelData::GameLevelData()
 	LevelData::Unload();
 
 	this->zipLineArray.clear();
+	this->cubieFilesArray.clear();
 
 	return true;
 }

@@ -33,4 +33,9 @@ public:
 	virtual bool Setup() override;
 	virtual bool Shutdown() override;
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
+
+private:
+	uint32_t masterHandle;
+	Imzadi::Transform currentCubieToPuzzle;
+	Imzadi::Transform targetCubieToPuzzle;
 };

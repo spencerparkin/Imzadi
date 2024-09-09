@@ -94,6 +94,8 @@ MovingPlatformData::MovingPlatformData()
 		this->splineMode = SplineMode::BOUNCE;
 	else if (splineModeStr == "cycle")
 		this->splineMode = SplineMode::CYCLE;
+	else if (splineModeStr == "once")
+		this->splineMode = SplineMode::ONCE;
 	else
 	{
 		IMZADI_LOG_ERROR(std::format("Could not decypher \"{}\" as a spline mode.", splineModeStr.c_str()));
