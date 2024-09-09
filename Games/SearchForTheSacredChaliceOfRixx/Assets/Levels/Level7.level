@@ -64,6 +64,12 @@
         "Levels/Level7_Cubie025.cubie",
         "Levels/Level7_Cubie026.cubie"
     ],
+    "trigger_boxes": [
+        "Models/Level7/JumpToLevel3.trigger_box",
+        "Models/Level7/JumpToLevel5.trigger_box",
+        "Models/Level7/JumpToLevel6.trigger_box",
+        "Models/Level7/RubiksCube.trigger_box"
+    ],
     "npc_array": [
         {
             "type": "borg",
