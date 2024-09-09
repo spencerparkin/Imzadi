@@ -12,7 +12,7 @@ namespace Imzadi
 	/**
 	 * These are elements of the level that make platforming a bit more challenging and fun.
 	 */
-	class MovingPlatform : public Entity
+	class IMZADI_API MovingPlatform : public Entity
 	{
 	public:
 		MovingPlatform();

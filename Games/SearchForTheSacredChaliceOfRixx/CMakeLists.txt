@@ -25,6 +25,8 @@ set(RIXX_SOURCES
     Source/Entities/ZipLineEntity.h
     Source/Entities/ZipLineRider.cpp
     Source/Entities/ZipLineRider.h
+    Source/Entities/RubiksCubie.cpp
+    Source/Entities/RubiksCubie.h
     Source/Assets/DialogData.cpp
     Source/Assets/DialogData.h
     Source/Assets/GameProgress.cpp
