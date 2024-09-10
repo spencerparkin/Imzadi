@@ -63,21 +63,8 @@ const Transform& Camera::GetWorldToCameraTransform() const
 
 bool Camera::LookAt(const Vector3& eyePoint, const Vector3& focalPoint, const Vector3& upVector)
 {
-	this->cameraToWorld.translation = eyePoint;
-
-	Vector3 xAxis, yAxis, zAxis;
-
-	zAxis = eyePoint - focalPoint;
-	if (!zAxis.Normalize())
+	if (!this->cameraToWorld.LookAt(eyePoint, focalPoint, upVector))
 		return false;
-
-	xAxis = upVector.Cross(zAxis);
-	if (!xAxis.Normalize())
-		return false;
-
-	yAxis = zAxis.Cross(xAxis);
-
-	this->cameraToWorld.matrix.SetColumnVectors(xAxis, yAxis, zAxis);
 
 	this->worldToCameraValid = false;
 	return true;

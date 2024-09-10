@@ -16,10 +16,26 @@ public:
 	virtual bool Shutdown() override;
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 
+	void Enable(bool enable);
+
 	void SetPuzzleChannelName(const std::string& name) { this->puzzleChannelName = name; }
 	const Imzadi::Transform& GetPuzzleToWorldTransform() const { return this->puzzleToWorld; }
 
 private:
+	enum State
+	{
+		OFF,
+		POWERING_UP,
+		OPERATING,
+		POWERING_DOWN
+	};
+
+	State state;
 	Imzadi::Transform puzzleToWorld;
 	std::string puzzleChannelName;
+	Imzadi::Transform originalCameraTransform;
+	Imzadi::Transform sourceCameraTransform;
+	Imzadi::Transform targetCameraTransform;
+	double cameraTransitionRate;
+	double cameraTransitionAlpha;
 };

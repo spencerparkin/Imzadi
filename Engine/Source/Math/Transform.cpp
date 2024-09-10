@@ -35,6 +35,11 @@ Transform::Transform(const Transform& transform)
 {
 }
 
+bool Transform::operator==(const Transform& transform) const
+{
+	return this->translation == transform.translation && this->matrix == transform.matrix;
+}
+
 bool Transform::IsValid() const
 {
 	if (!this->matrix.IsValid())
@@ -187,6 +192,26 @@ bool Transform::MoveTo(const Transform& transformA, const Transform& transformB,
 
 	this->translation = transformA.translation.MoveTo(transformB.translation, translationStep);
 	return moved;
+}
+
+bool Transform::LookAt(const Vector3& eyePoint, const Vector3& focalPoint, const Vector3& upVector)
+{
+	this->translation = eyePoint;
+	
+	Vector3 xAxis, yAxis, zAxis;
+
+	zAxis = eyePoint - focalPoint;
+	if (!zAxis.Normalize())
+		return false;
+
+	xAxis = upVector.Cross(zAxis);
+	if (!xAxis.Normalize())
+		return false;
+
+	yAxis = zAxis.Cross(xAxis);
+
+	this->matrix.SetColumnVectors(xAxis, yAxis, zAxis);
+	return true;
 }
 
 void Transform::Dump(std::ostream& stream) const

@@ -61,6 +61,16 @@ void Matrix3x3::operator*=(double scalar)
 			this->ele[i][j] *= scalar;
 }
 
+bool Matrix3x3::operator==(const Matrix3x3& matrix) const
+{
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			if (this->ele[i][j] != matrix.ele[i][j])
+				return false;
+
+	return true;
+}
+
 bool Matrix3x3::IsValid() const
 {
 	for (int i = 0; i < 3; i++)
