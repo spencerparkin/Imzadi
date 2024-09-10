@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level7\\WeirdHoveringPlatform_Indices.buffer",
+    "vertex_buffer": "Models\\Level7\\WeirdHoveringPlatform_Vertices.buffer",
+    "name": "WeirdHoveringPlatform",
+    "texture": "Textures\\Wood.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -10.729331016540528,
+            "y": -166.2682647705078,
+            "z": 590.16015625
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -43.05998229980469,
+            "y": -16.439661026000978,
+            "z": -164.77297973632813
+        },
+        "max": {
+            "x": 43.05998229980469,
+            "y": 16.439659118652345,
+            "z": 164.77297973632813
+        }
+    }
+}

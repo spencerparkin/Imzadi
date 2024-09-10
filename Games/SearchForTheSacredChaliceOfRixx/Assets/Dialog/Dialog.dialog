@@ -140,6 +140,148 @@
                     "text": "We are the Borg.  We will add your biological and technological distinctiveness to our own.  Resistance if futile."
                 }
             ]
+        },
+        "riker_troi_initial_contact": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "Deanna, you found me!  Oh, Imzadi..."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Whoa, cool your nacelles there, Mr.  How do I know it's really you, Will?  Where did we go on our last vacation together?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "I remember like it was yesterday...the way the moonlight sparkled in your eyes as we lay together on the beach, the sound of waves crashing...the occational mating call of the native cruskian owl echoing in the distance."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "What planet?  ...Will?  Will!  Snap out of it!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "Oh!  Right, right, um....  Risa, of course.  Oh, speaking of which.  Deanna...  I've lost my horga'hn statue.  Have you seen it anywhere around here?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "What?!  You're missing something too?!  First it's my mother wanter her old clay pot found, and now you've gone and lost your one true chance at jamaharon?  What's next?  Is Data missing his type-L phase descriminating amplifier?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "I'm sorry, Deanna.  Look...I don't display it publicly.  It's a momento of our Risian vacation together.  Can you help me find it?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Can't you go looking for it yourself?  I'm kind-of busy at the moment, Will."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "I would, but I'm afraid the programmer of this stupid video-game we're stuck in didn't write any code that allows me to move from this spot.  It's idiotic, I know, but true nevertheless."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Okay, Will, okay.  [Sigh...]  If I find it, I'll let you know."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "Thank you, Deanna!  I still love you, you know."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "I know, Will.  I know."
+                }
+            ]
+        },
+        "lwaxana_turns_into_q": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "Surprise!!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Q?!  You were pretending to me my mother this whole time?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Sure was!  How did I do?"
+                }
+            ]
+        },
+        "q_and_deanna_final_pep_talk": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "All right, Q.  Enough of this!  I've restored the challice and brought order to the universe.  Now end this."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "You just don't get it, do you, Deanna.  The chalice is, and always was, nothing more than an old clay pot with mold growing in it."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "What do you mean?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "It's _you_, Deanna!  Your bloodline.  This is why the Q have taken such an interest in you, and have been keeping an eye on you."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "The members of the 5th house are more than telepaths, but none of them know this, nor can they take advantage of it, until they believe it.  The challice only served to help them believe in the power that was already inside them."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "You simply don't grasp the power of faith."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "I'm not a religious person, Q."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "I'm not talking about religion!  I'm talking about the force behind all action: belief!  And conversly, belief without action is meaningless.  Combined, these constitute the principle of faith, a word with universal applicability, not merely confined to Worf's primitive notions of Stovocore.  How do you think the Q rule the universe?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "I'll tell you what I believe, Q!  I believe you're crazy, and I want out of this insane, poorly written, poorly conceived video game!  End all this now, Q.  I'm done with your little game."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "[Q smiles.]  As you wish, Deanna.  My work here is done..."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Q",
+                    "text": "And so is yours...if you can believe it."
+                }
+            ]
         }
     }
 }

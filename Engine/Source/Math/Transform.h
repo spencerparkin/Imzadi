@@ -60,6 +60,13 @@ namespace Imzadi
 		virtual ~Transform();
 
 		/**
+		 * Return true if and only if this transform and the given transform are the same transform.
+		 * That is, distinct objects that represent the same transform exactly.  We do not check here
+		 * that the transforms are approximately equal, but identical.
+		 */
+		bool operator==(const Transform& transform) const;
+
+		/**
 		 * Here we just check for the presents of Inf or Nan in the matrix and translation.
 		 * 
 		 * @return True is returned if the matrix is valid; false, otherwise.
@@ -162,6 +169,16 @@ namespace Imzadi
 		 * @return We fail here if the given matrix isn't an affine transform.
 		 */
 		bool SetFromMatrix(const Matrix4x4& matrix);
+
+		/**
+		 * Set this transform to a camera-to-world matrix based on the given viewing parameters.
+		 * 
+		 * @param[in] eyePoint This is where the camera will be placed.  It's the vantage point.
+		 * @param[in] focalPoint This is what the camera will be looking at.
+		 * @param[in] upVector This indicates which way should be toward the top of the screen.
+		 * @return True is returned on success; false, on failure.  We can fail if the resulting transform is singular.
+		 */
+		bool LookAt(const Vector3& eyePoint, const Vector3& focalPoint, const Vector3& upVector);
 
 		/**
 		 * Write this transform to the given stream in binary form.

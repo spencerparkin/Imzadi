@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level7\\Torus004_Indices.buffer",
+    "vertex_buffer": "Models\\Level7\\Torus004_Vertices.buffer",
+    "name": "Torus004",
+    "texture": "Textures\\Galaxy4.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -8.948247909545899,
+            "y": -171.46096801757813,
+            "z": 1456.1290283203126
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -213.7779083251953,
+            "y": -213.77789306640626,
+            "z": -87.82099151611328
+        },
+        "max": {
+            "x": 213.7779083251953,
+            "y": 213.77792358398438,
+            "z": 87.82099914550781
+        }
+    }
+}

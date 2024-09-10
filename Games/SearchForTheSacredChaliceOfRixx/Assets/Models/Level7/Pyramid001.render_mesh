@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level7\\Pyramid001_Indices.buffer",
+    "vertex_buffer": "Models\\Level7\\Pyramid001_Vertices.buffer",
+    "name": "Pyramid001",
+    "texture": "Textures\\AstroTurf.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -1.7031517028808594,
+            "y": -734.8257446289063,
+            "z": 2721.354736328125
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -207.11407470703126,
+            "y": -118.76884460449219,
+            "z": -274.0597839355469
+        },
+        "max": {
+            "x": 207.11407470703126,
+            "y": 53.52682113647461,
+            "z": 341.9125061035156
+        }
+    }
+}

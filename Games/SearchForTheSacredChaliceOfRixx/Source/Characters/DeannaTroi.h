@@ -94,6 +94,18 @@ private:
 		Imzadi::Reference<Pickup> pickup;
 	};
 
+	class ControlRubiksCubeAction : public LabeledAction
+	{
+	public:
+		ControlRubiksCubeAction(DeannaTroi* troi);
+		virtual ~ControlRubiksCubeAction();
+
+		virtual bool Perform() override;
+		virtual std::string GetActionLabel() const override;
+
+		std::string masterName;
+	};
+
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;

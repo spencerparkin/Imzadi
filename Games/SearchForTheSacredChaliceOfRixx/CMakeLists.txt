@@ -25,6 +25,10 @@ set(RIXX_SOURCES
     Source/Entities/ZipLineEntity.h
     Source/Entities/ZipLineRider.cpp
     Source/Entities/ZipLineRider.h
+    Source/Entities/RubiksCubie.cpp
+    Source/Entities/RubiksCubie.h
+    Source/Entities/RubiksCubeMaster.cpp
+    Source/Entities/RubiksCubeMaster.h
     Source/Assets/DialogData.cpp
     Source/Assets/DialogData.h
     Source/Assets/GameProgress.cpp
@@ -33,6 +37,8 @@ set(RIXX_SOURCES
     Source/Assets/ZipLine.h
     Source/Assets/GameLevelData.cpp
     Source/Assets/GameLevelData.h
+    Source/Assets/RubiksCubieData.cpp
+    Source/Assets/RubiksCubieData.h
     Source/RenderObjects/HUDRenderObject.cpp
     Source/RenderObjects/HUDRenderObject.h
     Assets/Icons/Icon.rc

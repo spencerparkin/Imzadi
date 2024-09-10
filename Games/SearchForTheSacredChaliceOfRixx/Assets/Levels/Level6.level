@@ -107,6 +107,27 @@
                 "pitch": 0.0,
                 "roll": 0.0
             }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 125.4914,
+                "y": 3.0,
+                "z": 401.90265
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 277.80178,
+                "y": 28.0,
+                "z": 465.10490
+            }
         }
     ]
 }

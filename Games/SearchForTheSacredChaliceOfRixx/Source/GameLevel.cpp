@@ -7,6 +7,7 @@
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
 #include "Entities/WarpTunnel.h"
+#include "Entities/RubiksCubie.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
 #include "RenderObjects/HUDRenderObject.h"
@@ -38,7 +39,7 @@ GameLevel::GameLevel()
 	}
 	else if (this->GetLevelName() == "Level6")
 	{
-		Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("MIDI", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+		Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("MIDI", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 			this->HandleLevel6MIDIEvent(dynamic_cast<const Imzadi::MidiSongEvent*>(event));
 		}));
 	}
@@ -48,8 +49,6 @@ GameLevel::GameLevel()
 	audioSystem->AddAmbientSound({ "OwlSound", "WindChimes" }, Imzadi::Interval(50, 100), false, 1.0f);
 
 	auto game = (GameApp*)Imzadi::Game::Get();
-	game->GetDialogSystem()->LevelSetup();
-
 	auto hud = new HUDRenderObject();
 	hud->SetFont("UbuntuMono_R");
 	game->GetScene()->AddRenderObject(hud);
@@ -70,6 +69,12 @@ GameLevel::GameLevel()
 		ZipLine* zipLine = const_cast<ZipLine*>(gameLevelData->GetZipLineArray()[i].Get());
 		ZipLineEntity* zipLineEntity = Imzadi::Game::Get()->SpawnEntity<ZipLineEntity>();
 		zipLineEntity->SetZipLine(zipLine);
+	}
+
+	for (const std::string& cubieFile : gameLevelData->GetCubieFilesArray())
+	{
+		auto rubiksCubie = Imzadi::Game::Get()->SpawnEntity<RubiksCubie>();
+		rubiksCubie->SetMovingPlatformFile(cubieFile);
 	}
 
 	return true;

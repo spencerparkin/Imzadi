@@ -1,6 +1,7 @@
 #include "DeannaTroi.h"
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
+#include "Entities/RubiksCubeMaster.h"
 #include "Characters/Borg.h"
 #include "EventSystem.h"
 #include "DialogSystem.h"
@@ -44,12 +45,12 @@ DeannaTroi::DeannaTroi()
 
 	this->cameraHandle = followCam->GetHandle();
 
-	this->triggerBoxListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("TriggerBox", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+	this->triggerBoxListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("TriggerBox", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->HandleTriggerBoxEvent((const Imzadi::TriggerBoxEvent*)event);
 	}));
 
 #if defined _DEBUG
-	this->freeCamListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("FreeCam", new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
+	this->freeCamListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("FreeCam", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->HandleFreeCamEvent(event);
 	}));
 #endif
@@ -120,6 +121,12 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 					action->targetLevel = triggerBoxName.substr(6);
 					this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
 				}
+				else if (triggerBoxName == "RubiksCube")
+				{
+					auto action = new ControlRubiksCubeAction(this);
+					action->masterName = "RubiksCubeMaster";
+					this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
+				}
 
 				break;
 			}
@@ -127,7 +134,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			{
 				IMZADI_LOG_INFO("Exited trigger box \"%s\".", triggerBoxName.c_str());
 
-				if (triggerBoxName.find("JumpTo") == 0)
+				if (triggerBoxName.find("JumpTo") == 0 || triggerBoxName == "RubiksCube")
 					this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
 
 				break;
@@ -565,4 +572,32 @@ DeannaTroi::CollectPickupAction::CollectPickupAction(DeannaTroi* troi) : Labeled
 /*virtual*/ std::string DeannaTroi::CollectPickupAction::GetActionLabel() const
 {
 	return std::format("Press \"B\" to {} {}.", this->pickup->GetVerb().c_str(), this->pickup->GetLabel().c_str());
+}
+
+//------------------------------------ DeannaTroi::ControlRubiksCubeAction ------------------------------------
+
+DeannaTroi::ControlRubiksCubeAction::ControlRubiksCubeAction(DeannaTroi* troi) : LabeledAction(troi)
+{
+}
+
+/*virtual*/ DeannaTroi::ControlRubiksCubeAction::~ControlRubiksCubeAction()
+{
+}
+
+/*virtual*/ bool DeannaTroi::ControlRubiksCubeAction::Perform()
+{
+	Imzadi::Reference<Imzadi::Entity> foundEntity;
+	if (Imzadi::Game::Get()->FindEntityByName(this->masterName, foundEntity))
+	{
+		auto master = dynamic_cast<RubiksCubeMaster*>(foundEntity.Get());
+		if (master)
+			master->Enable(true);
+	}
+
+	return false;
+}
+
+/*virtual*/ std::string DeannaTroi::ControlRubiksCubeAction::GetActionLabel() const
+{
+	return std::format("Press \"A\" to telepathically control the Rubik's Cube.");
 }

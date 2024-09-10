@@ -26,7 +26,8 @@ namespace Imzadi
 		enum SplineMode
 		{
 			BOUNCE,
-			CYCLE
+			CYCLE,
+			ONCE
 		};
 
 		void SetSplineType(SplineType type) { this->splineType = type; }
@@ -46,6 +47,7 @@ namespace Imzadi
 		const std::string& GetCollisionFile() const { return this->collisionFile; }
 		double GetMoveSpeed() const { return this->moveSpeedUnitsPerSecond; }
 		double GetRotationSpeed() const { return this->rotationSpeedDegreesPerSecond; }
+		bool GetIgnoreCollision() const { return this->ignoreCollision; }
 
 	private:
 
@@ -56,5 +58,6 @@ namespace Imzadi
 		std::string collisionFile;
 		double moveSpeedUnitsPerSecond;
 		double rotationSpeedDegreesPerSecond;
+		bool ignoreCollision;
 	};
 }

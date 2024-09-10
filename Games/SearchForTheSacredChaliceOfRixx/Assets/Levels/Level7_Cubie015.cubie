@@ -1,0 +1,40 @@
+{
+    "mesh": "Models/Level7/Cubie015.render_mesh",
+    "collision": "Models/Level7/Cubie015.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "once",
+    "move_speed": 30.0,
+    "rotation_speed": 25.0,
+    "cubie_to_puzzle": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -22.0,
+            "y": 0.0,
+            "z": 22.0
+        }
+    },
+    "master": "RubiksCubeMaster",
+    "puzzle_channel": "RubiksCubeChannel"
+}

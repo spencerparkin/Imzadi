@@ -3,6 +3,7 @@
 #include "Assets/GameProgress.h"
 #include "Assets/ZipLine.h"
 #include "Assets/GameLevelData.h"
+#include "Assets/RubiksCubieData.h"
 
 CustomAssetCache::CustomAssetCache()
 {
@@ -25,6 +26,8 @@ CustomAssetCache::CustomAssetCache()
 		return new ZipLine();
 	else if (ext == ".level")
 		return new GameLevelData();
+	else if (ext == ".cubie")
+		return new RubiksCubieData();
 
 	Imzadi::Asset* asset = AssetCache::CreateBlankAssetForFileType(assetFile);
 	if (asset)

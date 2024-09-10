@@ -1,0 +1,140 @@
+{
+    "static_meshes": [
+        "Models/Level7/CenterPlatform.render_mesh",
+        "Models/Level7/Cylinder001.render_mesh",
+        "Models/Level7/Cylinder002.render_mesh",
+        "Models/Level7/Cylinder003.render_mesh",
+        "Models/Level7/Cylinder004.render_mesh",
+        "Models/Level7/Pyramid001.render_mesh",
+        "Models/Level7/Tube001.render_mesh"
+    ],
+    "static_collision": [
+        "Models/Level7/CenterPlatform.collision",
+        "Models/Level7/Cylinder001.collision",
+        "Models/Level7/Cylinder002.collision",
+        "Models/Level7/Cylinder003.collision",
+        "Models/Level7/Cylinder004.collision",
+        "Models/Level7/Pyramid001.collision",
+        "Models/Level7/Tube001.collision"
+    ],
+    "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
+    "cube_texture": "Textures/OceanSkyBox/SkyBox.cube_texture",
+    "player_start_location": {
+        "x": 0.0,
+        "y": -708.041,
+        "z": 2986.85
+    },
+    "player_start_orientation": {
+        "yaw": 0.0,
+        "pitch": 0.0,
+        "roll": 0.0
+    },
+    "moving_platforms": [
+        "Levels/Level7_MainFloater.mov_plat",
+        "Levels/Level7_RingA.mov_plat",
+        "Levels/Level7_RingB.mov_plat",
+        "Levels/Level7_RingC.mov_plat",
+        "Levels/Level7_RingD.mov_plat"
+    ],
+    "cubies": [
+        "Levels/Level7_Cubie000.cubie",
+        "Levels/Level7_Cubie001.cubie",
+        "Levels/Level7_Cubie002.cubie",
+        "Levels/Level7_Cubie003.cubie",
+        "Levels/Level7_Cubie004.cubie",
+        "Levels/Level7_Cubie005.cubie",
+        "Levels/Level7_Cubie006.cubie",
+        "Levels/Level7_Cubie007.cubie",
+        "Levels/Level7_Cubie008.cubie",
+        "Levels/Level7_Cubie009.cubie",
+        "Levels/Level7_Cubie010.cubie",
+        "Levels/Level7_Cubie011.cubie",
+        "Levels/Level7_Cubie012.cubie",
+        "Levels/Level7_Cubie014.cubie",
+        "Levels/Level7_Cubie015.cubie",
+        "Levels/Level7_Cubie016.cubie",
+        "Levels/Level7_Cubie017.cubie",
+        "Levels/Level7_Cubie018.cubie",
+        "Levels/Level7_Cubie019.cubie",
+        "Levels/Level7_Cubie020.cubie",
+        "Levels/Level7_Cubie021.cubie",
+        "Levels/Level7_Cubie022.cubie",
+        "Levels/Level7_Cubie023.cubie",
+        "Levels/Level7_Cubie024.cubie",
+        "Levels/Level7_Cubie025.cubie",
+        "Levels/Level7_Cubie026.cubie"
+    ],
+    "trigger_boxes": [
+        "Models/Level7/JumpToLevel3.trigger_box",
+        "Models/Level7/JumpToLevel5.trigger_box",
+        "Models/Level7/JumpToLevel6.trigger_box",
+        "Models/Level7/RubiksCube.trigger_box"
+    ],
+    "npc_array": [
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 6.27,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -25.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -60.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 25.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 60.0,
+                "y": -707.0,
+                "z": 2614.0
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        }
+    ]
+}

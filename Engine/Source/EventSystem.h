@@ -23,6 +23,19 @@ namespace Imzadi
 		Reference<Event> event;
 	};
 
+	enum EventListenerType
+	{
+		/**
+		 * The event listener is to remain for the life of the process.
+		 */
+		PERMINANT,
+
+		/**
+		 * The event listener is to remain only for the life of the level.
+		 */
+		TRANSITORY
+	};
+
 	/**
 	 * This is a simple event sending and dispatch system.  The idea here is to
 	 * decouple the systems that generate events from the systems that want to
@@ -69,10 +82,11 @@ namespace Imzadi
 		 * Register an event listener with the system.
 		 * 
 		 * @param[in] channelName The given listener will receive events from this channel.  If the channel doesn't exist, it is created.
+		 * @param[in] eventListenerType This is used to specify the scope of the event listener.
 		 * @param[in] eventListener This is a derivative of the EventListener class which will process events on the given channel.
 		 * @return A handle is returned that the user can pass to the UnregisterEventListener method.  Note that zero is an invalid handle value.
 		 */
-		EventListenerHandle RegisterEventListener(const std::string& channelName, Reference<EventListener> eventListener);
+		EventListenerHandle RegisterEventListener(const std::string& channelName, EventListenerType eventListenerType, Reference<EventListener> eventListener);
 
 		/**
 		 * Unregister a previously registered event listener.
@@ -94,6 +108,11 @@ namespace Imzadi
 		 * Unregister all event listeners and delete any pending events.
 		 */
 		void Clear();
+
+		/**
+		 * Unregister transitory event listeners and delete any pending events for any listeners.
+		 */
+		void ResetForNextLevel();
 
 	private:
 
@@ -120,6 +139,7 @@ namespace Imzadi
 		void GenerateDispatches(std::vector<EventDispatch>& eventDispatchArray);
 		void DispatchEventNow(Event* event);
 		void Clear();
+		void ResetForNextLevel();
 
 	private:
 		EventListenerMap eventListenerMap;
@@ -162,6 +182,9 @@ namespace Imzadi
 		virtual ~EventListener();
 
 		virtual void ProcessEvent(Event* event) = 0;
+
+	public:
+		EventListenerType eventListenerType;
 	};
 
 	/**

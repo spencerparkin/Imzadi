@@ -44,6 +44,11 @@ namespace Imzadi
 		void operator*=(double scalar);
 
 		/**
+		 * Return true if and only if this matrix and the given matrix are identicial.
+		 */
+		bool operator==(const Matrix3x3& matrix) const;
+
+		/**
 		 * Tell the caller if Inf or NaN can be found in the matrix.
 		 * No other notion of validity is checked here.  If we want to
 		 * check that your matrix is non-singular, check the determinant.

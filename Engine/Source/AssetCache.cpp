@@ -25,6 +25,7 @@
 #include <filesystem>
 #include "rapidjson/reader.h"
 #include "rapidjson/error/en.h"
+#include "rapidjson/cursorstreamwrapper.h"
 #include "rapidjson/istreamwrapper.h"
 #include "rapidjson/prettywriter.h"
 
@@ -191,15 +192,23 @@ bool AssetCache::LoadAsset(const std::string& assetFile, Reference<Asset>& asset
 		return false;
 	}
 
-	rapidjson::IStreamWrapper streamWrapper(fileStream);
 	rapidjson::Document jsonDoc;
+#if defined _DEBUG
+	std::stringstream stringStream;
+	stringStream << fileStream.rdbuf();
+	std::string jsonText = stringStream.str();
+	rapidjson::StringStream stream(jsonText.c_str());
+	rapidjson::CursorStreamWrapper<rapidjson::StringStream> streamWrapper(stream);
+#else
+	rapidjson::IStreamWrapper streamWrapper(fileStream);
+#endif
 	jsonDoc.ParseStream(streamWrapper);
 	if (jsonDoc.HasParseError())
 	{
-		// TODO: It would be nice if we could get line and column numbers in the error message here.
 		asset.Reset();
 		rapidjson::ParseErrorCode errorCode = jsonDoc.GetParseError();
-		IMZADI_LOG_ERROR(rapidjson::GetParseError_En(errorCode));
+		IMZADI_LOG_ERROR("Parse error on line %d, column %d of file %s.", streamWrapper.GetLine(), streamWrapper.GetColumn(), resolvedAssetFile.c_str());
+		IMZADI_LOG_ERROR("Parse error: %s", rapidjson::GetParseError_En(errorCode));
 		return false;
 	}
 
