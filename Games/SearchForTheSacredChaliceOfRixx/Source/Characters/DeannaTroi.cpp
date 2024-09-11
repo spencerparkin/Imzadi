@@ -121,9 +121,18 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 				}
 				else if (triggerBoxName == "RubiksCube")
 				{
-					auto action = new ControlRubiksCubeAction(this);
-					action->masterName = "RubiksCubeMaster";
-					this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
+					if (!((GameApp*)Imzadi::Game::Get())->GetGameProgress()->WasMileStoneReached("rubiks_cube_solved"))
+					{
+						auto action = new ControlRubiksCubeAction(this);
+						action->masterName = "RubiksCubeMaster";
+						this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
+					}
+					else
+					{
+						auto action = new TeleportToLevelAction(this);
+						action->targetLevel = "Level8";
+						this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
+					}
 				}
 
 				break;
