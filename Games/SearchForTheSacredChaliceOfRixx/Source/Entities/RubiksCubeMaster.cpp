@@ -1,6 +1,6 @@
 #include "RubiksCubeMaster.h"
 #include "Entities/RubiksCubie.h"
-#include "Game.h"
+#include "GameApp.h"
 #include "Camera.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "Assets/RenderMesh.h"
@@ -38,7 +38,7 @@ RubiksCubeMaster::RubiksCubeMaster()
 #if defined _DEBUG
 	int numScrambleTwists = 1;		// I have spent time solving the cube in game by hand, but this is needed for debugging purposes.
 #else
-	int numScrambleTwists = 50;		// I spent about 10 minutes solving the cube in game by hand, and it's not so bad, really.
+	int numScrambleTwists = 1;		// I spent about 10 minutes solving the cube in game by hand, and it's not so bad, really.
 #endif
 	Imzadi::Random random;
 	random.SetSeedUsingTime();
@@ -102,7 +102,10 @@ RubiksCubeMaster::RubiksCubeMaster()
 					this->state = State::OFF;
 					Imzadi::Game::Get()->PopControllerUser();
 					if (this->IsCubeSolved())
+					{
 						Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->puzzleChannelName, new Imzadi::Event("CubiesDisperse"));
+						((GameApp*)Imzadi::Game::Get())->GetGameProgress()->SetMileStoneReached("rubiks_cube_solved");
+					}
 				}
 			}
 

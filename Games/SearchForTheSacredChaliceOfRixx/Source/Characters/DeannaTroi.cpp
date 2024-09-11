@@ -49,11 +49,9 @@ DeannaTroi::DeannaTroi()
 		this->HandleTriggerBoxEvent((const Imzadi::TriggerBoxEvent*)event);
 	}));
 
-#if defined _DEBUG
 	this->freeCamListenerHandle = Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener("FreeCam", Imzadi::EventListenerType::TRANSITORY, new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
 		this->HandleFreeCamEvent(event);
 	}));
-#endif
 
 	return true;
 }
@@ -384,7 +382,6 @@ void DeannaTroi::HandleEntityOverlapResults()
 	Character::Reset();
 }
 
-#if defined _DEBUG
 void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 {
 	auto teleportEvent = dynamic_cast<const Imzadi::FreeCamTeleportEvent*>(event);
@@ -397,7 +394,6 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 		this->velocity.SetComponents(0.0, 0.0, 0.0);
 	}
 }
-#endif //_DEBUG
 
 /*virtual*/ bool DeannaTroi::HangingOnToZipLine()
 {

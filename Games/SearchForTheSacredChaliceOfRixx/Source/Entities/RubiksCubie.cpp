@@ -1,6 +1,7 @@
 #include "RubiksCubie.h"
 #include "Entities/RubiksCubeMaster.h"
 #include "Assets/RubiksCubieData.h"
+#include "GameApp.h"
 
 //------------------------------ RubiksCubie ------------------------------
 
@@ -12,6 +13,7 @@ RubiksCubie::RubiksCubie()
 	this->animationTargetAngle = 0.0;
 	this->animationRate = 3.0;
 	this->animating = false;
+	this->disposition = Disposition::FOLLOW_MASTER;
 }
 
 /*virtual*/ RubiksCubie::~RubiksCubie()
@@ -22,6 +24,10 @@ RubiksCubie::RubiksCubie()
 {
 	if (!MovingPlatform::Setup())
 		return false;
+
+	// Save this transform off for later use.  This is where the platform should
+	// be placed once the puzzle has been solved by the player.
+	this->platformObjectToWorld = this->renderMesh->GetObjectToWorldTransform();
 
 	auto cubieData = dynamic_cast<RubiksCubieData*>(this->data.Get());
 	if (!cubieData)
@@ -49,6 +55,9 @@ RubiksCubie::RubiksCubie()
 			this->HandleCubieEvent(event);
 		}));
 
+	if (((GameApp*)Imzadi::Game::Get())->GetGameProgress()->WasMileStoneReached("rubiks_cube_solved"))
+		this->disposition = Disposition::MOVE_TO_PLATFORMING_POSITION;
+
 	return true;
 }
 
@@ -67,57 +76,76 @@ RubiksCubie::RubiksCubie()
 {
 	if (tickPass == Imzadi::TickPass::MOVE_UNCONSTRAINTED)
 	{
-		Imzadi::Transform cubieToPuzzle;
-
-		if (!this->animating)
-			cubieToPuzzle = this->currentCubieToPuzzle;
-		else
+		if (this->disposition == Disposition::FOLLOW_MASTER)
 		{
-			double animationAngleDelta = this->animationRate * deltaTime;
-			bool animationComplete = false;
+			Imzadi::Transform cubieToPuzzle;
 
-			if (this->animationCurrentAngle < this->animationTargetAngle)
-			{
-				this->animationCurrentAngle += animationAngleDelta;
-				if (this->animationCurrentAngle >= this->animationTargetAngle)
-				{
-					this->animationCurrentAngle = this->animationTargetAngle;
-					animationComplete = true;
-				}
-			}
-			else if (this->animationCurrentAngle > this->animationTargetAngle)
-			{
-				this->animationCurrentAngle -= animationAngleDelta;
-				if (this->animationCurrentAngle <= this->animationTargetAngle)
-				{
-					this->animationCurrentAngle = this->animationTargetAngle;
-					animationComplete = true;
-				}
-			}
+			if (!this->animating)
+				cubieToPuzzle = this->currentCubieToPuzzle;
 			else
-				animationComplete = true;
-
-			Imzadi::Transform rotation;
-			rotation.matrix.SetFromAxisAngle(this->animationAxis, this->animationCurrentAngle);
-			cubieToPuzzle = rotation * this->currentCubieToPuzzle;
-
-			if (animationComplete)
 			{
-				this->currentCubieToPuzzle = cubieToPuzzle;
-				this->animating = false;
+				double animationAngleDelta = this->animationRate * deltaTime;
+				bool animationComplete = false;
+
+				if (this->animationCurrentAngle < this->animationTargetAngle)
+				{
+					this->animationCurrentAngle += animationAngleDelta;
+					if (this->animationCurrentAngle >= this->animationTargetAngle)
+					{
+						this->animationCurrentAngle = this->animationTargetAngle;
+						animationComplete = true;
+					}
+				}
+				else if (this->animationCurrentAngle > this->animationTargetAngle)
+				{
+					this->animationCurrentAngle -= animationAngleDelta;
+					if (this->animationCurrentAngle <= this->animationTargetAngle)
+					{
+						this->animationCurrentAngle = this->animationTargetAngle;
+						animationComplete = true;
+					}
+				}
+				else
+					animationComplete = true;
+
+				Imzadi::Transform rotation;
+				rotation.matrix.SetFromAxisAngle(this->animationAxis, this->animationCurrentAngle);
+				cubieToPuzzle = rotation * this->currentCubieToPuzzle;
+
+				if (animationComplete)
+				{
+					this->currentCubieToPuzzle = cubieToPuzzle;
+					this->animating = false;
+				}
+			}
+
+			Imzadi::Reference<Imzadi::ReferenceCounted> ref;
+			if (Imzadi::HandleManager::Get()->GetObjectFromHandle(this->masterHandle, ref))
+			{
+				auto master = dynamic_cast<RubiksCubeMaster*>(ref.Get());
+				if (master)
+				{
+					Imzadi::Transform currentCubieToWorld = this->renderMesh->GetObjectToWorldTransform();
+					const Imzadi::Transform& puzzleToWorld = master->GetPuzzleToWorldTransform();
+					Imzadi::Transform cubieToWorld = puzzleToWorld * cubieToPuzzle;
+					if (cubieToWorld != currentCubieToWorld)
+					{
+						this->renderMesh->SetObjectToWorldTransform(cubieToWorld);
+						this->UpdateCollisionTransforms();
+					}
+				}
 			}
 		}
-
-		Imzadi::Reference<Imzadi::ReferenceCounted> ref;
-		if (Imzadi::HandleManager::Get()->GetObjectFromHandle(this->masterHandle, ref))
+		else if (this->disposition == Disposition::MOVE_TO_PLATFORMING_POSITION)
 		{
-			auto master = dynamic_cast<RubiksCubeMaster*>(ref.Get());
-			if (master)
+			Imzadi::Transform objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+			static double translationRate = 10.0;
+			static double rotationRate = 0.5;
+			double translationStep = translationRate * deltaTime;
+			double rotationStep = rotationRate * deltaTime;
+			if (objectToWorld.MoveTo(objectToWorld, this->platformObjectToWorld, translationStep, rotationStep))
 			{
-				const Imzadi::Transform& puzzleToWorld = master->GetPuzzleToWorldTransform();
-				Imzadi::Transform cubieToWorld = puzzleToWorld * cubieToPuzzle;
-				this->renderMesh->SetObjectToWorldTransform(cubieToWorld);
-
+				this->renderMesh->SetObjectToWorldTransform(objectToWorld);
 				this->UpdateCollisionTransforms();
 			}
 		}
@@ -155,7 +183,7 @@ void RubiksCubie::HandleCubieEvent(const Imzadi::Event* event)
 	}
 	else if (event->GetName() == "CubiesDisperse")
 	{
-		// TODO: Have the cubies move (with collision) to places where they can be platformed.
+		this->disposition = Disposition::MOVE_TO_PLATFORMING_POSITION;
 	}
 }
 

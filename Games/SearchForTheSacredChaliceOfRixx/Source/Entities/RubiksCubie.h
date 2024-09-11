@@ -45,15 +45,23 @@ private:
 	void HandleCubieEvent(const Imzadi::Event* event);
 	void CompleteAnimationNow();
 
+	enum Disposition
+	{
+		FOLLOW_MASTER,
+		MOVE_TO_PLATFORMING_POSITION
+	};
+
 	uint32_t masterHandle;
 	Imzadi::EventListenerHandle eventHandle;
 	Imzadi::Transform solvedCubieToPuzzle;
 	Imzadi::Transform currentCubieToPuzzle;
+	Imzadi::Transform platformObjectToWorld;
 	Imzadi::Vector3 animationAxis;
 	double animationCurrentAngle;
 	double animationTargetAngle;
 	double animationRate;
 	bool animating;
+	Disposition disposition;
 };
 
 /**
