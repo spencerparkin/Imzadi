@@ -8,11 +8,11 @@ FBXHeaderExtension:  {
 		Version: 1000
 		Year: 2024
 		Month: 9
-		Day: 9
-		Hour: 13
-		Minute: 37
-		Second: 53
-		Millisecond: 978
+		Day: 11
+		Hour: 9
+		Minute: 9
+		Second: 6
+		Millisecond: 799
 	}
 	Creator: "FBX SDK/FBX Plugins version 2019.0"
 	SceneInfo: "SceneInfo::GlobalInfo", "UserData" {
@@ -34,13 +34,13 @@ FBXHeaderExtension:  {
 			P: "Original|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "Original|ApplicationName", "KString", "", "", "3ds Max"
 			P: "Original|ApplicationVersion", "KString", "", "", "2019"
-			P: "Original|DateTime_GMT", "DateTime", "", "", "09/09/2024 19:37:53.974"
+			P: "Original|DateTime_GMT", "DateTime", "", "", "11/09/2024 15:09:06.794"
 			P: "Original|FileName", "KString", "", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Models\Level7\Level7.FBX"
 			P: "LastSaved", "Compound", "", ""
 			P: "LastSaved|ApplicationVendor", "KString", "", "", "Autodesk"
 			P: "LastSaved|ApplicationName", "KString", "", "", "3ds Max"
 			P: "LastSaved|ApplicationVersion", "KString", "", "", "2019"
-			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "09/09/2024 19:37:53.974"
+			P: "LastSaved|DateTime_GMT", "DateTime", "", "", "11/09/2024 15:09:06.794"
 			P: "Original|ApplicationActiveProject", "KString", "", "", "C:\Users\Spencer.Parkin\OneDrive - L3 Technologies, Inc\Documents\3dsMax"
 			P: "Original|ApplicationNativeFile", "KString", "", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Models\Level7\Level7.max"
 		}
@@ -77,7 +77,7 @@ GlobalSettings:  {
 
 Documents:  {
 	Count: 1
-	Document: 2014228269536, "", "Scene" {
+	Document: 1465307917760, "", "Scene" {
 		Properties70:  {
 			P: "SourceObject", "object", "", ""
 			P: "ActiveAnimStackName", "KString", "", "", ""
@@ -277,7 +277,7 @@ Definitions:  {
 ;------------------------------------------------------------------
 
 Objects:  {
-	Geometry: 2014233531472, "Geometry::", "Mesh" {
+	Geometry: 1465311073472, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -386,7 +386,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014233524944, "Geometry::", "Mesh" {
+	Geometry: 1465307892608, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -495,7 +495,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484447760, "Geometry::", "Mesh" {
+	Geometry: 1465307899680, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -604,7 +604,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484448848, "Geometry::", "Mesh" {
+	Geometry: 1465307895872, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -713,7 +713,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484451024, "Geometry::", "Mesh" {
+	Geometry: 1465307898048, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -822,7 +822,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484451568, "Geometry::", "Mesh" {
+	Geometry: 1465307899136, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -931,7 +931,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484452112, "Geometry::", "Mesh" {
+	Geometry: 1465307895328, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1040,7 +1040,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484453200, "Geometry::", "Mesh" {
+	Geometry: 1465307894240, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1149,7 +1149,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484449392, "Geometry::", "Mesh" {
+	Geometry: 1465307898592, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1258,7 +1258,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966859920, "Geometry::", "Mesh" {
+	Geometry: 1465307893696, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1367,7 +1367,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966857744, "Geometry::", "Mesh" {
+	Geometry: 1465307893152, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1476,7 +1476,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966860464, "Geometry::", "Mesh" {
+	Geometry: 1465307896416, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1585,7 +1585,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966858288, "Geometry::", "Mesh" {
+	Geometry: 1465307896960, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1694,7 +1694,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966857200, "Geometry::", "Mesh" {
+	Geometry: 1465307894784, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1803,7 +1803,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966856112, "Geometry::", "Mesh" {
+	Geometry: 1465311072384, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -1912,7 +1912,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013542118672, "Geometry::", "Mesh" {
+	Geometry: 1465307906560, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2021,7 +2021,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013966854480, "Geometry::", "Mesh" {
+	Geometry: 1465307910368, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2130,7 +2130,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014484453744, "Geometry::", "Mesh" {
+	Geometry: 1465307909824, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2239,7 +2239,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013545882256, "Geometry::", "Mesh" {
+	Geometry: 1465307908192, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2348,7 +2348,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2013543129584, "Geometry::", "Mesh" {
+	Geometry: 1465307910912, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2457,7 +2457,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014233529840, "Geometry::", "Mesh" {
+	Geometry: 1465307909280, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2566,7 +2566,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524249840, "Geometry::", "Mesh" {
+	Geometry: 1465307906016, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2675,7 +2675,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524240048, "Geometry::", "Mesh" {
+	Geometry: 1465307905472, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2784,7 +2784,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524269968, "Geometry::", "Mesh" {
+	Geometry: 1465307911456, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -2893,7 +2893,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524260176, "Geometry::", "Mesh" {
+	Geometry: 1465307904928, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -3002,7 +3002,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524264528, "Geometry::", "Mesh" {
+	Geometry: 1465307912000, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -3111,7 +3111,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524244944, "Geometry::", "Mesh" {
+	Geometry: 1465307907648, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -3220,7 +3220,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524250928, "Geometry::", "Mesh" {
+	Geometry: 1465307907104, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -3316,7 +3316,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524272144, "Geometry::", "Mesh" {
+	Geometry: 1465307897504, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -3466,7 +3466,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524252560, "Geometry::", "Mesh" {
+	Geometry: 1465307908736, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -3781,7 +3781,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524241136, "Geometry::", "Mesh" {
+	Geometry: 1465303102816, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -4067,7 +4067,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524244400, "Geometry::", "Mesh" {
+	Geometry: 1465303105536, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -4352,7 +4352,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524270512, "Geometry::", "Mesh" {
+	Geometry: 1465303104992, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -4637,7 +4637,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524260720, "Geometry::", "Mesh" {
+	Geometry: 1465303103360, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -4922,7 +4922,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524253104, "Geometry::", "Mesh" {
+	Geometry: 1465303101184, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5031,7 +5031,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524268880, "Geometry::", "Mesh" {
+	Geometry: 1465303103904, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5201,7 +5201,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524268336, "Geometry::", "Mesh" {
+	Geometry: 1465303104448, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5371,7 +5371,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524248752, "Geometry::", "Mesh" {
+	Geometry: 1465303100640, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5541,7 +5541,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524254736, "Geometry::", "Mesh" {
+	Geometry: 1465303101728, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5637,7 +5637,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524256912, "Geometry::", "Mesh" {
+	Geometry: 1465303099552, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5733,7 +5733,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524271600, "Geometry::", "Mesh" {
+	Geometry: 1465303102272, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5829,7 +5829,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524245488, "Geometry::", "Mesh" {
+	Geometry: 1465303106080, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -5999,7 +5999,7 @@ Objects:  {
 			}
 		}
 	}
-	Geometry: 2014524240592, "Geometry::", "Mesh" {
+	Geometry: 1465303106624, "Geometry::", "Mesh" {
 		Properties70:  {
 			P: "Color", "ColorRGB", "Color", "",0.345098039215686,0.564705882352941,0.882352941176471
 		}
@@ -6095,7 +6095,7 @@ Objects:  {
 			}
 		}
 	}
-	Model: 2014566698176, "Model::Cubie000", "Mesh" {
+	Model: 1465301333296, "Model::Cubie000", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6103,13 +6103,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,-22,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",-44.0321311950684,-17.8505058288574,25.5030937194824
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",1
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014566700368, "Model::Cubie001", "Mesh" {
+	Model: 1465301366176, "Model::Cubie001", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6117,13 +6118,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,-22,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-7.67022705078125,-31.8653564453125
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",2
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014566702560, "Model::Cubie002", "Mesh" {
+	Model: 1465301379328, "Model::Cubie002", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6131,13 +6133,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,-22,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",44.0930595397949,-16.9679794311523,26.7790966033936
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",3
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014566704752, "Model::Cubie003", "Mesh" {
+	Model: 1465301385904, "Model::Cubie003", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6145,13 +6148,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,-22,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",-22,-22,49.0322418212891
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",4
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014566709136, "Model::Cubie004", "Mesh" {
+	Model: 1465301381520, "Model::Cubie004", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6159,13 +6163,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,-22,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-12.3515167236328,39.6878776550293
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-179.999991348578,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",5
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014566711328, "Model::Cubie005", "Mesh" {
+	Model: 1465301388096, "Model::Cubie005", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6173,13 +6178,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,-22,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",22,-22,49.0721893310547
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",6
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328001824, "Model::Cubie006", "Mesh" {
+	Model: 1465301383712, "Model::Cubie006", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6187,13 +6193,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,-22,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",-22,-22,72.3887481689453
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",7
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328012784, "Model::Cubie007", "Mesh" {
+	Model: 1465301368368, "Model::Cubie007", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6201,13 +6208,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,-22,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-22,136.869750976563
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",8
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014327997440, "Model::Cubie008", "Mesh" {
+	Model: 1465301390288, "Model::Cubie008", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6215,13 +6223,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,-22,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",22,-22,72.0392608642578
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",9
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328019360, "Model::Cubie009", "Mesh" {
+	Model: 1465301363984, "Model::Cubie009", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6229,13 +6238,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,0,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",-44.0349960327148,-12.3325672149658,-17.4043426513672
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",11
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328006208, "Model::Cubie010", "Mesh" {
+	Model: 1465301396864, "Model::Cubie010", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6243,13 +6253,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-7.95785522460938,-54.1486129760742
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",12
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014327993056, "Model::Cubie011", "Mesh" {
+	Model: 1465301405632, "Model::Cubie011", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6257,13 +6268,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,0,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",44.9927520751953,-12.0856323242188,-15.7244863510132
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",13
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328023744, "Model::Cubie012", "Mesh" {
+	Model: 1465301407824, "Model::Cubie012", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6271,13 +6283,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,0,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",-44.1102867126465,-19.7805633544922,48.6220321655273
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",14
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014327995248, "Model::Cubie014", "Mesh" {
+	Model: 1465301412208, "Model::Cubie014", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6285,13 +6298,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,0,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",43.7266998291016,-19.2982025146484,49.5201416015625
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-89.9999974955219,0
 			P: "MaxHandle", "int", "Integer", "UH",16
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328028128, "Model::Cubie015", "Mesh" {
+	Model: 1465301418784, "Model::Cubie015", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6299,13 +6313,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,0,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",-22,-22.1358947753906,94.1560211181641
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",17
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014327999632, "Model::Cubie016", "Mesh" {
+	Model: 1465301420976, "Model::Cubie016", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6313,13 +6328,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,0,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-22.3900833129883,93.3996124267578
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",18
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328017168, "Model::Cubie017", "Mesh" {
+	Model: 1465301403440, "Model::Cubie017", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6327,13 +6343,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,0,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",22,-21.1716613769531,94.4513320922852
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",19
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328030320, "Model::Cubie018", "Mesh" {
+	Model: 1465301423168, "Model::Cubie018", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6341,13 +6358,13 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,22,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",-43.0963592529297,-19.701452255249,-49.6129112243652
 			P: "MaxHandle", "int", "Integer", "UH",20
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328032512, "Model::Cubie019", "Mesh" {
+	Model: 1465301414400, "Model::Cubie019", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6355,13 +6372,13 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,22,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",23.8154144287109,-18.6202392578125,-47.4573211669922
 			P: "MaxHandle", "int", "Integer", "UH",21
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328004016, "Model::Cubie020", "Mesh" {
+	Model: 1465301399056, "Model::Cubie020", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6369,13 +6386,13 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,22,-22
+			P: "Lcl Translation", "Lcl Translation", "", "A",44.9784545898438,-18.7770080566406,-46.498233795166
 			P: "MaxHandle", "int", "Integer", "UH",22
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328034704, "Model::Cubie021", "Mesh" {
+	Model: 1465301416592, "Model::Cubie021", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6383,13 +6400,13 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,22,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",-43.6544494628906,-24.5379676818848,-5.85408592224121
 			P: "MaxHandle", "int", "Integer", "UH",23
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328036896, "Model::Cubie022", "Mesh" {
+	Model: 1465301401248, "Model::Cubie022", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6397,13 +6414,13 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,22,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",-22.5445899963379,-18.3485107421875,-49.3161315917969
 			P: "MaxHandle", "int", "Integer", "UH",24
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328008400, "Model::Cubie023", "Mesh" {
+	Model: 1465301394672, "Model::Cubie023", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6411,13 +6428,13 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,22,-0
+			P: "Lcl Translation", "Lcl Translation", "", "A",44.531078338623,-24.9198226928711,-4.43672561645508
 			P: "MaxHandle", "int", "Integer", "UH",25
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328052240, "Model::Cubie024", "Mesh" {
+	Model: 1466401378512, "Model::Cubie024", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6425,13 +6442,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",-22,22,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",-12.4793434143066,-21.6812133789063,115.575714111328
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",26
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328045664, "Model::Cubie025", "Mesh" {
+	Model: 1466401380704, "Model::Cubie025", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6439,13 +6457,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",0,22,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",0,-21.9428329467773,72.0596466064453
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",27
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328050048, "Model::Cubie026", "Mesh" {
+	Model: 1466401382896, "Model::Cubie026", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6453,13 +6472,14 @@ Objects:  {
 			P: "InheritType", "enum", "", "",1
 			P: "ScalingMax", "Vector3D", "Vector", "",0,0,0
 			P: "DefaultAttributeIndex", "int", "Integer", "",0
-			P: "Lcl Translation", "Lcl Translation", "", "A",22,22,22
+			P: "Lcl Translation", "Lcl Translation", "", "A",8.91244697570801,-21.9926605224609,114.957092285156
+			P: "Lcl Rotation", "Lcl Rotation", "", "A",-90.0000025044781,-0,0
 			P: "MaxHandle", "int", "Integer", "UH",28
 		}
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328047856, "Model::CenterPlatform", "Mesh" {
+	Model: 1466401385088, "Model::CenterPlatform", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6473,7 +6493,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328054432, "Model::Port1", "Mesh" {
+	Model: 1466401415776, "Model::Port1", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "InheritType", "enum", "", "",1
@@ -6485,7 +6505,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328138112, "Model::Tube001", "Mesh" {
+	Model: 1466401387280, "Model::Tube001", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6501,7 +6521,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328124960, "Model::WeirdHoveringPlatform", "Mesh" {
+	Model: 1466371782144, "Model::WeirdHoveringPlatform", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6517,7 +6537,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328142496, "Model::Torus001", "Mesh" {
+	Model: 1466371777760, "Model::Torus001", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6533,7 +6553,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014328144688, "Model::Torus002", "Mesh" {
+	Model: 1466371760224, "Model::Torus002", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6549,7 +6569,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014228251376, "Model::Torus003", "Mesh" {
+	Model: 1466371762416, "Model::Torus003", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6565,7 +6585,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014228253568, "Model::Torus004", "Mesh" {
+	Model: 1466371764608, "Model::Torus004", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6581,7 +6601,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2014228255760, "Model::Pyramid001", "Mesh" {
+	Model: 1466350613728, "Model::Pyramid001", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6596,7 +6616,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013201270720, "Model::Cylinder001", "Mesh" {
+	Model: 1466350600576, "Model::Cylinder001", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6610,7 +6630,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013201279488, "Model::Cylinder002", "Mesh" {
+	Model: 1466350620304, "Model::Cylinder002", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6624,7 +6644,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013211317360, "Model::Cylinder003", "Mesh" {
+	Model: 1466494208304, "Model::Cylinder003", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6638,7 +6658,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013211339184, "Model::TriggerBox_JumpToLevel3", "Mesh" {
+	Model: 1466494247760, "Model::TriggerBox_JumpToLevel3", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6652,7 +6672,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013392876768, "Model::TriggerBox_JumpToLevel5", "Mesh" {
+	Model: 1466494238992, "Model::TriggerBox_JumpToLevel5", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6666,7 +6686,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013211162208, "Model::TriggerBox_JumpToLevel6", "Mesh" {
+	Model: 1466398162688, "Model::TriggerBox_JumpToLevel6", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6680,7 +6700,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013985059504, "Model::Cylinder004", "Mesh" {
+	Model: 1466398164880, "Model::Cylinder004", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6694,7 +6714,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Model: 2013985077040, "Model::TriggerBox_RubiksCube", "Mesh" {
+	Model: 1465300804464, "Model::TriggerBox_RubiksCube", "Mesh" {
 		Version: 232
 		Properties70:  {
 			P: "PreRotation", "Vector3D", "Vector", "",-90,-0,0
@@ -6708,7 +6728,7 @@ Objects:  {
 		Shading: T
 		Culling: "CullingOff"
 	}
-	Material: 2013967420688, "Material::Material #40", "" {
+	Material: 1465920864672, "Material::Material #40", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6730,7 +6750,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2013967414928, "Material::Material #41", "" {
+	Material: 1465920870432, "Material::Material #41", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6752,7 +6772,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2014527769984, "Material::Material #48", "" {
+	Material: 1465921176592, "Material::Material #48", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6774,7 +6794,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2014527767104, "Material::Material #47", "" {
+	Material: 1465921175152, "Material::Material #47", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6796,7 +6816,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2014527768544, "Material::Material #43", "" {
+	Material: 1465921181392, "Material::Material #43", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6818,7 +6838,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2014517822352, "Material::Material #44", "" {
+	Material: 1465921180912, "Material::Material #44", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6840,7 +6860,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2013988363168, "Material::Material #45", "" {
+	Material: 1465921175632, "Material::Material #45", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6862,7 +6882,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2013988364128, "Material::Material #46", "" {
+	Material: 1465007239808, "Material::Material #46", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6884,7 +6904,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2014494614352, "Material::Material #49", "" {
+	Material: 1465007235488, "Material::Material #49", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6906,7 +6926,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Material: 2014990693184, "Material::Material #42", "" {
+	Material: 1465007236448, "Material::Material #42", "" {
 		Version: 102
 		ShadingModel: "phong"
 		MultiLayer: 0
@@ -6928,7 +6948,7 @@ Objects:  {
 			P: "Reflectivity", "double", "Number", "",0
 		}
 	}
-	Video: 2014990692224, "Video::Map #7", "Clip" {
+	Video: 1465447018800, "Video::Map #7", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\RubiksCube\CubeAtlas.png"
@@ -6938,7 +6958,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\RubiksCube\CubeAtlas.png"
 		RelativeFilename: "..\..\Textures\RubiksCube\CubeAtlas.png"
 	}
-	Video: 2014990691264, "Video::Map #8", "Clip" {
+	Video: 1465447020720, "Video::Map #8", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Funky.png"
@@ -6948,7 +6968,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Funky.png"
 		RelativeFilename: "..\..\Textures\Funky.png"
 	}
-	Video: 2014990688864, "Video::Map #15", "Clip" {
+	Video: 1465447019280, "Video::Map #15", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\MetalPlating.png"
@@ -6958,7 +6978,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\MetalPlating.png"
 		RelativeFilename: "..\..\Textures\MetalPlating.png"
 	}
-	Video: 2014990691744, "Video::Map #14", "Clip" {
+	Video: 1466155823104, "Video::Map #14", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Wood.png"
@@ -6968,7 +6988,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Wood.png"
 		RelativeFilename: "..\..\Textures\Wood.png"
 	}
-	Video: 2014990695584, "Video::Map #10", "Clip" {
+	Video: 1466155824544, "Video::Map #10", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy.png"
@@ -6978,7 +6998,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy.png"
 		RelativeFilename: "..\..\Textures\Galaxy.png"
 	}
-	Video: 2014990690304, "Video::Map #11", "Clip" {
+	Video: 1466155825984, "Video::Map #11", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy2.png"
@@ -6988,7 +7008,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy2.png"
 		RelativeFilename: "..\..\Textures\Galaxy2.png"
 	}
-	Video: 2014990689824, "Video::Map #12", "Clip" {
+	Video: 1466493007600, "Video::Map #12", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy3.png"
@@ -6998,7 +7018,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy3.png"
 		RelativeFilename: "..\..\Textures\Galaxy3.png"
 	}
-	Video: 2014990692704, "Video::Map #13", "Clip" {
+	Video: 1466486849328, "Video::Map #13", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy4.png"
@@ -7008,7 +7028,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Galaxy4.png"
 		RelativeFilename: "..\..\Textures\Galaxy4.png"
 	}
-	Video: 2014990693664, "Video::Map #16", "Clip" {
+	Video: 1465303218960, "Video::Map #16", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\AstroTurf.png"
@@ -7018,7 +7038,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\AstroTurf.png"
 		RelativeFilename: "..\..\Textures\AstroTurf.png"
 	}
-	Video: 2014990694144, "Video::Map #9", "Clip" {
+	Video: 1465303225200, "Video::Map #9", "Clip" {
 		Type: "Clip"
 		Properties70:  {
 			P: "Path", "KString", "XRefUrl", "", "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Spiral.png"
@@ -7028,7 +7048,7 @@ Objects:  {
 		Filename: "E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets\Textures\Spiral.png"
 		RelativeFilename: "..\..\Textures\Spiral.png"
 	}
-	Texture: 2013967422128, "Texture::Map #7", "" {
+	Texture: 1465920868512, "Texture::Map #7", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #7"
@@ -7044,7 +7064,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2013967416848, "Texture::Map #8", "" {
+	Texture: 1465920869952, "Texture::Map #8", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #8"
@@ -7060,7 +7080,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014527772864, "Texture::Map #15", "" {
+	Texture: 1465921179952, "Texture::Map #15", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #15"
@@ -7076,7 +7096,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014527768064, "Texture::Map #14", "" {
+	Texture: 1465921178512, "Texture::Map #14", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #14"
@@ -7092,7 +7112,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014517821872, "Texture::Map #10", "" {
+	Texture: 1465921181872, "Texture::Map #10", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #10"
@@ -7108,7 +7128,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014517823312, "Texture::Map #11", "" {
+	Texture: 1465921179472, "Texture::Map #11", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #11"
@@ -7124,7 +7144,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2013988363648, "Texture::Map #12", "" {
+	Texture: 1465007234528, "Texture::Map #12", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #12"
@@ -7140,7 +7160,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014494612432, "Texture::Map #13", "" {
+	Texture: 1465007235008, "Texture::Map #13", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #13"
@@ -7156,7 +7176,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014990690784, "Texture::Map #16", "" {
+	Texture: 1465007235968, "Texture::Map #16", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #16"
@@ -7172,7 +7192,7 @@ Objects:  {
 		Texture_Alpha_Source: "Alpha_Black"
 		Cropping: 0,0,0,0
 	}
-	Texture: 2014990689344, "Texture::Map #9", "" {
+	Texture: 1465447020240, "Texture::Map #9", "" {
 		Type: "TextureVideoClip"
 		Version: 202
 		TextureName: "Texture::Map #9"
@@ -7196,434 +7216,434 @@ Objects:  {
 Connections:  {
 	
 	;Model::Cubie000, Model::RootNode
-	C: "OO",2014566698176,0
+	C: "OO",1465301333296,0
 	
 	;Model::Cubie001, Model::RootNode
-	C: "OO",2014566700368,0
+	C: "OO",1465301366176,0
 	
 	;Model::Cubie002, Model::RootNode
-	C: "OO",2014566702560,0
+	C: "OO",1465301379328,0
 	
 	;Model::Cubie003, Model::RootNode
-	C: "OO",2014566704752,0
+	C: "OO",1465301385904,0
 	
 	;Model::Cubie004, Model::RootNode
-	C: "OO",2014566709136,0
+	C: "OO",1465301381520,0
 	
 	;Model::Cubie005, Model::RootNode
-	C: "OO",2014566711328,0
+	C: "OO",1465301388096,0
 	
 	;Model::Cubie006, Model::RootNode
-	C: "OO",2014328001824,0
+	C: "OO",1465301383712,0
 	
 	;Model::Cubie007, Model::RootNode
-	C: "OO",2014328012784,0
+	C: "OO",1465301368368,0
 	
 	;Model::Cubie008, Model::RootNode
-	C: "OO",2014327997440,0
+	C: "OO",1465301390288,0
 	
 	;Model::Cubie009, Model::RootNode
-	C: "OO",2014328019360,0
+	C: "OO",1465301363984,0
 	
 	;Model::Cubie010, Model::RootNode
-	C: "OO",2014328006208,0
+	C: "OO",1465301396864,0
 	
 	;Model::Cubie011, Model::RootNode
-	C: "OO",2014327993056,0
+	C: "OO",1465301405632,0
 	
 	;Model::Cubie012, Model::RootNode
-	C: "OO",2014328023744,0
+	C: "OO",1465301407824,0
 	
 	;Model::Cubie014, Model::RootNode
-	C: "OO",2014327995248,0
+	C: "OO",1465301412208,0
 	
 	;Model::Cubie015, Model::RootNode
-	C: "OO",2014328028128,0
+	C: "OO",1465301418784,0
 	
 	;Model::Cubie016, Model::RootNode
-	C: "OO",2014327999632,0
+	C: "OO",1465301420976,0
 	
 	;Model::Cubie017, Model::RootNode
-	C: "OO",2014328017168,0
+	C: "OO",1465301403440,0
 	
 	;Model::Cubie018, Model::RootNode
-	C: "OO",2014328030320,0
+	C: "OO",1465301423168,0
 	
 	;Model::Cubie019, Model::RootNode
-	C: "OO",2014328032512,0
+	C: "OO",1465301414400,0
 	
 	;Model::Cubie020, Model::RootNode
-	C: "OO",2014328004016,0
+	C: "OO",1465301399056,0
 	
 	;Model::Cubie021, Model::RootNode
-	C: "OO",2014328034704,0
+	C: "OO",1465301416592,0
 	
 	;Model::Cubie022, Model::RootNode
-	C: "OO",2014328036896,0
+	C: "OO",1465301401248,0
 	
 	;Model::Cubie023, Model::RootNode
-	C: "OO",2014328008400,0
+	C: "OO",1465301394672,0
 	
 	;Model::Cubie024, Model::RootNode
-	C: "OO",2014328052240,0
+	C: "OO",1466401378512,0
 	
 	;Model::Cubie025, Model::RootNode
-	C: "OO",2014328045664,0
+	C: "OO",1466401380704,0
 	
 	;Model::Cubie026, Model::RootNode
-	C: "OO",2014328050048,0
+	C: "OO",1466401382896,0
 	
 	;Model::CenterPlatform, Model::RootNode
-	C: "OO",2014328047856,0
+	C: "OO",1466401385088,0
 	
 	;Model::Tube001, Model::RootNode
-	C: "OO",2014328138112,0
+	C: "OO",1466401387280,0
 	
 	;Model::WeirdHoveringPlatform, Model::RootNode
-	C: "OO",2014328124960,0
+	C: "OO",1466371782144,0
 	
 	;Model::Torus001, Model::RootNode
-	C: "OO",2014328142496,0
+	C: "OO",1466371777760,0
 	
 	;Model::Torus002, Model::RootNode
-	C: "OO",2014328144688,0
+	C: "OO",1466371760224,0
 	
 	;Model::Torus003, Model::RootNode
-	C: "OO",2014228251376,0
+	C: "OO",1466371762416,0
 	
 	;Model::Torus004, Model::RootNode
-	C: "OO",2014228253568,0
+	C: "OO",1466371764608,0
 	
 	;Model::Pyramid001, Model::RootNode
-	C: "OO",2014228255760,0
+	C: "OO",1466350613728,0
 	
 	;Model::Cylinder001, Model::RootNode
-	C: "OO",2013201270720,0
+	C: "OO",1466350600576,0
 	
 	;Model::Cylinder002, Model::RootNode
-	C: "OO",2013201279488,0
+	C: "OO",1466350620304,0
 	
 	;Model::Cylinder003, Model::RootNode
-	C: "OO",2013211317360,0
+	C: "OO",1466494208304,0
 	
 	;Model::TriggerBox_JumpToLevel3, Model::RootNode
-	C: "OO",2013211339184,0
+	C: "OO",1466494247760,0
 	
 	;Model::TriggerBox_JumpToLevel5, Model::RootNode
-	C: "OO",2013392876768,0
+	C: "OO",1466494238992,0
 	
 	;Model::TriggerBox_JumpToLevel6, Model::RootNode
-	C: "OO",2013211162208,0
+	C: "OO",1466398162688,0
 	
 	;Model::Cylinder004, Model::RootNode
-	C: "OO",2013985059504,0
+	C: "OO",1466398164880,0
 	
 	;Model::TriggerBox_RubiksCube, Model::RootNode
-	C: "OO",2013985077040,0
+	C: "OO",1465300804464,0
 	
 	;Material::Material #40, Model::Cubie000
-	C: "OO",2013967420688,2014566698176
+	C: "OO",1465920864672,1465301333296
 	
 	;Geometry::, Model::Cubie000
-	C: "OO",2014233531472,2014566698176
+	C: "OO",1465311073472,1465301333296
 	
 	;Material::Material #40, Model::Cubie001
-	C: "OO",2013967420688,2014566700368
+	C: "OO",1465920864672,1465301366176
 	
 	;Geometry::, Model::Cubie001
-	C: "OO",2014233524944,2014566700368
+	C: "OO",1465307892608,1465301366176
 	
 	;Material::Material #40, Model::Cubie002
-	C: "OO",2013967420688,2014566702560
+	C: "OO",1465920864672,1465301379328
 	
 	;Geometry::, Model::Cubie002
-	C: "OO",2014484447760,2014566702560
+	C: "OO",1465307899680,1465301379328
 	
 	;Material::Material #40, Model::Cubie003
-	C: "OO",2013967420688,2014566704752
+	C: "OO",1465920864672,1465301385904
 	
 	;Geometry::, Model::Cubie003
-	C: "OO",2014484448848,2014566704752
+	C: "OO",1465307895872,1465301385904
 	
 	;Material::Material #40, Model::Cubie004
-	C: "OO",2013967420688,2014566709136
+	C: "OO",1465920864672,1465301381520
 	
 	;Geometry::, Model::Cubie004
-	C: "OO",2014484451024,2014566709136
+	C: "OO",1465307898048,1465301381520
 	
 	;Material::Material #40, Model::Cubie005
-	C: "OO",2013967420688,2014566711328
+	C: "OO",1465920864672,1465301388096
 	
 	;Geometry::, Model::Cubie005
-	C: "OO",2014484451568,2014566711328
+	C: "OO",1465307899136,1465301388096
 	
 	;Material::Material #40, Model::Cubie006
-	C: "OO",2013967420688,2014328001824
+	C: "OO",1465920864672,1465301383712
 	
 	;Geometry::, Model::Cubie006
-	C: "OO",2014484452112,2014328001824
+	C: "OO",1465307895328,1465301383712
 	
 	;Material::Material #40, Model::Cubie007
-	C: "OO",2013967420688,2014328012784
+	C: "OO",1465920864672,1465301368368
 	
 	;Geometry::, Model::Cubie007
-	C: "OO",2014484453200,2014328012784
+	C: "OO",1465307894240,1465301368368
 	
 	;Material::Material #40, Model::Cubie008
-	C: "OO",2013967420688,2014327997440
+	C: "OO",1465920864672,1465301390288
 	
 	;Geometry::, Model::Cubie008
-	C: "OO",2014484449392,2014327997440
+	C: "OO",1465307898592,1465301390288
 	
 	;Material::Material #40, Model::Cubie009
-	C: "OO",2013967420688,2014328019360
+	C: "OO",1465920864672,1465301363984
 	
 	;Geometry::, Model::Cubie009
-	C: "OO",2013966859920,2014328019360
+	C: "OO",1465307893696,1465301363984
 	
 	;Material::Material #40, Model::Cubie010
-	C: "OO",2013967420688,2014328006208
+	C: "OO",1465920864672,1465301396864
 	
 	;Geometry::, Model::Cubie010
-	C: "OO",2013966857744,2014328006208
+	C: "OO",1465307893152,1465301396864
 	
 	;Material::Material #40, Model::Cubie011
-	C: "OO",2013967420688,2014327993056
+	C: "OO",1465920864672,1465301405632
 	
 	;Geometry::, Model::Cubie011
-	C: "OO",2013966860464,2014327993056
+	C: "OO",1465307896416,1465301405632
 	
 	;Material::Material #40, Model::Cubie012
-	C: "OO",2013967420688,2014328023744
+	C: "OO",1465920864672,1465301407824
 	
 	;Geometry::, Model::Cubie012
-	C: "OO",2013966858288,2014328023744
+	C: "OO",1465307896960,1465301407824
 	
 	;Material::Material #40, Model::Cubie014
-	C: "OO",2013967420688,2014327995248
+	C: "OO",1465920864672,1465301412208
 	
 	;Geometry::, Model::Cubie014
-	C: "OO",2013966857200,2014327995248
+	C: "OO",1465307894784,1465301412208
 	
 	;Material::Material #40, Model::Cubie015
-	C: "OO",2013967420688,2014328028128
+	C: "OO",1465920864672,1465301418784
 	
 	;Geometry::, Model::Cubie015
-	C: "OO",2013966856112,2014328028128
+	C: "OO",1465311072384,1465301418784
 	
 	;Material::Material #40, Model::Cubie016
-	C: "OO",2013967420688,2014327999632
+	C: "OO",1465920864672,1465301420976
 	
 	;Geometry::, Model::Cubie016
-	C: "OO",2013542118672,2014327999632
+	C: "OO",1465307906560,1465301420976
 	
 	;Material::Material #40, Model::Cubie017
-	C: "OO",2013967420688,2014328017168
+	C: "OO",1465920864672,1465301403440
 	
 	;Geometry::, Model::Cubie017
-	C: "OO",2013966854480,2014328017168
+	C: "OO",1465307910368,1465301403440
 	
 	;Material::Material #40, Model::Cubie018
-	C: "OO",2013967420688,2014328030320
+	C: "OO",1465920864672,1465301423168
 	
 	;Geometry::, Model::Cubie018
-	C: "OO",2014484453744,2014328030320
+	C: "OO",1465307909824,1465301423168
 	
 	;Material::Material #40, Model::Cubie019
-	C: "OO",2013967420688,2014328032512
+	C: "OO",1465920864672,1465301414400
 	
 	;Geometry::, Model::Cubie019
-	C: "OO",2013545882256,2014328032512
+	C: "OO",1465307908192,1465301414400
 	
 	;Material::Material #40, Model::Cubie020
-	C: "OO",2013967420688,2014328004016
+	C: "OO",1465920864672,1465301399056
 	
 	;Geometry::, Model::Cubie020
-	C: "OO",2013543129584,2014328004016
+	C: "OO",1465307910912,1465301399056
 	
 	;Material::Material #40, Model::Cubie021
-	C: "OO",2013967420688,2014328034704
+	C: "OO",1465920864672,1465301416592
 	
 	;Geometry::, Model::Cubie021
-	C: "OO",2014233529840,2014328034704
+	C: "OO",1465307909280,1465301416592
 	
 	;Material::Material #40, Model::Cubie022
-	C: "OO",2013967420688,2014328036896
+	C: "OO",1465920864672,1465301401248
 	
 	;Geometry::, Model::Cubie022
-	C: "OO",2014524249840,2014328036896
+	C: "OO",1465307906016,1465301401248
 	
 	;Material::Material #40, Model::Cubie023
-	C: "OO",2013967420688,2014328008400
+	C: "OO",1465920864672,1465301394672
 	
 	;Geometry::, Model::Cubie023
-	C: "OO",2014524240048,2014328008400
+	C: "OO",1465307905472,1465301394672
 	
 	;Material::Material #40, Model::Cubie024
-	C: "OO",2013967420688,2014328052240
+	C: "OO",1465920864672,1466401378512
 	
 	;Geometry::, Model::Cubie024
-	C: "OO",2014524269968,2014328052240
+	C: "OO",1465307911456,1466401378512
 	
 	;Material::Material #40, Model::Cubie025
-	C: "OO",2013967420688,2014328045664
+	C: "OO",1465920864672,1466401380704
 	
 	;Geometry::, Model::Cubie025
-	C: "OO",2014524260176,2014328045664
+	C: "OO",1465307904928,1466401380704
 	
 	;Material::Material #40, Model::Cubie026
-	C: "OO",2013967420688,2014328050048
+	C: "OO",1465920864672,1466401382896
 	
 	;Geometry::, Model::Cubie026
-	C: "OO",2014524264528,2014328050048
+	C: "OO",1465307912000,1466401382896
 	
 	;Model::Port1, Model::CenterPlatform
-	C: "OO",2014328054432,2014328047856
+	C: "OO",1466401415776,1466401385088
 	
 	;Material::Material #41, Model::CenterPlatform
-	C: "OO",2013967414928,2014328047856
+	C: "OO",1465920870432,1466401385088
 	
 	;Geometry::, Model::CenterPlatform
-	C: "OO",2014524244944,2014328047856
+	C: "OO",1465307907648,1466401385088
 	
 	;Geometry::, Model::Port1
-	C: "OO",2014524250928,2014328054432
+	C: "OO",1465307907104,1466401415776
 	
 	;Material::Material #48, Model::Tube001
-	C: "OO",2014527769984,2014328138112
+	C: "OO",1465921176592,1466401387280
 	
 	;Geometry::, Model::Tube001
-	C: "OO",2014524272144,2014328138112
+	C: "OO",1465307897504,1466401387280
 	
 	;Geometry::, Model::WeirdHoveringPlatform
-	C: "OO",2014524252560,2014328124960
+	C: "OO",1465307908736,1466371782144
 	
 	;Material::Material #47, Model::WeirdHoveringPlatform
-	C: "OO",2014527767104,2014328124960
+	C: "OO",1465921175152,1466371782144
 	
 	;Geometry::, Model::Torus001
-	C: "OO",2014524241136,2014328142496
+	C: "OO",1465303102816,1466371777760
 	
 	;Material::Material #43, Model::Torus001
-	C: "OO",2014527768544,2014328142496
+	C: "OO",1465921181392,1466371777760
 	
 	;Geometry::, Model::Torus002
-	C: "OO",2014524244400,2014328144688
+	C: "OO",1465303105536,1466371760224
 	
 	;Material::Material #44, Model::Torus002
-	C: "OO",2014517822352,2014328144688
+	C: "OO",1465921180912,1466371760224
 	
 	;Geometry::, Model::Torus003
-	C: "OO",2014524270512,2014228251376
+	C: "OO",1465303104992,1466371762416
 	
 	;Material::Material #45, Model::Torus003
-	C: "OO",2013988363168,2014228251376
+	C: "OO",1465921175632,1466371762416
 	
 	;Geometry::, Model::Torus004
-	C: "OO",2014524260720,2014228253568
+	C: "OO",1465303103360,1466371764608
 	
 	;Material::Material #46, Model::Torus004
-	C: "OO",2013988364128,2014228253568
+	C: "OO",1465007239808,1466371764608
 	
 	;Material::Material #49, Model::Pyramid001
-	C: "OO",2014494614352,2014228255760
+	C: "OO",1465007235488,1466350613728
 	
 	;Geometry::, Model::Pyramid001
-	C: "OO",2014524253104,2014228255760
+	C: "OO",1465303101184,1466350613728
 	
 	;Geometry::, Model::Cylinder001
-	C: "OO",2014524268880,2013201270720
+	C: "OO",1465303103904,1466350600576
 	
 	;Material::Material #42, Model::Cylinder001
-	C: "OO",2014990693184,2013201270720
+	C: "OO",1465007236448,1466350600576
 	
 	;Geometry::, Model::Cylinder002
-	C: "OO",2014524268336,2013201279488
+	C: "OO",1465303104448,1466350620304
 	
 	;Material::Material #42, Model::Cylinder002
-	C: "OO",2014990693184,2013201279488
+	C: "OO",1465007236448,1466350620304
 	
 	;Geometry::, Model::Cylinder003
-	C: "OO",2014524248752,2013211317360
+	C: "OO",1465303100640,1466494208304
 	
 	;Material::Material #42, Model::Cylinder003
-	C: "OO",2014990693184,2013211317360
+	C: "OO",1465007236448,1466494208304
 	
 	;Geometry::, Model::TriggerBox_JumpToLevel3
-	C: "OO",2014524254736,2013211339184
+	C: "OO",1465303101728,1466494247760
 	
 	;Geometry::, Model::TriggerBox_JumpToLevel5
-	C: "OO",2014524256912,2013392876768
+	C: "OO",1465303099552,1466494238992
 	
 	;Geometry::, Model::TriggerBox_JumpToLevel6
-	C: "OO",2014524271600,2013211162208
+	C: "OO",1465303102272,1466398162688
 	
 	;Geometry::, Model::Cylinder004
-	C: "OO",2014524245488,2013985059504
+	C: "OO",1465303106080,1466398164880
 	
 	;Material::Material #42, Model::Cylinder004
-	C: "OO",2014990693184,2013985059504
+	C: "OO",1465007236448,1466398164880
 	
 	;Geometry::, Model::TriggerBox_RubiksCube
-	C: "OO",2014524240592,2013985077040
+	C: "OO",1465303106624,1465300804464
 	
 	;Texture::Map #7, Material::Material #40
-	C: "OP",2013967422128,2013967420688, "DiffuseColor"
+	C: "OP",1465920868512,1465920864672, "DiffuseColor"
 	
 	;Video::Map #7, Texture::Map #7
-	C: "OO",2014990692224,2013967422128
+	C: "OO",1465447018800,1465920868512
 	
 	;Texture::Map #8, Material::Material #41
-	C: "OP",2013967416848,2013967414928, "DiffuseColor"
+	C: "OP",1465920869952,1465920870432, "DiffuseColor"
 	
 	;Video::Map #8, Texture::Map #8
-	C: "OO",2014990691264,2013967416848
+	C: "OO",1465447020720,1465920869952
 	
 	;Texture::Map #15, Material::Material #48
-	C: "OP",2014527772864,2014527769984, "DiffuseColor"
+	C: "OP",1465921179952,1465921176592, "DiffuseColor"
 	
 	;Video::Map #15, Texture::Map #15
-	C: "OO",2014990688864,2014527772864
+	C: "OO",1465447019280,1465921179952
 	
 	;Texture::Map #14, Material::Material #47
-	C: "OP",2014527768064,2014527767104, "DiffuseColor"
+	C: "OP",1465921178512,1465921175152, "DiffuseColor"
 	
 	;Video::Map #14, Texture::Map #14
-	C: "OO",2014990691744,2014527768064
+	C: "OO",1466155823104,1465921178512
 	
 	;Texture::Map #10, Material::Material #43
-	C: "OP",2014517821872,2014527768544, "DiffuseColor"
+	C: "OP",1465921181872,1465921181392, "DiffuseColor"
 	
 	;Video::Map #10, Texture::Map #10
-	C: "OO",2014990695584,2014517821872
+	C: "OO",1466155824544,1465921181872
 	
 	;Texture::Map #11, Material::Material #44
-	C: "OP",2014517823312,2014517822352, "DiffuseColor"
+	C: "OP",1465921179472,1465921180912, "DiffuseColor"
 	
 	;Video::Map #11, Texture::Map #11
-	C: "OO",2014990690304,2014517823312
+	C: "OO",1466155825984,1465921179472
 	
 	;Texture::Map #12, Material::Material #45
-	C: "OP",2013988363648,2013988363168, "DiffuseColor"
+	C: "OP",1465007234528,1465921175632, "DiffuseColor"
 	
 	;Video::Map #12, Texture::Map #12
-	C: "OO",2014990689824,2013988363648
+	C: "OO",1466493007600,1465007234528
 	
 	;Texture::Map #13, Material::Material #46
-	C: "OP",2014494612432,2013988364128, "DiffuseColor"
+	C: "OP",1465007235008,1465007239808, "DiffuseColor"
 	
 	;Video::Map #13, Texture::Map #13
-	C: "OO",2014990692704,2014494612432
+	C: "OO",1466486849328,1465007235008
 	
 	;Texture::Map #16, Material::Material #49
-	C: "OP",2014990690784,2014494614352, "DiffuseColor"
+	C: "OP",1465007235968,1465007235488, "DiffuseColor"
 	
 	;Video::Map #16, Texture::Map #16
-	C: "OO",2014990693664,2014990690784
+	C: "OO",1465303218960,1465007235968
 	
 	;Texture::Map #9, Material::Material #42
-	C: "OP",2014990689344,2014990693184, "DiffuseColor"
+	C: "OP",1465447020240,1465007236448, "DiffuseColor"
 	
 	;Video::Map #9, Texture::Map #9
-	C: "OO",2014990694144,2014990689344
+	C: "OO",1465303225200,1465447020240
 }
