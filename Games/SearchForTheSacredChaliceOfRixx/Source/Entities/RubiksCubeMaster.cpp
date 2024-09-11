@@ -38,7 +38,7 @@ RubiksCubeMaster::RubiksCubeMaster()
 #if defined _DEBUG
 	int numScrambleTwists = 1;		// I have spent time solving the cube in game by hand, but this is needed for debugging purposes.
 #else
-	int numScrambleTwists = 1;		// I spent about 10 minutes solving the cube in game by hand, and it's not so bad, really.
+	int numScrambleTwists = 50;		// I spent about 10 minutes solving the cube in game by hand, and it's not so bad, really.
 #endif
 	Imzadi::Random random;
 	random.SetSeedUsingTime();
