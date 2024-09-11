@@ -290,6 +290,24 @@ namespace Imzadi
 		void InterpolateOrientations(const Matrix3x3& orientationA, const Matrix3x3& orientationB, double alpha);
 
 		/**
+		 * Set this 3x3 matrix to the given orientation matrix having been rotated to the
+		 * nearest axes.  The result will be a matrix that contains zeros, ones and negative
+		 * ones only.
+		 * 
+		 * @param[in] orientation This is the rotation matrix to the snap.  If not an orientation matrix, then our result here is left undefined.
+		 */
+		void SetSnapped(const Matrix3x3& orientation);
+
+		/**
+		 * Make this matrix the rotation matrix that rotates the first given vector
+		 * into the second.
+		 * 
+		 * @param[in] unitVectorA This is the first given vector, assumed to be of unit length.
+		 * @param[in] unitVectorB This is the second given vector, also assumed to be of unit length.
+		 */
+		void MakeRotation(const Vector3& unitVectorA, const Vector3& unitVectorB);
+
+		/**
 		 * Write this matrix to the given stream in binary form.
 		 */
 		void Dump(std::ostream& stream) const;

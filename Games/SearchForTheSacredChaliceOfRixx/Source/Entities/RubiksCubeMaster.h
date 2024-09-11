@@ -38,4 +38,5 @@ private:
 	Imzadi::Transform targetCameraTransform;
 	double cameraTransitionRate;
 	double cameraTransitionAlpha;
+	double rotationSensativity;
 };

@@ -1,6 +1,7 @@
 #include "Matrix3x3.h"
 #include "Vector3.h"
 #include "Quaternion.h"
+#include <algorithm>
 
 using namespace Imzadi;
 
@@ -454,6 +455,93 @@ void Matrix3x3::InterpolateOrientations(const Matrix3x3& orientationA, const Mat
 	Matrix3x3 rotation;
 	rotation.SetFromAxisAngle(unitAxis, angle);
 	*this = rotation * orientationA;
+}
+
+void Matrix3x3::SetSnapped(const Matrix3x3& orientation)
+{
+	std::vector<Vector3> axesArray;
+	axesArray.push_back(Vector3(1.0, 0.0, 0.0));
+	axesArray.push_back(Vector3(-1.0, 0.0, 0.0));
+	axesArray.push_back(Vector3(0.0, 1.0, 0.0));
+	axesArray.push_back(Vector3(0.0, -1.0, 0.0));
+	axesArray.push_back(Vector3(0.0, 0.0, 1.0));
+	axesArray.push_back(Vector3(0.0, 0.0, -1.0));
+
+	*this = orientation;
+
+	// We will only need at most two iterations of the following algorithm.
+	for (int i = 0; i < 2; i++)
+	{
+		Vector3 xAxis, yAxis, zAxis;
+		orientation.GetColumnVectors(xAxis, yAxis, zAxis);
+
+		double smallestAngleX = std::numeric_limits<double>::max();
+		double smallestAngleY = std::numeric_limits<double>::max();
+		double smallestAngleZ = std::numeric_limits<double>::max();
+
+		Vector3 chosenAxisX, chosenAxisY, chosenAxisZ;
+
+		for (const Vector3& axis : axesArray)
+		{
+			double angleX = axis.AngleBetween(xAxis);
+			if (angleX < smallestAngleX)
+			{
+				smallestAngleX = angleX;
+				chosenAxisX = axis;
+			}
+
+			double angleY = axis.AngleBetween(yAxis);
+			if (angleY < smallestAngleY)
+			{
+				smallestAngleY = angleY;
+				chosenAxisY = axis;
+			}
+
+			double angleZ = axis.AngleBetween(zAxis);
+			if (angleZ < smallestAngleZ)
+			{
+				smallestAngleZ = angleZ;
+				chosenAxisZ = axis;
+			}
+		}
+
+		std::vector<double> angleArray{ smallestAngleX, smallestAngleY, smallestAngleZ };
+		std::sort(angleArray.begin(), angleArray.end(), [](double angleA, double angleB) -> bool
+			{
+				return angleA < angleB;
+			});
+
+		double chosenAngle = angleArray[i];
+
+		Matrix3x3 rotation;
+		if (chosenAngle == smallestAngleX)
+			rotation.MakeRotation(xAxis, chosenAxisX);
+		else if (chosenAngle == smallestAngleY)
+			rotation.MakeRotation(yAxis, chosenAxisY);
+		else if (chosenAngle == smallestAngleZ)
+			rotation.MakeRotation(zAxis, chosenAxisZ);
+		else
+		{
+			IMZADI_ASSERT(false);
+		}
+
+		*this = rotation * *this;
+	}
+
+	for (int i = 0; i < 3; i++)
+		for (int j = 0; j < 3; j++)
+			this->ele[i][j] = ::round(this->ele[i][j]);
+}
+
+void Matrix3x3::MakeRotation(const Vector3& unitVectorA, const Vector3& unitVectorB)
+{
+	double angle = unitVectorA.AngleBetween(unitVectorB);
+	Vector3 axis = unitVectorA.Cross(unitVectorB);
+
+	if (axis.Normalize())
+		this->SetFromAxisAngle(axis, angle);
+	else
+		this->SetIdentity();
 }
 
 void Matrix3x3::Dump(std::ostream& stream) const
