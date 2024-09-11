@@ -4,6 +4,7 @@
 #include "Camera.h"
 #include "RenderObjects/RenderMeshInstance.h"
 #include "Assets/RenderMesh.h"
+#include "Math/Random.h"
 
 RubiksCubeMaster::RubiksCubeMaster()
 {
@@ -31,6 +32,37 @@ RubiksCubeMaster::RubiksCubeMaster()
 				this->puzzleToWorld = renderMesh->GetObjectToWorldTransform() * portToObject;
 			}
 		}
+	}
+
+	// We should be setup *after* all the cubies are setup, so I think this should work.
+#if defined _DEBUG
+	int numScrambleTwists = 1;		// I have spent time solving the cube in game by hand, but this is needed for debugging purposes.
+#else
+	int numScrambleTwists = 50;		// I spent about 10 minutes solving the cube in game by hand, and it's not so bad, really.
+#endif
+	Imzadi::Random random;
+	random.SetSeedUsingTime();
+	for (int i = 0; i < numScrambleTwists; i++)
+	{
+		Imzadi::Plane cutPlane;
+
+		switch (random.InRange(0, 2))
+		{
+			case 0: cutPlane.unitNormal.SetComponents(1.0, 0.0, 0.0); break;
+			case 1: cutPlane.unitNormal.SetComponents(0.0, 1.0, 0.0); break;
+			case 2: cutPlane.unitNormal.SetComponents(0.0, 0.0, 1.0); break;
+		}
+
+		if (random.CoinFlip())
+			cutPlane.unitNormal = -cutPlane.unitNormal;
+
+		cutPlane.center = cutPlane.unitNormal * 5.0;	// The cubies are 10x10x10.
+
+		auto event = new RubiksCubieEvent();
+		event->animate = false;
+		event->rotation = random.CoinFlip() ? RubiksCubieEvent::Rotation::CCW : RubiksCubieEvent::CW;
+		event->cutPlane = cutPlane;
+		Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->puzzleChannelName, event);
 	}
 
 	return true;
