@@ -46,7 +46,7 @@ RubiksCubie::RubiksCubie()
 		cubieData->GetPuzzleChannelName(),
 		Imzadi::EventListenerType::TRANSITORY,
 		new Imzadi::LambdaEventListener([=](const Imzadi::Event* event) {
-			this->HandleCubieEvent(dynamic_cast<const RubiksCubieEvent*>(event));
+			this->HandleCubieEvent(event);
 		}));
 
 	return true;
@@ -124,28 +124,36 @@ RubiksCubie::RubiksCubie()
 	return true;
 }
 
-void RubiksCubie::HandleCubieEvent(const RubiksCubieEvent* event)
+void RubiksCubie::HandleCubieEvent(const Imzadi::Event* event)
 {
-	if (this->animating)
+	auto cubieEvent = dynamic_cast<const RubiksCubieEvent*>(event);
+	if (cubieEvent)
 	{
-		this->CompleteAnimationNow();
-		this->animating = false;
-	}
-
-	if (event->cutPlane.GetSide(this->currentCubieToPuzzle.translation) == Imzadi::Plane::Side::FRONT)
-	{
-		this->animationAxis = event->cutPlane.unitNormal;
-		this->animationCurrentAngle = 0.0;
-
-		if (event->rotation == RubiksCubieEvent::Rotation::CCW)
-			this->animationTargetAngle = M_PI / 2.0;
-		else
-			this->animationTargetAngle = -M_PI / 2.0;
-
-		if (event->animate)
-			this->animating = true;
-		else
+		if (this->animating)
+		{
 			this->CompleteAnimationNow();
+			this->animating = false;
+		}
+
+		if (cubieEvent->cutPlane.GetSide(this->currentCubieToPuzzle.translation) == Imzadi::Plane::Side::FRONT)
+		{
+			this->animationAxis = cubieEvent->cutPlane.unitNormal;
+			this->animationCurrentAngle = 0.0;
+
+			if (cubieEvent->rotation == RubiksCubieEvent::Rotation::CCW)
+				this->animationTargetAngle = M_PI / 2.0;
+			else
+				this->animationTargetAngle = -M_PI / 2.0;
+
+			if (cubieEvent->animate)
+				this->animating = true;
+			else
+				this->CompleteAnimationNow();
+		}
+	}
+	else if (event->GetName() == "CubiesDisperse")
+	{
+		// TODO: Have the cubies move (with collision) to places where they can be platformed.
 	}
 }
 
@@ -154,6 +162,24 @@ void RubiksCubie::CompleteAnimationNow()
 	Imzadi::Transform rotation;
 	rotation.matrix.SetFromAxisAngle(this->animationAxis, this->animationTargetAngle);
 	this->currentCubieToPuzzle = rotation * this->currentCubieToPuzzle;
+}
+
+bool RubiksCubie::IsSolved() const
+{
+	Imzadi::Matrix3x3 matrixA;
+	matrixA.SetSnapped(this->currentCubieToPuzzle.matrix);
+
+	Imzadi::Matrix3x3 matrixB;
+	matrixB.SetSnapped(this->solvedCubieToPuzzle.matrix);
+
+	if (matrixA != matrixB)
+		return false;
+
+	double epsilon = 1e-5;
+	if (!this->solvedCubieToPuzzle.translation.IsPoint(this->currentCubieToPuzzle.translation, epsilon))
+		return false;
+
+	return true;
 }
 
 //------------------------------ RubiksCubieEvent ------------------------------

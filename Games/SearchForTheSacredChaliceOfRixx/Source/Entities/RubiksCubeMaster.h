@@ -30,6 +30,8 @@ private:
 		POWERING_DOWN
 	};
 
+	bool IsCubeSolved();
+
 	State state;
 	Imzadi::Transform puzzleToWorld;
 	std::string puzzleChannelName;

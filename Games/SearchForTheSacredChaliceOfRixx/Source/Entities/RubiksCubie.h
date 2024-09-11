@@ -38,8 +38,11 @@ public:
 	virtual bool Shutdown() override;
 	virtual bool Tick(Imzadi::TickPass tickPass, double deltaTime) override;
 
+	uint32_t GetMasterHandle() const { return this->masterHandle; }
+	bool IsSolved() const;
+
 private:
-	void HandleCubieEvent(const RubiksCubieEvent* event);
+	void HandleCubieEvent(const Imzadi::Event* event);
 	void CompleteAnimationNow();
 
 	uint32_t masterHandle;

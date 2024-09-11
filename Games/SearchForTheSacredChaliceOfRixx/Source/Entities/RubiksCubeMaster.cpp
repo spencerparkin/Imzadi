@@ -101,6 +101,8 @@ RubiksCubeMaster::RubiksCubeMaster()
 				{
 					this->state = State::OFF;
 					Imzadi::Game::Get()->PopControllerUser();
+					if (this->IsCubeSolved())
+						Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->puzzleChannelName, new Imzadi::Event("CubiesDisperse"));
 				}
 			}
 
@@ -185,4 +187,18 @@ void RubiksCubeMaster::Enable(bool enable)
 		this->targetCameraTransform = this->originalCameraTransform;
 		this->cameraTransitionAlpha = 0.0;
 	}
+}
+
+bool RubiksCubeMaster::IsCubeSolved()
+{
+	std::vector<RubiksCubie*> cubieArray;
+	if (!Imzadi::Game::Get()->FindAllEntitiesOfType<RubiksCubie>(cubieArray))
+		return false;
+
+	int solvedCount = 0;
+	for (const RubiksCubie* cubie : cubieArray)
+		if (cubie->GetMasterHandle() == this->GetHandle() && cubie->IsSolved())
+			solvedCount++;
+
+	return solvedCount == 26;	// 3*3*3 - 1
 }
