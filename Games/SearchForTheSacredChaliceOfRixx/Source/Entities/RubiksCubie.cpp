@@ -117,6 +117,8 @@ RubiksCubie::RubiksCubie()
 				const Imzadi::Transform& puzzleToWorld = master->GetPuzzleToWorldTransform();
 				Imzadi::Transform cubieToWorld = puzzleToWorld * cubieToPuzzle;
 				this->renderMesh->SetObjectToWorldTransform(cubieToWorld);
+
+				this->UpdateCollisionTransforms();
 			}
 		}
 	}
