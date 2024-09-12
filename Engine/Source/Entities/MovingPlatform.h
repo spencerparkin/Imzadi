@@ -40,6 +40,8 @@ namespace Imzadi
 
 	protected:
 
+		void UpdateCollisionTransforms();
+
 		enum State
 		{
 			UNKNOWN,

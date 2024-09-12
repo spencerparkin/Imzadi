@@ -280,6 +280,26 @@ namespace Imzadi
 		bool FindAllEntitiesWithName(const std::string& name, std::vector<Entity*>& foundEntityArray);
 
 		/**
+		 * Find and return all currently ticking entities of the desired type.
+		 * 
+		 * @return True is returned if one or more entities are found; false, otherwise.
+		 */
+		template<typename T>
+		bool FindAllEntitiesOfType(std::vector<T*>& foundEntityArray)
+		{
+			foundEntityArray.clear();
+
+			for (Entity* entity : this->tickingEntityList)
+			{
+				T* entityType = dynamic_cast<T*>(entity);
+				if (entityType)
+					foundEntityArray.push_back(entityType);
+			}
+
+			return foundEntityArray.size() > 0;
+		}
+
+		/**
 		 * Return the first entity found having the given shape.
 		 * 
 		 * @param[in] shapeID An entity owning this shape ID is saught after.

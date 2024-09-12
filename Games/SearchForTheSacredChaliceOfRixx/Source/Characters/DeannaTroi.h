@@ -35,9 +35,7 @@ public:
 
 private:
 	void HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event);
-#if defined _DEBUG
 	void HandleFreeCamEvent(const Imzadi::Event* event);
-#endif
 	void HandleEntityOverlapResults();
 
 	class LabeledAction : public Imzadi::Action

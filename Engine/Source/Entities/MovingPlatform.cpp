@@ -173,15 +173,20 @@ MovingPlatform::MovingPlatform()
 
 		if (!this->data->GetIgnoreCollision())
 		{
-			for (Collision::ShapeID shapeID : this->collisionShapeArray)
-			{
-				auto command = new Collision::ObjectToWorldCommand();
-				command->SetShapeID(shapeID);
-				command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-				Game::Get()->GetCollisionSystem()->IssueCommand(command);
-			}
+			this->UpdateCollisionTransforms();
 		}
 	}
 
 	return true;
+}
+
+void MovingPlatform::UpdateCollisionTransforms()
+{
+	for (Collision::ShapeID shapeID : this->collisionShapeArray)
+	{
+		auto command = new Collision::ObjectToWorldCommand();
+		command->SetShapeID(shapeID);
+		command->objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+		Game::Get()->GetCollisionSystem()->IssueCommand(command);
+	}
 }

@@ -72,6 +72,14 @@
     ],
     "npc_array": [
         {
+            "type": "heart",
+            "start_position": {
+                "x": 0.535498,
+                "y": 2.0,
+                "z": -3.0155303
+            }
+        },
+        {
             "type": "borg",
             "start_position": {
                 "x": 6.27,

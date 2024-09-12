@@ -1,0 +1,47 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Q\\Q_Indices.buffer",
+    "vertex_buffer": "Models\\Q\\Q_Vertices.buffer",
+    "shadow_scale": 1.0,
+    "name": "Q",
+    "texture": "Models\\Q\\Q.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -4.447807788848877,
+            "y": -0.04532577097415924,
+            "z": -1.22855544090271
+        },
+        "max": {
+            "x": 4.62999153137207,
+            "y": 8.413091659545899,
+            "z": 1.1274303197860718
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\Q\\Q.skeleton",
+    "skin_weights": "Models\\Q\\Q.skin_weights",
+    "animations": [
+        "Animations\\QIdle.animation"
+    ]
+}

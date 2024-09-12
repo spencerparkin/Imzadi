@@ -30,6 +30,8 @@ private:
 		POWERING_DOWN
 	};
 
+	bool IsCubeSolved();
+
 	State state;
 	Imzadi::Transform puzzleToWorld;
 	std::string puzzleChannelName;
@@ -38,4 +40,5 @@ private:
 	Imzadi::Transform targetCameraTransform;
 	double cameraTransitionRate;
 	double cameraTransitionAlpha;
+	double rotationSensativity;
 };
