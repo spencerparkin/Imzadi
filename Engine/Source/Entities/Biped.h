@@ -104,6 +104,7 @@ namespace Imzadi
 		Vector3 groundSurfaceNormal;
 		Vector3 groundSurfacePoint;
 		AnimationMode animationMode;
+		bool continuouslyUpdatePlatformTransform;
 	};
 
 	/**

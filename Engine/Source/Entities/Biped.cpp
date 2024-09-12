@@ -26,6 +26,7 @@ Biped::Biped()
 	this->inContactWithGround = false;
 	this->canRestart = true;
 	this->mass = 1.0;
+	this->continuouslyUpdatePlatformTransform = true;
 }
 
 /*virtual*/ Biped::~Biped()
@@ -173,7 +174,15 @@ Biped::Biped()
 				{
 					auto objectToWorldResult = dynamic_cast<Collision::ObjectToWorldResult*>(result);
 					if (objectToWorldResult)
-						this->platformToWorld = objectToWorldResult->objectToWorld;
+					{
+						if (this->continuouslyUpdatePlatformTransform)
+							this->platformToWorld = objectToWorldResult->objectToWorld;
+						else
+						{
+							// TODO: Here we might use the transform in a different way to, say,
+							//       apply friction to the character.
+						}
+					}
 
 					delete result;
 				}
@@ -440,6 +449,7 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	Collision::ShapeID newGroundShapeID = 0;
 	Transform newGroundObjectToWorld;
 	newGroundObjectToWorld.SetIdentity();
+	this->continuouslyUpdatePlatformTransform = false;
 
 	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
 	{
@@ -456,9 +466,10 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 			newGroundShapeID = otherShapeID;
 			const Collision::Shape* shape = collisionStatus->GetShape(otherShapeID);
 			if ((shape->GetUserFlags() & IMZADI_SHAPE_FLAG_NON_RELATIVE) == 0)
+			{
 				newGroundObjectToWorld = shape->GetObjectToWorldTransform();
-			else
-				newGroundShapeID = 0;
+				this->continuouslyUpdatePlatformTransform = true;
+			}
 		}
 	}
 
