@@ -1,0 +1,36 @@
+{
+    "mesh": "Models/Level8/Cylinder001.render_mesh",
+    "collision": "Models/Level8/Cylinder001.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 17.5
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 17.5,
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "roll": 180.0
+        },
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 17.5,
+            "yaw": 0.0,
+            "pitch": 0.0,
+            "roll": 0.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "cycle",
+    "move_speed": 3.0,
+    "rotation_speed": 50.0
+}

@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level8\\Pyramid001_Indices.buffer",
+    "vertex_buffer": "Models\\Level8\\Pyramid001_Vertices.buffer",
+    "name": "Pyramid001",
+    "texture": "Textures\\Funky.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 12.570951461791993,
+            "y": -0.4701889455318451,
+            "z": -2.267812490463257
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -6.404154300689697,
+            "y": -6.050313949584961,
+            "z": -4.848726272583008
+        },
+        "max": {
+            "x": 6.404154300689697,
+            "y": 1.21006441116333,
+            "z": 4.84872579574585
+        }
+    }
+}

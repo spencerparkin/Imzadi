@@ -1,0 +1,20 @@
+{
+    "mesh": "Models/Level8/Pyramid001.render_mesh",
+    "collision": "Models/Level8/Pyramid001.collision",
+    "spline_deltas": [
+        {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+        },
+        {
+            "x": 0.0,
+            "y": 23.5,
+            "z": 0.0,
+            "linger": 1.0
+        }
+    ],
+    "spline_type": "lerp",
+    "spline_mode": "bounce",
+    "move_speed": 8.0
+}

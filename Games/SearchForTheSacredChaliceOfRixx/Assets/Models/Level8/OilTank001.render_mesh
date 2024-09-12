@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level8\\OilTank001_Indices.buffer",
+    "vertex_buffer": "Models\\Level8\\OilTank001_Vertices.buffer",
+    "name": "OilTank001",
+    "texture": "Textures\\Heart.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 11.93017578125,
+            "y": 21.805126190185548,
+            "z": 34.95541000366211
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -7.0577874183654789,
+            "y": -3.5528693199157717,
+            "z": -3.5528695583343508
+        },
+        "max": {
+            "x": 7.0577874183654789,
+            "y": 3.552870035171509,
+            "z": 3.5528695583343508
+        }
+    }
+}

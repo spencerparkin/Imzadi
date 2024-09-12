@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level8\\Cylinder001_Indices.buffer",
+    "vertex_buffer": "Models\\Level8\\Cylinder001_Vertices.buffer",
+    "name": "Cylinder001",
+    "texture": "Textures\\Wood.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 13.35932731628418,
+            "y": 18.83371925354004,
+            "z": 9.260538101196289
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -3.6489803791046144,
+            "y": -5.837789058685303,
+            "z": -4.289633750915527
+        },
+        "max": {
+            "x": 4.510387420654297,
+            "y": 5.8377885818481449,
+            "z": 4.289633274078369
+        }
+    }
+}
