@@ -48,6 +48,7 @@ namespace Imzadi
 		double GetMoveSpeed() const { return this->moveSpeedUnitsPerSecond; }
 		double GetRotationSpeed() const { return this->rotationSpeedDegreesPerSecond; }
 		bool GetIgnoreCollision() const { return this->ignoreCollision; }
+		bool IsNonRelativeCollision() const { return this->nonRelativeCollision; }
 
 	private:
 
@@ -59,5 +60,6 @@ namespace Imzadi
 		double moveSpeedUnitsPerSecond;
 		double rotationSpeedDegreesPerSecond;
 		bool ignoreCollision;
+		bool nonRelativeCollision;
 	};
 }

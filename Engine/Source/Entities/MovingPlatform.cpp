@@ -53,9 +53,14 @@ MovingPlatform::MovingPlatform()
 	if (!collisionShapeSet)
 		return false;
 
+	uint32_t additionalFlags = 0;
+	if (this->data->IsNonRelativeCollision())
+		additionalFlags |= IMZADI_SHAPE_FLAG_NON_RELATIVE;
+
 	this->collisionShapeArray.clear();
 	for (Collision::Shape* shape : collisionShapeSet->GetCollisionShapeArray())
 	{
+		shape->SetUserFlags(shape->GetUserFlags() | additionalFlags);
 		Collision::ShapeID shapeID = Game::Get()->GetCollisionSystem()->AddShape(shape, 0);
 		this->collisionShapeArray.push_back(shapeID);
 	}

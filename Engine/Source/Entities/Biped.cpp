@@ -454,11 +454,15 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 		{
 			this->inContactWithGround = true;
 			newGroundShapeID = otherShapeID;
-			newGroundObjectToWorld = collisionStatus->GetShape(otherShapeID)->GetObjectToWorldTransform();
+			const Collision::Shape* shape = collisionStatus->GetShape(otherShapeID);
+			if ((shape->GetUserFlags() & IMZADI_SHAPE_FLAG_NON_RELATIVE) == 0)
+				newGroundObjectToWorld = shape->GetObjectToWorldTransform();
+			else
+				newGroundShapeID = 0;
 		}
 	}
 
-	averageSeperationDelta /= float(collisionResult->GetCollisionStatusArray().size());
+	averageSeperationDelta /= double(collisionResult->GetCollisionStatusArray().size());
 
 	Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
 
@@ -473,9 +477,6 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	if (averageSeperationDelta.Length() > 0.0)
 	{
 		objectToWorld.translation += averageSeperationDelta;
-
-		Transform worldToPlatform;
-		worldToPlatform.Invert(this->platformToWorld);
 		this->objectToPlatform = worldToPlatform * objectToWorld;
 	}
 }
