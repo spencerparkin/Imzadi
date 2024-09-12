@@ -134,3 +134,16 @@ public:
 private:
 	std::string song;
 };
+
+/**
+ * this pickup simply adds a key to your inventory.
+ */
+class KeyPickup : public Pickup
+{
+public:
+	KeyPickup();
+	virtual ~KeyPickup();
+
+	virtual void Collect() override;
+	virtual std::string GetLabel() const override;
+};

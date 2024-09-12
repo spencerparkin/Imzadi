@@ -108,7 +108,11 @@ GameLevel::GameLevel()
 			character->SetCanRestart(false);
 		}
 	}
-	else if (npc->type == "heart" || npc->type == "speed_boost" || npc->type == "song")
+	else if (
+		npc->type == "heart" ||
+		npc->type == "speed_boost" ||
+		npc->type == "song" ||
+		npc->type == "key")
 	{
 		Pickup* pickup = nullptr;
 
@@ -118,6 +122,8 @@ GameLevel::GameLevel()
 			pickup = game->SpawnEntity<SpeedBoostPickup>();
 		else if (npc->type == "song")
 			pickup = game->SpawnEntity<SongPickup>();
+		else if (npc->type == "key")
+			pickup = game->SpawnEntity<KeyPickup>();
 
 		if (pickup)
 		{

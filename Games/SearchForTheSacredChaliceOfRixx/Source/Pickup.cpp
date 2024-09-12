@@ -249,3 +249,30 @@ SongPickup::SongPickup()
 
 	return !audioSystem->IsMidiSongPlaying();
 }
+
+//----------------------------------- KeyPickup -----------------------------------
+
+KeyPickup::KeyPickup()
+{
+	this->renderMeshFile = "Models/Key/Key.render_mesh";
+}
+
+/*virtual*/ KeyPickup::~KeyPickup()
+{
+}
+
+/*virtual*/ void KeyPickup::Collect()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	uint32_t keyCount = game->GetGameProgress()->GetPossessedItemCount("key");
+	game->GetGameProgress()->SetPossessedItemCount("key", keyCount + 1);
+
+	game->GetAudioSystem()->PlaySound("Yay");
+
+	Pickup::Collect();
+}
+
+/*virtual*/ std::string KeyPickup::GetLabel() const
+{
+	return "key";
+}

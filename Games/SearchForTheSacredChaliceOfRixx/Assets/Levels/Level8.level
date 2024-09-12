@@ -29,5 +29,15 @@
         "Levels/Level8_Floater3.mov_plat",
         "Levels/Level8_Floater4.mov_plat",
         "Levels/Level8_Floater5.mov_plat"
+    ],
+    "npc_array": [
+        {
+            "type": "key",
+            "start_position": {
+                "x": 49.1630142,
+                "y": 76.0,
+                "z": 9.1817
+            }
+        }
     ]
 }
