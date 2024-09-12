@@ -17,5 +17,6 @@
     "spline_mode": "once",
     "move_speed": 2.0,
     "initially_locked": true,
-    "door_channel": "level8_main_door"
+    "door_channel": "Level8MainDoor",
+    "trigger_box_remove": "OpenDoor_Level8MainDoor"
 }

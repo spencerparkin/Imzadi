@@ -54,10 +54,25 @@ void SlidingDoor::HandleDoorEvent(const Imzadi::Event* event)
 				gameProgress->SetPossessedItemCount("key", keyCount - 1);
 				this->isLocked = false;
 			}
+			else
+			{
+				// TODO: Maybe play sound-FX: "you need a key."
+			}
 		}
 
 		if (!this->isLocked)
+		{
 			this->isOpen = true;
+
+			auto doorData = dynamic_cast<SlidingDoorData*>(this->data.Get());
+			const std::string& triggerBoxRemove = doorData->GetTriggerBoxRemove();
+			if (triggerBoxRemove.length() > 0)
+			{
+				Imzadi::Reference<Imzadi::Entity> foundEntity;
+				if (Imzadi::Game::Get()->FindEntityByName(triggerBoxRemove, foundEntity))
+					foundEntity->DoomEntity();
+			}
+		}
 	}
 }
 

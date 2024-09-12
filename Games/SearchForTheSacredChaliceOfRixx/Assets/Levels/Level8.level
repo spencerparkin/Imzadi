@@ -33,6 +33,10 @@
     "doors": [
         "Levels/Level8_Door.door"
     ],
+    "trigger_boxes": [
+        "Models/Level8/JumpToLevel9.trigger_box",
+        "Models/Level8/OpenDoor_Level8MainDoor.trigger_box"
+    ],
     "npc_array": [
         {
             "type": "key",

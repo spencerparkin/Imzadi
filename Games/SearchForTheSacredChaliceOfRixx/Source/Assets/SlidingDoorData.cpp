@@ -20,6 +20,9 @@ SlidingDoorData::SlidingDoorData()
 	if (jsonDoc.HasMember("door_channel") && jsonDoc["door_channel"].IsString())
 		this->doorChannel = jsonDoc["door_channel"].GetString();
 
+	if (jsonDoc.HasMember("trigger_box_remove") && jsonDoc["trigger_box_remove"].IsString())
+		this->triggerBoxRemove = jsonDoc["trigger_box_remove"].GetString();
+
 	return true;
 }
 
