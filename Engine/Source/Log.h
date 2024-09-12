@@ -14,7 +14,7 @@
 #define IMZADI_LOG_INFO_FLAG				0x00000008
 #define IMZADI_LOG_ALL_FLAGS				0xFFFFFFFF
 
-#if defined _DEBUG
+#if defined IMZADI_LOGGING
 #	define IMZADI_LOG_FATAL_ERROR(format, ...)		Imzadi::LoggingSystem::Get()->PrintLogMessage(IMZADI_LOG_FATAL_ERROR_FLAG, format, __VA_ARGS__)
 #	define IMZADI_LOG_ERROR(format, ...)			Imzadi::LoggingSystem::Get()->PrintLogMessage(IMZADI_LOG_ERROR_FLAG, format, __VA_ARGS__)
 #	define IMZADI_LOG_WARNING(format, ...)			Imzadi::LoggingSystem::Get()->PrintLogMessage(IMZADI_LOG_WARNING_FLAG, format, __VA_ARGS__)

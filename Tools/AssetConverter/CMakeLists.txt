@@ -45,6 +45,7 @@ target_compile_definitions(ImzadiAssetConverter PRIVATE
     WIN32_LEAN_AND_MEAN
     NOMINMAX
     _USE_MATH_DEFINES
+    IMZADI_LOGGING
 )
 
 if(CMAKE_SIZEOF_VOID_P EQUAL 8)

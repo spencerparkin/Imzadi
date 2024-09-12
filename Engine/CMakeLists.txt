@@ -217,3 +217,9 @@ target_include_directories(ImzadiGameEngine PUBLIC
     "Source"
     ${PROJECT_SOURCE_DIR}/ThirdParty
 )
+
+if(CMAKE_BUILD_TYPE MATCHES DEBUG)
+    target_compile_definitions(ImzadiGameEngine PUBLIC
+        IMZADI_LOGGING
+    )
+endif()
