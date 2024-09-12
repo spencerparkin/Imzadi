@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Box004_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Box004_Vertices.buffer",
+    "name": "Box004",
     "texture": "Textures\\Weirdo.texture",
     "object_to_world": {
         "matrix": [
@@ -19,14 +20,14 @@
         ],
         "translation": {
             "x": -313.5459899902344,
-            "y": 194.6619110107422,
-            "z": -344.97515869140627
+            "y": 190.6370849609375,
+            "z": -330.4754943847656
         }
     },
     "bounding_box": {
         "min": {
             "x": -23.79460906982422,
-            "y": -72.11734008789063,
+            "y": -3.4717140197753908,
             "z": -52.24835205078125
         },
         "max": {

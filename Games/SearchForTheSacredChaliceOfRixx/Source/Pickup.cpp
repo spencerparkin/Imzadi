@@ -82,9 +82,17 @@ Pickup::Pickup()
 {
 	auto* game = Imzadi::Game::Get();
 
-	game->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
-	game->GetCollisionSystem()->RemoveShape(this->pickupShapeID);
-	this->pickupShapeID = 0;
+	if (this->renderMesh.Get())
+	{
+		game->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+		this->renderMesh.Reset();
+	}
+
+	if (this->pickupShapeID != 0)
+	{
+		game->GetCollisionSystem()->RemoveShape(this->pickupShapeID);
+		this->pickupShapeID = 0;
+	}
 
 	return true;
 }
@@ -169,7 +177,7 @@ ExtraLifePickup::ExtraLifePickup()
 
 SpeedBoostPickup::SpeedBoostPickup()
 {
-	this->renderMeshFile = "Models/SpeedBoost/SpeedBoost.render_mesh";
+	this->renderMeshFile = "Models/SpeedBoost/EnergyDrink.render_mesh";
 }
 
 /*virtual*/ SpeedBoostPickup::~SpeedBoostPickup()

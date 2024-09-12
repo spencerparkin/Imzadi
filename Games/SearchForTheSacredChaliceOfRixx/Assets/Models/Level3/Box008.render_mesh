@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level3\\Box008_Indices.buffer",
+    "vertex_buffer": "Models\\Level3\\Box008_Vertices.buffer",
+    "name": "Box008",
+    "texture": "Textures\\Beautiful.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 6.0991926193237309,
+            "y": -88.73655700683594,
+            "z": 391.6879577636719
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -111.91063690185547,
+            "y": -44.18748092651367,
+            "z": -102.538818359375
+        },
+        "max": {
+            "x": 82.54631805419922,
+            "y": 90.5768814086914,
+            "z": 182.40966796875
+        }
+    }
+}

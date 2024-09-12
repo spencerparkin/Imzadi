@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Torus001_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Torus001_Vertices.buffer",
+    "name": "Torus001",
     "texture": "Textures\\Weirdo.texture",
     "object_to_world": {
         "matrix": [
@@ -19,20 +20,20 @@
         ],
         "translation": {
             "x": 14.795788764953614,
-            "y": 3.5841636657714845,
-            "z": -8.197242736816407
+            "y": 3.4718000888824465,
+            "z": -7.7980570793151859
         }
     },
     "bounding_box": {
         "min": {
             "x": -114.76417541503906,
-            "y": -8.943099975585938,
-            "z": -123.53282165527344
+            "y": -8.83073616027832,
+            "z": -123.9320068359375
         },
         "max": {
             "x": 87.01256561279297,
-            "y": 83.869873046875,
-            "z": 294.3102722167969
+            "y": 41.17426681518555,
+            "z": 334.7560729980469
         }
     }
 }
