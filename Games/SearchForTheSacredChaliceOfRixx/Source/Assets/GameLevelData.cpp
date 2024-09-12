@@ -49,6 +49,13 @@ GameLevelData::GameLevelData()
 		return false;
 	}
 
+	this->doorFilesArray.clear();
+	if (jsonDoc.HasMember("doors") && !this->LoadStringArray(jsonDoc["doors"], this->doorFilesArray))
+	{
+		IMZADI_LOG_ERROR("Failed to load \"doors\" array.");
+		return false;
+	}
+
 	return true;
 }
 
@@ -58,6 +65,7 @@ GameLevelData::GameLevelData()
 
 	this->zipLineArray.clear();
 	this->cubieFilesArray.clear();
+	this->doorFilesArray.clear();
 
 	return true;
 }

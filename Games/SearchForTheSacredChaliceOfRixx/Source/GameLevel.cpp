@@ -8,6 +8,7 @@
 #include "Entities/ZipLineEntity.h"
 #include "Entities/WarpTunnel.h"
 #include "Entities/RubiksCubie.h"
+#include "Entities/SlidingDoor.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
 #include "RenderObjects/HUDRenderObject.h"
@@ -75,6 +76,12 @@ GameLevel::GameLevel()
 	{
 		auto rubiksCubie = Imzadi::Game::Get()->SpawnEntity<RubiksCubie>();
 		rubiksCubie->SetMovingPlatformFile(cubieFile);
+	}
+
+	for (const std::string& doorFile : gameLevelData->GetDoorFilesArray())
+	{
+		auto door = Imzadi::Game::Get()->SpawnEntity<SlidingDoor>();
+		door->SetMovingPlatformFile(doorFile);
 	}
 
 	return true;

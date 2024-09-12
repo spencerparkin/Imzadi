@@ -30,6 +30,9 @@
         "Levels/Level8_Floater4.mov_plat",
         "Levels/Level8_Floater5.mov_plat"
     ],
+    "doors": [
+        "Levels/Level8_Door.door"
+    ],
     "npc_array": [
         {
             "type": "key",

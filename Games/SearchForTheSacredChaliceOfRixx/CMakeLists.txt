@@ -29,6 +29,8 @@ set(RIXX_SOURCES
     Source/Entities/RubiksCubie.h
     Source/Entities/RubiksCubeMaster.cpp
     Source/Entities/RubiksCubeMaster.h
+    Source/Entities/SlidingDoor.cpp
+    Source/Entities/SlidingDoor.h
     Source/Assets/DialogData.cpp
     Source/Assets/DialogData.h
     Source/Assets/GameProgress.cpp
@@ -39,6 +41,8 @@ set(RIXX_SOURCES
     Source/Assets/GameLevelData.h
     Source/Assets/RubiksCubieData.cpp
     Source/Assets/RubiksCubieData.h
+    Source/Assets/SlidingDoorData.cpp
+    Source/Assets/SlidingDoorData.h
     Source/RenderObjects/HUDRenderObject.cpp
     Source/RenderObjects/HUDRenderObject.h
     Assets/Icons/Icon.rc
