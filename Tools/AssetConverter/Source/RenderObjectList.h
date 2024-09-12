@@ -16,7 +16,7 @@ public:
 
 	enum
 	{
-		ID_ContextMenu_PlayAnimation,
+		ID_ContextMenu_PlayAnimation = wxID_HIGHEST + 1000,
 		ID_ContextMenu_DrawPorts
 	};
 

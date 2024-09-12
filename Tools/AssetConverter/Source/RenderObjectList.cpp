@@ -21,9 +21,9 @@ RenderObjectList::RenderObjectList(wxWindow* parent) : wxListCtrl(parent, wxID_A
 
 	this->Bind(wxEVT_LIST_ITEM_SELECTED, &RenderObjectList::OnItemSelected, this);
 	this->Bind(wxEVT_LIST_ITEM_RIGHT_CLICK, &RenderObjectList::OnItemRightClicked, this);
-	this->Bind(wxEVT_MENU, &RenderObjectList::OnPlayAnimation, this);
-	this->Bind(wxEVT_MENU, &RenderObjectList::OnDrawPorts, this);
-	this->Bind(wxEVT_UPDATE_UI, &RenderObjectList::OnUpdateUI, this);
+	this->Bind(wxEVT_MENU, &RenderObjectList::OnPlayAnimation, this, ID_ContextMenu_PlayAnimation);
+	this->Bind(wxEVT_MENU, &RenderObjectList::OnDrawPorts, this, ID_ContextMenu_DrawPorts);
+	this->Bind(wxEVT_UPDATE_UI, &RenderObjectList::OnUpdateUI, this, ID_ContextMenu_DrawPorts);
 }
 
 /*virtual*/ RenderObjectList::~RenderObjectList()
