@@ -54,8 +54,12 @@ TriggerBox::TriggerBox()
 {
 	Entity::Shutdown();
 
-	// TODO: Do we need to issue a command to the collision system here
-	//       to remove our collision shape?
+	if (this->collisionShapeID != 0)
+	{
+		Collision::System* collisionSystem = Game::Get()->GetCollisionSystem();
+		collisionSystem->RemoveShape(this->collisionShapeID);
+		this->collisionShapeID = 0;
+	}
 
 	return true;
 }

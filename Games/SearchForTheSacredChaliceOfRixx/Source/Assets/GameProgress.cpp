@@ -115,6 +115,10 @@ uint32_t GameProgress::GetPossessedItemCount(const std::string& itemName) const
 
 void GameProgress::SetPossessedItemCount(const std::string& itemName, uint32_t itemCount)
 {
+	std::unordered_map<std::string, uint32_t>::iterator iter = this->inventoryMap.find(itemName);
+	if (iter != this->inventoryMap.end())
+		this->inventoryMap.erase(iter);
+
 	this->inventoryMap.insert(std::pair<std::string, uint32_t>(itemName, itemCount));
 }
 

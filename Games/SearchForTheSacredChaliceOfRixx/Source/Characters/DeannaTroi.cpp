@@ -630,7 +630,7 @@ DeannaTroi::OpenDoorAction::OpenDoorAction(DeannaTroi* troi) : LabeledAction(tro
 /*virtual*/ bool DeannaTroi::OpenDoorAction::Perform()
 {
 	Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->doorChannel, new Imzadi::Event("OpenDoor"));
-	return true;
+	return false;
 }
 
 /*virtual*/ std::string DeannaTroi::OpenDoorAction::GetActionLabel() const
