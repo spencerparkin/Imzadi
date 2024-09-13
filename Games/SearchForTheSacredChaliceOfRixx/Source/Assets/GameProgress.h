@@ -32,6 +32,8 @@ public:
 	void SetNumLives(int numLives);
 	int GetNumLives() const;
 
+	const std::unordered_map<std::string, uint32_t>& GetInventoryMap() const { return this->inventoryMap; }
+
 private:
 	std::unordered_map<std::string, uint32_t> inventoryMap;
 	std::unordered_set<std::string> mileStoneSet;
