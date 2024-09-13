@@ -56,7 +56,7 @@ void SlidingDoor::HandleDoorEvent(const Imzadi::Event* event)
 			}
 			else
 			{
-				// TODO: Maybe play sound-FX: "you need a key."
+				Imzadi::Game::Get()->GetAudioSystem()->PlaySound("NeedAKey");
 			}
 		}
 
