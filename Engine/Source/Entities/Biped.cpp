@@ -72,9 +72,17 @@ Biped::Biped()
 
 /*virtual*/ bool Biped::Shutdown()
 {
-	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
-	Game::Get()->GetCollisionSystem()->RemoveShape(this->collisionShapeID);
-	this->collisionShapeID = 0;
+	if (this->renderMesh.Get())
+	{
+		Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+		this->renderMesh.Reset();
+	}
+
+	if (this->collisionShapeID != 0)
+	{
+		Game::Get()->GetCollisionSystem()->RemoveShape(this->collisionShapeID);
+		this->collisionShapeID = 0;
+	}
 
 	Entity::Shutdown();
 	return true;

@@ -3,6 +3,7 @@
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
 #include "Characters/Borg.h"
+#include "Characters/Riker.h"
 #include "Pickup.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
@@ -101,12 +102,15 @@ GameLevel::GameLevel()
 {
 	Imzadi::Game* game = Imzadi::Game::Get();
 
-	if (npc->type == "borg")
+	if (npc->type == "borg" ||
+		npc->type == "riker")
 	{
 		Character* character = nullptr;
 
 		if (npc->type == "borg")
 			character = game->SpawnEntity<Borg>();
+		else if (npc->type == "riker")
+			character = game->SpawnEntity<Riker>();
 
 		if (character)
 		{

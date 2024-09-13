@@ -21,6 +21,8 @@ set(RIXX_SOURCES
     Source/Characters/LwaxanaTroi.h
     Source/Characters/Borg.cpp
     Source/Characters/Borg.h
+    Source/Characters/Riker.cpp
+    Source/Characters/Riker.h
     Source/Entities/ZipLineEntity.cpp
     Source/Entities/ZipLineEntity.h
     Source/Entities/ZipLineRider.cpp

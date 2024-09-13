@@ -27,16 +27,7 @@ Borg::Borg()
 /*virtual*/ bool Borg::Setup()
 {
 	std::string modelFile = "Models/Borg/Borg.skinned_render_mesh";
-	Imzadi::Reference<Imzadi::RenderObject> renderObj;
-	Imzadi::Reference<Imzadi::Asset> renderMeshAsset;
-	if (Imzadi::Game::Get()->GetAssetCache()->LoadAsset(modelFile, renderMeshAsset))
-	{
-		if (renderMeshAsset->MakeRenderInstance(renderObj))
-		{
-			Imzadi::Game::Get()->GetScene()->AddRenderObject(renderObj);
-			this->renderMesh.SafeSet(renderObj);
-		}
-	}
+	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Character::Setup())
 		return false;

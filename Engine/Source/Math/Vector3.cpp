@@ -187,3 +187,48 @@ bool Vector3::CalcBarycentricCoords(const Vector3& vertexA, const Vector3& verte
 	coordinates.z = 1.0 - coordinates.x - coordinates.y;
 	return true;
 }
+
+int Vector3::NearestPoint(const std::vector<Vector3>& pointArray) const
+{
+	if (pointArray.size() == 0)
+		return -1;
+
+	int j = -1;
+	double smallestSquareDistance = std::numeric_limits<double>::max();
+	for (int i = 0; i < (int)pointArray.size(); i++)
+	{
+		const Vector3& point = pointArray[i];
+		Vector3 delta = point - *this;
+		double squareDistance = delta.SquareLength();
+		if (squareDistance < smallestSquareDistance)
+		{
+			smallestSquareDistance = squareDistance;
+			j = i;
+		}
+	}
+
+	IMZADI_ASSERT(j != -1);
+	return j;
+}
+
+int Vector3::NearestPoint(const std::vector<Vector3>& pointArray, double squareRadius) const
+{
+	if (pointArray.size() == 0)
+		return -1;
+
+	int j = -1;
+	double smallestSquareDistance = std::numeric_limits<double>::max();
+	for (int i = 0; i < (int)pointArray.size(); i++)
+	{
+		const Vector3& point = pointArray[i];
+		Vector3 delta = point - *this;
+		double squareDistance = delta.SquareLength();
+		if(squareDistance <= squareRadius && squareDistance < smallestSquareDistance)
+		{
+			smallestSquareDistance = squareDistance;
+			j = i;
+		}
+	}
+	
+	return j;
+}
