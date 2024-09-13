@@ -1,15 +1,25 @@
 #include "Riker.h"
 #include "Assets/RenderMesh.h"
+#include "GameApp.h"
 
 Riker::Riker()
 {
 	this->SetName("Riker");
 	this->waypointTargetIndex = -1;
-	this->runSpeed = 2.0;
+	this->runSpeed = 10.0;
+	this->disposition = Disposition::RUN_AROUND_LIKE_AN_IDIOT;
 }
 
 /*virtual*/ Riker::~Riker()
 {
+}
+
+/*virtual*/ void Riker::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+{
+	capsule->SetVertex(0, Imzadi::Vector3(0.0, 1.0, 0.0));
+	capsule->SetVertex(1, Imzadi::Vector3(0.0, 5.0, 0.0));
+	capsule->SetRadius(1.0);
+	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER);
 }
 
 /*virtual*/ bool Riker::Setup()
@@ -47,6 +57,14 @@ Riker::Riker()
 	if (this->waypointTargetIndex == -1)
 		return false;
 
+	Imzadi::Game::Get()->GetEventSystem()->RegisterEventListener(
+		"ConvoBoundary",
+		Imzadi::EventListenerType::TRANSITORY,
+		new Imzadi::LambdaEventListener([=](const Imzadi::Event* event)
+			{
+				this->HandleConversationBoundaryEvent(dynamic_cast<const ConvoBoundaryEvent*>(event));
+			}));
+
 	return true;
 }
 
@@ -62,13 +80,30 @@ Riker::Riker()
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
 
-	if (tickPass == Imzadi::TickPass::PARALLEL_WORK)
+	switch (tickPass)
 	{
-		const Imzadi::Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
-		static double squareRadius = 4.0;
-		int i = objectToWorld.translation.NearestPoint(this->waypointLoopArray, squareRadius);
-		if (i == this->waypointTargetIndex)
-			this->waypointTargetIndex = (i + 1) % this->waypointLoopArray.size();
+		case Imzadi::TickPass::MOVE_UNCONSTRAINTED:
+		{
+			if (this->disposition == Disposition::STOP_AND_TALK)
+			{
+				// TODO: Make sure we're facing Deanna.
+			}
+
+			break;
+		}
+		case Imzadi::TickPass::PARALLEL_WORK:
+		{
+			if (this->disposition == Disposition::RUN_AROUND_LIKE_AN_IDIOT)
+			{
+				const Imzadi::Transform& objectToWorld = this->renderMesh->GetObjectToWorldTransform();
+				static double squareRadius = 4.0;
+				int i = objectToWorld.translation.NearestPoint(this->waypointLoopArray, squareRadius);
+				if (i == this->waypointTargetIndex)
+					this->waypointTargetIndex = (i + 1) % this->waypointLoopArray.size();
+			}
+
+			break;
+		}
 	}
 
 	return true;
@@ -78,14 +113,49 @@ Riker::Riker()
 {
 	if (this->inContactWithGround)
 	{
-		const Imzadi::Vector3& waypointTarget = this->waypointLoopArray[this->waypointTargetIndex];
-		const Imzadi::Transform& objectToWorld = renderMesh->GetObjectToWorldTransform();
+		switch (this->disposition)
+		{
+			case Disposition::RUN_AROUND_LIKE_AN_IDIOT:
+			{
+				const Imzadi::Vector3& waypointTarget = this->waypointLoopArray[this->waypointTargetIndex];
+				const Imzadi::Transform& objectToWorld = renderMesh->GetObjectToWorldTransform();
 
-		this->velocity = waypointTarget - objectToWorld.translation;
-		this->velocity = this->velocity.RejectedFrom(this->groundSurfaceNormal).Normalized() * this->runSpeed;
+				this->velocity = waypointTarget - objectToWorld.translation;
+				this->velocity = this->velocity.RejectedFrom(this->groundSurfaceNormal).Normalized() * this->runSpeed;
+
+				break;
+			}
+			case Disposition::STOP_AND_TALK:
+			{
+				this->velocity.SetComponents(0.0, 0.0, 0.0);
+				break;
+			}
+		}
+		
 	}
 
 	Character::IntegrateVelocity(acceleration, deltaTime);
+}
+
+void Riker::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
+{
+	if (event->IsParticipant(this->GetHandle()))
+	{
+		switch (event->type)
+		{
+			case ConvoBoundaryEvent::STARTED:
+			{
+				this->disposition = Disposition::STOP_AND_TALK;
+				// TODO: Calculate our look target here.
+				break;
+			}
+			case ConvoBoundaryEvent::FINISHED:
+			{
+				this->disposition = Disposition::RUN_AROUND_LIKE_AN_IDIOT;
+				break;
+			}
+		}
+	}
 }
 
 /*virtual*/ std::string Riker::GetAnimName(Imzadi::Biped::AnimType animType)

@@ -159,6 +159,9 @@ namespace Imzadi
 		Event(const std::string& name);
 		virtual ~Event();
 
+		virtual Event* New() const;
+		virtual Event* Clone() const;
+
 		void SetName(const std::string& name) { this->name = name; }
 		const std::string& GetName() const { return this->name; }
 

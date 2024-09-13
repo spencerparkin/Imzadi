@@ -28,12 +28,15 @@ public:
 	bool InitiateConversation(const ConversationEvent* convoEvent);
 	bool PresentlyEngagedInConversation();
 
+	const std::vector<uint32_t>& GetCurrentParticipantArray() const { return this->currentParticipantHandleArray; }
+
 private:
 	bool DetermineDialogSequenceForConversation(const ConversationEvent* convoEvent, std::string& sequenceName);
 
 	Imzadi::Reference<DialogData> dialogData;
 	Imzadi::Reference<DialogSequence> currentDialogSequence;
 	int currentDialogSequencePosition;
+	std::vector<uint32_t> currentParticipantHandleArray;
 };
 
 /**
@@ -45,5 +48,35 @@ public:
 	ConversationEvent();
 	virtual ~ConversationEvent();
 
+	virtual Event* New() const override;
+	virtual Event* Clone() const override;
+
+	bool IsParticipant(uint32_t handle) const;
+
+public:
 	std::vector<uint32_t> participantHandleArray;
+};
+
+/**
+ * These types of events are sent at the beginning and ending of a conversation.
+ */
+class ConvoBoundaryEvent : public ConversationEvent
+{
+public:
+	enum Type
+	{
+		UNKNOWN,
+		STARTED,
+		FINISHED
+	};
+
+	ConvoBoundaryEvent();
+	ConvoBoundaryEvent(Type type, DialogSystem* dialogSystem);
+	virtual ~ConvoBoundaryEvent();
+
+	virtual Event* New() const override;
+	virtual Event* Clone() const override;
+
+public:
+	Type type;
 };

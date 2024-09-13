@@ -89,6 +89,8 @@ bool DialogSystem::InitiateConversation(const ConversationEvent* convoEvent)
 		return false;
 	}
 
+	this->currentParticipantHandleArray = convoEvent->participantHandleArray;
+	Imzadi::Game::Get()->GetEventSystem()->SendEvent("ConvoBoundary", new ConvoBoundaryEvent(ConvoBoundaryEvent::Type::STARTED, this));
 	Imzadi::Game::Get()->PushControllerUser("DialogSystem");
 	return true;
 }
@@ -129,11 +131,24 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 			if (!progress->WasMileStoneReached("initial_contact_with_lwaxana_made"))
 				sequenceName = "lwaxana_initial_contact";
 			else
+			{
+				//...
 				sequenceName = "lwaxana_encourage_deanna";
+			}
 		}
 		else if (otherEntityName == "Borg")
 		{
 			sequenceName = "borg_talk";
+		}
+		else if (otherEntityName == "Riker")
+		{
+			if (!progress->WasMileStoneReached("initial_contact_with_riker_made"))
+				sequenceName = "riker_troi_initial_contact";
+			else
+			{
+				//...
+				sequenceName = "riker_encouragement";
+			}
 		}
 	}
 
@@ -191,6 +206,8 @@ void DialogSystem::Tick()
 		this->currentDialogSequence.Reset();
 		this->currentDialogSequencePosition = -1;
 		Imzadi::Game::Get()->PopControllerUser();
+		Imzadi::Game::Get()->GetEventSystem()->SendEvent("ConvoBoundary", new ConvoBoundaryEvent(ConvoBoundaryEvent::Type::FINISHED, this));
+		this->currentParticipantHandleArray.clear();
 	}
 }
 
@@ -202,4 +219,55 @@ ConversationEvent::ConversationEvent()
 
 /*virtual*/ ConversationEvent::~ConversationEvent()
 {
+}
+
+/*virtual*/ Imzadi::Event* ConversationEvent::New() const
+{
+	return new ConversationEvent();
+}
+
+/*virtual*/ Imzadi::Event* ConversationEvent::Clone() const
+{
+	auto event = (ConversationEvent*)Event::Clone();
+	for (uint32_t handle : this->participantHandleArray)
+		event->participantHandleArray.push_back(handle);
+	return event;
+}
+
+bool ConversationEvent::IsParticipant(uint32_t handle) const
+{
+	for (int i = 0; i < (signed)this->participantHandleArray.size(); i++)
+		if (handle == this->participantHandleArray[i])
+			return true;
+
+	return false;
+}
+
+//--------------------------------- ConvoBoundaryEvent ---------------------------------
+
+ConvoBoundaryEvent::ConvoBoundaryEvent()
+{
+	this->type = Type::UNKNOWN;
+}
+
+ConvoBoundaryEvent::ConvoBoundaryEvent(Type type, DialogSystem* dialogSystem)
+{
+	this->type = type;
+	this->participantHandleArray = dialogSystem->GetCurrentParticipantArray();
+}
+
+/*virtual*/ ConvoBoundaryEvent::~ConvoBoundaryEvent()
+{
+}
+
+/*virtual*/ Imzadi::Event* ConvoBoundaryEvent::New() const
+{
+	return new ConvoBoundaryEvent();
+}
+
+/*virtual*/ Imzadi::Event* ConvoBoundaryEvent::Clone() const
+{
+	auto event = (ConvoBoundaryEvent*)ConversationEvent::Clone();
+	event->type = this->type;
+	return event;
 }

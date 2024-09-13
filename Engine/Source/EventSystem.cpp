@@ -221,6 +221,18 @@ Event::Event(const std::string& name)
 {
 }
 
+/*virtual*/ Event* Event::New() const
+{
+	return new Event();
+}
+
+/*virtual*/ Event* Event::Clone() const
+{
+	Event* event = this->New();
+	event->name = this->name;
+	return event;
+}
+
 //-------------------------------------- EventListener --------------------------------------
 
 EventListener::EventListener()
