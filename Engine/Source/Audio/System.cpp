@@ -255,6 +255,9 @@ bool AudioSystem::LoadAudioDirectory(const std::string& audioDirectory, bool rec
 
 void AudioSystem::ClearSourceCache()
 {
+	for (auto pair : this->audioSourceCache)
+		pair.second->Clear();
+
 	this->audioSourceCache.clear();
 }
 
