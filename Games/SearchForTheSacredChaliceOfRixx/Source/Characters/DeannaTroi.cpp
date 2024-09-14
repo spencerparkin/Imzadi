@@ -134,6 +134,12 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 						this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
 					}
 				}
+				else if (triggerBoxName.find("OpenDoor") == 0)
+				{
+					auto action = new OpenDoorAction(this);
+					action->doorChannel = triggerBoxName.substr(9);
+					this->actionManager.BindAction(Imzadi::Button::A_BUTTON, action);
+				}
 
 				break;
 			}
@@ -141,8 +147,12 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			{
 				IMZADI_LOG_INFO("Exited trigger box \"%s\".", triggerBoxName.c_str());
 
-				if (triggerBoxName.find("JumpTo") == 0 || triggerBoxName == "RubiksCube")
+				if (triggerBoxName.find("JumpTo") == 0 ||
+					triggerBoxName == "RubiksCube" ||
+					triggerBoxName.find("OpenDoor") == 0)
+				{
 					this->actionManager.UnbindAction(Imzadi::Button::A_BUTTON);
+				}
 
 				break;
 			}
@@ -604,5 +614,26 @@ DeannaTroi::ControlRubiksCubeAction::ControlRubiksCubeAction(DeannaTroi* troi) :
 
 /*virtual*/ std::string DeannaTroi::ControlRubiksCubeAction::GetActionLabel() const
 {
-	return std::format("Press \"A\" to telepathically control the Rubik's Cube.");
+	return "Press \"A\" to telepathically control the Rubik's Cube.";
+}
+
+//------------------------------------ DeannaTroi::OpenDoorAction ------------------------------------
+
+DeannaTroi::OpenDoorAction::OpenDoorAction(DeannaTroi* troi) : LabeledAction(troi)
+{
+}
+
+/*virtual*/ DeannaTroi::OpenDoorAction::~OpenDoorAction()
+{
+}
+
+/*virtual*/ bool DeannaTroi::OpenDoorAction::Perform()
+{
+	Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->doorChannel, new Imzadi::Event("OpenDoor"));
+	return false;
+}
+
+/*virtual*/ std::string DeannaTroi::OpenDoorAction::GetActionLabel() const
+{
+	return "Press \"A\" to open the door.";
 }

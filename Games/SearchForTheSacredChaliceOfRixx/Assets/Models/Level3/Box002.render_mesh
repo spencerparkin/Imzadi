@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Box002_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Box002_Vertices.buffer",
+    "name": "Box002",
     "texture": "Textures\\AstroTurf.texture",
     "object_to_world": {
         "matrix": [
@@ -26,7 +27,7 @@
     "bounding_box": {
         "min": {
             "x": -107.00796508789063,
-            "y": -155.7571258544922,
+            "y": -1.9616619348526,
             "z": -155.7571258544922
         },
         "max": {

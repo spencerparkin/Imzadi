@@ -4,7 +4,8 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Cone001_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Cone001_Vertices.buffer",
-    "texture": "Textures\\MegaWack.texture",
+    "name": "Cone001",
+    "texture": "Textures\\JuliaFractal.texture",
     "object_to_world": {
         "matrix": [
             1.0,
@@ -18,21 +19,21 @@
             1.0
         ],
         "translation": {
-            "x": 5.026908874511719,
-            "y": -69.10975646972656,
-            "z": 317.04473876953127
+            "x": 942.41552734375,
+            "y": 142.24371337890626,
+            "z": 67.80583953857422
         }
     },
     "bounding_box": {
         "min": {
-            "x": -159.2738494873047,
-            "y": -62.96345520019531,
-            "z": -158.6619110107422
+            "x": -102.15727233886719,
+            "y": -26.324586868286134,
+            "z": -102.15727996826172
         },
         "max": {
-            "x": 158.60763549804688,
-            "y": 56.46590042114258,
-            "z": 158.6619110107422
+            "x": 102.15728759765625,
+            "y": 26.324583053588868,
+            "z": 102.15727996826172
         }
     }
 }

@@ -4,7 +4,8 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Sphere002_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Sphere002_Vertices.buffer",
-    "texture": "Textures\\Beautiful.texture",
+    "name": "Sphere002",
+    "texture": "Textures\\CrappyStar.texture",
     "object_to_world": {
         "matrix": [
             1.0,
@@ -18,21 +19,21 @@
             1.0
         ],
         "translation": {
-            "x": -0.13162066042423249,
-            "y": 32.322383880615237,
-            "z": 127.64954376220703
+            "x": 6.052308559417725,
+            "y": 50.4370002746582,
+            "z": 136.20652770996095
         }
     },
     "bounding_box": {
         "min": {
-            "x": -18.765087127685548,
-            "y": -18.763181686401368,
-            "z": -18.76282501220703
+            "x": -13.297226905822754,
+            "y": -39.58570098876953,
+            "z": -13.297233581542969
         },
         "max": {
-            "x": 18.761276245117189,
-            "y": 18.763181686401368,
-            "z": 18.763538360595704
+            "x": 13.297224998474121,
+            "y": 183.071533203125,
+            "z": 13.297233581542969
         }
     }
 }

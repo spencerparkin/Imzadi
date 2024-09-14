@@ -15,5 +15,5 @@
     ],
     "spline_type": "lerp",
     "spline_mode": "cycle",
-    "move_speed": 30.0
+    "move_speed": 25.0
 }

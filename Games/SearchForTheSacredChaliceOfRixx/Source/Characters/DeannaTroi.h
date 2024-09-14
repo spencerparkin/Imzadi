@@ -104,6 +104,18 @@ private:
 		std::string masterName;
 	};
 
+	class OpenDoorAction : public LabeledAction
+	{
+	public:
+		OpenDoorAction(DeannaTroi* troi);
+		virtual ~OpenDoorAction();
+
+		virtual bool Perform() override;
+		virtual std::string GetActionLabel() const override;
+
+		std::string doorChannel;
+	};
+
 	uint32_t cameraHandle;
 	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;

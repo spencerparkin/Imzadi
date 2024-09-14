@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level8\\Box002_Indices.buffer",
+    "vertex_buffer": "Models\\Level8\\Box002_Vertices.buffer",
+    "name": "Box002",
+    "texture": "Textures\\Marble.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 51.74819564819336,
+            "y": 6.928363800048828,
+            "z": 6.751304626464844
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.7726492285728455,
+            "y": -5.935296058654785,
+            "z": -9.307847023010254
+        },
+        "max": {
+            "x": 0.7726492285728455,
+            "y": 5.935296058654785,
+            "z": 9.307847023010254
+        }
+    }
+}

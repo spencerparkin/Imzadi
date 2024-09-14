@@ -407,6 +407,32 @@ namespace Imzadi
 		 */
 		bool CalcBarycentricCoords(const Vector3& vertexA, const Vector3& vertexB, const Vector3& vertexC, Vector3& coordinates) const;
 
+		/**
+		 * Perform a linear search through the given array of points to find which
+		 * one this point is nearest.  There do exist algorithms with time-complexity
+		 * better than linear for this kind of thing, but here we're just doing a
+		 * simple linear search, so make sure the list isn't too big and that it's not
+		 * being done in performance-critical code.
+		 * 
+		 * @param[in] pointArray This is the array of points to search against.
+		 * @return An offset into the given array is returned.  -1 is returned if the array is of zero size.
+		 */
+		int NearestPoint(const std::vector<Vector3>& pointArray) const;
+
+		/**
+		 * This is similar to the overload of this method that does not take a radius as
+		 * an argument, but here we return -1 if this point is not within the given radius
+		 * of any point in the given array.  Note that a square radius is actually given
+		 * so that we can avoid doing a square-root operation.  Also, if this point is within
+		 * the given radius of multiple points in the given array, then we return the closest
+		 * of those.
+		 * 
+		 * @param[in] pointArray This is the array of points to search against.
+		 * @param[in] squareRadius This point is checked to see if it exists within this radius of any point in the given array.
+		 * @return An offset into the given array is returned.
+		 */
+		int NearestPoint(const std::vector<Vector3>& pointArray, double squareRadius) const;
+
 	public:
 		double x, y, z;
 	};

@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level8\\Tube001_Indices.buffer",
+    "vertex_buffer": "Models\\Level8\\Tube001_Vertices.buffer",
+    "name": "Tube001",
+    "texture": "Textures\\Galaxy4.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -14.951553344726563,
+            "y": 58.81880187988281,
+            "z": 4.3832597732543949
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -10.228267669677735,
+            "y": -10.754636764526368,
+            "z": -13.259737968444825
+        },
+        "max": {
+            "x": 10.228267669677735,
+            "y": 10.754636764526368,
+            "z": 13.259737968444825
+        }
+    }
+}

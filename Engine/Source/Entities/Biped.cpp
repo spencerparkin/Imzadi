@@ -26,6 +26,7 @@ Biped::Biped()
 	this->inContactWithGround = false;
 	this->canRestart = true;
 	this->mass = 1.0;
+	this->continuouslyUpdatePlatformTransform = true;
 }
 
 /*virtual*/ Biped::~Biped()
@@ -71,9 +72,17 @@ Biped::Biped()
 
 /*virtual*/ bool Biped::Shutdown()
 {
-	Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
-	Game::Get()->GetCollisionSystem()->RemoveShape(this->collisionShapeID);
-	this->collisionShapeID = 0;
+	if (this->renderMesh.Get())
+	{
+		Game::Get()->GetScene()->RemoveRenderObject(this->renderMesh->GetName());
+		this->renderMesh.Reset();
+	}
+
+	if (this->collisionShapeID != 0)
+	{
+		Game::Get()->GetCollisionSystem()->RemoveShape(this->collisionShapeID);
+		this->collisionShapeID = 0;
+	}
 
 	Entity::Shutdown();
 	return true;
@@ -96,6 +105,12 @@ Biped::Biped()
 	return info;
 }
 
+/*virtual*/ Vector3 Biped::GetPlatformSpaceFacingDirection() const
+{
+	// Note that this is in platform-space, not world-space.
+	return this->velocity;
+}
+
 /*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)
 {
 	// Make sure the render mesh faces the direction we're moving.
@@ -106,7 +121,7 @@ Biped::Biped()
 		Vector3 xAxis, yAxis, zAxis;
 
 		yAxis.SetComponents(0.0, 1.0, 0.0);
-		zAxis = -this->velocity.RejectedFrom(yAxis).Normalized();
+		zAxis = (-this->GetPlatformSpaceFacingDirection()).RejectedFrom(yAxis).Normalized();
 		xAxis = yAxis.Cross(zAxis);
 
 		targetOrientation.SetColumnVectors(xAxis, yAxis, zAxis);
@@ -173,7 +188,15 @@ Biped::Biped()
 				{
 					auto objectToWorldResult = dynamic_cast<Collision::ObjectToWorldResult*>(result);
 					if (objectToWorldResult)
-						this->platformToWorld = objectToWorldResult->objectToWorld;
+					{
+						if (this->continuouslyUpdatePlatformTransform)
+							this->platformToWorld = objectToWorldResult->objectToWorld;
+						else
+						{
+							// TODO: Here we might use the transform in a different way to, say,
+							//       apply friction to the character.
+						}
+					}
 
 					delete result;
 				}
@@ -440,6 +463,7 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	Collision::ShapeID newGroundShapeID = 0;
 	Transform newGroundObjectToWorld;
 	newGroundObjectToWorld.SetIdentity();
+	this->continuouslyUpdatePlatformTransform = false;
 
 	for (const auto& collisionStatus : collisionResult->GetCollisionStatusArray())
 	{
@@ -454,11 +478,16 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 		{
 			this->inContactWithGround = true;
 			newGroundShapeID = otherShapeID;
-			newGroundObjectToWorld = collisionStatus->GetShape(otherShapeID)->GetObjectToWorldTransform();
+			const Collision::Shape* shape = collisionStatus->GetShape(otherShapeID);
+			if ((shape->GetUserFlags() & IMZADI_SHAPE_FLAG_NON_RELATIVE) == 0)
+			{
+				newGroundObjectToWorld = shape->GetObjectToWorldTransform();
+				this->continuouslyUpdatePlatformTransform = true;
+			}
 		}
 	}
 
-	averageSeperationDelta /= float(collisionResult->GetCollisionStatusArray().size());
+	averageSeperationDelta /= double(collisionResult->GetCollisionStatusArray().size());
 
 	Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
 
@@ -473,9 +502,6 @@ void Biped::HandleWorldSurfaceCollisionResult(Collision::CollisionQueryResult* c
 	if (averageSeperationDelta.Length() > 0.0)
 	{
 		objectToWorld.translation += averageSeperationDelta;
-
-		Transform worldToPlatform;
-		worldToPlatform.Invert(this->platformToWorld);
 		this->objectToPlatform = worldToPlatform * objectToWorld;
 	}
 }

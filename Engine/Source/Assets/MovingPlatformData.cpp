@@ -9,6 +9,7 @@ MovingPlatformData::MovingPlatformData()
 	this->moveSpeedUnitsPerSecond = 0.0;
 	this->rotationSpeedDegreesPerSecond = 0.0;
 	this->ignoreCollision = false;
+	this->nonRelativeCollision = false;
 }
 
 /*virtual*/ MovingPlatformData::~MovingPlatformData()
@@ -109,6 +110,11 @@ MovingPlatformData::MovingPlatformData()
 	this->rotationSpeedDegreesPerSecond = 0.0;
 	if (jsonDoc.HasMember("rotation_speed") && jsonDoc["rotation_speed"].IsFloat())
 		this->rotationSpeedDegreesPerSecond = Angle::DegreesToRadians(jsonDoc["rotation_speed"].GetFloat());
+
+	if (jsonDoc.HasMember("non_relative") && jsonDoc["non_relative"].IsBool())
+		this->nonRelativeCollision = jsonDoc["non_relative"].GetBool();
+	else
+		this->nonRelativeCollision = false;
 
 	return true;
 }

@@ -146,7 +146,8 @@
                 {
                     "type": "basic",
                     "speaker": "Riker",
-                    "text": "Deanna, you found me!  Oh, Imzadi..."
+                    "text": "Deanna, you found me!  Oh, Imzadi...",
+                    "mile_stone": "initial_contact_with_riker_made"
                 },
                 {
                     "type": "basic",
@@ -171,7 +172,7 @@
                 {
                     "type": "basic",
                     "speaker": "Deanna",
-                    "text": "What?!  You're missing something too?!  First it's my mother wanter her old clay pot found, and now you've gone and lost your one true chance at jamaharon?  What's next?  Is Data missing his type-L phase descriminating amplifier?"
+                    "text": "What?!  You're missing something too?!  First it's my mother wanting her old clay pot found, and now you've gone and lost your one true chance at jamaharon?  What's next?  Is Data missing his type-L phase descriminating amplifier?"
                 },
                 {
                     "type": "basic",
@@ -186,7 +187,7 @@
                 {
                     "type": "basic",
                     "speaker": "Riker",
-                    "text": "I would, but I'm afraid the programmer of this stupid video-game we're stuck in didn't write any code that allows me to move from this spot.  It's idiotic, I know, but true nevertheless."
+                    "text": "I would, but I'm afraid the programmer of this stupid video-game we're stuck in has limited my movement logic to running in a circle around this green ring thing.  It's idiotic, I know, but true nevertheless."
                 },
                 {
                     "type": "basic",
@@ -202,6 +203,25 @@
                     "type": "basic",
                     "speaker": "Deanna",
                     "text": "I know, Will.  I know."
+                }
+            ]
+        },
+        "riker_encouragement": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "Oh, Deanna!  My Imzadi!...  I love you so much!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Deanna",
+                    "text": "Will, I'm with Worf now.  You need to get over this."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Riker",
+                    "text": "<Sniffle-sniffle>"
                 }
             ]
         },

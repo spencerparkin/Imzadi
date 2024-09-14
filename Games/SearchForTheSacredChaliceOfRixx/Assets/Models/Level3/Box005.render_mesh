@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Box005_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Box005_Vertices.buffer",
+    "name": "Box005",
     "texture": "Textures\\CreepyBlobs.texture",
     "object_to_world": {
         "matrix": [
@@ -25,8 +26,8 @@
     },
     "bounding_box": {
         "min": {
-            "x": -107.00796508789063,
-            "y": -155.7571258544922,
+            "x": -69.15892028808594,
+            "y": -0.8435539603233337,
             "z": -66.97868347167969
         },
         "max": {

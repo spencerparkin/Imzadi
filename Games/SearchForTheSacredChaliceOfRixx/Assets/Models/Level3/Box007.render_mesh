@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level3\\Box007_Indices.buffer",
     "vertex_buffer": "Models\\Level3\\Box007_Vertices.buffer",
+    "name": "Box007",
     "texture": "Textures\\Beautiful.texture",
     "object_to_world": {
         "matrix": [
@@ -27,7 +28,7 @@
         "min": {
             "x": -108.25127410888672,
             "y": -31.49976921081543,
-            "z": -20.011680603027345
+            "z": -3.228005886077881
         },
         "max": {
             "x": 108.25127410888672,

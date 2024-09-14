@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level3\\Box010_Indices.buffer",
+    "vertex_buffer": "Models\\Level3\\Box010_Vertices.buffer",
+    "name": "Box010",
+    "texture": "Textures\\BrickWall.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 16.926979064941408,
+            "y": 118.3843002319336,
+            "z": -218.8506317138672
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -32.55937194824219,
+            "y": -2.3052635192871095,
+            "z": -128.8738555908203
+        },
+        "max": {
+            "x": 33.04698181152344,
+            "y": 2.3052635192871095,
+            "z": 128.8738555908203
+        }
+    }
+}

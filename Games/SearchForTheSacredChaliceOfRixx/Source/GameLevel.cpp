@@ -3,11 +3,13 @@
 #include "Characters/DeannaTroi.h"
 #include "Characters/LwaxanaTroi.h"
 #include "Characters/Borg.h"
+#include "Characters/Riker.h"
 #include "Pickup.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
 #include "Entities/WarpTunnel.h"
 #include "Entities/RubiksCubie.h"
+#include "Entities/SlidingDoor.h"
 #include "Audio/System.h"
 #include "Math/Interval.h"
 #include "RenderObjects/HUDRenderObject.h"
@@ -77,6 +79,12 @@ GameLevel::GameLevel()
 		rubiksCubie->SetMovingPlatformFile(cubieFile);
 	}
 
+	for (const std::string& doorFile : gameLevelData->GetDoorFilesArray())
+	{
+		auto door = Imzadi::Game::Get()->SpawnEntity<SlidingDoor>();
+		door->SetMovingPlatformFile(doorFile);
+	}
+
 	return true;
 }
 
@@ -94,12 +102,15 @@ GameLevel::GameLevel()
 {
 	Imzadi::Game* game = Imzadi::Game::Get();
 
-	if (npc->type == "borg")
+	if (npc->type == "borg" ||
+		npc->type == "riker")
 	{
 		Character* character = nullptr;
 
 		if (npc->type == "borg")
 			character = game->SpawnEntity<Borg>();
+		else if (npc->type == "riker")
+			character = game->SpawnEntity<Riker>();
 
 		if (character)
 		{
@@ -108,7 +119,11 @@ GameLevel::GameLevel()
 			character->SetCanRestart(false);
 		}
 	}
-	else if (npc->type == "heart" || npc->type == "speed_boost" || npc->type == "song")
+	else if (
+		npc->type == "heart" ||
+		npc->type == "speed_boost" ||
+		npc->type == "song" ||
+		npc->type == "key")
 	{
 		Pickup* pickup = nullptr;
 
@@ -118,6 +133,8 @@ GameLevel::GameLevel()
 			pickup = game->SpawnEntity<SpeedBoostPickup>();
 		else if (npc->type == "song")
 			pickup = game->SpawnEntity<SongPickup>();
+		else if (npc->type == "key")
+			pickup = game->SpawnEntity<KeyPickup>();
 
 		if (pickup)
 		{

@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Key\\Key_Indices.buffer",
+    "vertex_buffer": "Models\\Key\\Key_Vertices.buffer",
+    "name": "Key",
+    "texture": "Textures\\Galaxy4.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 0.006876402068883181,
+            "y": 0.3193611204624176,
+            "z": 0.04657537862658501
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.13971951603889466,
+            "y": -0.6618891358375549,
+            "z": -0.5482893586158752
+        },
+        "max": {
+            "x": 0.12596671283245088,
+            "y": 0.9992350339889526,
+            "z": 0.7461404800415039
+        }
+    }
+}

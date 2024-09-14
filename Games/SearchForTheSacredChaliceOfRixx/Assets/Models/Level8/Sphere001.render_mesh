@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level8\\Sphere001_Indices.buffer",
+    "vertex_buffer": "Models\\Level8\\Sphere001_Vertices.buffer",
+    "name": "Sphere001",
+    "texture": "Textures\\Funky.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -15.776291847229004,
+            "y": 48.85449981689453,
+            "z": -13.57816219329834
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -7.6693501472473148,
+            "y": -2.797065496444702,
+            "z": -7.6693501472473148
+        },
+        "max": {
+            "x": 7.669349193572998,
+            "y": 2.797065496444702,
+            "z": 7.669349193572998
+        }
+    }
+}

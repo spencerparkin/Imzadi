@@ -1,6 +1,7 @@
 #include "HUDRenderObject.h"
 #include "GameApp.h"
 #include "Assets/GameProgress.h"
+#include <algorithm>
 
 HUDRenderObject::HUDRenderObject()
 {
@@ -16,12 +17,19 @@ HUDRenderObject::HUDRenderObject()
 	GameProgress* gameProgress = game->GetGameProgress();
 	int numLives = gameProgress->GetNumLives();
 
-	// TODO: Also show inventory here.
-
 	std::string hudText;
 	hudText += std::format("Lives: {}", numLives);
 	if (numLives == 0)
 		hudText += " (GAME OVER!)";
+
+	const std::unordered_map<std::string, uint32_t>& inventoryMap = gameProgress->GetInventoryMap();
+	std::vector<std::string> inventoryStringArray;
+	for (auto pair : inventoryMap)
+		inventoryStringArray.push_back(std::format("\n{}s: {}", pair.first.c_str(), pair.second));
+	std::sort(inventoryStringArray.begin(), inventoryStringArray.end());
+	for (const std::string& inventoryString : inventoryStringArray)
+		hudText += "\n" + inventoryString;
+
 	this->SetText(hudText);
 
 	this->SetBackgroundAlpha(0.5);
@@ -32,7 +40,7 @@ HUDRenderObject::HUDRenderObject()
 
 	Imzadi::Transform translate;
 	translate.SetIdentity();
-	translate.translation.SetComponents(-0.9, 0.9, -0.5);
+	translate.translation.SetComponents(-0.9, -0.9, -0.5);
 
 	this->SetTransform(translate * scale);
 

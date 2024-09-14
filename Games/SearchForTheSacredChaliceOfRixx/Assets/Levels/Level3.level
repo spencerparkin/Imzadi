@@ -5,7 +5,17 @@
         "Models/Level3/Cone001.render_mesh",
         "Models/Level3/Box002.render_mesh",
         "Models/Level3/Box003.render_mesh",
-        "Models/Level3/Box006.render_mesh"
+        "Models/Level3/Box006.render_mesh",
+        "Models/Level3/Box008.render_mesh",
+        "Models/Level3/Box009.render_mesh",
+        "Models/Level3/Box010.render_mesh",
+        "Models/Level3/Box011.render_mesh",
+        "Models/Level3/Object001.render_mesh",
+        "Models/Level3/Object002.render_mesh",
+        "Models/Level3/Cylinder003.render_mesh",
+        "Models/Level3/Box012.render_mesh",
+        "Models/Level3/Box013.render_mesh",
+        "Models/Level3/Cone001.render_mesh"
     ],
     "static_collision": [
         "Models/Level3/Torus001.collision",
@@ -13,7 +23,17 @@
         "Models/Level3/Cone001.collision",
         "Models/Level3/Box002.collision",
         "Models/Level3/Box003.collision",
-        "Models/Level3/Box006.collision"
+        "Models/Level3/Box006.collision",
+        "Models/Level3/Box008.collision",
+        "Models/Level3/Box009.collision",
+        "Models/Level3/Box010.collision",
+        "Models/Level3/Box011.collision",
+        "Models/Level3/Object001.collision",
+        "Models/Level3/Object002.collision",
+        "Models/Level3/Cylinder003.collision",
+        "Models/Level3/Box012.collision",
+        "Models/Level3/Box013.collision",
+        "Models/Level3/Cone001.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
     "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
@@ -36,5 +56,60 @@
         "Levels/Level3_Sphere001.mov_plat",
         "Levels/Level3_Sphere002.mov_plat",
         "Levels/Level3_Sphere003.mov_plat"
+    ],
+    "npc_array": [
+        {
+            "type": "heart",
+            "start_position": {
+                "x": -299.57,
+                "y": 196.0,
+                "z": -110.716
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": -459.83,
+                "y": 196.0,
+                "z": 21.3421
+            }
+        },
+        {
+            "type": "song",
+            "start_position": {
+                "x": 8.596579,
+                "y": 6.0,
+                "z": 8.1450
+            },
+            "config": {
+                "song": "GGMOZH"
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": -432.4889,
+                "y": 195.5,
+                "z": -64.74
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        },
+        {
+            "type": "borg",
+            "start_position": {
+                "x": 19.5719,
+                "y": 121.0,
+                "z": -198.1272
+            },
+            "start_orientation": {
+                "yaw": 0.0,
+                "pitch": 0.0,
+                "roll": 0.0
+            }
+        }
     ]
 }

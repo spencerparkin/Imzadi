@@ -3,6 +3,10 @@
 #include "Character.h"
 #include "Math/Random.h"
 
+/**
+ * These are just dump baddies that can kill the main character if touched.
+ * They're easy to avoid for now, but maybe I can make them more interesting later.
+ */
 class Borg : public Character
 {
 public:

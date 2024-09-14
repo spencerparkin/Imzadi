@@ -76,7 +76,12 @@ void FollowCam::HandleWarpTunnelEvent(const WarpTunnelEvent* event)
 {
 	Input* controller = Game::Get()->GetController(this->cameraUser);
 	if (!controller)
-		return true;
+	{
+		// We should be able to move when in a conversation too.
+		controller = Game::Get()->GetController("DialogSystem");
+		if (!controller)
+			return true;
+	}
 
 	switch (tickPass)
 	{
