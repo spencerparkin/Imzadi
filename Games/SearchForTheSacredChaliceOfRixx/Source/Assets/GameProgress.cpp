@@ -50,7 +50,7 @@ GameProgress::GameProgress()
 
 				std::string itemName = iter->name.GetString();
 				uint32_t itemCount = iter->value.GetUint();
-				this->inventoryMap.insert(std::pair<std::string, uint32_t>(itemName, itemCount));
+				this->SetPossessedItemCount(itemName, itemCount);
 			}
 		}
 	}
@@ -119,7 +119,8 @@ void GameProgress::SetPossessedItemCount(const std::string& itemName, uint32_t i
 	if (iter != this->inventoryMap.end())
 		this->inventoryMap.erase(iter);
 
-	this->inventoryMap.insert(std::pair<std::string, uint32_t>(itemName, itemCount));
+	if (itemCount > 0)
+		this->inventoryMap.insert(std::pair<std::string, uint32_t>(itemName, itemCount));
 }
 
 void GameProgress::SetLevelName(const std::string& levelName)
