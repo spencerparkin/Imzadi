@@ -56,6 +56,7 @@ namespace Imzadi
 		virtual Collision::ShapeID GetGroundContactShape() const override;
 		virtual uint32_t TickOrder() const override;
 		virtual std::string GetInfo() const override;
+		virtual Vector3 GetPlatformSpaceFacingDirection() const;
 
 		void SetRestartLocation(const Vector3& restartLocation);
 		void SetRestartOrientation(const Quaternion& restartOrientation);

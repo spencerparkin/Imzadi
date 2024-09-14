@@ -82,15 +82,6 @@ Riker::Riker()
 
 	switch (tickPass)
 	{
-		case Imzadi::TickPass::MOVE_UNCONSTRAINTED:
-		{
-			if (this->disposition == Disposition::STOP_AND_TALK)
-			{
-				// TODO: Make sure we're facing Deanna.
-			}
-
-			break;
-		}
 		case Imzadi::TickPass::PARALLEL_WORK:
 		{
 			if (this->disposition == Disposition::RUN_AROUND_LIKE_AN_IDIOT)
@@ -107,6 +98,22 @@ Riker::Riker()
 	}
 
 	return true;
+}
+
+/*virtual*/ Imzadi::Vector3 Riker::GetPlatformSpaceFacingDirection() const
+{
+	if (this->disposition != Disposition::STOP_AND_TALK)
+		return Character::GetPlatformSpaceFacingDirection();
+
+	Imzadi::Transform objectToWorld = this->platformToWorld * this->objectToPlatform;
+	
+	Imzadi::Vector3 upDirection(0.0, 1.0, 0.0);
+	Imzadi::Vector3 facingDirection = (this->talkTarget - objectToWorld.translation).RejectedFrom(upDirection).Normalized();
+	
+	Imzadi::Transform worldToPlatform;
+	worldToPlatform.Invert(this->platformToWorld);
+
+	return worldToPlatform.TransformVector(facingDirection);
 }
 
 /*virtual*/ void Riker::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
@@ -146,7 +153,7 @@ void Riker::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
 			case ConvoBoundaryEvent::STARTED:
 			{
 				this->disposition = Disposition::STOP_AND_TALK;
-				// TODO: Calculate our look target here.
+				this->CalculateTalkTarget(event);
 				break;
 			}
 			case ConvoBoundaryEvent::FINISHED:
@@ -156,6 +163,35 @@ void Riker::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
 			}
 		}
 	}
+}
+
+void Riker::CalculateTalkTarget(const ConvoBoundaryEvent* event)
+{
+	this->talkTarget.SetComponents(0.0, 0.0, 0.0);
+	uint32_t count = 0;
+
+	for (uint32_t handle : event->participantHandleArray)
+	{
+		if (handle == this->GetHandle())
+			continue;
+
+		Imzadi::Reference<Imzadi::ReferenceCounted> ref;
+		Imzadi::HandleManager::Get()->GetObjectFromHandle(handle, ref);
+		Imzadi::Reference<Imzadi::Entity> entity;
+		entity.SafeSet(ref.Get());
+		if (!entity)
+			continue;
+
+		Imzadi::Transform objectToWorld;
+		if (!entity->GetTransform(objectToWorld))
+			continue;
+
+		this->talkTarget += objectToWorld.translation;
+		count++;
+	}
+
+	if (count > 0)
+		this->talkTarget /= double(count);
 }
 
 /*virtual*/ std::string Riker::GetAnimName(Imzadi::Biped::AnimType animType)

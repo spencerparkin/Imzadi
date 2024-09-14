@@ -105,6 +105,12 @@ Biped::Biped()
 	return info;
 }
 
+/*virtual*/ Vector3 Biped::GetPlatformSpaceFacingDirection() const
+{
+	// Note that this is in platform-space, not world-space.
+	return this->velocity;
+}
+
 /*virtual*/ void Biped::AdjustFacingDirection(double deltaTime)
 {
 	// Make sure the render mesh faces the direction we're moving.
@@ -115,7 +121,7 @@ Biped::Biped()
 		Vector3 xAxis, yAxis, zAxis;
 
 		yAxis.SetComponents(0.0, 1.0, 0.0);
-		zAxis = -this->velocity.RejectedFrom(yAxis).Normalized();
+		zAxis = (-this->GetPlatformSpaceFacingDirection()).RejectedFrom(yAxis).Normalized();
 		xAxis = yAxis.Cross(zAxis);
 
 		targetOrientation.SetColumnVectors(xAxis, yAxis, zAxis);
