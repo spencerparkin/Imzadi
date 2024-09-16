@@ -4,17 +4,36 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level4\\Box002_Indices.buffer",
     "vertex_buffer": "Models\\Level4\\Box002_Vertices.buffer",
+    "name": "Box002",
     "texture": "Textures\\MegaWack.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 6.862300395965576,
+            "y": -8.866393089294434,
+            "z": 236.52935791015626
+        }
+    },
     "bounding_box": {
         "min": {
-            "x": -119.88819122314453,
-            "y": -48.8330192565918,
-            "z": 0.0
+            "x": -25.82270050048828,
+            "y": -0.992271363735199,
+            "z": -44.90681838989258
         },
         "max": {
-            "x": 122.83880615234375,
-            "y": 111.68851470947266,
-            "z": 1230.7861328125
+            "x": 24.925933837890626,
+            "y": 0.9922720193862915,
+            "z": 24.21341323852539
         }
     }
 }
