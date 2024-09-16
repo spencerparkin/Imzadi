@@ -68,3 +68,9 @@ target_include_directories(SearchForTheSacredChaliceOfRixx PRIVATE
     "Source"
     ${PROJECT_SOURCE_DIR}/Engine/Source
 )
+
+if(CMAKE_BUILD_TYPE MATCHES Debug)
+    target_compile_definitions(SearchForTheSacredChaliceOfRixx PUBLIC
+        IMZADI_LOGGING
+    )
+endif()
