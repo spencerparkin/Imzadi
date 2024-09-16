@@ -172,7 +172,7 @@ void Frame::OnMergePolygons(wxCommandEvent& event)
 	if (wxYES == wxMessageBox("Tessellate after compression?", "Query", wxICON_QUESTION | wxYES_NO, this))
 		tessellate = true;
 
-	Imzadi::Polygon::Compress(wxGetApp().GetPolygonArray(), tessellate);
+	Imzadi::Polygon::Compress(wxGetApp().GetPolygonArray(), tessellate, true);
 
 	this->Refresh();
 }

@@ -43,6 +43,8 @@ public:
 	void OnUpdateUI(wxUpdateUIEvent& event);
 	void OnTimer(wxTimerEvent& event);
 
+	Canvas* GetCanvas() { return this->canvas; }
+
 private:
 	Canvas* canvas;
 	wxTimer timer;

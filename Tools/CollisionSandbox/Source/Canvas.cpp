@@ -16,8 +16,6 @@ int Canvas::attributeList[] = { WX_GL_RGBA, WX_GL_DOUBLEBUFFER, 0 };
 
 Canvas::Canvas(wxWindow* parent) : wxGLCanvas(parent, wxID_ANY, attributeList, wxDefaultPosition, wxDefaultSize)
 {
-	this->inputSystem.Setup(wxGetApp().GetFrame()->GetHWND());
-
 	this->targetShapes = false;
 	this->targetShapeHitLine = nullptr;
 	this->debugDrawFlags = IMZADI_DRAW_FLAG_SHAPES;
@@ -278,6 +276,11 @@ void Canvas::OnKeyPressed(wxKeyEvent& event)
 			break;
 		}
 	}
+}
+
+void Canvas::SetupInput()
+{
+	this->inputSystem.Setup(wxGetApp().GetFrame()->GetHWND());
 }
 
 void Canvas::Tick()

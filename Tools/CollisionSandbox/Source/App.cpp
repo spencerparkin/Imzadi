@@ -1,5 +1,6 @@
 #include "App.h"
 #include "Frame.h"
+#include "Canvas.h"
 #include "Math/AxisAlignedBoundingBox.h"
 
 wxIMPLEMENT_APP(App);
@@ -31,6 +32,7 @@ App::App()
 
 	this->frame = new Frame(wxDefaultPosition, wxSize(1600, 1000));
 	this->frame->Show();
+	this->frame->GetCanvas()->SetupInput();
 
 	return true;
 }
