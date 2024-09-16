@@ -234,7 +234,7 @@ namespace Imzadi
 		 * Remove as many redundancies in this polygon as we can.  The shape and
 		 * area of the polygon are not changed by this routine.
 		 */
-		void Reduce(double tolerance = 1e-7);
+		void Reduce(double tolerance = 1e-3);
 
 		/**
 		 * Return true if and only if the given vertex is, up
