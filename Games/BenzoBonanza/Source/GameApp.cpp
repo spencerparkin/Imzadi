@@ -5,7 +5,7 @@
 
 GameApp::GameApp(HINSTANCE instance) : Game(instance)
 {
-	lstrcpy(this->windowTitle, "Programmer's Block");
+	lstrcpy(this->windowTitle, "Benzo Bonanza");
 }
 
 /*virtual*/ GameApp::~GameApp()

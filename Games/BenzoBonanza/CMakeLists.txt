@@ -15,14 +15,14 @@ set(BENZO_BONANZA_SOURCES
     Source/CustomAssetCache.h
     Source/Pickup.cpp
     Source/Pickup.h
-    Source/Characters/DeannaTroi.cpp
-    Source/Characters/DeannaTroi.h
-    Source/Characters/LwaxanaTroi.cpp
-    Source/Characters/LwaxanaTroi.h
-    Source/Characters/Borg.cpp
-    Source/Characters/Borg.h
-    Source/Characters/Riker.cpp
-    Source/Characters/Riker.h
+    Source/Characters/Alice.cpp
+    Source/Characters/Alice.h
+    Source/Characters/Spencer.cpp
+    Source/Characters/Spencer.h
+    Source/Characters/Borggy.cpp
+    Source/Characters/Borggy.h
+    Source/Characters/Bob.cpp
+    Source/Characters/Bob.h
     Source/Entities/ZipLineEntity.cpp
     Source/Entities/ZipLineEntity.h
     Source/Entities/ZipLineRider.cpp

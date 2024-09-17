@@ -1,6 +1,6 @@
 #include "ZipLineEntity.h"
 #include "GameApp.h"
-#include "Characters/DeannaTroi.h"
+#include "Characters/Alice.h"
 #include "Collision/Shapes/Sphere.h"
 #include "Collision/CollisionCache.h"
 #include "Entities/ZipLineRider.h"

@@ -4,14 +4,17 @@
 #include "Math/Random.h"
 
 /**
- * These are just dump baddies that can kill the main character if touched.
+ * These are just dumb baddies that can kill the main character if touched.
  * They're easy to avoid for now, but maybe I can make them more interesting later.
+ * 
+ * There is some concern here that parody enters upon copyright infringement.
+ * It's not a borg, though, it's a borggy!
  */
-class Borg : public Character
+class Borggy : public Character
 {
 public:
-	Borg();
-	virtual ~Borg();
+	Borggy();
+	virtual ~Borggy();
 
 	virtual bool Setup() override;
 	virtual bool Shutdown() override;

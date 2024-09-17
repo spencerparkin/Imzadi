@@ -1,20 +1,20 @@
-#include "Riker.h"
+#include "Bob.h"
 #include "Assets/RenderMesh.h"
 #include "GameApp.h"
 
-Riker::Riker()
+Bob::Bob()
 {
-	this->SetName("Riker");
+	this->SetName("Bob");
 	this->waypointTargetIndex = -1;
 	this->runSpeed = 10.0;
 	this->disposition = Disposition::RUN_AROUND_LIKE_AN_IDIOT;
 }
 
-/*virtual*/ Riker::~Riker()
+/*virtual*/ Bob::~Bob()
 {
 }
 
-/*virtual*/ void Riker::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+/*virtual*/ void Bob::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
 {
 	capsule->SetVertex(0, Imzadi::Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Imzadi::Vector3(0.0, 5.0, 0.0));
@@ -22,9 +22,9 @@ Riker::Riker()
 	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER);
 }
 
-/*virtual*/ bool Riker::Setup()
+/*virtual*/ bool Bob::Setup()
 {
-	std::string modelFile = "Models/Riker/Riker.skinned_render_mesh";
+	std::string modelFile = "Models/Bob/Bob.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Character::Setup())
@@ -68,14 +68,14 @@ Riker::Riker()
 	return true;
 }
 
-/*virtual*/ bool Riker::Shutdown()
+/*virtual*/ bool Bob::Shutdown()
 {
 	Character::Shutdown();
 
 	return true;
 }
 
-/*virtual*/ bool Riker::Tick(Imzadi::TickPass tickPass, double deltaTime)
+/*virtual*/ bool Bob::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
@@ -100,7 +100,7 @@ Riker::Riker()
 	return true;
 }
 
-/*virtual*/ Imzadi::Vector3 Riker::GetPlatformSpaceFacingDirection() const
+/*virtual*/ Imzadi::Vector3 Bob::GetPlatformSpaceFacingDirection() const
 {
 	if (this->disposition != Disposition::STOP_AND_TALK)
 		return Character::GetPlatformSpaceFacingDirection();
@@ -116,7 +116,7 @@ Riker::Riker()
 	return worldToPlatform.TransformVector(facingDirection);
 }
 
-/*virtual*/ void Riker::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
+/*virtual*/ void Bob::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
 	if (this->inContactWithGround)
 	{
@@ -144,7 +144,7 @@ Riker::Riker()
 	Character::IntegrateVelocity(acceleration, deltaTime);
 }
 
-void Riker::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
+void Bob::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
 {
 	if (event->IsParticipant(this->GetHandle()))
 	{
@@ -165,7 +165,7 @@ void Riker::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
 	}
 }
 
-void Riker::CalculateTalkTarget(const ConvoBoundaryEvent* event)
+void Bob::CalculateTalkTarget(const ConvoBoundaryEvent* event)
 {
 	this->talkTarget.SetComponents(0.0, 0.0, 0.0);
 	uint32_t count = 0;
@@ -194,14 +194,14 @@ void Riker::CalculateTalkTarget(const ConvoBoundaryEvent* event)
 		this->talkTarget /= double(count);
 }
 
-/*virtual*/ std::string Riker::GetAnimName(Imzadi::Biped::AnimType animType)
+/*virtual*/ std::string Bob::GetAnimName(Imzadi::Biped::AnimType animType)
 {
 	switch (animType)
 	{
 	case Imzadi::Biped::AnimType::IDLE:
-		return "RikerIdle";
+		return "BobIdle";
 	case Imzadi::Biped::AnimType::RUN:
-		return "RikerRun";
+		return "BobRun";
 	}
 
 	return "";

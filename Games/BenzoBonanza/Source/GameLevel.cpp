@@ -1,9 +1,9 @@
 #include "GameLevel.h"
 #include "GameApp.h"
-#include "Characters/DeannaTroi.h"
-#include "Characters/LwaxanaTroi.h"
-#include "Characters/Borg.h"
-#include "Characters/Riker.h"
+#include "Characters/Alice.h"
+#include "Characters/Spencer.h"
+#include "Characters/Borggy.h"
+#include "Characters/Bob.h"
 #include "Pickup.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/ZipLineEntity.h"
@@ -25,7 +25,7 @@ GameLevel::GameLevel()
 
 /*virtual*/ Imzadi::Biped* GameLevel::SpawnMainCharacter()
 {
-	return Imzadi::Game::Get()->SpawnEntity<DeannaTroi>();
+	return Imzadi::Game::Get()->SpawnEntity<Alice>();
 }
 
 /*virtual*/ bool GameLevel::Setup()
@@ -35,9 +35,9 @@ GameLevel::GameLevel()
 
 	if (this->GetLevelName() == "Level1")
 	{
-		auto lwaxana = Imzadi::Game::Get()->SpawnEntity<LwaxanaTroi>();
-		lwaxana->SetRestartLocation(Imzadi::Vector3(-6.814, 1.6, -105.338));
-		lwaxana->SetRestartOrientation(Imzadi::Quaternion());
+		auto spencer = Imzadi::Game::Get()->SpawnEntity<Spencer>();
+		spencer->SetRestartLocation(Imzadi::Vector3(-6.814, 1.6, -105.338));
+		spencer->SetRestartOrientation(Imzadi::Quaternion());
 	}
 	else if (this->GetLevelName() == "Level6")
 	{
@@ -102,15 +102,15 @@ GameLevel::GameLevel()
 {
 	Imzadi::Game* game = Imzadi::Game::Get();
 
-	if (npc->type == "borg" ||
+	if (npc->type == "bob" ||
 		npc->type == "riker")
 	{
 		Character* character = nullptr;
 
 		if (npc->type == "borg")
-			character = game->SpawnEntity<Borg>();
-		else if (npc->type == "riker")
-			character = game->SpawnEntity<Riker>();
+			character = game->SpawnEntity<Borggy>();
+		else if (npc->type == "bob")
+			character = game->SpawnEntity<Bob>();
 
 		if (character)
 		{

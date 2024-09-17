@@ -2,11 +2,14 @@
 
 #include "Character.h"
 
-class LwaxanaTroi : public Character
+/**
+ * This is me.
+ */
+class Spencer : public Character
 {
 public:
-	LwaxanaTroi();
-	virtual ~LwaxanaTroi();
+	Spencer();
+	virtual ~Spencer();
 
 	virtual bool Setup() override;
 	virtual bool Shutdown() override;

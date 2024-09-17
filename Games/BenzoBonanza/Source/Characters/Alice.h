@@ -11,11 +11,14 @@
 
 class Pickup;
 
-class DeannaTroi : public Character
+/**
+ * Alice is the main character of the game and is controlled by the player.
+ */
+class Alice : public Character
 {
 public:
-	DeannaTroi();
-	virtual ~DeannaTroi();
+	Alice();
+	virtual ~Alice();
 
 	virtual bool Setup() override;
 	virtual bool Shutdown() override;
@@ -41,7 +44,7 @@ private:
 	class LabeledAction : public Imzadi::Action
 	{
 	public:
-		LabeledAction(DeannaTroi* troi);
+		LabeledAction(Alice* alice);
 		virtual ~LabeledAction();
 
 		virtual void Init() override;
@@ -59,7 +62,7 @@ private:
 	class TeleportToLevelAction : public LabeledAction
 	{
 	public:
-		TeleportToLevelAction(DeannaTroi* troi);
+		TeleportToLevelAction(Alice* alice);
 		virtual ~TeleportToLevelAction();
 
 		virtual bool Perform() override;
@@ -71,7 +74,7 @@ private:
 	class TalkToEntityAction : public LabeledAction
 	{
 	public:
-		TalkToEntityAction(DeannaTroi* troi);
+		TalkToEntityAction(Alice* alice);
 		virtual ~TalkToEntityAction();
 
 		virtual bool Perform() override;
@@ -83,7 +86,7 @@ private:
 	class CollectPickupAction : public LabeledAction
 	{
 	public:
-		CollectPickupAction(DeannaTroi* troi);
+		CollectPickupAction(Alice* alice);
 		virtual ~CollectPickupAction();
 
 		virtual bool Perform() override;
@@ -95,7 +98,7 @@ private:
 	class ControlRubiksCubeAction : public LabeledAction
 	{
 	public:
-		ControlRubiksCubeAction(DeannaTroi* troi);
+		ControlRubiksCubeAction(Alice* alice);
 		virtual ~ControlRubiksCubeAction();
 
 		virtual bool Perform() override;
@@ -107,7 +110,7 @@ private:
 	class OpenDoorAction : public LabeledAction
 	{
 	public:
-		OpenDoorAction(DeannaTroi* troi);
+		OpenDoorAction(Alice* alice);
 		virtual ~OpenDoorAction();
 
 		virtual bool Perform() override;

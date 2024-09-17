@@ -1,17 +1,17 @@
-#include "LwaxanaTroi.h"
+#include "Spencer.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "GameApp.h"
 
-LwaxanaTroi::LwaxanaTroi()
+Spencer::Spencer()
 {
 	this->SetName("Lwaxana");
 }
 
-/*virtual*/ LwaxanaTroi::~LwaxanaTroi()
+/*virtual*/ Spencer::~Spencer()
 {
 }
 
-/*virtual*/ void LwaxanaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+/*virtual*/ void Spencer::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
 {
 	capsule->SetVertex(0, Imzadi::Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Imzadi::Vector3(0.0, 5.0, 0.0));
@@ -19,9 +19,9 @@ LwaxanaTroi::LwaxanaTroi()
 	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER);
 }
 
-/*virtual*/ bool LwaxanaTroi::Setup()
+/*virtual*/ bool Spencer::Setup()
 {
-	std::string modelFile = "Models/LwaxanaTroi/LwaxanaTroi.skinned_render_mesh";
+	std::string modelFile = "Models/Spencer/Spencer.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Character::Setup())
@@ -30,24 +30,24 @@ LwaxanaTroi::LwaxanaTroi()
 	return true;
 }
 
-/*virtual*/ bool LwaxanaTroi::Shutdown()
+/*virtual*/ bool Spencer::Shutdown()
 {
 	Character::Shutdown();
 	return true;
 }
 
-/*virtual*/ void LwaxanaTroi::AdjustFacingDirection(double deltaTime)
+/*virtual*/ void Spencer::AdjustFacingDirection(double deltaTime)
 {
 	Imzadi::Reference<Imzadi::Entity> entity;
-	if (Imzadi::Game::Get()->FindEntityByName("Deanna", entity))
+	if (Imzadi::Game::Get()->FindEntityByName("Alice", entity))
 	{
-		Imzadi::Transform deannaTransform;
-		entity->GetTransform(deannaTransform);
+		Imzadi::Transform aliceTransform;
+		entity->GetTransform(aliceTransform);
 
 		Imzadi::Transform lwaxanaTransform;
 		this->GetTransform(lwaxanaTransform);
 
-		Imzadi::Vector3 direction = (deannaTransform.translation - lwaxanaTransform.translation).Normalized();
+		Imzadi::Vector3 direction = (aliceTransform.translation - lwaxanaTransform.translation).Normalized();
 		Imzadi::Vector3 xAxis, yAxis, zAxis;
 		yAxis.SetComponents(0.0, 1.0, 0.0);
 		zAxis = (-direction).RejectedFrom(yAxis).Normalized();
@@ -59,7 +59,7 @@ LwaxanaTroi::LwaxanaTroi()
 	}
 }
 
-/*virtual*/ bool LwaxanaTroi::Tick(Imzadi::TickPass tickPass, double deltaTime)
+/*virtual*/ bool Spencer::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
@@ -67,7 +67,7 @@ LwaxanaTroi::LwaxanaTroi()
 	return true;
 }
 
-/*virtual*/ void LwaxanaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
+/*virtual*/ void Spencer::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
 	Character::IntegrateVelocity(acceleration, deltaTime);
 
@@ -75,12 +75,12 @@ LwaxanaTroi::LwaxanaTroi()
 	this->velocity.z = 0.0;
 }
 
-/*virtual*/ std::string LwaxanaTroi::GetAnimName(Imzadi::Biped::AnimType animType)
+/*virtual*/ std::string Spencer::GetAnimName(Imzadi::Biped::AnimType animType)
 {
 	switch (animType)
 	{
 	case Imzadi::Biped::AnimType::IDLE:
-		return "LwaxanaTroiIdle";
+		return "SpencerIdle";
 	}
 
 	return "";

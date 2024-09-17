@@ -5,13 +5,13 @@
 #include "DialogSystem.h"
 
 /**
- * Command Riker is Deann's love interest, or at one point this was the case.
+ * Bob is another character in the game.  Not sure yet what his deal is.
  */
-class Riker : public Character
+class Bob : public Character
 {
 public:
-	Riker();
-	virtual ~Riker();
+	Bob();
+	virtual ~Bob();
 
 	virtual bool Setup() override;
 	virtual bool Shutdown() override;

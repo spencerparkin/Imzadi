@@ -1,4 +1,4 @@
-#include "Borg.h"
+#include "Borggy.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "GameApp.h"
 #include "Math/Ray.h"
@@ -6,9 +6,9 @@
 #include "Collision/Result.h"
 #include "Audio/System.h"
 
-Borg::Borg()
+Borggy::Borggy()
 {
-	this->SetName("Borg");
+	this->SetName("Borggy");
 	this->disposition = Disposition::MEANDERING;
 	this->meanderState = MeanderState::UNKNOWN;
 	this->rayCastQueryTaskID = 0;
@@ -20,13 +20,13 @@ Borg::Borg()
 	this->assimulatedHuman = false;
 }
 
-/*virtual*/ Borg::~Borg()
+/*virtual*/ Borggy::~Borggy()
 {
 }
 
-/*virtual*/ bool Borg::Setup()
+/*virtual*/ bool Borggy::Setup()
 {
-	std::string modelFile = "Models/Borg/Borg.skinned_render_mesh";
+	std::string modelFile = "Models/Borggy/Borggy.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Character::Setup())
@@ -35,14 +35,14 @@ Borg::Borg()
 	return true;
 }
 
-/*virtual*/ bool Borg::Shutdown()
+/*virtual*/ bool Borggy::Shutdown()
 {
 	Character::Shutdown();
 
 	return true;
 }
 
-/*virtual*/ void Borg::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+/*virtual*/ void Borggy::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
 {
 	capsule->SetVertex(0, Imzadi::Vector3(0.0, 2.5, 0.0));
 	capsule->SetVertex(1, Imzadi::Vector3(0.0, 6.5, 0.0));
@@ -50,7 +50,7 @@ Borg::Borg()
 	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY | SHAPE_FLAG_TALKER | SHAPE_FLAG_BADDY);
 }
 
-/*virtual*/ bool Borg::Tick(Imzadi::TickPass tickPass, double deltaTime)
+/*virtual*/ bool Borggy::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
@@ -142,7 +142,7 @@ Borg::Borg()
 	return true;
 }
 
-/*virtual*/ void Borg::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
+/*virtual*/ void Borggy::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
 	switch (this->disposition)
 	{
@@ -168,7 +168,7 @@ Borg::Borg()
 	Character::IntegrateVelocity(acceleration, deltaTime);
 }
 
-/*virtual*/ void Borg::AdjustFacingDirection(double deltaTime)
+/*virtual*/ void Borggy::AdjustFacingDirection(double deltaTime)
 {
 	if (this->inContactWithGround && this->disposition == Disposition::MEANDERING)
 	{
@@ -194,7 +194,7 @@ Borg::Borg()
 	}
 }
 
-void Borg::HandlePlatformRayCast(double deltaTime)
+void Borggy::HandlePlatformRayCast(double deltaTime)
 {
 	Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
@@ -265,7 +265,7 @@ void Borg::HandlePlatformRayCast(double deltaTime)
 	}
 }
 
-void Borg::HandleAttackRayCast()
+void Borggy::HandleAttackRayCast()
 {
 	Imzadi::Collision::System* collisionSystem = Imzadi::Game::Get()->GetCollisionSystem();
 
@@ -288,18 +288,18 @@ void Borg::HandleAttackRayCast()
 	if (!Imzadi::Game::Get()->FindEntityByShapeID(hitData.shapeID, foundEntity))
 		return;
 
-	if (foundEntity->GetName() != "Deanna")
+	if (foundEntity->GetName() != "Alice")
 		return;
 
 	this->disposition = Disposition::ATTACKING;
 
-	Imzadi::Transform deannaObjectToWorld;
-	foundEntity->GetTransform(deannaObjectToWorld);
+	Imzadi::Transform aliceObjectToWorld;
+	foundEntity->GetTransform(aliceObjectToWorld);
 
 	Imzadi::Transform borgObjectToWorld;
 	this->GetTransform(borgObjectToWorld);
 
-	this->velocity = (deannaObjectToWorld.translation - borgObjectToWorld.translation).Normalized() * this->attackMoveSpeed;
+	this->velocity = (aliceObjectToWorld.translation - borgObjectToWorld.translation).Normalized() * this->attackMoveSpeed;
 
 	Imzadi::Transform worldToPlatform;
 	worldToPlatform.Invert(this->platformToWorld);
@@ -308,13 +308,13 @@ void Borg::HandleAttackRayCast()
 	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("ResistanceIsFutile");
 }
 
-/*virtual*/ void Borg::OnBipedAbyssFalling()
+/*virtual*/ void Borggy::OnBipedAbyssFalling()
 {
 	if (!this->assimulatedHuman)
 		Imzadi::Game::Get()->GetAudioSystem()->PlaySound("ResistanceIsNotFutile");
 }
 
-/*virtual*/ std::string Borg::GetAnimName(Imzadi::Biped::AnimType animType)
+/*virtual*/ std::string Borggy::GetAnimName(Imzadi::Biped::AnimType animType)
 {
 	switch (animType)
 	{

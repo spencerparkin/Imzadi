@@ -119,37 +119,15 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 	if (entityArray.size() == 2)
 	{
 		std::string otherEntityName;
-		if (entityArray[0]->GetName() == "Deanna")
+		if (entityArray[0]->GetName() == "Alice")
 			otherEntityName = entityArray[1]->GetName();
-		else if (entityArray[1]->GetName() == "Deanna")
+		else if (entityArray[1]->GetName() == "Alice")
 			otherEntityName = entityArray[0]->GetName();
 		else
 			return false;
 
-		if (otherEntityName == "Lwaxana")
-		{
-			if (!progress->WasMileStoneReached("initial_contact_with_lwaxana_made"))
-				sequenceName = "lwaxana_initial_contact";
-			else
-			{
-				//...
-				sequenceName = "lwaxana_encourage_deanna";
-			}
-		}
-		else if (otherEntityName == "Borg")
-		{
-			sequenceName = "borg_talk";
-		}
-		else if (otherEntityName == "Riker")
-		{
-			if (!progress->WasMileStoneReached("initial_contact_with_riker_made"))
-				sequenceName = "riker_troi_initial_contact";
-			else
-			{
-				//...
-				sequenceName = "riker_encouragement";
-			}
-		}
+		// TODO: Write this.  It had to change since the copyright fix.
+		sequenceName = "";
 	}
 
 	return sequenceName.size() > 0;

@@ -1,8 +1,8 @@
-#include "DeannaTroi.h"
+#include "Alice.h"
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
 #include "Entities/RubiksCubeMaster.h"
-#include "Characters/Borg.h"
+#include "Characters/Borggy.h"
 #include "EventSystem.h"
 #include "DialogSystem.h"
 #include "Collision/Result.h"
@@ -11,36 +11,36 @@
 #include "Pickup.h"
 #include "Audio/System.h"
 
-//------------------------------------ DeannaTroi ------------------------------------
+//------------------------------------ Alice ------------------------------------
 
-DeannaTroi::DeannaTroi()
+Alice::Alice()
 {
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
 	this->entityOverlapQueryTaskID = 0;
-	this->SetName("Deanna");
+	this->SetName("Alice");
 }
 
-/*virtual*/ DeannaTroi::~DeannaTroi()
+/*virtual*/ Alice::~Alice()
 {
 }
 
-/*virtual*/ bool DeannaTroi::Setup()
+/*virtual*/ bool Alice::Setup()
 {
-	std::string modelFile = "Models/DeannaTroi/Troi.skinned_render_mesh";
+	std::string modelFile = "Models/Alice/Alice.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Character::Setup())
 		return false;
 
-	Imzadi::Game::Get()->PushControllerUser("DeannaTroi");
-	this->actionManager.SetControllerUser("DeannaTroi");
+	Imzadi::Game::Get()->PushControllerUser("Alice");
+	this->actionManager.SetControllerUser("Alice");
 
 	auto followCam = Imzadi::Game::Get()->SpawnEntity<Imzadi::FollowCam>();
 	followCam->SetSubject(this);
-	followCam->SetCameraUser("DeannaTroi");
+	followCam->SetCameraUser("Alice");
 	followCam->SetCamera(Imzadi::Game::Get()->GetCamera());
 
 	this->cameraHandle = followCam->GetHandle();
@@ -56,7 +56,7 @@ DeannaTroi::DeannaTroi()
 	return true;
 }
 
-/*virtual*/ bool DeannaTroi::Shutdown()
+/*virtual*/ bool Alice::Shutdown()
 {
 	Character::Shutdown();
 
@@ -73,7 +73,7 @@ DeannaTroi::DeannaTroi()
 	return true;
 }
 
-void DeannaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
+void Alice::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule)
 {
 	capsule->SetVertex(0, Imzadi::Vector3(0.0, 1.0, 0.0));
 	capsule->SetVertex(1, Imzadi::Vector3(0.0, 5.0, 0.0));
@@ -81,28 +81,28 @@ void DeannaTroi::ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* caps
 	capsule->SetUserFlags(IMZADI_SHAPE_FLAG_BIPED_ENTITY);
 }
 
-/*virtual*/ std::string DeannaTroi::GetAnimName(Imzadi::Biped::AnimType animType)
+/*virtual*/ std::string Alice::GetAnimName(Imzadi::Biped::AnimType animType)
 {
 	switch (animType)
 	{
-	case Imzadi::Biped::AnimType::IDLE:
-		return "Idle";
-	case Imzadi::Biped::AnimType::JUMP:
-		return "Jumping";
-	case Imzadi::Biped::AnimType::RUN:
-		return "Run";
 	case Imzadi::Biped::AnimType::ABYSS_FALLING:
-		return "DeannaTroiAbyssFalling";
+		return "AliceAbyssFalling";
 	case Imzadi::Biped::AnimType::FATAL_LANDING:
-		return "DeannaTroiFatalLanding";
+		return "AliceFatalLanding";
 	case Imzadi::Biped::AnimType::HIT_FALLING:
-		return "DeannaTroiHitFalling";
+		return "AliceHitFalling";
+	case Imzadi::Biped::AnimType::IDLE:
+		return "AliceIdle";
+	case Imzadi::Biped::AnimType::JUMP:
+		return "AliceJumping";
+	case Imzadi::Biped::AnimType::RUN:
+		return "AliceRun";
 	}
 
 	return "";
 }
 
-void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
+void Alice::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 {
 	if (this->collisionShapeID == event->shapeID)
 	{
@@ -160,11 +160,11 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	}
 }
 
-/*virtual*/ void DeannaTroi::AccumulateForces(Imzadi::Vector3& netForce)
+/*virtual*/ void Alice::AccumulateForces(Imzadi::Vector3& netForce)
 {
 	Character::AccumulateForces(netForce);
 
-	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("Alice");
 	if (!controller)
 		return;
 
@@ -175,7 +175,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	}
 }
 
-/*virtual*/ void DeannaTroi::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
+/*virtual*/ void Alice::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
 	if (this->inContactWithGround)
 	{
@@ -186,7 +186,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			return;
 
 		Imzadi::Vector2 leftStick(0.0, 0.0);
-		Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+		Imzadi::Input* controller = Imzadi::Game::Get()->GetController("Alice");
 		if (controller)
 			leftStick = controller->GetAnalogJoyStick(Imzadi::Button::L_JOY_STICK);
 
@@ -225,7 +225,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	Character::IntegrateVelocity(acceleration, deltaTime);
 }
 
-/*virtual*/ bool DeannaTroi::Tick(Imzadi::TickPass tickPass, double deltaTime)
+/*virtual*/ bool Alice::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
 	if (!Character::Tick(tickPass, deltaTime))
 		return false;
@@ -324,7 +324,7 @@ void DeannaTroi::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 	return true;
 }
 
-void DeannaTroi::HandleEntityOverlapResults()
+void Alice::HandleEntityOverlapResults()
 {
 	if (!this->entityOverlapQueryTaskID)
 		return;
@@ -352,7 +352,7 @@ void DeannaTroi::HandleEntityOverlapResults()
 			Imzadi::Reference<Imzadi::Entity> foundEntity;
 			if (Imzadi::Game::Get()->FindEntityByShapeID(shapeID, foundEntity))
 			{
-				auto borg = dynamic_cast<Borg*>(foundEntity.Get());
+				auto borg = dynamic_cast<Borggy*>(foundEntity.Get());
 				if (borg)
 					borg->assimulatedHuman = true;
 			}
@@ -384,7 +384,7 @@ void DeannaTroi::HandleEntityOverlapResults()
 		this->actionManager.UnbindAction(Imzadi::Button::B_BUTTON);
 }
 
-/*virtual*/ bool DeannaTroi::OnBipedDied()
+/*virtual*/ bool Alice::OnBipedDied()
 {
 	auto game = (GameApp*)Imzadi::Game::Get();
 	GameProgress* gameProgress = game->GetGameProgress();
@@ -396,12 +396,12 @@ void DeannaTroi::HandleEntityOverlapResults()
 	return Character::OnBipedDied();
 }
 
-/*virtual*/ void DeannaTroi::Reset()
+/*virtual*/ void Alice::Reset()
 {
 	Character::Reset();
 }
 
-void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
+void Alice::HandleFreeCamEvent(const Imzadi::Event* event)
 {
 	auto teleportEvent = dynamic_cast<const Imzadi::FreeCamTeleportEvent*>(event);
 	if (teleportEvent)
@@ -414,9 +414,9 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 	}
 }
 
-/*virtual*/ bool DeannaTroi::HangingOnToZipLine()
+/*virtual*/ bool Alice::HangingOnToZipLine()
 {
-	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DeannaTroi");
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("Alice");
 	if (!controller)
 		return false;
 
@@ -425,12 +425,12 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 	return controller->ButtonDown(Imzadi::Button::Y_BUTTON);
 }
 
-/*virtual*/ std::string DeannaTroi::GetZipLineAnimationName()
+/*virtual*/ std::string Alice::GetZipLineAnimationName()
 {
-	return "DeannaZipLine";
+	return "AliceZipLine";
 }
 
-/*virtual*/ bool DeannaTroi::ConstraintVelocityWithGround()
+/*virtual*/ bool Alice::ConstraintVelocityWithGround()
 {
 	double platformLandingSpeed = this->velocity.Length();
 
@@ -440,33 +440,33 @@ void DeannaTroi::HandleFreeCamEvent(const Imzadi::Event* event)
 	return Biped::ConstraintVelocityWithGround();
 }
 
-/*virtual*/ void DeannaTroi::OnBipedFatalLanding()
+/*virtual*/ void Alice::OnBipedFatalLanding()
 {
 	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("DeathGroan");
 }
 
-/*virtual*/ void DeannaTroi::OnBipedAbyssFalling()
+/*virtual*/ void Alice::OnBipedAbyssFalling()
 {
 	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("HelpMeAhhh");
 }
 
-/*virtual*/ void DeannaTroi::OnBipedBaddyHit()
+/*virtual*/ void Alice::OnBipedBaddyHit()
 {
 	Imzadi::Game::Get()->GetAudioSystem()->PlaySound("BorgNanoProbesUgh");
 }
 
-//------------------------------------ DeannaTroi::LabeledAction ------------------------------------
+//------------------------------------ Alice::LabeledAction ------------------------------------
 
-DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
+Alice::LabeledAction::LabeledAction(Alice* alice)
 {
-	this->entityHandle = troi->GetHandle();
+	this->entityHandle = alice->GetHandle();
 }
 
-/*virtual*/ DeannaTroi::LabeledAction::~LabeledAction()
+/*virtual*/ Alice::LabeledAction::~LabeledAction()
 {
 }
 
-/*virtual*/ void DeannaTroi::LabeledAction::Init()
+/*virtual*/ void Alice::LabeledAction::Init()
 {
 	uint32_t flags =
 		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
@@ -485,29 +485,29 @@ DeannaTroi::LabeledAction::LabeledAction(DeannaTroi* troi)
 	scene->AddRenderObject(this->textRenderObject.Get());
 }
 
-/*virtual*/ void DeannaTroi::LabeledAction::Deinit()
+/*virtual*/ void Alice::LabeledAction::Deinit()
 {
 	Imzadi::Scene* scene = Imzadi::Game::Get()->GetScene();
 	scene->RemoveRenderObject(this->textRenderObject->GetName());
 	this->textRenderObject.Reset();
 }
 
-/*virtual*/ void DeannaTroi::LabeledAction::Tick(double deltaTime)
+/*virtual*/ void Alice::LabeledAction::Tick(double deltaTime)
 {
 	this->textRenderObject->SetText(this->GetActionLabel());
 	this->UpdateTransform();
 }
 
-void DeannaTroi::LabeledAction::UpdateTransform()
+void Alice::LabeledAction::UpdateTransform()
 {
 	Imzadi::Reference<ReferenceCounted> ref;
 	if (Imzadi::HandleManager::Get()->GetObjectFromHandle(this->entityHandle, ref))
 	{
-		auto troi = dynamic_cast<DeannaTroi*>(ref.Get());
-		if (troi)
+		auto alice = dynamic_cast<Alice*>(ref.Get());
+		if (alice)
 		{
 			Imzadi::Transform transform;
-			troi->GetTransform(transform);
+			alice->GetTransform(transform);
 			transform.matrix.SetIdentity();
 			transform.matrix.SetUniformScale(20.0);
 			transform.translation += Imzadi::Vector3(0.0, 4.0, 0.0);
@@ -516,39 +516,39 @@ void DeannaTroi::LabeledAction::UpdateTransform()
 	}
 }
 
-//------------------------------------ DeannaTroi::TeleportToLevelAction ------------------------------------
+//------------------------------------ Alice::TeleportToLevelAction ------------------------------------
 
-DeannaTroi::TeleportToLevelAction::TeleportToLevelAction(DeannaTroi* troi) : LabeledAction(troi)
+Alice::TeleportToLevelAction::TeleportToLevelAction(Alice* alice) : LabeledAction(alice)
 {
 }
 
-/*virtual*/ DeannaTroi::TeleportToLevelAction::~TeleportToLevelAction()
+/*virtual*/ Alice::TeleportToLevelAction::~TeleportToLevelAction()
 {
 }
 
-/*virtual*/ bool DeannaTroi::TeleportToLevelAction::Perform()
+/*virtual*/ bool Alice::TeleportToLevelAction::Perform()
 {
 	Imzadi::EventSystem* eventSystem = Imzadi::Game::Get()->GetEventSystem();
 	eventSystem->SendEvent("LevelTransition", new Imzadi::Event(this->targetLevel));
 	return false;	// Return false here to unbind the action once it's been performed.
 }
 
-/*virtual*/ std::string DeannaTroi::TeleportToLevelAction::GetActionLabel() const
+/*virtual*/ std::string Alice::TeleportToLevelAction::GetActionLabel() const
 {
 	return std::format("Press \"A\" to teleport to {}.", this->targetLevel.c_str());
 }
 
-//------------------------------------ DeannaTroi::TalkToEntityAction ------------------------------------
+//------------------------------------ Alice::TalkToEntityAction ------------------------------------
 
-DeannaTroi::TalkToEntityAction::TalkToEntityAction(DeannaTroi* troi) : LabeledAction(troi)
+Alice::TalkToEntityAction::TalkToEntityAction(Alice* alice) : LabeledAction(alice)
 {
 }
 
-/*virtual*/ DeannaTroi::TalkToEntityAction::~TalkToEntityAction()
+/*virtual*/ Alice::TalkToEntityAction::~TalkToEntityAction()
 {
 }
 
-/*virtual*/ bool DeannaTroi::TalkToEntityAction::Perform()
+/*virtual*/ bool Alice::TalkToEntityAction::Perform()
 {
 	Imzadi::Reference<Entity> foundEntity;
 	if (Imzadi::Game::Get()->FindEntityByName(this->targetEntity, foundEntity))
@@ -563,43 +563,43 @@ DeannaTroi::TalkToEntityAction::TalkToEntityAction(DeannaTroi* troi) : LabeledAc
 	return false;
 }
 
-/*virtual*/ std::string DeannaTroi::TalkToEntityAction::GetActionLabel() const
+/*virtual*/ std::string Alice::TalkToEntityAction::GetActionLabel() const
 {
 	return std::format("Press \"A\" to talk to {}.", this->targetEntity.c_str());
 }
 
-//------------------------------------ DeannaTroi::TalkToEntityAction ------------------------------------
+//------------------------------------ Alice::TalkToEntityAction ------------------------------------
 
-DeannaTroi::CollectPickupAction::CollectPickupAction(DeannaTroi* troi) : LabeledAction(troi)
+Alice::CollectPickupAction::CollectPickupAction(Alice* alice) : LabeledAction(alice)
 {
 }
 
-/*virtual*/ DeannaTroi::CollectPickupAction::~CollectPickupAction()
+/*virtual*/ Alice::CollectPickupAction::~CollectPickupAction()
 {
 }
 
-/*virtual*/ bool DeannaTroi::CollectPickupAction::Perform()
+/*virtual*/ bool Alice::CollectPickupAction::Perform()
 {
 	this->pickup->Collect();
 	return true;
 }
 
-/*virtual*/ std::string DeannaTroi::CollectPickupAction::GetActionLabel() const
+/*virtual*/ std::string Alice::CollectPickupAction::GetActionLabel() const
 {
 	return std::format("Press \"B\" to {} {}.", this->pickup->GetVerb().c_str(), this->pickup->GetLabel().c_str());
 }
 
-//------------------------------------ DeannaTroi::ControlRubiksCubeAction ------------------------------------
+//------------------------------------ Alice::ControlRubiksCubeAction ------------------------------------
 
-DeannaTroi::ControlRubiksCubeAction::ControlRubiksCubeAction(DeannaTroi* troi) : LabeledAction(troi)
+Alice::ControlRubiksCubeAction::ControlRubiksCubeAction(Alice* alice) : LabeledAction(alice)
 {
 }
 
-/*virtual*/ DeannaTroi::ControlRubiksCubeAction::~ControlRubiksCubeAction()
+/*virtual*/ Alice::ControlRubiksCubeAction::~ControlRubiksCubeAction()
 {
 }
 
-/*virtual*/ bool DeannaTroi::ControlRubiksCubeAction::Perform()
+/*virtual*/ bool Alice::ControlRubiksCubeAction::Perform()
 {
 	Imzadi::Reference<Imzadi::Entity> foundEntity;
 	if (Imzadi::Game::Get()->FindEntityByName(this->masterName, foundEntity))
@@ -612,28 +612,28 @@ DeannaTroi::ControlRubiksCubeAction::ControlRubiksCubeAction(DeannaTroi* troi) :
 	return false;
 }
 
-/*virtual*/ std::string DeannaTroi::ControlRubiksCubeAction::GetActionLabel() const
+/*virtual*/ std::string Alice::ControlRubiksCubeAction::GetActionLabel() const
 {
 	return "Press \"A\" to telepathically control the Rubik's Cube.";
 }
 
-//------------------------------------ DeannaTroi::OpenDoorAction ------------------------------------
+//------------------------------------ Alice::OpenDoorAction ------------------------------------
 
-DeannaTroi::OpenDoorAction::OpenDoorAction(DeannaTroi* troi) : LabeledAction(troi)
+Alice::OpenDoorAction::OpenDoorAction(Alice* alice) : LabeledAction(alice)
 {
 }
 
-/*virtual*/ DeannaTroi::OpenDoorAction::~OpenDoorAction()
+/*virtual*/ Alice::OpenDoorAction::~OpenDoorAction()
 {
 }
 
-/*virtual*/ bool DeannaTroi::OpenDoorAction::Perform()
+/*virtual*/ bool Alice::OpenDoorAction::Perform()
 {
 	Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->doorChannel, new Imzadi::Event("OpenDoor"));
 	return false;
 }
 
-/*virtual*/ std::string DeannaTroi::OpenDoorAction::GetActionLabel() const
+/*virtual*/ std::string Alice::OpenDoorAction::GetActionLabel() const
 {
 	return "Press \"A\" to open the door.";
 }
