@@ -1,6 +1,6 @@
-# CMakeLists.txt for the ProgrammersBlock game application.
+# CMakeLists.txt for the BenzoBonanza game application.
 
-set(PROGRAMMERS_BLOCK_SOURCES
+set(BENZO_BONANZA_SOURCES
     Source/Main.cpp
     Source/Main.h
     Source/GameApp.cpp
@@ -50,27 +50,27 @@ set(PROGRAMMERS_BLOCK_SOURCES
     Assets/Icons/Icon.rc
 )
 
-source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROGRAMMERS_BLOCK_SOURCES})
+source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${BENZO_BONANZA_SOURCES})
 
-add_executable(ProgrammersBlock WIN32 ${PROGRAMMERS_BLOCK_SOURCES})
+add_executable(BenzoBonanza WIN32 ${BENZO_BONANZA_SOURCES})
 
-target_link_libraries(ProgrammersBlock PRIVATE
+target_link_libraries(BenzoBonanza PRIVATE
     ImzadiGameEngine
 )
 
-target_compile_definitions(ProgrammersBlock PRIVATE
+target_compile_definitions(BenzoBonanza PRIVATE
     WIN32_LEAN_AND_MEAN
     NOMINMAX
     _USE_MATH_DEFINES
 )
 
-target_include_directories(ProgrammersBlock PRIVATE
+target_include_directories(BenzoBonanza PRIVATE
     "Source"
     ${PROJECT_SOURCE_DIR}/Engine/Source
 )
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(ProgrammersBlock PUBLIC
+    target_compile_definitions(BenzoBonanza PUBLIC
         IMZADI_LOGGING
     )
 endif()

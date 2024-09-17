@@ -1,3 +1,3 @@
 # CMakeLists.txt for Games directory.
 
-add_subdirectory(ProgrammersBlock)
+add_subdirectory(BenzoBonanza)

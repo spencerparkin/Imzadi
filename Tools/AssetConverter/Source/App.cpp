@@ -80,7 +80,7 @@ ConverterApp::ConverterApp()
 wxString ConverterApp::GetAssetsRootFolder()
 {
 	// TODO: Shouldn't hard-code this path.
-	return R"(E:\ENG_DEV\Imzadi\Games\ProgrammersBlock\Assets)";
+	return R"(E:\ENG_DEV\Imzadi\Games\BenzoBonanza\Assets)";
 }
 
 wxString ConverterApp::MakeAssetFileReference(const wxString& assetFile)
