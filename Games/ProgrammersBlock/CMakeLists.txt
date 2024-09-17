@@ -1,6 +1,6 @@
-# CMakeLists.txt for SearchForTheSacredChaliceOfRixx game application.
+# CMakeLists.txt for the ProgrammersBlock game application.
 
-set(RIXX_SOURCES
+set(PROGRAMMERS_BLOCK_SOURCES
     Source/Main.cpp
     Source/Main.h
     Source/GameApp.cpp
@@ -50,27 +50,27 @@ set(RIXX_SOURCES
     Assets/Icons/Icon.rc
 )
 
-source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${RIXX_SOURCES})
+source_group("Sources" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${PROGRAMMERS_BLOCK_SOURCES})
 
-add_executable(SearchForTheSacredChaliceOfRixx WIN32 ${RIXX_SOURCES})
+add_executable(ProgrammersBlock WIN32 ${PROGRAMMERS_BLOCK_SOURCES})
 
-target_link_libraries(SearchForTheSacredChaliceOfRixx PRIVATE
+target_link_libraries(ProgrammersBlock PRIVATE
     ImzadiGameEngine
 )
 
-target_compile_definitions(SearchForTheSacredChaliceOfRixx PRIVATE
+target_compile_definitions(ProgrammersBlock PRIVATE
     WIN32_LEAN_AND_MEAN
     NOMINMAX
     _USE_MATH_DEFINES
 )
 
-target_include_directories(SearchForTheSacredChaliceOfRixx PRIVATE
+target_include_directories(ProgrammersBlock PRIVATE
     "Source"
     ${PROJECT_SOURCE_DIR}/Engine/Source
 )
 
 if(CMAKE_BUILD_TYPE MATCHES Debug)
-    target_compile_definitions(SearchForTheSacredChaliceOfRixx PUBLIC
+    target_compile_definitions(ProgrammersBlock PUBLIC
         IMZADI_LOGGING
     )
 endif()

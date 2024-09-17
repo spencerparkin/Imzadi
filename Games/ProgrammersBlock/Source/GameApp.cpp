@@ -5,7 +5,7 @@
 
 GameApp::GameApp(HINSTANCE instance) : Game(instance)
 {
-	lstrcpy(this->windowTitle, "Search for the Sacred Chalice of Rixx");
+	lstrcpy(this->windowTitle, "Programmer's Block");
 }
 
 /*virtual*/ GameApp::~GameApp()
@@ -79,7 +79,7 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 bool GameApp::GetGameAssetPath(std::filesystem::path& gameAssetPath)
 {
-	gameAssetPath = R"(E:\ENG_DEV\Imzadi\Games\SearchForTheSacredChaliceOfRixx\Assets)";	// TODO: Need to not hard-code a path here.
+	gameAssetPath = R"(E:\ENG_DEV\Imzadi\Games\ProgrammersBlock\Assets)";	// TODO: Need to not hard-code a path here.
 	return true;
 }
 

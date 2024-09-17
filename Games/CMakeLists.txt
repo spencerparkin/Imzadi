@@ -1,3 +1,3 @@
 # CMakeLists.txt for Games directory.
 
-add_subdirectory(SearchForTheSacredChaliceOfRixx)
+add_subdirectory(ProgrammersBlock)
