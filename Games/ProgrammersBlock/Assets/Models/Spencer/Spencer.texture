@@ -1,0 +1,8 @@
+{
+    "width": 512,
+    "height": 512,
+    "data": "Models\\Spencer\\Spencer.texture_data",
+    "num_mips": 10,
+    "format": "RGBA",
+    "compressed": true
+}
