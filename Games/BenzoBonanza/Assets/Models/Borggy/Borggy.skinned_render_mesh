@@ -42,7 +42,7 @@
     "skeleton": "Models\\Borggy\\Borggy.skeleton",
     "skin_weights": "Models\\Borggy\\Borggy.skin_weights",
     "animations": [
-        "Animations/BorggyIdle.animation",
-        "Animations/BorggyRun.animation"
+        "Animations\\BorggyIdle.animation",
+        "Animations\\BorggyRun.animation"
     ]
 }

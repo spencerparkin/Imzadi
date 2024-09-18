@@ -319,9 +319,9 @@ void Borggy::HandleAttackRayCast()
 	switch (animType)
 	{
 	case Imzadi::Biped::AnimType::IDLE:
-		return "BorgIdle";
+		return "BorggyIdle";
 	case Imzadi::Biped::AnimType::RUN:
-		return "BorgRun";
+		return "BorggyRun";
 	}
 
 	return "";

@@ -103,7 +103,7 @@ GameLevel::GameLevel()
 	Imzadi::Game* game = Imzadi::Game::Get();
 
 	if (npc->type == "bob" ||
-		npc->type == "riker")
+		npc->type == "borg")
 	{
 		Character* character = nullptr;
 
