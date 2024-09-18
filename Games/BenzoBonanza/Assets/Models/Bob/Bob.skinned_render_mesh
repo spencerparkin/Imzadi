@@ -42,7 +42,7 @@
     "skeleton": "Models\\Bob\\Bob.skeleton",
     "skin_weights": "Models\\Bob\\Bob.skin_weights",
     "animations": [
-        "Animations/BobIdle.animation",
-        "Animations/BobRun.animation"
+        "Animations\\BobIdle.animation",
+        "Animations\\BobRun.animation"
     ]
 }
