@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Tube003_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Tube003_Vertices.buffer",
+    "name": "Tube003",
+    "texture": "Textures\\Weirdo.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 118.39048767089844,
+            "y": 13.394524574279786,
+            "z": 4.474301815032959
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -75.85111236572266,
+            "y": -25.327516555786134,
+            "z": -23.24693489074707
+        },
+        "max": {
+            "x": 75.8507080078125,
+            "y": 25.341949462890626,
+            "z": 23.248363494873048
+        }
+    }
+}

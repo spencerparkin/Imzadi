@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Cylinder001_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Cylinder001_Vertices.buffer",
+    "name": "Cylinder001",
+    "texture": "Textures\\JuliaFractal.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 7.667604923248291,
+            "y": -9.265664100646973,
+            "z": 4.034212112426758
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -35.73411178588867,
+            "y": -1.5796778202056885,
+            "z": -35.19123840332031
+        },
+        "max": {
+            "x": 35.73412322998047,
+            "y": 1.5796778202056885,
+            "z": 35.19123840332031
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Box003_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Box003_Vertices.buffer",
+    "name": "Box003",
+    "texture": "Textures\\MegaWack.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -224.02542114257813,
+            "y": -9.056709289550782,
+            "z": 3.1451709270477297
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -24.302867889404298,
+            "y": -0.9922725558280945,
+            "z": -25.882732391357423
+        },
+        "max": {
+            "x": 44.95090866088867,
+            "y": 0.9922724962234497,
+            "z": 24.913074493408204
+        }
+    }
+}

@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Tube004_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Tube004_Vertices.buffer",
+    "name": "Tube004",
+    "texture": "Textures\\AstroTurf.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 7.391263484954834,
+            "y": 10.72070026397705,
+            "z": 116.04745483398438
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -23.730966567993165,
+            "y": -25.258676528930665,
+            "z": -76.77422332763672
+        },
+        "max": {
+            "x": 23.798046112060548,
+            "y": 25.410781860351564,
+            "z": 74.96157836914063
+        }
+    }
+}

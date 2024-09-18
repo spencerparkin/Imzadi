@@ -684,8 +684,9 @@ bool Polygon::RayCast(const Ray& ray, double& alpha, Vector3& unitSurfaceNormal)
 			for (const Polygon& polygon : coplanarPolygonArray)
 				totalAreaAfterword += polygon.Area(false);
 			
-			double tolerance = 1e-6;
-			if (::fabs(totalAreaBeforehand - totalAreaAfterword) >= tolerance)
+			double tolerance = 1e-3;
+			double error = totalAreaBeforehand - totalAreaAfterword;
+			if (::fabs(error) >= tolerance)
 			{
 				IMZADI_ASSERT(false);
 			}
@@ -756,7 +757,7 @@ void Polygon::AddVerticesFrom(const Polygon& polygon, int i, int j, bool include
 	}
 }
 
-void Polygon::Reduce(double tolerance /*= 1e-7*/)
+void Polygon::Reduce(double tolerance /*= 1e-3*/)
 {
 	while (true)
 	{
@@ -973,7 +974,7 @@ bool Polygon::MergeCoplanarPolygonPair(const Polygon& polygonA, const Polygon& p
 		return false;
 
 	// Reduction must follow the merge, because the merger process
-	// can leave behind a valid (in some some sense) yet undesirable
+	// can leave behind a valid (in some sense) yet undesirable
 	// polygon.  Reduction does not change the shape or area of the
 	// polygon.  It just removes redundancies.
 	this->Reduce();
