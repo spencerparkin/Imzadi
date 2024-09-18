@@ -4,7 +4,7 @@
 
 Spencer::Spencer()
 {
-	this->SetName("Lwaxana");
+	this->SetName("Spencer");
 }
 
 /*virtual*/ Spencer::~Spencer()
@@ -44,10 +44,10 @@ Spencer::Spencer()
 		Imzadi::Transform aliceTransform;
 		entity->GetTransform(aliceTransform);
 
-		Imzadi::Transform lwaxanaTransform;
-		this->GetTransform(lwaxanaTransform);
+		Imzadi::Transform spencerTransform;
+		this->GetTransform(spencerTransform);
 
-		Imzadi::Vector3 direction = (aliceTransform.translation - lwaxanaTransform.translation).Normalized();
+		Imzadi::Vector3 direction = (aliceTransform.translation - spencerTransform.translation).Normalized();
 		Imzadi::Vector3 xAxis, yAxis, zAxis;
 		yAxis.SetComponents(0.0, 1.0, 0.0);
 		zAxis = (-direction).RejectedFrom(yAxis).Normalized();
