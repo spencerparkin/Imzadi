@@ -126,8 +126,20 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 		else
 			return false;
 
-		// TODO: Write this.  It had to change since the copyright fix.
-		sequenceName = "";
+		if (otherEntityName == "Spencer")
+		{
+			if (!progress->WasMileStoneReached("initial_contact_with_spencer_made"))
+				sequenceName = "spencer_initial_contact";
+			else
+			{
+				// TODO: The dialog sequence should unfold differently based on whether meds can be exchanged for hearts.
+				sequenceName = "";
+			}
+		}
+		else if (otherEntityName == "Bob")
+		{
+			//...
+		}
 	}
 
 	return sequenceName.size() > 0;

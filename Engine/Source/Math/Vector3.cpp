@@ -1,6 +1,8 @@
 #include "Vector3.h"
 #include "Matrix3x3.h"
 #include "Vector2.h"
+#include "SphericalCoords.h"
+#include "Random.h"
 
 using namespace Imzadi;
 
@@ -231,4 +233,13 @@ int Vector3::NearestPoint(const std::vector<Vector3>& pointArray, double squareR
 	}
 	
 	return j;
+}
+
+void Vector3::SetAsRandomDirection(Random& random)
+{
+	SphericalCoords coords;
+	coords.radius = 1.0;
+	coords.latitudeAngle = random.InRange(0.0, M_PI);
+	coords.longitudeAngle = random.InRange(0.0, 2.0 * M_PI);
+	*this = coords.GetToVector();
 }

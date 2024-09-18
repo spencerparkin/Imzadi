@@ -1,5 +1,95 @@
 {
     "sequence_table": {
-        
+        "spencer_initial_contact": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Hello, there.  Who are you?",
+                    "mile_stone": "initial_contact_with_spencer_made"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Hi.  I'm Spencer.  I'm the programmer."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "The programmer?  The programmer of what?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "This game that you're in right now."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Oh, I see.  And what's the goal here?  What am I supposed to do?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "The premise of the game is simple.  You see, I'm super depressed and I've lost all my meds.  I need your help to find them."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Alright.  Are they just lying about, then?  Why don't you just go get them yourself?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "My depression is debilitating.  If you wouldn't mind gathering them for me, I'd much appreciate it.  Once I have them all, you win the game!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Hmmmm.  Okay.  Sounds simple enough.  You know, though...You could just kill yourself now and get it over with."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Really?  Is that what I should do?"
+                },
+                {
+                    "type": "choice",
+                    "speaker": "Alice",
+                    "choice": [
+                        {
+                            "text": "I'm afraid so, yes.  You have no more reason to live.  It's time to end it all.",
+                            "sequence": "alice_suggests_spencer_sould_die"
+                        },
+                        {
+                            "text": "No, no, no...  I was just kidding (sortta).  I'll go find your stupid meds.  Try to stay alive in the meantime, okay?",
+                            "sequence": "alice_agrees_to_help_find_spencers_meds"
+                        }
+                    ]
+                }
+            ]
+        },
+        "alice_suggests_spencer_sould_die": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "I think you're right.  Good-bye.",
+                    "send_message": {
+                        "channel": "Spencer",
+                        "message": "suicide"
+                    }
+                }
+            ]
+        },
+        "alice_agrees_to_help_find_spencers_meds": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Okay.  I'll just be here waiting.  Note that I can also convert meds into hearts if that's helpful to you.  Good-bye and...thanks for your help."
+                }
+            ]
+        }
     }
 }

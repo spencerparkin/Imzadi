@@ -9,6 +9,8 @@
 
 namespace Imzadi
 {
+	class Random;
+
 	/**
 	 * Instances of this class are members of a 3-dimensional euclidean vector space,
 	 * and form a group over addition.
@@ -432,6 +434,13 @@ namespace Imzadi
 		 * @return An offset into the given array is returned.
 		 */
 		int NearestPoint(const std::vector<Vector3>& pointArray, double squareRadius) const;
+
+		/**
+		 * Set this vector to be of unit-length in a random direction.
+		 * 
+		 * @param[in] random This is the random number generator to use.
+		 */
+		void SetAsRandomDirection(Random& random);
 
 	public:
 		double x, y, z;
