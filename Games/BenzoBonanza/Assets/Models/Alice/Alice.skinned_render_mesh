@@ -42,12 +42,12 @@
     "skeleton": "Models\\Alice\\Alice.skeleton",
     "skin_weights": "Models\\Alice\\Alice.skin_weights",
     "animations": [
-        "Animations/AliceAbyssFalling.animation",
-        "Animations/AliceFatalLanding.animation",
-        "Animations/AliceHitFalling.animation",
-        "Animations/AliceIdle.animation",
-        "Animations/AliceJumping.animation",
-        "Animations/AliceRun.animation",
-        "Animations/AliceZipLine.animation"
+        "Animations\\AliceAbyssFalling.animation",
+        "Animations\\AliceFatalLanding.animation",
+        "Animations\\AliceHitFalling.animation",
+        "Animations\\AliceIdle.animation",
+        "Animations\\AliceJumping.animation",
+        "Animations\\AliceRun.animation",
+        "Animations\\AliceZipLine.animation"
     ]
 }
