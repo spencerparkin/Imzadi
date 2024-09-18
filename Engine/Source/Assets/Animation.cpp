@@ -427,6 +427,9 @@ bool KeyFrame::Save(rapidjson::Value& keyFrameValue, rapidjson::Document& jsonDo
 
 bool KeyFrame::Interpolate(const KeyFramePair& keyFramePair, double timeSeconds)
 {
+	if (!keyFramePair.lowerBound || !keyFramePair.upperBound)
+		return false;
+
 	if (keyFramePair.lowerBound->poseInfoArray.size() != keyFramePair.upperBound->poseInfoArray.size())
 		return false;
 
