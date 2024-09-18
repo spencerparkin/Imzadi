@@ -1,0 +1,53 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Alice\\Alice_Indices.buffer",
+    "vertex_buffer": "Models\\Alice\\Alice_Vertices.buffer",
+    "shadow_scale": 1.0,
+    "name": "Alice",
+    "texture": "Models\\Alice\\Alice.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -3.537841558456421,
+            "y": -0.028600135818123819,
+            "z": -0.9103123545646668
+        },
+        "max": {
+            "x": 3.5322985649108888,
+            "y": 6.523622512817383,
+            "z": 0.6995506286621094
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\Alice\\Alice.skeleton",
+    "skin_weights": "Models\\Alice\\Alice.skin_weights",
+    "animations": [
+        "Animations\\AliceAbyssFalling.animation",
+        "Animations\\AliceFatalLanding.animation",
+        "Animations\\AliceHitFalling.animation",
+        "Animations\\AliceIdle.animation",
+        "Animations\\AliceJumping.animation",
+        "Animations\\AliceRun.animation",
+        "Animations\\AliceZipLine.animation"
+    ]
+}

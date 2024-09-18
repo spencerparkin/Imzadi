@@ -1,8 +1,0 @@
-{
-    "width": 512,
-    "height": 512,
-    "data": "Models\\DeannaTroi\\DeannaTroi.texture_data",
-    "num_mips": 1,
-    "format": "RGBA",
-    "compressed": true
-}

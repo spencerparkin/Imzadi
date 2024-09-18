@@ -1,0 +1,48 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Borggy\\Borggy_Indices.buffer",
+    "vertex_buffer": "Models\\Borggy\\Borggy_Vertices.buffer",
+    "shadow_scale": 1.0,
+    "name": "Borggy",
+    "texture": "Models\\Borggy\\Borggy.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -6.575129508972168,
+            "y": -0.034941814839839938,
+            "z": -1.7526954412460328
+        },
+        "max": {
+            "x": 6.449285507202148,
+            "y": 9.735902786254883,
+            "z": 2.923757791519165
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\Borggy\\Borggy.skeleton",
+    "skin_weights": "Models\\Borggy\\Borggy.skin_weights",
+    "animations": [
+        "Animations\\BorggyIdle.animation",
+        "Animations\\BorggyRun.animation"
+    ]
+}

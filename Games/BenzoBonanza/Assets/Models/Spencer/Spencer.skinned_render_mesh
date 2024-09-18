@@ -1,0 +1,47 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Spencer\\Spencer_Indices.buffer",
+    "vertex_buffer": "Models\\Spencer\\Spencer_Vertices.buffer",
+    "shadow_scale": 1.0,
+    "name": "Spencer",
+    "texture": "Models\\Spencer\\Spencer.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -3.6925888061523439,
+            "y": -0.00015405184240080416,
+            "z": -0.44742438197135928
+        },
+        "max": {
+            "x": 3.5307323932647707,
+            "y": 6.42559814453125,
+            "z": 0.5571908950805664
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\Spencer\\Spencer.skeleton",
+    "skin_weights": "Models\\Spencer\\Spencer.skin_weights",
+    "animations": [
+        "Animations\\SpencerIdle.animation"
+    ]
+}

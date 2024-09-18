@@ -1,0 +1,48 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Bob\\Bob_Indices.buffer",
+    "vertex_buffer": "Models\\Bob\\Bob_Vertices.buffer",
+    "shadow_scale": 1.0,
+    "name": "Bob",
+    "texture": "Models\\Bob\\Bob.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.0,
+            "y": -0.0,
+            "z": -0.0
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -5.233124732971191,
+            "y": -0.010697646997869015,
+            "z": -0.8364564180374146
+        },
+        "max": {
+            "x": 4.663872241973877,
+            "y": 7.604005336761475,
+            "z": 0.963299036026001
+        }
+    },
+    "position_offset": 0,
+    "normal_offset": 20,
+    "skeleton": "Models\\Bob\\Bob.skeleton",
+    "skin_weights": "Models\\Bob\\Bob.skin_weights",
+    "animations": [
+        "Animations\\BobIdle.animation",
+        "Animations\\BobRun.animation"
+    ]
+}

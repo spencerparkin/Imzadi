@@ -1,0 +1,8 @@
+{
+    "width": 1024,
+    "height": 1024,
+    "data": "Models\\Bob\\Bob.texture_data",
+    "num_mips": 11,
+    "format": "RGBA",
+    "compressed": true
+}
