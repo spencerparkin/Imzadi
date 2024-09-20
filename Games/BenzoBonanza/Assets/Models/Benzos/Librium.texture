@@ -1,0 +1,8 @@
+{
+    "width": 32,
+    "height": 32,
+    "data": "Models\\Benzos\\Librium.texture_data",
+    "num_mips": 6,
+    "format": "RGBA",
+    "compressed": true
+}

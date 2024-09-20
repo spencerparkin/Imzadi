@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Benzos\\Halcion_Indices.buffer",
+    "vertex_buffer": "Models\\Benzos\\Halcion_Vertices.buffer",
+    "name": "Halcion",
+    "texture": "Models\\Benzos\\Halcion.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -1.0352502499699767e-7,
+            "y": -0.005537691991776228,
+            "z": -0.2541331350803375
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.9190936088562012,
+            "y": -0.9190937876701355,
+            "z": -0.2541331946849823
+        },
+        "max": {
+            "x": 0.9190937280654907,
+            "y": 0.9190936088562012,
+            "z": 0.2541331946849823
+        }
+    }
+}

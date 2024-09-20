@@ -1,0 +1,8 @@
+{
+    "width": 8,
+    "height": 8,
+    "data": "Models\\Benzos\\Halcion.texture_data",
+    "num_mips": 4,
+    "format": "RGBA",
+    "compressed": true
+}

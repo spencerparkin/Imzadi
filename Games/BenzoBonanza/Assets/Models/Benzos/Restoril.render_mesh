@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Benzos\\Restoril_Indices.buffer",
+    "vertex_buffer": "Models\\Benzos\\Restoril_Vertices.buffer",
+    "name": "Restoril",
+    "texture": "Models\\Benzos\\Restoril.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -7.776877475329513e-10,
+            "y": -2.2063835558583379e-7,
+            "z": 3.234287149211923e-8
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.2715400159358978,
+            "y": -0.5595515966415405,
+            "z": -0.5595516562461853
+        },
+        "max": {
+            "x": 0.2715400159358978,
+            "y": 0.5595517158508301,
+            "z": 0.5595517158508301
+        }
+    }
+}

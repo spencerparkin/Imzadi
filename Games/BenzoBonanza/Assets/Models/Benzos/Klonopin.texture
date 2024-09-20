@@ -1,0 +1,8 @@
+{
+    "width": 128,
+    "height": 128,
+    "data": "Models\\Benzos\\Klonopin.texture_data",
+    "num_mips": 8,
+    "format": "RGBA",
+    "compressed": true
+}
