@@ -2,13 +2,13 @@
 #include "GameApp.h"
 #include "Entities/FollowCam.h"
 #include "Entities/RubiksCubeMaster.h"
+#include "Entities/Pickup.h"
 #include "Characters/Borggy.h"
 #include "EventSystem.h"
 #include "DialogSystem.h"
 #include "Collision/Result.h"
 #include "Collision/CollisionCache.h"
 #include "Log.h"
-#include "Pickup.h"
 #include "Audio/System.h"
 
 //------------------------------------ Alice ------------------------------------
@@ -17,6 +17,7 @@ Alice::Alice()
 {
 	this->cameraHandle = 0;
 	this->maxMoveSpeed = 20.0;
+	this->freeCamListenerHandle = 0;
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
 	this->entityOverlapQueryTaskID = 0;
