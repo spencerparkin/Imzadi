@@ -136,8 +136,8 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 				sequenceName = "";
 
 				// The sequence should do this calcuation as well...
-				//int totalNumBenzos = 0, numBenzosCollected = 0;
-				//progress->CalcBenzoStats(totalNumBenzos, numBenzosCollected);
+				//int totalNumBenzos = 0, numBenzosReturned = 0;
+				//progress->CalcBenzoStats(totalNumBenzos, numBenzosReturned);
 				//...and then add that all benzos are found and you won the game.
 			}
 		}

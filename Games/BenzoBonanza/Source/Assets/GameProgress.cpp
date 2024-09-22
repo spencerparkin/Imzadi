@@ -186,10 +186,28 @@ std::string GameProgress::MakeBenzoKey(const Imzadi::Vector3& location) const
 	return std::format("<{}, {}, {}>", location.x, location.y, location.z);
 }
 
-void GameProgress::CalcBenzoStats(int& totalNumBenzos, int& numBenzosCollected)
+void GameProgress::CalcBenzoStats(int& totalNumBenzos, int& numBenzosReturned)
 {
 	totalNumBenzos = 0;
-	numBenzosCollected = (int)this->benzoSet.size();
+	numBenzosReturned = (int)this->benzoSet.size();
+
+	for (const auto& pair : this->inventoryMap)
+	{
+		const std::string& itemName = pair.first;
+		if (itemName == "Ativan" ||
+			itemName == "Halcion" ||
+			itemName == "Klonopin" ||
+			itemName == "Librium" ||
+			itemName == "Restoril" ||
+			itemName == "Valium" ||
+			itemName == "Xanax")
+		{
+			// If the benzo is in our possession, then it has not yet been returned.
+			uint32_t itemCount = pair.second;
+			if (itemCount > 0)
+				numBenzosReturned--;
+		}
+	}
 
 	for (const std::filesystem::path& assetFolderPath : Imzadi::Game::Get()->GetAssetCache()->GetAssetFolderArray())
 	{

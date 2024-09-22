@@ -37,7 +37,7 @@ public:
 	bool WasBenzoCollectedAt(const Imzadi::Vector3& location) const;
 	void SetBenzoCollectedAt(const Imzadi::Vector3& location);
 
-	void CalcBenzoStats(int& totalNumBenzos, int& numBenzosCollected);
+	void CalcBenzoStats(int& totalNumBenzos, int& numBenzosReturned);
 
 private:
 	std::string MakeBenzoKey(const Imzadi::Vector3& location) const;
