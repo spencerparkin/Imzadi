@@ -110,6 +110,61 @@
                 "pitch": 0.0,
                 "roll": 0.0
             }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 163.729658,
+                "y": -15.0,
+                "z": -313.145683
+            },
+            "config": {
+                "type": "Xanax"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -68.21702098,
+                "y": -95.0,
+                "z": 299.7301469
+            },
+            "config": {
+                "type": "Ativan"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -420.52,
+                "y": 196.0,
+                "z": -131.8728
+            },
+            "config": {
+                "type": "Halcion"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 778.0039,
+                "y": 197.0,
+                "z": -270.88045
+            },
+            "config": {
+                "type": "Klonopin"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 489.1749,
+                "y": 197.0,
+                "z": -125.07188
+            },
+            "config": {
+                "type": "Librium"
+            }
         }
     ]
 }

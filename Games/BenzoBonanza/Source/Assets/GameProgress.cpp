@@ -24,6 +24,7 @@ GameProgress::GameProgress()
 
 	this->mileStoneSet.clear();
 	this->inventoryMap.clear();
+	this->benzoSet.clear();
 
 	if (this->numLives > 0)
 	{
@@ -37,6 +38,19 @@ GameProgress::GameProgress()
 					return false;
 
 				this->mileStoneSet.insert(mileStoneValue.GetString());
+			}
+		}
+
+		if (jsonDoc.HasMember("benzo_collection") && jsonDoc["benzo_collection"].IsArray())
+		{
+			const rapidjson::Value& benzoCollectionArrayValue = jsonDoc["benzo_collection"];
+			for (int i = 0; i < benzoCollectionArrayValue.Size(); i++)
+			{
+				const rapidjson::Value& benzoValue = benzoCollectionArrayValue[i];
+				if (!benzoValue.IsString())
+					return false;
+
+				this->benzoSet.insert(benzoValue.GetString());
 			}
 		}
 
@@ -76,6 +90,13 @@ GameProgress::GameProgress()
 
 	jsonDoc.AddMember("mile_stone_array", mileStoneArrayValue, jsonDoc.GetAllocator());
 
+	rapidjson::Value benzoCollectionArrayValue;
+	benzoCollectionArrayValue.SetArray();
+	for (const std::string& benzoKey : this->benzoSet)
+		benzoCollectionArrayValue.PushBack(rapidjson::Value().SetString(benzoKey.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+
+	jsonDoc.AddMember("benzo_collection", benzoCollectionArrayValue, jsonDoc.GetAllocator());
+
 	rapidjson::Value inventoryMapValue;
 	inventoryMapValue.SetObject();
 	for (const auto& pair : this->inventoryMap)
@@ -91,6 +112,7 @@ GameProgress::GameProgress()
 	this->levelName = "";
 	this->inventoryMap.clear();
 	this->mileStoneSet.clear();
+	this->benzoSet.clear();
 	return true;
 }
 
@@ -141,4 +163,21 @@ void GameProgress::SetNumLives(int numLives)
 int GameProgress::GetNumLives() const
 {
 	return this->numLives;
+}
+
+bool GameProgress::WasBenzoCollectedAt(const Imzadi::Vector3& location) const
+{
+	std::string key = this->MakeBenzoKey(location);
+	return this->benzoSet.find(key) != this->benzoSet.end();
+}
+
+void GameProgress::SetBenzoCollectedAt(const Imzadi::Vector3& location)
+{
+	std::string key = this->MakeBenzoKey(location);
+	this->benzoSet.insert(key);
+}
+
+std::string GameProgress::MakeBenzoKey(const Imzadi::Vector3& location) const
+{
+	return std::format("<{}, {}, {}>", location.x, location.y, location.z);
 }

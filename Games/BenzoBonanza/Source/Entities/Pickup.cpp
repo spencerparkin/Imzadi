@@ -276,3 +276,51 @@ KeyPickup::KeyPickup()
 {
 	return "key";
 }
+
+//----------------------------------- BenzoPickup -----------------------------------
+
+BenzoPickup::BenzoPickup()
+{
+}
+
+/*virtual*/ BenzoPickup::~BenzoPickup()
+{
+}
+
+/*virtual*/ bool BenzoPickup::Setup()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* progress = game->GetGameProgress();
+	if (progress->WasBenzoCollectedAt(this->initialTransform.translation))
+		return false;
+
+	return Pickup::Setup();
+}
+
+/*virtual*/ void BenzoPickup::Collect()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* progress = game->GetGameProgress();
+	progress->SetBenzoCollectedAt(this->initialTransform.translation);
+	uint32_t count = progress->GetPossessedItemCount(this->benzoType);
+	progress->SetPossessedItemCount(this->benzoType, count + 1);
+
+	game->GetAudioSystem()->PlaySound("Yay");
+
+	Pickup::Collect();
+}
+
+/*virtual*/ std::string BenzoPickup::GetLabel() const
+{
+	return this->benzoType;
+}
+
+/*virtual*/ void BenzoPickup::Configure(const std::unordered_map<std::string, std::string>& configMap)
+{
+	std::unordered_map<std::string, std::string>::const_iterator iter = configMap.find("type");
+	if (iter == configMap.end())
+		return;
+
+	this->benzoType = iter->second;
+	this->renderMeshFile = std::format("Models/Benzos/{}.render_mesh", this->benzoType);
+}

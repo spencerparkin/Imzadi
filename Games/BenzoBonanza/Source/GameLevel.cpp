@@ -123,7 +123,8 @@ GameLevel::GameLevel()
 		npc->type == "heart" ||
 		npc->type == "speed_boost" ||
 		npc->type == "song" ||
-		npc->type == "key")
+		npc->type == "key" ||
+		npc->type == "benzo")
 	{
 		Pickup* pickup = nullptr;
 
@@ -135,6 +136,8 @@ GameLevel::GameLevel()
 			pickup = game->SpawnEntity<SongPickup>();
 		else if (npc->type == "key")
 			pickup = game->SpawnEntity<KeyPickup>();
+		else if (npc->type == "benzo")
+			pickup = game->SpawnEntity<BenzoPickup>();
 
 		if (pickup)
 		{

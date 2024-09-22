@@ -99,8 +99,8 @@ public:
 
 /**
  * Once added to the player's inventory, they can activate a speed-boost
- * (with a button press) at any desired time.  Doing so, they'll move extra
- * speed-fast for some amount of time.
+ * (with a button press) at any desired time.  Doing so, they'll move
+ * faster than usual for some amount of time.
  *
  * Some obstancles, for example, can't be overcome at normal speed.  So finding
  * and using one of these pick-ups is a way the player solves a level.
@@ -136,7 +136,7 @@ private:
 };
 
 /**
- * this pickup simply adds a key to your inventory.
+ * This pickup simply adds a key to your inventory.
  */
 class KeyPickup : public Pickup
 {
@@ -146,4 +146,22 @@ public:
 
 	virtual void Collect() override;
 	virtual std::string GetLabel() const override;
+};
+
+/**
+ * Collect all of these and return them to me and you win the game.  Yay.
+ */
+class BenzoPickup : public Pickup
+{
+public:
+	BenzoPickup();
+	virtual ~BenzoPickup();
+
+	virtual bool Setup() override;
+	virtual void Collect() override;
+	virtual std::string GetLabel() const override;
+	virtual void Configure(const std::unordered_map<std::string, std::string>& configMap) override;
+
+private:
+	std::string benzoType;
 };
