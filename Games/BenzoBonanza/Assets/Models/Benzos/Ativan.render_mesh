@@ -2,9 +2,9 @@
     "primitive_type": "TRIANGLE_LIST",
     "shader": "Shaders/Standard.shader",
     "shadow_shader": "Shaders/StandardShadow.shader",
-    "index_buffer": "Models\\Benzos\\Avitan_Indices.buffer",
-    "vertex_buffer": "Models\\Benzos\\Avitan_Vertices.buffer",
-    "name": "Avitan",
+    "index_buffer": "Models\\Benzos\\Ativan_Indices.buffer",
+    "vertex_buffer": "Models\\Benzos\\Ativan_Vertices.buffer",
+    "name": "Ativan",
     "texture": "Models\\Benzos\\Ativan.texture",
     "object_to_world": {
         "matrix": [
