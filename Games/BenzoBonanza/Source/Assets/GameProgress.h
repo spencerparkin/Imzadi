@@ -37,8 +37,11 @@ public:
 	bool WasBenzoCollectedAt(const Imzadi::Vector3& location) const;
 	void SetBenzoCollectedAt(const Imzadi::Vector3& location);
 
+	void CalcBenzoStats(int& totalNumBenzos, int& numBenzosCollected);
+
 private:
 	std::string MakeBenzoKey(const Imzadi::Vector3& location) const;
+	int CountBenzosInLevelFile(const std::string& levelFile);
 
 private:
 	std::unordered_map<std::string, uint32_t> inventoryMap;

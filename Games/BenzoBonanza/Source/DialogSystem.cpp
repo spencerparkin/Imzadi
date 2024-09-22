@@ -134,6 +134,11 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 			{
 				// TODO: The dialog sequence should unfold differently based on whether meds can be exchanged for hearts.
 				sequenceName = "";
+
+				// The sequence should do this calcuation as well...
+				//int totalNumBenzos = 0, numBenzosCollected = 0;
+				//progress->CalcBenzoStats(totalNumBenzos, numBenzosCollected);
+				//...and then add that all benzos are found and you won the game.
 			}
 		}
 		else if (otherEntityName == "Bob")

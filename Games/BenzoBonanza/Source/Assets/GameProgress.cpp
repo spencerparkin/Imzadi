@@ -1,4 +1,8 @@
 #include "GameProgress.h"
+#include "GameApp.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/istreamwrapper.h"
+#include <fstream>
 
 GameProgress::GameProgress()
 {
@@ -180,4 +184,53 @@ void GameProgress::SetBenzoCollectedAt(const Imzadi::Vector3& location)
 std::string GameProgress::MakeBenzoKey(const Imzadi::Vector3& location) const
 {
 	return std::format("<{}, {}, {}>", location.x, location.y, location.z);
+}
+
+void GameProgress::CalcBenzoStats(int& totalNumBenzos, int& numBenzosCollected)
+{
+	totalNumBenzos = 0;
+	numBenzosCollected = (int)this->benzoSet.size();
+
+	for (const std::filesystem::path& assetFolderPath : Imzadi::Game::Get()->GetAssetCache()->GetAssetFolderArray())
+	{
+		std::filesystem::path levelsFolder = assetFolderPath / "Levels";
+		if (std::filesystem::exists(levelsFolder))
+		{
+			for (const auto& entry : std::filesystem::directory_iterator(levelsFolder))
+			{
+				totalNumBenzos += this->CountBenzosInLevelFile(entry.path().string());
+			}
+		}
+	}
+}
+
+int GameProgress::CountBenzosInLevelFile(const std::string& levelFile)
+{
+	int numBenzos = 0;
+
+	std::ifstream fileStream;
+	fileStream.open(levelFile, std::ios::in);
+	if(fileStream.is_open())
+	{
+		rapidjson::Document jsonDoc;
+		rapidjson::IStreamWrapper streamWrapper(fileStream);
+		jsonDoc.ParseStream(streamWrapper);
+		if (!jsonDoc.HasParseError())
+		{
+			if (jsonDoc.IsObject() && jsonDoc.HasMember("npc_array") && jsonDoc["npc_array"].IsArray())
+			{
+				const rapidjson::Value& npcArrayValue = jsonDoc["npc_array"];
+				for (int i = 0; i < npcArrayValue.Size(); i++)
+				{
+					const rapidjson::Value& npcValue = npcArrayValue[i];
+					if (npcValue.IsObject() && npcValue.HasMember("type") && npcValue["type"].IsString() && npcValue["type"].GetString() == "benzo")
+						numBenzos++;
+				}
+			}
+		}
+
+		fileStream.close();
+	}
+
+	return numBenzos;
 }
