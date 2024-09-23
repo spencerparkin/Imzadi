@@ -48,8 +48,18 @@ Spencer::Spencer()
 		Imzadi::EventListenerType::TRANSITORY,
 		new Imzadi::LambdaEventListener([=](const Imzadi::Event* event)
 			{
-				this->HandleEvent(event);
+				this->HandleGeneralEvent(event);
 			}));
+
+	game->GetEventSystem()->RegisterEventListener(
+		"ConvoBoundary",
+		Imzadi::EventListenerType::TRANSITORY,
+		new Imzadi::LambdaEventListener([=](const Imzadi::Event* event)
+			{
+				this->HandleConversationBoundaryEvent(dynamic_cast<const ConvoBoundaryEvent*>(event));
+			}));
+
+	this->CelebrateIfAllMedsReturned();
 
 	return true;
 }
@@ -60,10 +70,28 @@ Spencer::Spencer()
 	return true;
 }
 
-void Spencer::HandleEvent(const Imzadi::Event* event)
+void Spencer::HandleGeneralEvent(const Imzadi::Event* event)
 {
 	if (event && event->GetName() == "suicide")
 		this->disposition = Disposition::COMMIT_SUICIDE;
+}
+
+void Spencer::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
+{
+	if (event->type == ConvoBoundaryEvent::FINISHED)
+		this->CelebrateIfAllMedsReturned();
+}
+
+void Spencer::CelebrateIfAllMedsReturned()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* progress = game->GetGameProgress();
+	int totalNumBenzos = 0, numBenzosReturned = 0;
+	progress->CalcBenzoStats(totalNumBenzos, numBenzosReturned);
+	if (totalNumBenzos == numBenzosReturned)
+	{
+		this->disposition = Disposition::CELEBRATE;
+	}
 }
 
 /*virtual*/ void Spencer::AdjustFacingDirection(double deltaTime)
@@ -109,7 +137,7 @@ void Spencer::HandleEvent(const Imzadi::Event* event)
 		this->velocity.x = 0.0;
 		this->velocity.z = 0.0;
 	}
-	else
+	else if (this->disposition == Disposition::COMMIT_SUICIDE)
 	{
 		if (this->inContactWithGround)
 			this->velocity = this->runDirection * this->runSpeed;
@@ -122,10 +150,17 @@ void Spencer::HandleEvent(const Imzadi::Event* event)
 {
 	switch (animType)
 	{
-	case Imzadi::Biped::AnimType::IDLE:
-		return "SpencerIdle";
-	case Imzadi::Biped::AnimType::RUN:
-		return "SpencerRun";
+		case Imzadi::Biped::AnimType::IDLE:
+		{
+			if (this->disposition == Disposition::CELEBRATE)
+				return "SpencerCelebrate";
+
+			return "SpencerIdle";
+		}
+		case Imzadi::Biped::AnimType::RUN:
+		{
+			return "SpencerRun";
+		}
 	}
 
 	return "";

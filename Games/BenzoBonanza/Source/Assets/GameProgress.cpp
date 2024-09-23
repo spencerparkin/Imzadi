@@ -2,12 +2,14 @@
 #include "GameApp.h"
 #include "rapidjson/reader.h"
 #include "rapidjson/istreamwrapper.h"
+#include "Entities/Pickup.h"
 #include <fstream>
 
 GameProgress::GameProgress()
 {
 	this->levelName = "Level1";
 	this->numLives = 3;
+	this->totalNumBenzos = 0;
 }
 
 /*virtual*/ GameProgress::~GameProgress()
@@ -186,40 +188,52 @@ std::string GameProgress::MakeBenzoKey(const Imzadi::Vector3& location) const
 	return std::format("<{}, {}, {}>", location.x, location.y, location.z);
 }
 
-void GameProgress::CalcBenzoStats(int& totalNumBenzos, int& numBenzosReturned)
+int GameProgress::GetPossessedBenzoCount()
 {
-	totalNumBenzos = 0;
-	numBenzosReturned = (int)this->benzoSet.size();
+	int count = 0;
+	for (const auto& pair : this->inventoryMap)
+		if (BenzoPickup::IsBenzoName(pair.first))
+			count += pair.second;	
+	
+	return count;
+}
+
+void GameProgress::CalcBenzoStats(int& outTotalNumBenzos, int& outNumBenzosReturned)
+{
+	outNumBenzosReturned = (int)this->benzoSet.size() - this->GetPossessedBenzoCount();
 
 	for (const auto& pair : this->inventoryMap)
 	{
-		const std::string& itemName = pair.first;
-		if (itemName == "Ativan" ||
-			itemName == "Halcion" ||
-			itemName == "Klonopin" ||
-			itemName == "Librium" ||
-			itemName == "Restoril" ||
-			itemName == "Valium" ||
-			itemName == "Xanax")
+		if (BenzoPickup::IsBenzoName(pair.first))
 		{
 			// If the benzo is in our possession, then it has not yet been returned.
 			uint32_t itemCount = pair.second;
 			if (itemCount > 0)
-				numBenzosReturned--;
+				outNumBenzosReturned--;
 		}
 	}
 
-	for (const std::filesystem::path& assetFolderPath : Imzadi::Game::Get()->GetAssetCache()->GetAssetFolderArray())
+	if (this->totalNumBenzos == 0)
 	{
-		std::filesystem::path levelsFolder = assetFolderPath / "Levels";
-		if (std::filesystem::exists(levelsFolder))
+		for (const std::filesystem::path& assetFolderPath : Imzadi::Game::Get()->GetAssetCache()->GetAssetFolderArray())
 		{
-			for (const auto& entry : std::filesystem::directory_iterator(levelsFolder))
+			std::filesystem::path levelsFolder = assetFolderPath / "Levels";
+			if (std::filesystem::exists(levelsFolder))
 			{
-				totalNumBenzos += this->CountBenzosInLevelFile(entry.path().string());
+				for (const auto& entry : std::filesystem::directory_iterator(levelsFolder))
+				{
+					std::filesystem::path levelFilePath = entry.path();
+					std::string ext = levelFilePath.extension().string();
+					if (ext == ".level")
+					{
+						this->totalNumBenzos += this->CountBenzosInLevelFile(levelFilePath.string());
+					}
+				}
 			}
 		}
 	}
+
+	outTotalNumBenzos = this->totalNumBenzos;
 }
 
 int GameProgress::CountBenzosInLevelFile(const std::string& levelFile)
@@ -241,8 +255,12 @@ int GameProgress::CountBenzosInLevelFile(const std::string& levelFile)
 				for (int i = 0; i < npcArrayValue.Size(); i++)
 				{
 					const rapidjson::Value& npcValue = npcArrayValue[i];
-					if (npcValue.IsObject() && npcValue.HasMember("type") && npcValue["type"].IsString() && npcValue["type"].GetString() == "benzo")
-						numBenzos++;
+					if (npcValue.IsObject() && npcValue.HasMember("type") && npcValue["type"].IsString())
+					{
+						std::string type = npcValue["type"].GetString();
+						if (type == "benzo")
+							numBenzos++;
+					}
 				}
 			}
 		}

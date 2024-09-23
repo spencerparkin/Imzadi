@@ -322,5 +322,19 @@ BenzoPickup::BenzoPickup()
 		return;
 
 	this->benzoType = iter->second;
+	IMZADI_ASSERT(IsBenzoName(benzoType));
 	this->renderMeshFile = std::format("Models/Benzos/{}.render_mesh", this->benzoType);
+}
+
+/*static*/ bool BenzoPickup::IsBenzoName(const std::string& name)
+{
+	return(
+		name == "Ativan" ||
+		name == "Halcion" ||
+		name == "Klonopin" ||
+		name == "Librium" ||
+		name == "Restoril" ||
+		name == "Valium" ||
+		name == "Xanax"
+	);
 }

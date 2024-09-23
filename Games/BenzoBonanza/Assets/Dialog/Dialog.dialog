@@ -90,6 +90,199 @@
                     "text": "Okay.  I'll just be here waiting.  Note that I can also convert meds into hearts if that's helpful to you.  Good-bye and...thanks for your help."
                 }
             ]
+        },
+        "you_won_the_game": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "What the heck is wrong with you?!",
+                    "mile_stone": "celebration_discussion_had"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "I'm just so happy!  I can't contain myself!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Are you high on benzos?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "No, of course not.  I quit those a long time ago.  They do really bad things to my brain."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Then what's gotten into you?!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "I'm just so happy that someone cared enough to return my meds.  You're so kind to me, Alice.  I'll never forget you.  And by the way, you've won the game!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Uh...I've won the game?  Where's the end-game cinematic?!  Where are all of the particle-based fireworks?!  This game sucks!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "What did you expect?  It was written by an idiot that no in the gaming industry will hire, and who works a dead-end job writing software no one gives a rat's butt about."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Hmmmm.  I see your point.  You know you can still leap to your death at any time, and put an end to your miserable existance."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "I know, Alice.  I know."
+                }
+            ]
+        },
+        "final_spencer_talk": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Yeah, you can just close the window now.  Good-bye!"
+                }
+            ]
+        },
+        "no_benzos_to_give_convo": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Hey, Alice.  Can I ask you something?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "You just did, but yeah, go ahead."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Oh!  Ha-ha!  Right you are.  So...  Do you think I could get hired as a programmer in the gaming industry?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Are you kidding me?  Just look around.  This is the crappiest game I've ever seen.  What do you think?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "And besides, you're not diverse enough."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Well...  Wait!  Not diverse enough?  What do you mean?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "I think you know what I mean, Spencer."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Hmmmm...  I guess you're right..."
+                }
+            ]
+        },
+        "bob_convo_one": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Hi!  My name's Bob.  I'm the hiring manager for your typical game studio.  I rock!  And I value diversity more than anything!",
+                    "mile_stone": "bob_convo_one_had"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "I know, right!  Diversity *is* everything!  It's the only thing that really matters in life."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "You said it, babe.  If you're not diverse, then you should probably go kill yourself."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "People who are not diverse just deserve to die.  I could not agree more."
+                }
+            ]
+        },
+        "bob_convo_two": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "So hear me out, Alice.  I've been trying to rigourously define diversity using the purest of all languages: mathematics.",
+                    "mile_stone": "bob_convo_two_had"
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "What I've come up with is essentially that diversity is a relative measure extracted from a population."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "Some populations have a lot of diversity, and some don't."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "Consequently, by definition, the diversity of any singleton population set is zero.  Therefore, the idea of diversity has no meaning when applied to a single individual."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "Diversity only takes on meaning when comparing the immutable characterstics between two or more people."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Alice",
+                    "text": "No, no, no!  That's blasphamy!  You've got it all wrong!"
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Alice",
+                    "text": "You are diverse if and only if you are NOT a white, straight male.  End of story."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "My heavens, you're right!  What was I thinking?  I should probably go kill myself."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Alice",
+                    "text": "Well, I'm sorry to say this, Bob, but you don't look very diverse, so...yeah.  You need to die."
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Bob",
+                    "text": "What if I turned gay?  Would it then be okay for me to live?"
+                },
+                {
+                    "type": "basic",
+                    "speakder": "Alice",
+                    "text": "Sure, Bob.  But only if you really mean it."
+                }
+            ]
         }
     }
 }

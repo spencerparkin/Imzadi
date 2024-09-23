@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Character.h"
+#include "DialogSystem.h"
 
 /**
  * This is me.
@@ -21,12 +22,15 @@ public:
 	virtual bool OnBipedDied() override;
 
 private:
-	void HandleEvent(const Imzadi::Event* event);
+	void HandleGeneralEvent(const Imzadi::Event* event);
+	void HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event);
+	void CelebrateIfAllMedsReturned();
 
 	enum Disposition
 	{
 		COLLECT_BENZOS_FROM_PLAYER,
-		COMMIT_SUICIDE
+		COMMIT_SUICIDE,
+		CELEBRATE
 	};
 
 	Disposition disposition;

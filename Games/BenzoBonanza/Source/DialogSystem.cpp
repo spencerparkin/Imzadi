@@ -4,6 +4,7 @@
 #include "GameApp.h"
 #include "Entity.h"
 #include "Log.h"
+#include "Math/Random.h"
 
 //--------------------------------- DialogSystem ---------------------------------
 
@@ -132,18 +133,41 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 				sequenceName = "spencer_initial_contact";
 			else
 			{
-				// TODO: The dialog sequence should unfold differently based on whether meds can be exchanged for hearts.
-				sequenceName = "";
+				int totalNumBenzos = 0, numBenzosReturned = 0;
+				progress->CalcBenzoStats(totalNumBenzos, numBenzosReturned);
+				if (totalNumBenzos == numBenzosReturned)
+				{
+					if (!progress->WasMileStoneReached("celebration_discussion_had"))
+						sequenceName = "you_won_the_game";
+					else
+						sequenceName = "final_spencer_talk";
+				}
+				else if (progress->GetPossessedBenzoCount() == 0)
+					sequenceName = "no_benzos_to_give_convo";
+				else
+				{
 
-				// The sequence should do this calcuation as well...
-				//int totalNumBenzos = 0, numBenzosReturned = 0;
-				//progress->CalcBenzoStats(totalNumBenzos, numBenzosReturned);
-				//...and then add that all benzos are found and you won the game.
+					// TODO: The dialog sequence should unfold differently based on whether meds can be exchanged for hearts.
+					sequenceName = "";
+
+				}
 			}
 		}
 		else if (otherEntityName == "Bob")
 		{
-			//...
+			if (!progress->WasMileStoneReached("bob_convo_one_had"))
+				sequenceName = "bob_convo_one";
+			else if (!progress->WasMileStoneReached("bob_convo_two_had"))
+				sequenceName = "bob_convo_two";
+			else
+			{
+				Imzadi::Random random;
+				random.SetSeedUsingTime();
+				if (random.CoinFlip())
+					sequenceName = "bob_convo_one";
+				else
+					sequenceName = "bob_convo_two";
+			}
 		}
 	}
 

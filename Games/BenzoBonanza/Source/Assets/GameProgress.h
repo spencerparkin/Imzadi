@@ -37,7 +37,8 @@ public:
 	bool WasBenzoCollectedAt(const Imzadi::Vector3& location) const;
 	void SetBenzoCollectedAt(const Imzadi::Vector3& location);
 
-	void CalcBenzoStats(int& totalNumBenzos, int& numBenzosReturned);
+	void CalcBenzoStats(int& outTotalNumBenzos, int& outNumBenzosReturned);
+	int GetPossessedBenzoCount();
 
 private:
 	std::string MakeBenzoKey(const Imzadi::Vector3& location) const;
@@ -49,4 +50,5 @@ private:
 	std::unordered_set<std::string> benzoSet;
 	std::string levelName;
 	int numLives;
+	int totalNumBenzos;
 };

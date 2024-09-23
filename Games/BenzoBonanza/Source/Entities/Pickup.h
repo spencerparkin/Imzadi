@@ -162,6 +162,8 @@ public:
 	virtual std::string GetLabel() const override;
 	virtual void Configure(const std::unordered_map<std::string, std::string>& configMap) override;
 
+	static bool IsBenzoName(const std::string& name);
+
 private:
 	std::string benzoType;
 };
