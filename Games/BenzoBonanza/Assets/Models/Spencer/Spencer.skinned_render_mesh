@@ -43,6 +43,7 @@
     "skin_weights": "Models\\Spencer\\Spencer.skin_weights",
     "animations": [
         "Animations\\SpencerIdle.animation",
-        "Animations\\SpencerRun.animation"
+        "Animations\\SpencerRun.animation",
+        "Animations\\SpencerCelebrate.animation"
     ]
 }
