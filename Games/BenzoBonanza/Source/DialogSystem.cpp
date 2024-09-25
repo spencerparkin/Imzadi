@@ -4,7 +4,6 @@
 #include "GameApp.h"
 #include "Entity.h"
 #include "Log.h"
-#include "Math/Random.h"
 
 //--------------------------------- DialogSystem ---------------------------------
 
@@ -160,14 +159,7 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 			else if (!progress->WasMileStoneReached("bob_convo_two_had"))
 				sequenceName = "bob_convo_two";
 			else
-			{
-				Imzadi::Random random;
-				random.SetSeedUsingTime();
-				if (random.CoinFlip())
-					sequenceName = "bob_convo_one";
-				else
-					sequenceName = "bob_convo_two";
-			}
+				sequenceName = "bob_convo_three";
 		}
 	}
 

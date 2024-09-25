@@ -228,59 +228,73 @@
             "sequence": [
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "So hear me out, Alice.  I've been trying to rigourously define diversity using the purest of all languages: mathematics.",
                     "mile_stone": "bob_convo_two_had"
                 },
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "What I've come up with is essentially that diversity is a relative measure extracted from a population."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "Some populations have a lot of diversity, and some don't."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "Consequently, by definition, the diversity of any singleton population set is zero.  Therefore, the idea of diversity has no meaning when applied to a single individual."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "Diversity only takes on meaning when comparing the immutable characterstics between two or more people."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Alice",
+                    "speaker": "Alice",
                     "text": "No, no, no!  That's blasphamy!  You've got it all wrong!"
                 },
                 {
                     "type": "basic",
-                    "speakder": "Alice",
+                    "speaker": "Alice",
                     "text": "You are diverse if and only if you are NOT a white, straight male.  End of story."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "My heavens, you're right!  What was I thinking?  I should probably go kill myself."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Alice",
+                    "speaker": "Alice",
                     "text": "Well, I'm sorry to say this, Bob, but you don't look very diverse, so...yeah.  You need to die."
                 },
                 {
                     "type": "basic",
-                    "speakder": "Bob",
+                    "speaker": "Bob",
                     "text": "What if I turned gay?  Would it then be okay for me to live?"
                 },
                 {
                     "type": "basic",
-                    "speakder": "Alice",
+                    "speaker": "Alice",
                     "text": "Sure, Bob.  But only if you really mean it."
+                }
+            ]
+        },
+        "bob_convo_three": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "My workforce has too many humans in it.  I've decided to only hire aliens from now on."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Down with the patriarchy!  Wait...no.  Down with the human race!"
                 }
             ]
         }
