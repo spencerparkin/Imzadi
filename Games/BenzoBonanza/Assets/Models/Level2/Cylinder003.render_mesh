@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level2\\Cylinder003_Indices.buffer",
     "vertex_buffer": "Models\\Level2\\Cylinder003_Vertices.buffer",
+    "name": "Cylinder003",
     "texture": "Textures\\JuliaFractal.texture",
     "object_to_world": {
         "matrix": [

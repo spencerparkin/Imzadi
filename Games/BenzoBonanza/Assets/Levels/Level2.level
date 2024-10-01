@@ -6,7 +6,11 @@
         "Models/Level2/Box008.render_mesh",
         "Models/Level2/Box009.render_mesh",
         "Models/Level2/Cylinder001.render_mesh",
-        "Models/Level2/Cylinder002.render_mesh"
+        "Models/Level2/Cylinder002.render_mesh",
+        "Models/Level2/Telepad1.render_mesh",
+        "Models/Level2/Telepad2.render_mesh",
+        "Models/Level2/Telepad3.render_mesh",
+        "Models/Level2/Telepad4.render_mesh"
     ],
     "static_collision": [
         "Models/Level2/Box001.collision",
@@ -15,7 +19,11 @@
         "Models/Level2/Box008.collision",
         "Models/Level2/Box009.collision",
         "Models/Level2/Cylinder001.collision",
-        "Models/Level2/Cylinder002.collision"
+        "Models/Level2/Cylinder002.collision",
+        "Models/Level2/Telepad1.collision",
+        "Models/Level2/Telepad2.collision",
+        "Models/Level2/Telepad3.collision",
+        "Models/Level2/Telepad4.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
     "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
@@ -35,6 +43,12 @@
         "Levels/Level2_Box004.mov_plat",
         "Levels/Level2_Box005.mov_plat",
         "Levels/Level2_Cylinder003.mov_plat"
+    ],
+    "trigger_boxes": [
+        "Models/Level2/JumpToLevel1.trigger_box",
+        "Models/Level2/JumpToLevel3.trigger_box",
+        "Models/Level2/JumpToLevel4.trigger_box",
+        "Models/Level2/JumpToLevel7.trigger_box"
     ],
     "zip_lines": [
         "Levels/Level2_ZL1.zip_line"

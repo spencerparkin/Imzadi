@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level2\\Box008_Indices.buffer",
     "vertex_buffer": "Models\\Level2\\Box008_Vertices.buffer",
+    "name": "Box008",
     "texture": "Textures\\AstroTurf.texture",
     "object_to_world": {
         "matrix": [

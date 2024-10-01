@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level2\\Cylinder001_Indices.buffer",
     "vertex_buffer": "Models\\Level2\\Cylinder001_Vertices.buffer",
+    "name": "Cylinder001",
     "texture": "Textures\\CreepyBlobs.texture",
     "object_to_world": {
         "matrix": [
