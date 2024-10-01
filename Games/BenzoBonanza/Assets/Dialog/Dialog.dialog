@@ -191,11 +191,6 @@
                     "type": "basic",
                     "speaker": "Alice",
                     "text": "I think you know what I mean, Spencer."
-                },
-                {
-                    "type": "basic",
-                    "speaker": "Spencer",
-                    "text": "Hmmmm...  I guess you're right..."
                 }
             ]
         },
