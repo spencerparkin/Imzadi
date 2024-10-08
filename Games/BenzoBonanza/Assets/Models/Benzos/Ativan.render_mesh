@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Benzos\\Ativan_Indices.buffer",
+    "vertex_buffer": "Models\\Benzos\\Ativan_Vertices.buffer",
+    "name": "Ativan",
+    "texture": "Models\\Benzos\\Ativan.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -0.024870578199625016,
+            "y": -0.011485936120152474,
+            "z": -0.008344992063939572
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.21473155915737153,
+            "y": -0.7102080583572388,
+            "z": -0.8400570750236511
+        },
+        "max": {
+            "x": 0.21473154425621034,
+            "y": 0.9035486578941345,
+            "z": 0.8567469716072083
+        }
+    }
+}

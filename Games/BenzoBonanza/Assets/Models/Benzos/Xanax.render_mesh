@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Benzos\\Xanax_Indices.buffer",
+    "vertex_buffer": "Models\\Benzos\\Xanax_Vertices.buffer",
+    "name": "Xanax",
+    "texture": "Models\\Benzos\\Xanax.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 4.8163805388412587e-8,
+            "y": -8.056905898001787e-8,
+            "z": -3.002729654312134
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -0.5886398553848267,
+            "y": -0.5886398553848267,
+            "z": -1.4621641635894776
+        },
+        "max": {
+            "x": 0.5886399149894714,
+            "y": 0.5886399149894714,
+            "z": 1.462164282798767
+        }
+    }
+}

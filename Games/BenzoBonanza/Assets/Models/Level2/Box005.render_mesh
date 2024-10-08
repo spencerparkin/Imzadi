@@ -4,6 +4,7 @@
     "shadow_shader": "Shaders/StandardShadow.shader",
     "index_buffer": "Models\\Level2\\Box005_Indices.buffer",
     "vertex_buffer": "Models\\Level2\\Box005_Vertices.buffer",
+    "name": "Box005",
     "texture": "Textures\\CrappyStar.texture",
     "object_to_world": {
         "matrix": [

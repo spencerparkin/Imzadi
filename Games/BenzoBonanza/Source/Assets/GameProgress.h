@@ -34,9 +34,21 @@ public:
 
 	const std::unordered_map<std::string, uint32_t>& GetInventoryMap() const { return this->inventoryMap; }
 
+	bool WasBenzoCollectedAt(const Imzadi::Vector3& location) const;
+	void SetBenzoCollectedAt(const Imzadi::Vector3& location);
+
+	void CalcBenzoStats(int& outTotalNumBenzos, int& outNumBenzosReturned);
+	int GetPossessedBenzoCount();
+
+private:
+	std::string MakeBenzoKey(const Imzadi::Vector3& location) const;
+	int CountBenzosInLevelFile(const std::string& levelFile);
+
 private:
 	std::unordered_map<std::string, uint32_t> inventoryMap;
 	std::unordered_set<std::string> mileStoneSet;
+	std::unordered_set<std::string> benzoSet;
 	std::string levelName;
 	int numLives;
+	int totalNumBenzos;
 };

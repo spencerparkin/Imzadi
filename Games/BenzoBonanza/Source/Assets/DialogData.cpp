@@ -2,6 +2,7 @@
 #include "GameApp.h"
 #include "Scene.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "EventSystem.h"
 #include "Entity.h"
 #include "Log.h"
 
@@ -117,6 +118,27 @@ DialogElement::DialogElement()
 	else
 		this->mileStone = "";
 
+	this->messageChannel = "";
+	this->messageText = "";
+	if (elementValue.HasMember("send_message") && elementValue["send_message"].IsObject())
+	{
+		const rapidjson::Value& sendMessageValue = elementValue["send_message"];
+		if (!sendMessageValue.HasMember("channel") || !sendMessageValue.HasMember("message"))
+		{
+			IMZADI_LOG_ERROR("The \"channel\" and \"message\" fields were not both found.");
+			return false;
+		}
+
+		if (!sendMessageValue["channel"].IsString() || !sendMessageValue["message"].IsString())
+		{
+			IMZADI_LOG_ERROR("Expected both \"channel\" and \"message\" fields to be strings.");
+			return false;
+		}
+
+		this->messageChannel = sendMessageValue["channel"].GetString();
+		this->messageText = sendMessageValue["message"].GetString();
+	}
+
 	this->speaker = elementValue["speaker"].GetString();
 	return true;
 }
@@ -130,6 +152,9 @@ DialogElement::DialogElement()
 {
 	if (this->mileStone.length() > 0)
 		((GameApp*)Imzadi::Game::Get())->GetGameProgress()->SetMileStoneReached(this->mileStone);
+
+	if (this->messageChannel.length() > 0 && this->messageText.length() > 0)
+		Imzadi::Game::Get()->GetEventSystem()->SendEvent(this->messageChannel, new Imzadi::Event(this->messageText));
 
 	return true;
 }

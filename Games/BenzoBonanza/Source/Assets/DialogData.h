@@ -33,6 +33,8 @@ public:
 
 	std::string speaker;
 	std::string mileStone;
+	std::string messageChannel;
+	std::string messageText;
 };
 
 class DialogBasicElement : public DialogElement

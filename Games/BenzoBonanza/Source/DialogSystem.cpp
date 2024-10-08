@@ -126,8 +126,41 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 		else
 			return false;
 
-		// TODO: Write this.  It had to change since the copyright fix.
-		sequenceName = "";
+		if (otherEntityName == "Spencer")
+		{
+			if (!progress->WasMileStoneReached("initial_contact_with_spencer_made"))
+				sequenceName = "spencer_initial_contact";
+			else
+			{
+				int totalNumBenzos = 0, numBenzosReturned = 0;
+				progress->CalcBenzoStats(totalNumBenzos, numBenzosReturned);
+				if (totalNumBenzos == numBenzosReturned)
+				{
+					if (!progress->WasMileStoneReached("celebration_discussion_had"))
+						sequenceName = "you_won_the_game";
+					else
+						sequenceName = "final_spencer_talk";
+				}
+				else if (progress->GetPossessedBenzoCount() == 0)
+					sequenceName = "no_benzos_to_give_convo";
+				else
+				{
+
+					// TODO: The dialog sequence should unfold differently based on whether meds can be exchanged for hearts.
+					sequenceName = "";
+
+				}
+			}
+		}
+		else if (otherEntityName == "Bob")
+		{
+			if (!progress->WasMileStoneReached("bob_convo_one_had"))
+				sequenceName = "bob_convo_one";
+			else if (!progress->WasMileStoneReached("bob_convo_two_had"))
+				sequenceName = "bob_convo_two";
+			else
+				sequenceName = "bob_convo_three";
+		}
 	}
 
 	return sequenceName.size() > 0;

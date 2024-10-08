@@ -1,10 +1,14 @@
 #include "Spencer.h"
 #include "RenderObjects/AnimatedMeshInstance.h"
 #include "GameApp.h"
+#include "Math/Random.h"
 
 Spencer::Spencer()
 {
 	this->SetName("Spencer");
+	this->disposition = Disposition::COLLECT_BENZOS_FROM_PLAYER;
+	this->runSpeed = 10.0;
+	this->canRestart = false;
 }
 
 /*virtual*/ Spencer::~Spencer()
@@ -21,11 +25,41 @@ Spencer::Spencer()
 
 /*virtual*/ bool Spencer::Setup()
 {
+	auto game = (GameApp*)Imzadi::Game::Get();
+	if (game->GetGameProgress()->WasMileStoneReached("spencer_suicide"))
+		return false;
+
 	std::string modelFile = "Models/Spencer/Spencer.skinned_render_mesh";
 	this->renderMesh.SafeSet(Imzadi::Game::Get()->LoadAndPlaceRenderMesh(modelFile));
 
 	if (!Character::Setup())
 		return false;
+
+	Imzadi::Random random;
+	Imzadi::Vector3 upVector(0.0, 1.0, 0.0);
+	do
+	{
+		this->runDirection.SetAsRandomDirection(random);
+		this->runDirection = this->runDirection.RejectedFrom(upVector);
+	} while (!this->runDirection.Normalize());
+
+	game->GetEventSystem()->RegisterEventListener(
+		"Spencer",
+		Imzadi::EventListenerType::TRANSITORY,
+		new Imzadi::LambdaEventListener([=](const Imzadi::Event* event)
+			{
+				this->HandleGeneralEvent(event);
+			}));
+
+	game->GetEventSystem()->RegisterEventListener(
+		"ConvoBoundary",
+		Imzadi::EventListenerType::TRANSITORY,
+		new Imzadi::LambdaEventListener([=](const Imzadi::Event* event)
+			{
+				this->HandleConversationBoundaryEvent(dynamic_cast<const ConvoBoundaryEvent*>(event));
+			}));
+
+	this->CelebrateIfAllMedsReturned();
 
 	return true;
 }
@@ -36,27 +70,56 @@ Spencer::Spencer()
 	return true;
 }
 
+void Spencer::HandleGeneralEvent(const Imzadi::Event* event)
+{
+	if (event && event->GetName() == "suicide")
+		this->disposition = Disposition::COMMIT_SUICIDE;
+}
+
+void Spencer::HandleConversationBoundaryEvent(const ConvoBoundaryEvent* event)
+{
+	if (event->type == ConvoBoundaryEvent::FINISHED)
+		this->CelebrateIfAllMedsReturned();
+}
+
+void Spencer::CelebrateIfAllMedsReturned()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* progress = game->GetGameProgress();
+	int totalNumBenzos = 0, numBenzosReturned = 0;
+	progress->CalcBenzoStats(totalNumBenzos, numBenzosReturned);
+	if (totalNumBenzos == numBenzosReturned)
+	{
+		this->disposition = Disposition::CELEBRATE;
+	}
+}
+
 /*virtual*/ void Spencer::AdjustFacingDirection(double deltaTime)
 {
-	Imzadi::Reference<Imzadi::Entity> entity;
-	if (Imzadi::Game::Get()->FindEntityByName("Alice", entity))
+	if (this->disposition == Disposition::COLLECT_BENZOS_FROM_PLAYER)
 	{
-		Imzadi::Transform aliceTransform;
-		entity->GetTransform(aliceTransform);
+		Imzadi::Reference<Imzadi::Entity> entity;
+		if (Imzadi::Game::Get()->FindEntityByName("Alice", entity))
+		{
+			Imzadi::Transform aliceTransform;
+			entity->GetTransform(aliceTransform);
 
-		Imzadi::Transform spencerTransform;
-		this->GetTransform(spencerTransform);
+			Imzadi::Transform spencerTransform;
+			this->GetTransform(spencerTransform);
 
-		Imzadi::Vector3 direction = (aliceTransform.translation - spencerTransform.translation).Normalized();
-		Imzadi::Vector3 xAxis, yAxis, zAxis;
-		yAxis.SetComponents(0.0, 1.0, 0.0);
-		zAxis = (-direction).RejectedFrom(yAxis).Normalized();
-		xAxis = yAxis.Cross(zAxis);
-		Imzadi::Matrix3x3 matrix;
-		matrix.SetColumnVectors(xAxis, yAxis, zAxis);
-		if (matrix.IsValid())
-			this->objectToPlatform.matrix = matrix;		// This assumes the platform-to-world matrix is identity.
+			Imzadi::Vector3 direction = (aliceTransform.translation - spencerTransform.translation).Normalized();
+			Imzadi::Vector3 xAxis, yAxis, zAxis;
+			yAxis.SetComponents(0.0, 1.0, 0.0);
+			zAxis = (-direction).RejectedFrom(yAxis).Normalized();
+			xAxis = yAxis.Cross(zAxis);
+			Imzadi::Matrix3x3 matrix;
+			matrix.SetColumnVectors(xAxis, yAxis, zAxis);
+			if (matrix.IsValid())
+				this->objectToPlatform.matrix = matrix;		// This assumes the platform-to-world matrix is identity.
+		}
 	}
+	else if (this->disposition == Disposition::COMMIT_SUICIDE)
+		Character::AdjustFacingDirection(deltaTime);
 }
 
 /*virtual*/ bool Spencer::Tick(Imzadi::TickPass tickPass, double deltaTime)
@@ -69,19 +132,44 @@ Spencer::Spencer()
 
 /*virtual*/ void Spencer::IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime)
 {
-	Character::IntegrateVelocity(acceleration, deltaTime);
+	if (this->disposition == Disposition::COLLECT_BENZOS_FROM_PLAYER)
+	{
+		this->velocity.x = 0.0;
+		this->velocity.z = 0.0;
+	}
+	else if (this->disposition == Disposition::COMMIT_SUICIDE)
+	{
+		if (this->inContactWithGround)
+			this->velocity = this->runDirection * this->runSpeed;
+	}
 
-	this->velocity.x = 0.0;
-	this->velocity.z = 0.0;
+	Character::IntegrateVelocity(acceleration, deltaTime);
 }
 
 /*virtual*/ std::string Spencer::GetAnimName(Imzadi::Biped::AnimType animType)
 {
 	switch (animType)
 	{
-	case Imzadi::Biped::AnimType::IDLE:
-		return "SpencerIdle";
+		case Imzadi::Biped::AnimType::IDLE:
+		{
+			if (this->disposition == Disposition::CELEBRATE)
+				return "SpencerCelebrate";
+
+			return "SpencerIdle";
+		}
+		case Imzadi::Biped::AnimType::RUN:
+		{
+			return "SpencerRun";
+		}
 	}
 
 	return "";
+}
+
+/*virtual*/ bool Spencer::OnBipedDied()
+{
+	auto game = (GameApp*)Imzadi::Game::Get();
+	game->GetGameProgress()->SetMileStoneReached("spencer_suicide");
+
+	return Character::OnBipedDied();
 }

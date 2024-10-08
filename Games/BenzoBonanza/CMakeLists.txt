@@ -13,8 +13,6 @@ set(BENZO_BONANZA_SOURCES
     Source/Character.h
     Source/CustomAssetCache.cpp
     Source/CustomAssetCache.h
-    Source/Pickup.cpp
-    Source/Pickup.h
     Source/Characters/Alice.cpp
     Source/Characters/Alice.h
     Source/Characters/Spencer.cpp
@@ -33,6 +31,8 @@ set(BENZO_BONANZA_SOURCES
     Source/Entities/RubiksCubeMaster.h
     Source/Entities/SlidingDoor.cpp
     Source/Entities/SlidingDoor.h
+    Source/Entities/Pickup.cpp
+    Source/Entities/Pickup.h
     Source/Assets/DialogData.cpp
     Source/Assets/DialogData.h
     Source/Assets/GameProgress.cpp

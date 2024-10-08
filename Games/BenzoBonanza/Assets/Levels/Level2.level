@@ -6,7 +6,11 @@
         "Models/Level2/Box008.render_mesh",
         "Models/Level2/Box009.render_mesh",
         "Models/Level2/Cylinder001.render_mesh",
-        "Models/Level2/Cylinder002.render_mesh"
+        "Models/Level2/Cylinder002.render_mesh",
+        "Models/Level2/Telepad1.render_mesh",
+        "Models/Level2/Telepad2.render_mesh",
+        "Models/Level2/Telepad3.render_mesh",
+        "Models/Level2/Telepad4.render_mesh"
     ],
     "static_collision": [
         "Models/Level2/Box001.collision",
@@ -15,7 +19,11 @@
         "Models/Level2/Box008.collision",
         "Models/Level2/Box009.collision",
         "Models/Level2/Cylinder001.collision",
-        "Models/Level2/Cylinder002.collision"
+        "Models/Level2/Cylinder002.collision",
+        "Models/Level2/Telepad1.collision",
+        "Models/Level2/Telepad2.collision",
+        "Models/Level2/Telepad3.collision",
+        "Models/Level2/Telepad4.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
     "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
@@ -35,6 +43,12 @@
         "Levels/Level2_Box004.mov_plat",
         "Levels/Level2_Box005.mov_plat",
         "Levels/Level2_Cylinder003.mov_plat"
+    ],
+    "trigger_boxes": [
+        "Models/Level2/JumpToLevel1.trigger_box",
+        "Models/Level2/JumpToLevel3.trigger_box",
+        "Models/Level2/JumpToLevel4.trigger_box",
+        "Models/Level2/JumpToLevel7.trigger_box"
     ],
     "zip_lines": [
         "Levels/Level2_ZL1.zip_line"
@@ -96,6 +110,94 @@
             },
             "config": {
                 "song": "GGMOZH"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -58.523888,
+                "y": 2.0,
+                "z": -57.3182768
+            },
+            "config": {
+                "type": "Halcion"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -26.8851,
+                "y": 2.0,
+                "z": -57.3182768
+            },
+            "config": {
+                "type": "Halcion"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -36.92222,
+                "y": 50.0,
+                "z": -115.79842
+            },
+            "config": {
+                "type": "Klonopin"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -2.49488,
+                "y": 42.0,
+                "z": 58.295345
+            },
+            "config": {
+                "type": "Klonopin"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 52.074422,
+                "y": 77.0,
+                "z": 46.060457
+            },
+            "config": {
+                "type": "Klonopin"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -154.6427,
+                "y": 18.0,
+                "z": -64.921679
+            },
+            "config": {
+                "type": "Xanax"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -207.07523,
+                "y": 19.0,
+                "z": -8.31508339
+            },
+            "config": {
+                "type": "Xanax"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -137.92827,
+                "y": 9.0,
+                "z": 10.86943090
+            },
+            "config": {
+                "type": "Ativan"
             }
         }
     ]

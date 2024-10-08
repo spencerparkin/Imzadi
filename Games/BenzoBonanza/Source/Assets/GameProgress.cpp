@@ -1,9 +1,15 @@
 #include "GameProgress.h"
+#include "GameApp.h"
+#include "rapidjson/reader.h"
+#include "rapidjson/istreamwrapper.h"
+#include "Entities/Pickup.h"
+#include <fstream>
 
 GameProgress::GameProgress()
 {
 	this->levelName = "Level1";
 	this->numLives = 3;
+	this->totalNumBenzos = 0;
 }
 
 /*virtual*/ GameProgress::~GameProgress()
@@ -24,6 +30,7 @@ GameProgress::GameProgress()
 
 	this->mileStoneSet.clear();
 	this->inventoryMap.clear();
+	this->benzoSet.clear();
 
 	if (this->numLives > 0)
 	{
@@ -37,6 +44,19 @@ GameProgress::GameProgress()
 					return false;
 
 				this->mileStoneSet.insert(mileStoneValue.GetString());
+			}
+		}
+
+		if (jsonDoc.HasMember("benzo_collection") && jsonDoc["benzo_collection"].IsArray())
+		{
+			const rapidjson::Value& benzoCollectionArrayValue = jsonDoc["benzo_collection"];
+			for (int i = 0; i < benzoCollectionArrayValue.Size(); i++)
+			{
+				const rapidjson::Value& benzoValue = benzoCollectionArrayValue[i];
+				if (!benzoValue.IsString())
+					return false;
+
+				this->benzoSet.insert(benzoValue.GetString());
 			}
 		}
 
@@ -76,6 +96,13 @@ GameProgress::GameProgress()
 
 	jsonDoc.AddMember("mile_stone_array", mileStoneArrayValue, jsonDoc.GetAllocator());
 
+	rapidjson::Value benzoCollectionArrayValue;
+	benzoCollectionArrayValue.SetArray();
+	for (const std::string& benzoKey : this->benzoSet)
+		benzoCollectionArrayValue.PushBack(rapidjson::Value().SetString(benzoKey.c_str(), jsonDoc.GetAllocator()), jsonDoc.GetAllocator());
+
+	jsonDoc.AddMember("benzo_collection", benzoCollectionArrayValue, jsonDoc.GetAllocator());
+
 	rapidjson::Value inventoryMapValue;
 	inventoryMapValue.SetObject();
 	for (const auto& pair : this->inventoryMap)
@@ -91,6 +118,7 @@ GameProgress::GameProgress()
 	this->levelName = "";
 	this->inventoryMap.clear();
 	this->mileStoneSet.clear();
+	this->benzoSet.clear();
 	return true;
 }
 
@@ -141,4 +169,104 @@ void GameProgress::SetNumLives(int numLives)
 int GameProgress::GetNumLives() const
 {
 	return this->numLives;
+}
+
+bool GameProgress::WasBenzoCollectedAt(const Imzadi::Vector3& location) const
+{
+	std::string key = this->MakeBenzoKey(location);
+	return this->benzoSet.find(key) != this->benzoSet.end();
+}
+
+void GameProgress::SetBenzoCollectedAt(const Imzadi::Vector3& location)
+{
+	std::string key = this->MakeBenzoKey(location);
+	this->benzoSet.insert(key);
+}
+
+std::string GameProgress::MakeBenzoKey(const Imzadi::Vector3& location) const
+{
+	return std::format("<{}, {}, {}>", location.x, location.y, location.z);
+}
+
+int GameProgress::GetPossessedBenzoCount()
+{
+	int count = 0;
+	for (const auto& pair : this->inventoryMap)
+		if (BenzoPickup::IsBenzoName(pair.first))
+			count += pair.second;	
+	
+	return count;
+}
+
+void GameProgress::CalcBenzoStats(int& outTotalNumBenzos, int& outNumBenzosReturned)
+{
+	outNumBenzosReturned = (int)this->benzoSet.size() - this->GetPossessedBenzoCount();
+
+	for (const auto& pair : this->inventoryMap)
+	{
+		if (BenzoPickup::IsBenzoName(pair.first))
+		{
+			// If the benzo is in our possession, then it has not yet been returned.
+			uint32_t itemCount = pair.second;
+			if (itemCount > 0)
+				outNumBenzosReturned--;
+		}
+	}
+
+	if (this->totalNumBenzos == 0)
+	{
+		for (const std::filesystem::path& assetFolderPath : Imzadi::Game::Get()->GetAssetCache()->GetAssetFolderArray())
+		{
+			std::filesystem::path levelsFolder = assetFolderPath / "Levels";
+			if (std::filesystem::exists(levelsFolder))
+			{
+				for (const auto& entry : std::filesystem::directory_iterator(levelsFolder))
+				{
+					std::filesystem::path levelFilePath = entry.path();
+					std::string ext = levelFilePath.extension().string();
+					if (ext == ".level")
+					{
+						this->totalNumBenzos += this->CountBenzosInLevelFile(levelFilePath.string());
+					}
+				}
+			}
+		}
+	}
+
+	outTotalNumBenzos = this->totalNumBenzos;
+}
+
+int GameProgress::CountBenzosInLevelFile(const std::string& levelFile)
+{
+	int numBenzos = 0;
+
+	std::ifstream fileStream;
+	fileStream.open(levelFile, std::ios::in);
+	if(fileStream.is_open())
+	{
+		rapidjson::Document jsonDoc;
+		rapidjson::IStreamWrapper streamWrapper(fileStream);
+		jsonDoc.ParseStream(streamWrapper);
+		if (!jsonDoc.HasParseError())
+		{
+			if (jsonDoc.IsObject() && jsonDoc.HasMember("npc_array") && jsonDoc["npc_array"].IsArray())
+			{
+				const rapidjson::Value& npcArrayValue = jsonDoc["npc_array"];
+				for (int i = 0; i < npcArrayValue.Size(); i++)
+				{
+					const rapidjson::Value& npcValue = npcArrayValue[i];
+					if (npcValue.IsObject() && npcValue.HasMember("type") && npcValue["type"].IsString())
+					{
+						std::string type = npcValue["type"].GetString();
+						if (type == "benzo")
+							numBenzos++;
+					}
+				}
+			}
+		}
+
+		fileStream.close();
+	}
+
+	return numBenzos;
 }

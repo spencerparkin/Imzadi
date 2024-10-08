@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level2\\Telepad4_Indices.buffer",
+    "vertex_buffer": "Models\\Level2\\Telepad4_Vertices.buffer",
+    "name": "Telepad4",
+    "texture": "Textures\\Funky.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -225.63336181640626,
+            "y": 11.577659606933594,
+            "z": 46.936767578125
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -6.306782245635986,
+            "y": -0.2500002980232239,
+            "z": -6.824495792388916
+        },
+        "max": {
+            "x": 7.0,
+            "y": 0.2500002980232239,
+            "z": 6.8244948387146
+        }
+    }
+}
