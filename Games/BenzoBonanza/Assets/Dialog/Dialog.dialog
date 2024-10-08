@@ -199,8 +199,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "Hi!  My name's Bob.  I'm the studio-head and sometimes the hiring manager for your typical game studio.  I rock!  And I value diversity more than anything!",
-                    "mile_stone": "bob_convo_1_had"
+                    "text": "Hi!  My name's Bob.  I'm the studio-head and sometimes the hiring manager for your typical game studio.  I rock!  And I value diversity more than anything!"
                 },
                 {
                     "type": "basic",
@@ -224,8 +223,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "I love giving candidates programmer tests.  It's so fun.  I sure get a laugh out of how much time and effort they put into them.",
-                    "mile_stone": "bob_convo_2_had"
+                    "text": "I love giving candidates programmer tests.  It's so fun.  I sure get a laugh out of how much time and effort they put into them."
                 },
                 {
                     "type": "basic",
@@ -235,7 +233,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "Because I have no intention of hiring them!  I just want to waste their time, no matter how well they do."
+                    "text": "Because I have no intention of hiring them!  I just want to waste their time, no matter how well they do on the test."
                 },
                 {
                     "type": "basic",
@@ -249,8 +247,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "So hear me out, Alice.  I've been trying to rigourously define diversity using the purest of all languages: mathematics.",
-                    "mile_stone": "bob_convo_3_had"
+                    "text": "So hear me out, Alice.  I've been trying to rigourously define diversity using the purest of all languages: mathematics."
                 },
                 {
                     "type": "basic",
@@ -309,13 +306,12 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "My workforce has too many humans in it.  I've decided to only hire aliens from now on.",
-                    "mile_stone": "bob_convo_4_had"
+                    "text": "My workforce has too many humans in it.  I've decided to only hire aliens from now on."
                 },
                 {
                     "type": "basic",
                     "speaker": "Alice",
-                    "text": "Down with the patriarchy!  Wait...no.  Down with the human race!"
+                    "text": "Down with the patriarchy!  Wait... No.  Down with the human race!"
                 }
             ]
         },
@@ -324,8 +320,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "Alice, do you think the conversations we've been having are too inflamatory?  Is this game going to be disqualified?",
-                    "mile_stone": "bob_convo_5_had"
+                    "text": "Alice, do you think the conversations we've been having are too inflamatory?  Is this game going to be disqualified?"
                 },
                 {
                     "type": "basic",
@@ -338,71 +333,385 @@
                     "text": "Wow, that makes you incredibly diverse, and special, Alice.  If I get a resume that doesn't specify personal pronouns, I throw it in the trash immediately."
                 }
             ]
+        },
+        "bob_convo_6": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "I see no contradiction between our DEI hiring practices and the Equal Opportunity Employement Act."
+                },
+                {
+                    "typ": "basic":,
+                    "speaker": "Alice"
+                    "text": "Really?  Hahahahahahaaaahahaaa!!  Yeah....  Me neither.  You're funny, Bob."
+                }
+            ]
+        },
+        "bob_convo_7": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "So I've been thinking about DEI, and something doesn't seem right to me, Alice."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "What's that?",
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Well, if we're rejecting anyone who isn't diverse, doesn't that mean that we're not being inclusive?  Is DEI contracting itself?"
+                },
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Bob, Bob, Bob....  You simply don't understand.  Remember, non-diverse people need to die, right?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Well, yeah, so?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "So!  After they're dead, are we excluding anybody?!  You can't exclude someone if they're dead, Bob."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Ah!  Right you are, Alice!  You've done it again!  You've set me straight!  What would I do without you?"
+                }
+            ]
+        },
+        "bob_convo_8": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "So, Alice... Remind me what equity is again?  You know, the \"E\" in DEI."
+                },
+                {                
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Yeah, so that's where everyone ends up in the same circumstances regardless of where they started out, or how hard they worked in life to achieve their goals.  It's the only fair and equitable way, Bob."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Awesome!  That's way better than equal opportunity.  Say, you wouldn't mind paying off my student loans, would you?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Why, Bob, I'd love to!  It's not like when you took out the loan that you were promising to pay the money back or anything like that, because that's just non-sense!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "I take so much comfort in knowing where my tax dollars are going.  I just wish I was paying for everyone's loans, no matter what they were for."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Yeah!  Wait... are we approaching communism here?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "We sure are, Bob!  And once we reach it, we will have achieved a utopia unlike anything the world has ever seen!  It's just going to be so great."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "I can't wait!  The government is so good at everything it does, we need more of it controller our lives!"
+                },
+                {
+                    "type": "basic":,
+                    "speaker": "Alice",
+                    "text": "You said it, Bob!  And once we all have social credit scores, the government can go around \"removing\" problematic individuals from society that won't conform to woke ideology."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Seriously!  If you're not woke, you don't deserve to exist."
+                }
+            ]
+        },
+        "bob_convo_9": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Not only is DEI an integral part of our hiring practices, but we also strive to embed subtle, woke messaging in the games we develop at our studio."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "What?!  No!  It needs to be extreme, in-your-face messaging!  Make all the characters in your game gay and trans, or I'm going to have a melt down right now!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Okay!  Okay!  I'll make some gay and some trans.  Got it!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Noooo!!!  Gay *and* trans!  They have to be both at the same time!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Okay, but....  Don't those two things cancel one another out?  I'm trying to think this through..."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Is, for example, a gay trans-female attracted to females because she's gay or was she gay before she transitioned so she likes guys?.... I'm so confused!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "That's because you're a bigot, Bob!  Only a bigot would say something like that.  You should be ashamed of yourself."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "But I go to all the gay pride parades!  I'm the naked guy on the float with all the rainbow colors."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "That doesn't really narrow it down, Bob.  In any case, if you really want to prove your allegiance to the LGBTQIA+ community, then you have to do better than that."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Okay, I'm sorry, Alice.  I'll try harder."
+                }
+            ]
+        },
+        "bob_convo_10": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "My child picked up a dall today, so I'm taking him in to get a top and bottom surgery."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "You mean her, but I understand.  And I forgive you for misgendering your child.  You're doing the right thing, Bob."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Oh, it's not about that, Alice.  I just think that if my kid is trans, then it will make my family more diverse!",
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Um...if you really want diversity, Bob, then you shouldn't choose one of the two, out-dated, extremely lame genders.  There are, like, 500 genders to choose from.  Or make-up your own!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Great idea, Alice!  Let's see...  I got it!  My child is now every imaginable gender simultaneously!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Huh?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Yup!  All of'em at once!  And I'm going to enforce...uh...I mean, *affirm* all genders on my child every day until they get with the program."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Wow, Bob.  Just when I thought you couldn't be a better parent... you go and do something like this.  I'm truely inspired."
+                }
+            ]
+        },
+        "bob_convo_11": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "My modern sensabilities are so advanced."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "For example, just because an idea is new, it must be true.  And if an idea is old, then it must be wrong.  Get with the times, people!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Well, actually, many ideas considered new are actually very old, and very wrong.  They were wrong then, wrong now, and always will be wrong."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Similarly, many old ideas were true, are true today, and always will be."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "No, Alice!  Truth is relative, and it's based on whatever the prevailing trends of the day dictate!  Respect my truth!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "But aren't you interested in *the* truth?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "There's no such thing, Alice.  Have you gone crazy?  I think I'm pregnant, by the way."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Oh!  Congratulations!  Can I be invited to the gender-reveal party?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Alice!  How dare you!  The children will tell us what gender they are!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "I get that, Bob!  I mean the party where we go and ask the baby what gender it is.  Duh!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Oh, yeah...that party.  Of course, Alice, of course you're invited."
+                }
+            ]
+        },
+        "bob_convo_12": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Bob, I'm so fluid, that I've been every gender at least once in my life.  I'm running out of genders!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob,
+                    "text": "Alice, you know you can just make up a gender, right?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob,
+                    "text": "You need to realize that gender isn't binary.  It isn't an *integer* in the unit interval [0,1], it's a *real* number in [0,1], like one half of the reciprical of pi."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob,
+                    "text": "Therefore, there are an uncountably infinite number of genders!  You remember that from real analysis, right?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "But what if I don't want to identify as any gender, Bob?!  What do I do then?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob,
+                    "text": "Well, isn't that gender neutral or something like that?  I can see you as being that."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "What?!!!!  Did you just misgender me?!  Apologize now!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob,
+                    "text": "I'm sorry!"
+                }
+            ]
+        },
+        "bob_convo_13": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "I was just born this way."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Uh...what way?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "The way I am."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Okay, great.  I don't really care."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Any time my fluid nature changes, it's completely out of my control."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Again, Bob... I don't really care."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "I mean, who I want to be in bed as or with changes all the time.  It's like a roller coaster!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Bob!  This conversation is done!  Over!  Good-bye."
+                }
+            ]
+        },
+        "bob_convo_14": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "text": "Do you believe in free speech, Alice?"
+                },
+                {
+                    "type": "basic",
+                    "text": "No, and I don't believe in critical thinking either.  In fact, whoever wrote the dialog for this game is in big trouble.  They should be canceled, and no one should ever hire him, ever."
+                },
+                {
+                    "type": "basic",
+                    "text": "Oh, you mean that Spencer guy?  Aren't you looking for his meds?"
+                },
+                {
+                    "type": "basic",
+                    "text": "Sigh....yeah, I guess so.  It's the only way to win this stupid game."
+                },
+                {
+                    "type": "basic",
+                    "text": "You could just turn it off.  I mean, the game-play feels aweful, and the graphics make your eyes bleed."
+                },
+                {
+                    "type": "basic",
+                    "text": "You're right, Bob.  But it's not really up to me.  It's up to the player."
+                }
+            ]
         }
-        
-        "I see no contradiction between our DEI hiring practices and the Equal Opportunity Employement Act."
-        "Really?  Hahahahahahaaaahahaaa!!  Yeah....  Me neither.  You're funny, Bob."
-        
-        "So I've been thinking about DEI, and something doesn't seem right to me, Alice.",
-        "What's that?",
-        "Well, if we're rejecting anyone who isn't diverse, doesn't that mean that we're not being inclusive?  Is DEI contracting itself?",
-        "Bob, Bob, Bob....  You simply don't understand.  Remember, non-diverse people need to die, right?"
-        "Well, yeah, so?",
-        "So!  After they're dead, are we excluding anybody?!  You can't exclude someone if they're dead, Bob."
-        "Ah!  Right you are, Alice!  You've done it again!  You've set me straight!  What would I do without you."
-        
-        "So, Alice... Remind me what equity is again?",
-        "Yeah, so that's where everyone ends up in the same circumstances regardless of where they started out, or how hard they worked in life to achieve their goals.  It's the only fair and equitable way, Bob.",
-        "Awesome!  Say, you wouldn't mind paying off my student loans, would you?",
-        "Why, Bob, I'd love to!  It's not like when you took out the loan that you were promising to pay the money back or anything like that, because that's just non-sense!"
-        "I take so much comfort in knowing where my tax dollars are going.  I just wish I was paying for everyone's loans, no matter what they were for."
-        "Yeah!  Wait... are we approaching communism here?"
-        "We sure are, Bob!  And once we reach it, we will have achieved a utopia unlike anything the world has ever seen!  It's just going to be so great."
-        
-        "Not only is DEI an integral part of our hiring practices, but we also strive to embed subtle, woke messaging in the games we develop at our studio."
-        "What?!  No!  It needs to be extreme, in-your-face messaging!  Make all the characters in your game gay and trans, or I'm going to have a melt down right now!"
-        "Okay!  Okay!  I'll make some gay and some trans.  Got it!"
-        "Noooo!!!  Gay & trans!  They have to be both at the same time!"
-        "Okay, but....  Don't those two things cancel one another out?  I'm trying to think this through..."
-        "Is, for example, a trans-female attracted to females because she's gay or was she gay before she transitioned?.... I'm so confused!"
-        "That's because you're a bigot, Bob!  Only a bigot would say something like that.  You should be ashamed of yourself."
-        "But I go to all the gay pride parades!  I'm the naked guy on the float with all the rainbow colors."
-        "That doesn't really narrow it down, Bob.  In any case, if you really want to prove your allegiance to the LGBTQIA+ community, then you have to do better than that."
-        "Okay, I'm sorry, Alice.  I'll try harder."
-        
-        
-        "My child picked up a doll today, so I'm taking him in to get a top and bottom surgery."
-        "You mean her, but I understand.  You're doing the right thing, Bob.",
-        "Oh, it's not about that, Alice.  I just think that if my kid is trans, then it will make my family more diverse!",
-        "Um...if you really want diversity, Bob, then you shouldn't choose one of the two, out-dated, extremely lame genders.  There are, like, 500 genders to choose from.  Or make-up your own!"
-        "Great idea, Alice!  Let's see...  I got it!  My child is now every imaginable gender simultaneously!"
-        "Huh?"
-        "Yup!  All of'em at once!  And I'm going to enforce...uh...I mean, affirm all genders on my child every day until they get with the program."
-        "Wow, Bob.  Just when I thought you couldn't be a better parent... you go and do something like this.  I'm truely inspired."
-        
-        "My modern sensabilities are so advanced."
-        "For example, just because an idea is new, it must be true.  And if an idea is old, then it must be wrong.  Get with the times, people!"
-        "Well, actually, many ideas considered new are actually very old, and very wrong.  They were wrong then, wrong now, and always will be wrong.",
-        "Similarly, many old ideas were true, are true today, and always will be.",
-        "No, Alice!  Truth is relative!  Respect my truth!",
-        "But aren't you interested in *the* truth?",
-        "There's no such thing, Alice.  Have you gone crazy?  I think I'm pregnant, by the way."
-        "Oh!  Congratulations!  Can I be invited to the gender-reveal party?"
-        "Alice!  How dare you!  The children will tell us what gender they are!"
-        "I get that, Bob!  I mean the party where we go and ask the baby what gender it is.  Duh!"
-        "Oh, yeah...that party.  Of course, Alice, of course you're invited."
-        
-        "Bob, I'm so fluid, that I've been every gender at least once in my life.  I'm running out of genders!",
-        "Alice, you know you can just make up a gender, right?"
-        "You need to realize that gender isn't binary.  It isn't an *integer* in the unit interval [0,1], it's a *real* number in [0,1].",
-        "Therefore, there are uncountably many genders!  You remember that from real analysis, right?",
-        "But what if I don't want to identify as any gender, Bob?!  What do I do then?"
-        "Well, isn't that gender neutral or something like that?  I can see you as being that."
-        "What?!!!!  Did you just misgender me?!  Apologize now!"
-        "I'm sorry!"
-        
-        "I didn't choose my gender.  I was just born this way."
-        
-        
     }
 }
