@@ -342,8 +342,8 @@
                     "text": "I see no contradiction between our DEI hiring practices and the Equal Opportunity Employement Act."
                 },
                 {
-                    "typ": "basic":,
-                    "speaker": "Alice"
+                    "type": "basic",
+                    "speaker": "Alice",
                     "text": "Really?  Hahahahahahaaaahahaaa!!  Yeah....  Me neither.  You're funny, Bob."
                 }
             ]
@@ -358,13 +358,14 @@
                 {
                     "type": "basic",
                     "speaker": "Alice",
-                    "text": "What's that?",
+                    "text": "What's that?"
                 },
                 {
                     "type": "basic",
                     "speaker": "Bob",
                     "text": "Well, if we're rejecting anyone who isn't diverse, doesn't that mean that we're not being inclusive?  Is DEI contracting itself?"
                 },
+                {
                     "type": "basic",
                     "speaker": "Alice",
                     "text": "Bob, Bob, Bob....  You simply don't understand.  Remember, non-diverse people need to die, right?"
@@ -429,7 +430,7 @@
                     "text": "I can't wait!  The government is so good at everything it does, we need more of it controller our lives!"
                 },
                 {
-                    "type": "basic":,
+                    "type": "basic",
                     "speaker": "Alice",
                     "text": "You said it, Bob!  And once we all have social credit scores, the government can go around \"removing\" problematic individuals from society that won't conform to woke ideology."
                 },
@@ -509,7 +510,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "Oh, it's not about that, Alice.  I just think that if my kid is trans, then it will make my family more diverse!",
+                    "text": "Oh, it's not about that, Alice.  I just think that if my kid is trans, then it will make my family more diverse!"
                 },
                 {
                     "type": "basic",
@@ -606,17 +607,17 @@
                 },
                 {
                     "type": "basic",
-                    "speaker": "Bob,
+                    "speaker": "Bob",
                     "text": "Alice, you know you can just make up a gender, right?"
                 },
                 {
                     "type": "basic",
-                    "speaker": "Bob,
+                    "speaker": "Bob",
                     "text": "You need to realize that gender isn't binary.  It isn't an *integer* in the unit interval [0,1], it's a *real* number in [0,1], like one half of the reciprical of pi."
                 },
                 {
                     "type": "basic",
-                    "speaker": "Bob,
+                    "speaker": "Bob",
                     "text": "Therefore, there are an uncountably infinite number of genders!  You remember that from real analysis, right?"
                 },
                 {
@@ -626,7 +627,7 @@
                 },
                 {
                     "type": "basic",
-                    "speaker": "Bob,
+                    "speaker": "Bob",
                     "text": "Well, isn't that gender neutral or something like that?  I can see you as being that."
                 },
                 {
@@ -636,7 +637,7 @@
                 },
                 {
                     "type": "basic",
-                    "speaker": "Bob,
+                    "speaker": "Bob",
                     "text": "I'm sorry!"
                 }
             ]
@@ -689,26 +690,32 @@
             "sequence": [
                 {
                     "type": "basic",
+                    "speaker": "Bob",
                     "text": "Do you believe in free speech, Alice?"
                 },
                 {
                     "type": "basic",
+                    "speaker": "Alice",
                     "text": "No, and I don't believe in critical thinking either.  In fact, whoever wrote the dialog for this game is in big trouble.  They should be canceled, and no one should ever hire him, ever."
                 },
                 {
                     "type": "basic",
+                    "speaker": "Bob",
                     "text": "Oh, you mean that Spencer guy?  Aren't you looking for his meds?"
                 },
                 {
                     "type": "basic",
+                    "speaker": "Alice",
                     "text": "Sigh....yeah, I guess so.  It's the only way to win this stupid game."
                 },
                 {
                     "type": "basic",
+                    "speaker": "Bob",
                     "text": "You could just turn it off.  I mean, the game-play feels aweful, and the graphics make your eyes bleed."
                 },
                 {
                     "type": "basic",
+                    "speaker": "Alice",
                     "text": "You're right, Bob.  But it's not really up to me.  It's up to the player."
                 }
             ]
