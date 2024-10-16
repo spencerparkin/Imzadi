@@ -427,7 +427,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "I can't wait!  The government is so good at everything it does, we need more of it controller our lives!"
+                    "text": "I can't wait!  The government is so good at everything it does, we need more of it controlling our lives!"
                 },
                 {
                     "type": "basic",
@@ -564,7 +564,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "No, Alice!  Truth is relative, and it's based on whatever the prevailing trends of the day dictate!  Respect my truth!"
+                    "text": "No, Alice!  Truth is relative!  And it's based on whatever the prevailing trends of the day dictate!  Respect my truth!"
                 },
                 {
                     "type": "basic",
@@ -613,7 +613,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "You need to realize that gender isn't binary.  It isn't an *integer* in the unit interval [0,1], it's a *real* number in [0,1], like one half of the reciprical of pi."
+                    "text": "You need to realize that gender isn't binary.  It isn't an *integer* in the unit interval [0,1], it's a *real* number in [0,1], like one half, or the reciprical of pi."
                 },
                 {
                     "type": "basic",
@@ -677,7 +677,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "I mean, who I want to be in bed as or with changes all the time.  It's like a roller coaster!"
+                    "text": "I mean, who I want to be in bed as, or in bed with, changes all the time.  It's like a roller coaster!"
                 },
                 {
                     "type": "basic",
