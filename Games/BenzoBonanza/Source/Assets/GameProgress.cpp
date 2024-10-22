@@ -185,7 +185,7 @@ void GameProgress::SetBenzoCollectedAt(const Imzadi::Vector3& location)
 
 std::string GameProgress::MakeBenzoKey(const Imzadi::Vector3& location) const
 {
-	return std::format("<{}, {}, {}>", location.x, location.y, location.z);
+	return std::format("{}: <{}, {}, {}>", this->levelName, location.x, location.y, location.z);
 }
 
 int GameProgress::GetPossessedBenzoCount()
