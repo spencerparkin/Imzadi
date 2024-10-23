@@ -12,6 +12,7 @@
 #include "Assets/Skeleton.h"
 #include "Assets/SkinWeights.h"
 #include "Assets/Animation.h"
+#include "Assets/NavGraph.h"
 #include "JsonUtils.h"
 #include "TextureMaker.h"
 #include <unordered_set>
@@ -30,7 +31,8 @@ public:
 		CONVERT_SKYDOME				= 0x00000004,
 		MAKE_COLLISION				= 0x00000008,
 		CENTER_OBJ_SPACE_AT_ORIGIN	= 0x00000010,
-		COMPRESS_COLLISION			= 0x00000020
+		COMPRESS_COLLISION			= 0x00000020,
+		MAKE_NAV_GRAPH				= 0x00000040
 	};
 
 	void SetFlags(uint32_t flags) { this->flags = flags; }
@@ -77,6 +79,7 @@ private:
 	wxString assetFolder;
 	std::unordered_map<const aiNode*, Imzadi::Transform> nodeToWorldMap;
 	TextureMaker textureMaker;
+	Imzadi::NavGraph navGraph;
 	uint32_t flags;
 	uint32_t textureMakerFlags;
 };

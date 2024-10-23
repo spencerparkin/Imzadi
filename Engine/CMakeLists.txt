@@ -184,6 +184,8 @@ set(GAME_ENGINE_SOURCES
     Source/Assets/TriggerBoxData.h
     Source/Assets/Audio.cpp
     Source/Assets/Audio.h
+    Source/Assets/NavGraph.cpp
+    Source/Assets/NavGraph.h
 )
     
 source_group("Source" TREE ${CMAKE_CURRENT_SOURCE_DIR} FILES ${GAME_ENGINE_SOURCES})

@@ -35,5 +35,6 @@
         "Models/Level9/JumpToLevel7.trigger_box"
     ],
     "npc_array": [
-    ]
+    ],
+    "nav_graph": "Models/Level9/Level9.nav_graph"
 }

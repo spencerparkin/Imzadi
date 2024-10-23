@@ -6,6 +6,7 @@
 namespace Imzadi
 {
 	class Biped;
+	class NavGraph;
 
 	/**
 	 * An instance of this class represents the level being played in the game.
@@ -65,7 +66,15 @@ namespace Imzadi
 		void SetLevelName(const std::string& levelName) { this->levelName = levelName; }
 		const std::string& GetLevelName() const { return this->levelName; }
 
+		NavGraph* GetNavGraph() { return this->navGraph.Get(); }
+
+	public:
+		bool debugDrawNavGraph;
+
 	private:
 		std::string levelName;
+
+	protected:
+		Reference<NavGraph> navGraph;
 	};
 }

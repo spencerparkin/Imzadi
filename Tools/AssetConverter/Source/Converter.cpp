@@ -48,6 +48,8 @@ bool Converter::Convert(const wxString& assetFile)
 		return false;
 	}
 
+	this->navGraph.Clear();
+
 	if ((this->flags & Flag::CONVERT_MESHES) != 0)
 	{
 		IMZADI_LOG_INFO("Processing scene graph...");
@@ -85,6 +87,27 @@ bool Converter::Convert(const wxString& assetFile)
 		if (!this->GenerateSkyDome(assetFile, scene, skyDomeNode))
 		{
 			IMZADI_LOG_ERROR("Failed to generate sky-dome.");
+			return false;
+		}
+	}
+
+	if ((this->flags & Flag::MAKE_NAV_GRAPH) != 0)
+	{
+		wxFileName navGraphFile;
+		navGraphFile.SetPath(fileName.GetPath());
+		navGraphFile.SetName(fileName.GetName());
+		navGraphFile.SetExt("nav_graph");
+
+		rapidjson::Document navGraphDoc;
+		if (!this->navGraph.Save(navGraphDoc))
+		{
+			IMZADI_LOG_ERROR("Failed to save nav-graph to JSON.");
+			return false;
+		}
+
+		if (!JsonUtils::WriteJsonFile(navGraphDoc, navGraphFile.GetFullPath()))
+		{
+			IMZADI_LOG_ERROR("Failed to write nav-graph file: %s", (const char*)navGraphFile.GetFullPath().c_str());
 			return false;
 		}
 	}
@@ -818,6 +841,16 @@ bool Converter::ProcessMesh(const aiScene* scene, const aiNode* node, const aiMe
 
 		if (!JsonUtils::WriteJsonFile(collisionDoc, collisionFileName.GetFullPath()))
 			return false;
+
+		if ((this->flags & Flag::MAKE_NAV_GRAPH) != 0)
+		{
+			for (const Imzadi::Polygon& polygon : polygonArray)
+			{
+				Imzadi::Polygon worldPolygon;
+				objectToWorld.TransformPolygon(polygon, worldPolygon);
+				this->navGraph.AddPathSegment(worldPolygon);
+			}
+		}
 	}
 
 	if (mesh->HasBones())

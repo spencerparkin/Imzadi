@@ -10,6 +10,10 @@
 #include "Collision/CollisionCache.h"
 #include "Log.h"
 #include "Audio/System.h"
+#if defined AUTHOR_NAV_GRAPH_CAPABILITY
+#include "Entities/Level.h"
+#include <rapidjson/prettywriter.h>
+#endif //AUTHOR_NAV_GRAPH_CAPABILITY
 
 //------------------------------------ Alice ------------------------------------
 
@@ -21,6 +25,9 @@ Alice::Alice()
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
 	this->entityOverlapQueryTaskID = 0;
+#if defined AUTHOR_NAV_GRAPH_CAPABILITY
+	this->authoringNavGraph = false;
+#endif //AUTHOR_NAV_GRAPH_CAPABILITY
 	this->SetName("Alice");
 }
 
@@ -171,6 +178,7 @@ void Alice::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 	if (this->inContactWithGround && controller->ButtonPressed(Imzadi::Button::Y_BUTTON))
 	{
+		// TODO: Should get jump force from current abilities.
 		Imzadi::Vector3 jumpForce(0.0, 1000.0, 0.0);
 		netForce += jumpForce;
 	}
@@ -317,6 +325,68 @@ void Alice::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 			}
 
 			this->HandleEntityOverlapResults();
+
+			break;
+		}
+		case Imzadi::TickPass::PARALLEL_WORK:
+		{
+#if defined AUTHOR_NAV_GRAPH_CAPABILITY
+			// Rather than try to procedurally generate the nav-graph as a function of
+			// the collision mesh, here I'm just going to author it by hand.  This code
+			// can be compiled out of the final release binary.
+			if (this->authoringNavGraph)
+			{
+				Imzadi::Input* controller = Imzadi::Game::Get()->GetController("Alice");
+				if (controller)
+				{
+					std::vector<Imzadi::Level*> foundEntityArray;
+					Imzadi::Game::Get()->FindAllEntitiesOfType<Imzadi::Level>(foundEntityArray);
+					if (foundEntityArray.size() == 1)
+					{
+						Imzadi::Level* level = foundEntityArray[0];
+						Imzadi::NavGraph* navGraph = level->GetNavGraph();
+						if (navGraph)
+						{
+							if (controller->ButtonPressed(Imzadi::Button::R_SHOULDER))
+							{
+								Imzadi::Transform objectToWorld;
+								this->GetTransform(objectToWorld);
+
+								auto newNode = const_cast<Imzadi::NavGraph::Node*>(navGraph->FindNearestNodeWithinDistance(objectToWorld.translation, 2.0));
+								if (!newNode)
+									newNode = navGraph->AddLocation(objectToWorld.translation);
+
+								if (!this->currentNode.Get())
+									this->currentNode = newNode;
+								else if(newNode && newNode != this->currentNode.Get())
+								{
+									if (navGraph->AddPathBetweenNodes(this->currentNode, newNode))
+										this->currentNode = newNode;
+								}
+							}
+							else if (controller->ButtonPressed(Imzadi::Button::L_SHOULDER))
+							{
+								this->currentNode.Reset();
+							}
+							else if (controller->ButtonPressed(Imzadi::Button::BACK))
+							{
+								rapidjson::Document jsonDoc;
+								if (navGraph->Save(jsonDoc))
+								{
+									std::ofstream fileStream;
+									fileStream.open(R"(E:\ENG_DEV\Imzadi\Games\BenzoBonanza\Assets\Models\Level9\Level9.nav_graph)", std::ios::out);
+									rapidjson::StringBuffer stringBuffer;
+									rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
+									jsonDoc.Accept(prettyWriter);
+									fileStream << stringBuffer.GetString();
+									fileStream.close();
+								}
+							}
+						}
+					}
+				}
+			}
+#endif //AUTHOR_NAV_GRAPH_CAPABILITY
 
 			break;
 		}

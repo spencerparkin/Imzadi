@@ -7,7 +7,9 @@
 #include "Math/Quaternion.h"
 #include "Assets/CollisionShapeSet.h"
 #include "Assets/LevelData.h"
+#include "Assets/NavGraph.h"
 #include "RenderObjects/SkyDomeRenderObject.h"
+#include "RenderObjects/DebugLines.h"
 #include "MovingPlatform.h"
 #include "WarpTunnel.h"
 #include "TriggerBox.h"
@@ -19,6 +21,7 @@ using namespace Imzadi;
 Level::Level()
 {
 	this->levelName = "?";
+	this->debugDrawNavGraph = false;
 }
 
 /*virtual*/ Level::~Level()
@@ -154,6 +157,23 @@ Level::Level()
 		triggerBox->SetData(triggerBoxData);
 	}
 
+	const std::string& navGraphFile = levelData->GetNavGraphFile();
+	if (!navGraphFile.empty())
+	{
+		if (!Game::Get()->GetAssetCache()->LoadAsset(navGraphFile, asset))
+		{
+			IMZADI_LOG_ERROR("Failed to load nav-graph asset: %s", navGraphFile.c_str());
+			return false;
+		}
+
+		this->navGraph.SafeSet(asset.Get());
+		if (!this->navGraph.Get())
+		{
+			IMZADI_LOG_ERROR("Whatever loaded for the nav-graph wasn't a nav-graph.");
+			return false;
+		}
+	}
+
 	return true;
 }
 
@@ -175,6 +195,11 @@ Level::Level()
 
 /*virtual*/ bool Level::Tick(TickPass tickPass, double deltaTime)
 {
+	if (this->debugDrawNavGraph && tickPass == TickPass::PARALLEL_WORK && this->navGraph.Get())
+	{
+		this->navGraph->DebugDraw(*Game::Get()->GetDebugLines());
+	}
+
 	return true;
 }
 
