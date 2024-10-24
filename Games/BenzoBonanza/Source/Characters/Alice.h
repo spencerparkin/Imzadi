@@ -9,7 +9,7 @@
 #include "Entities/FreeCam.h"
 
 #define MAX_PLATFORM_LANDING_SPEED		60.0
-#define AUTHOR_NAV_GRAPH_CAPABILITY
+//#define AUTHOR_NAV_GRAPH_CAPABILITY
 
 class Pickup;
 

@@ -21,6 +21,8 @@ set(BENZO_BONANZA_SOURCES
     Source/Characters/Borggy.h
     Source/Characters/Bob.cpp
     Source/Characters/Bob.h
+    Source/Characters/Cue.cpp
+    Source/Characters/Cue.h
     Source/Entities/ZipLineEntity.cpp
     Source/Entities/ZipLineEntity.h
     Source/Entities/ZipLineRider.cpp
