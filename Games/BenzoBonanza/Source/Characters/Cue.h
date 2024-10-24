@@ -1,6 +1,9 @@
 #pragma once
 
 #include "Character.h"
+#include "Math/Random.h"
+#include "Assets/NavGraph.h"
+#include "Characters/Alice.h"
 
 /**
  * Again, to avoid copyright infringement, this character parodies
@@ -23,4 +26,29 @@ public:
 	virtual std::string GetAnimName(Imzadi::Biped::AnimType animType) override;
 	virtual void ConfigureCollisionCapsule(Imzadi::Collision::CapsuleShape* capsule) override;
 	virtual void IntegrateVelocity(const Imzadi::Vector3& acceleration, double deltaTime) override;
+	virtual bool OnBipedDied() override;
+
+private:
+
+	void PersuePlayer();
+
+	enum Disposition
+	{
+		NONE,
+		STAY_STILL_FOR_A_BIT,
+		PERSUE_PLAYER_MERCILESSLY,
+		TELEPORT
+	};
+
+	Disposition disposition;
+	double remainingStillTimeSeconds;
+	Imzadi::Random random;
+	Imzadi::Reference<Imzadi::NavGraph> navGraph;
+	Imzadi::Reference<Alice> alice;
+	const Imzadi::NavGraph::Node* aliceNode;
+	const Imzadi::NavGraph::Node* cueNode;
+	std::list<int> runPathList;
+	bool debugDrawRunPath;
+	double runSpeed;
+	Imzadi::Vector3 desiredVelocity;
 };

@@ -3,6 +3,7 @@
 #include "AssetCache.h"
 #include "Math/Vector3.h"
 #include "Math/Polygon.h"
+#include "Math/Random.h"
 #include "Reference.h"
 
 namespace Imzadi
@@ -43,7 +44,7 @@ namespace Imzadi
 		/**
 		 * These are the vertices of the nav-graph.
 		 */
-		class Node : public ReferenceCounted
+		class IMZADI_API Node : public ReferenceCounted
 		{
 		public:
 			Node();
@@ -53,6 +54,7 @@ namespace Imzadi
 			bool IsAdjacentTo(const Node* node) const;
 			int FindAdjacencyIndex(const Node* adjacentNode) const;
 			bool RemovePath(const Path* path);
+			const Node* GetAdjacentNode(int i) const;
 
 		public:
 			Vector3 location;
@@ -64,14 +66,14 @@ namespace Imzadi
 		/**
 		 * These are the edges of the nav-graph.
 		 */
-		class Path : public ReferenceCounted
+		class IMZADI_API Path : public ReferenceCounted
 		{
 		public:
 			Path();
 			virtual ~Path();
 
 			void Clear();
-			const Node* Fallow(const Node* node) const;
+			const Node* Follow(const Node* node) const;
 			bool JoinsNodes(const Node* nodeA, const Node* nodeB) const;
 			LineSegment GetPathSegment() const;
 			void UpdateLength() const;
@@ -180,6 +182,15 @@ namespace Imzadi
 		const Node* FindNearestNodeWithinDistance(const Vector3& location, double maxDistance) const;
 
 		/**
+		 * Find the edge of the graph nearest the given location.
+		 * 
+		 * @param[in] location This location is checked against the paths of the graph.
+		 * @param[out] i If given, this tells you which terminal of the returned edge is nearest the given location.
+		 * @return A pointer to the found edge is returned.
+		 */
+		const Path* FindNearestPath(const Vector3& location, int* i = nullptr) const;
+
+		/**
 		 * Find and return the shortest path between two nodes of the nav-graph
 		 * using Dijkstra's algorihm.  (There can possibly exist more than one
 		 * path of the shortest possible length, but for now, we don't define here
@@ -189,10 +200,18 @@ namespace Imzadi
 		 * 
 		 * @parma[in] nodeA This is the node where the path should start.
 		 * @param[in] nodeB This is the node where the path should end.
-		 * @param[out] pathArray This will be populated with the turns made in the found path.
+		 * @param[out] pathList This will be populated with the turns made in the found path.
 		 * @return True is returned on success; false, otherwise.  Failure can occur here if there is no path between the two given nodes.
 		 */
-		bool FindShortestPath(const Node* nodeA, const Node* nodeB, std::vector<int>& pathArray) const;
+		bool FindShortestPath(const Node* nodeA, const Node* nodeB, std::list<int>& pathList) const;
+
+		/**
+		 * Return a random node in the graph.
+		 * 
+		 * @param[in,out] random This is the random number generator to use.
+		 * @return A pointer to the randomly selected node is returned.  Null is returned if there are no nodes in the graph.
+		 */
+		const Node* GetRandomNode(Random& random) const;
 
 	private:
 

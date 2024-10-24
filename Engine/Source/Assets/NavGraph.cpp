@@ -408,10 +408,39 @@ const NavGraph::Node* NavGraph::FindNearestNodeWithinDistance(const Vector3& loc
 	return (distance <= maxDistance) ? foundNode : nullptr;
 }
 
-// See Chapter 25, Single-Source Shortest Paths of "Intro to Algorithms" by Rivest, et. al.
-bool NavGraph::FindShortestPath(const Node* nodeA, const Node* nodeB, std::vector<int>& pathArray) const
+const NavGraph::Path* NavGraph::FindNearestPath(const Vector3& location, int* i /*= nullptr*/) const
 {
-	pathArray.clear();
+	double shortestDistance = std::numeric_limits<double>::max();
+	const Path* foundPath = nullptr;
+	for (const Path* path : this->pathArray)
+	{
+		double distance = path->GetPathSegment().ShortestDistanceTo(location);
+		if (distance < shortestDistance)
+		{
+			foundPath = path;
+			shortestDistance = distance;
+		}
+	}
+
+	if (i)
+	{
+		if (!foundPath)
+			*i = -1;
+		else
+		{
+			double distanceA = (location - foundPath->terminalNode[0]->location).Length();
+			double distanceB = (location - foundPath->terminalNode[1]->location).Length();
+			*i = (distanceA < distanceB) ? 0 : 1;
+		}
+	}
+
+	return foundPath;
+}
+
+// See Chapter 25, Single-Source Shortest Paths of "Intro to Algorithms" by Rivest, et. al.
+bool NavGraph::FindShortestPath(const Node* nodeA, const Node* nodeB, std::list<int>& pathList) const
+{
+	pathList.clear();
 	if (nodeA == nodeB)
 		return true;
 
@@ -442,7 +471,7 @@ bool NavGraph::FindShortestPath(const Node* nodeA, const Node* nodeB, std::vecto
 
 		for (const Reference<Path>& path : parentNode->adjacentPathArray)
 		{
-			const Node* childNode = path->Fallow(parentNode);
+			const Node* childNode = path->Follow(parentNode);
 			double distance = parentNode->distance + path->length;
 			if (distance < childNode->distance)
 			{
@@ -453,7 +482,6 @@ bool NavGraph::FindShortestPath(const Node* nodeA, const Node* nodeB, std::vecto
 		}
 	}
 
-	std::list<int> pathList;
 	while (nodeB->parentNode)
 	{
 		const Node* parentNode = nodeB->parentNode;
@@ -463,10 +491,16 @@ bool NavGraph::FindShortestPath(const Node* nodeA, const Node* nodeB, std::vecto
 		nodeB = parentNode;
 	}
 
-	for (int i : pathList)
-		pathArray.push_back(i);
+	return pathList.size() > 0;
+}
 
-	return pathArray.size() > 0;
+const NavGraph::Node* NavGraph::GetRandomNode(Random& random) const
+{
+	if (this->nodeArray.size() == 0)
+		return nullptr;
+
+	int i = random.InRange(0, this->nodeArray.size() - 1);
+	return this->nodeArray[i];
 }
 
 //------------------------------------- NavGraph::Node -------------------------------------
@@ -494,7 +528,7 @@ bool NavGraph::Node::IsAdjacentTo(const Node* node) const
 int NavGraph::Node::FindAdjacencyIndex(const Node* adjacentNode) const
 {
 	for (int i = 0; i < (int)this->adjacentPathArray.size(); i++)
-		if (this->adjacentPathArray[i]->Fallow(this) == adjacentNode)
+		if (this->adjacentPathArray[i]->Follow(this) == adjacentNode)
 			return i;
 	
 	return -1;
@@ -515,6 +549,12 @@ bool NavGraph::Node::RemovePath(const Path* path)
 	}
 
 	return false;
+}
+
+const NavGraph::Node* NavGraph::Node::GetAdjacentNode(int i) const
+{
+	IMZADI_ASSERT(0 <= i && i < (int)this->adjacentPathArray.size());
+	return this->adjacentPathArray[i]->Follow(this);
 }
 
 //------------------------------------- NavGraph::Path -------------------------------------
@@ -539,7 +579,7 @@ void NavGraph::Path::UpdateLength() const
 	this->length = (this->terminalNode[0]->location - this->terminalNode[1]->location).Length();
 }
 
-const NavGraph::Node* NavGraph::Path::Fallow(const Node* node) const
+const NavGraph::Node* NavGraph::Path::Follow(const Node* node) const
 {
 	if (node == this->terminalNode[0])
 		return this->terminalNode[1];

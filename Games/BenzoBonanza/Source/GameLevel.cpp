@@ -120,7 +120,6 @@ GameLevel::GameLevel()
 		{
 			character->SetRestartLocation(npc->startPosition);
 			character->SetRestartOrientation(npc->startOrientation);
-			character->SetCanRestart(false);
 		}
 	}
 	else if (

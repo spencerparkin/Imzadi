@@ -42,6 +42,70 @@
                 "y": 118.0,
                 "z": -503.36507
             }
+        },
+        {
+            "type": "cue",
+            "start_position": {
+                "x": -107.2757,
+                "y": 176.0,
+                "z": -78.36337
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": 161.322,
+                "y": 155.0,
+                "z": -442.5117
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": -53.2236,
+                "y": 130.0,
+                "z": -549.25915
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": -38.106339,
+                "y": 125.0,
+                "z": -443.355
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": -118.219828,
+                "y": 40.0,
+                "z": 2.6995
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": -219.0828,
+                "y": 204.0,
+                "z": 34.6020907
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": -145.62168,
+                "y": 219.0,
+                "z": -66.842025
+            }
+        },
+        {
+            "type": "speed_boost",
+            "start_position": {
+                "x": 346.0786,
+                "y": 145.0,
+                "z": 11.433345
+            }
         }
     ],
     "nav_graph": "Models/Level9/Level9.nav_graph"
