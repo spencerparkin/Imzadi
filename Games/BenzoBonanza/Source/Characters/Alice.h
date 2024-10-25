@@ -122,7 +122,6 @@ private:
 	};
 
 	uint32_t cameraHandle;
-	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
 	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;

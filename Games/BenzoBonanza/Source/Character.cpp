@@ -5,6 +5,7 @@
 Character::Character()
 {
 	this->controlMode = ControlMode::INTERNAL;
+	this->abilities.Set(new Abilities());
 }
 
 /*virtual*/ Character::~Character()
@@ -43,6 +44,9 @@ Character::ControlMode Character::GetControlMode() const
 
 /*virtual*/ bool Character::Tick(Imzadi::TickPass tickPass, double deltaTime)
 {
+	if (tickPass == Imzadi::TickPass::PARALLEL_WORK)
+		this->abilities->Tick(deltaTime);
+
 	if (this->controlMode == ControlMode::INTERNAL)
 		return Biped::Tick(tickPass, deltaTime);
 

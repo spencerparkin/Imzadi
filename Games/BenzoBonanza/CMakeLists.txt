@@ -11,6 +11,8 @@ set(BENZO_BONANZA_SOURCES
     Source/DialogSystem.h
     Source/Character.cpp
     Source/Character.h
+    Source/Abilities.cpp
+    Source/Abilities.h
     Source/CustomAssetCache.cpp
     Source/CustomAssetCache.h
     Source/Characters/Alice.cpp

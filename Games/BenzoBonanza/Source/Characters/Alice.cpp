@@ -20,7 +20,6 @@
 Alice::Alice()
 {
 	this->cameraHandle = 0;
-	this->maxMoveSpeed = 20.0;
 	this->freeCamListenerHandle = 0;
 	this->triggerBoxListenerHandle = 0;
 	this->rayCastQueryTaskID = 0;
@@ -29,6 +28,8 @@ Alice::Alice()
 	this->authoringNavGraph = false;
 #endif //AUTHOR_NAV_GRAPH_CAPABILITY
 	this->SetName("Alice");
+	this->abilities->SetAbility("jump", new FloatAbility(1000.0));
+	this->abilities->SetAbility("run_speed", new FloatAbility(20.0));
 }
 
 /*virtual*/ Alice::~Alice()
@@ -178,8 +179,9 @@ void Alice::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 
 	if (this->inContactWithGround && controller->ButtonPressed(Imzadi::Button::Y_BUTTON))
 	{
-		// TODO: Should get jump force from current abilities.
-		Imzadi::Vector3 jumpForce(0.0, 1000.0, 0.0);
+		double jumpForceValue = 0.0;
+		this->abilities->GetAbilityValue("jump", jumpForceValue);
+		Imzadi::Vector3 jumpForce(0.0, jumpForceValue, 0.0);
 		netForce += jumpForce;
 	}
 }
@@ -212,7 +214,10 @@ void Alice::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		xAxis = xAxis.RejectedFrom(upVector).Normalized();
 		zAxis = zAxis.RejectedFrom(upVector).Normalized();
 
-		Imzadi::Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * this->maxMoveSpeed;
+		double maxMoveSpeed = 0.0;
+		this->abilities->GetAbilityValue("run_speed", maxMoveSpeed);
+
+		Imzadi::Vector3 moveDelta = (xAxis * leftStick.x - zAxis * leftStick.y) * maxMoveSpeed;
 		double speed = moveDelta.Length();
 		
 		if (this->animationMode == Imzadi::Biped::AnimationMode::DEATH_BY_BADDY_HIT ||
@@ -330,57 +335,68 @@ void Alice::HandleTriggerBoxEvent(const Imzadi::TriggerBoxEvent* event)
 		}
 		case Imzadi::TickPass::PARALLEL_WORK:
 		{
+			Imzadi::Input* controller = Imzadi::Game::Get()->GetController("Alice");
+			if (controller)
+			{
+				if (controller->ButtonPressed(Imzadi::Button::R_SHOULDER))
+				{
+					GameProgress* gameProgress = ((GameApp*)Imzadi::Game::Get())->GetGameProgress();
+					uint32_t count = gameProgress->GetPossessedItemCount("booster");
+					if (count > 0)
+					{
+						if(abilities->OverrideAbility("run_speed", new FloatAbility(40.0), 30.0))
+							gameProgress->SetPossessedItemCount("booster", count - 1);
+					}
+				}
+			}
+
 #if defined AUTHOR_NAV_GRAPH_CAPABILITY
 			// Rather than try to procedurally generate the nav-graph as a function of
 			// the collision mesh, here I'm just going to author it by hand.  This code
 			// can be compiled out of the final release binary.
-			if (this->authoringNavGraph)
+			if (this->authoringNavGraph && controller)
 			{
-				Imzadi::Input* controller = Imzadi::Game::Get()->GetController("Alice");
-				if (controller)
+				std::vector<Imzadi::Level*> foundEntityArray;
+				Imzadi::Game::Get()->FindAllEntitiesOfType<Imzadi::Level>(foundEntityArray);
+				if (foundEntityArray.size() == 1)
 				{
-					std::vector<Imzadi::Level*> foundEntityArray;
-					Imzadi::Game::Get()->FindAllEntitiesOfType<Imzadi::Level>(foundEntityArray);
-					if (foundEntityArray.size() == 1)
+					Imzadi::Level* level = foundEntityArray[0];
+					Imzadi::NavGraph* navGraph = level->GetNavGraph();
+					if (navGraph)
 					{
-						Imzadi::Level* level = foundEntityArray[0];
-						Imzadi::NavGraph* navGraph = level->GetNavGraph();
-						if (navGraph)
+						if (controller->ButtonPressed(Imzadi::Button::R_SHOULDER))
 						{
-							if (controller->ButtonPressed(Imzadi::Button::R_SHOULDER))
+							Imzadi::Transform objectToWorld;
+							this->GetTransform(objectToWorld);
+
+							auto newNode = const_cast<Imzadi::NavGraph::Node*>(navGraph->FindNearestNodeWithinDistance(objectToWorld.translation, 2.0));
+							if (!newNode)
+								newNode = navGraph->AddLocation(objectToWorld.translation);
+
+							if (!this->currentNode.Get())
+								this->currentNode = newNode;
+							else if(newNode && newNode != this->currentNode.Get())
 							{
-								Imzadi::Transform objectToWorld;
-								this->GetTransform(objectToWorld);
-
-								auto newNode = const_cast<Imzadi::NavGraph::Node*>(navGraph->FindNearestNodeWithinDistance(objectToWorld.translation, 2.0));
-								if (!newNode)
-									newNode = navGraph->AddLocation(objectToWorld.translation);
-
-								if (!this->currentNode.Get())
+								if (navGraph->AddPathBetweenNodes(this->currentNode, newNode))
 									this->currentNode = newNode;
-								else if(newNode && newNode != this->currentNode.Get())
-								{
-									if (navGraph->AddPathBetweenNodes(this->currentNode, newNode))
-										this->currentNode = newNode;
-								}
 							}
-							else if (controller->ButtonPressed(Imzadi::Button::L_SHOULDER))
+						}
+						else if (controller->ButtonPressed(Imzadi::Button::L_SHOULDER))
+						{
+							this->currentNode.Reset();
+						}
+						else if (controller->ButtonPressed(Imzadi::Button::BACK))
+						{
+							rapidjson::Document jsonDoc;
+							if (navGraph->Save(jsonDoc))
 							{
-								this->currentNode.Reset();
-							}
-							else if (controller->ButtonPressed(Imzadi::Button::BACK))
-							{
-								rapidjson::Document jsonDoc;
-								if (navGraph->Save(jsonDoc))
-								{
-									std::ofstream fileStream;
-									fileStream.open(R"(E:\ENG_DEV\Imzadi\Games\BenzoBonanza\Assets\Models\Level9\Level9.nav_graph)", std::ios::out);
-									rapidjson::StringBuffer stringBuffer;
-									rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
-									jsonDoc.Accept(prettyWriter);
-									fileStream << stringBuffer.GetString();
-									fileStream.close();
-								}
+								std::ofstream fileStream;
+								fileStream.open(R"(E:\ENG_DEV\Imzadi\Games\BenzoBonanza\Assets\Models\Level9\Level9.nav_graph)", std::ios::out);
+								rapidjson::StringBuffer stringBuffer;
+								rapidjson::PrettyWriter<rapidjson::StringBuffer> prettyWriter(stringBuffer);
+								jsonDoc.Accept(prettyWriter);
+								fileStream << stringBuffer.GetString();
+								fileStream.close();
 							}
 						}
 					}

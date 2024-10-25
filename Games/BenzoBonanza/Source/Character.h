@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Entities/Biped.h"
+#include "Abilities.h"
 
 class Character : public Imzadi::Biped
 {
@@ -24,5 +25,6 @@ public:
 
 protected:
 
+	Imzadi::Reference<Abilities> abilities;
 	ControlMode controlMode;
 };
