@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level3\\Cylinder004_Indices.buffer",
+    "vertex_buffer": "Models\\Level3\\Cylinder004_Vertices.buffer",
+    "name": "Cylinder004",
+    "texture": "Textures\\Spiral.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": 931.61572265625,
+            "y": 170.13429260253907,
+            "z": 60.38063049316406
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -9.172517776489258,
+            "y": -1.0173736810684205,
+            "z": -10.782940864562989
+        },
+        "max": {
+            "x": 11.337854385375977,
+            "y": 1.0173736810684205,
+            "z": 10.782938957214356
+        }
+    }
+}

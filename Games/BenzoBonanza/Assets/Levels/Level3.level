@@ -13,6 +13,7 @@
         "Models/Level3/Object001.render_mesh",
         "Models/Level3/Object002.render_mesh",
         "Models/Level3/Cylinder003.render_mesh",
+        "Models/Level3/Cylinder004.render_mesh",
         "Models/Level3/Box012.render_mesh",
         "Models/Level3/Box013.render_mesh",
         "Models/Level3/Cone001.render_mesh"
@@ -31,6 +32,7 @@
         "Models/Level3/Object001.collision",
         "Models/Level3/Object002.collision",
         "Models/Level3/Cylinder003.collision",
+        "Models/Level3/Cylinder004.collision",
         "Models/Level3/Box012.collision",
         "Models/Level3/Box013.collision",
         "Models/Level3/Cone001.collision"
@@ -56,6 +58,15 @@
         "Levels/Level3_Sphere001.mov_plat",
         "Levels/Level3_Sphere002.mov_plat",
         "Levels/Level3_Sphere003.mov_plat"
+    ],
+    "zip_lines": [
+        "Levels/Level3_ZL1.zip_line",
+        "Levels/Level3_ZL2.zip_line",
+        "Levels/Level3_ZL3.zip_line"
+    ],
+    "trigger_boxes": [
+        "Models/Level3/JumpToLevel1.trigger_box",
+        "Models/Level3/JumpToLevel4.trigger_box"
     ],
     "npc_array": [
         {
@@ -164,6 +175,58 @@
             },
             "config": {
                 "type": "Librium"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 964.409,
+                "y": 170.0,
+                "z": 86.6718
+            },
+            "config": {
+                "type": "Xanax"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 954.18118,
+                "y": 170.0,
+                "z": 95.760247
+            },
+            "config": {
+                "type": "Xanax"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": 975.73245,
+                "y": 170.0,
+                "z": 70.2745516
+            },
+            "config": {
+                "type": "Xanax"
+            }
+        },
+        {
+            "type": "benzo",
+            "start_position": {
+                "x": -225.151,
+                "y": 50.0,
+                "z": -287.15904
+            },
+            "config": {
+                "type": "Halcion"
+            }
+        },
+        {
+            "type": "heart",
+            "start_position": {
+                "x": 65.8612,
+                "y": -91.0,
+                "z": 358.151
             }
         }
     ]
