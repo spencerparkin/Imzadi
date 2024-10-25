@@ -4,14 +4,20 @@
         "Models/Level4/Box002.render_mesh",
         "Models/Level4/Box003.render_mesh",
         "Models/Level4/Box004.render_mesh",
-        "Models/Level4/Cylinder001.render_mesh"
+        "Models/Level4/Cylinder001.render_mesh",
+        "Models/Level4/Torus001.render_mesh",
+        "Models/Level4/Torus002.render_mesh",
+        "Models/Level4/Torus003.render_mesh"
     ],
     "static_collision": [
         "Models/Level4/Box001.collision",
         "Models/Level4/Box002.collision",
         "Models/Level4/Box003.collision",
         "Models/Level4/Box004.collision",
-        "Models/Level4/Cylinder001.collision"
+        "Models/Level4/Cylinder001.collision",
+        "Models/Level4/Torus001.collision",
+        "Models/Level4/Torus002.collision",
+        "Models/Level4/Torus003.collision"
     ],
     "sky_dome": "Models/SkyDome/SkyDome.sky_dome",
     "cube_texture": "Textures/DesertSkyBox/SkyBox.cube_texture",
@@ -45,5 +51,10 @@
                 "roll": 0.0
             }
         }
+    ],
+    "trigger_boxes": [
+        "Models/Level4/JumpToLevel7.trigger_box",
+        "Models/Level4/JumpToLevel8.trigger_box",
+        "Models/Level4/JumpToLevel9.trigger_box"
     ]
 }
