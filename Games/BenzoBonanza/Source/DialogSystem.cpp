@@ -144,22 +144,17 @@ bool DialogSystem::DetermineDialogSequenceForConversation(const ConversationEven
 				else if (progress->GetPossessedBenzoCount() == 0)
 					sequenceName = "no_benzos_to_give_convo";
 				else
-				{
-
-					// TODO: The dialog sequence should unfold differently based on whether meds can be exchanged for hearts.
-					sequenceName = "";
-
-				}
+					sequenceName = "benzos_to_give_convo";
 			}
 		}
 		else if (otherEntityName == "Bob")
 		{
-			if (!progress->WasMileStoneReached("bob_convo_one_had"))
-				sequenceName = "bob_convo_one";
-			else if (!progress->WasMileStoneReached("bob_convo_two_had"))
-				sequenceName = "bob_convo_two";
-			else
-				sequenceName = "bob_convo_three";
+			static int convoNumber = 0;
+			convoNumber++;
+			if (convoNumber > 20)
+				convoNumber = 1;
+
+			sequenceName = std::format("bob_convo_{}", convoNumber);
 		}
 	}
 

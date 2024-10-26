@@ -194,6 +194,66 @@
                 }
             ]
         },
+        "benzos_to_give_convo": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Alice!  What's that I smell?!  Benzos!  Have you come to exchange them for hearts?"
+                },
+                {
+                    "type": "choice",
+                    "speaker": "Alice",
+                    "choice": [
+                        {
+                            "text": "Yes.  And you smell like pee, by the way.",
+                            "sequence": "spencer_to_receive_benzos"
+                        },
+                        {
+                            "text": "No, I think I'll just hang on to them for a while.",
+                            "sequence": "spencer_disappointed_hes_not_getting_benzos"
+                        }
+                    ]
+                }
+            ]
+        },
+        "spencer_disappointed_hes_not_getting_benzos": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Well, okay, Alice.  If that's what you want to do, then so be it.  I'll just be here...extremely depressed...on the verge of off-ing myself."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "I'll try to keep that in mind."
+                }
+            ]
+        },
+        "spencer_to_receive_benzos": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Oh, goodie!  Let's see what you have..."
+                },
+                {
+                    "type": "benzo_acquire",
+                    "speaker": "Spencer"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Spencer",
+                    "text": "Thank you for your help, Alice!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Sure, whatever.  Try not to kill yourself while I'm away, okay?"
+                }
+            ]
+        },
         "bob_convo_1": {
             "sequence": [
                 {

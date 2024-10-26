@@ -95,3 +95,19 @@ public:
 
 	std::vector<Imzadi::Reference<DialogElement>> dialogElementArray;
 };
+
+class DialogBenzoAcquireElement : public DialogElement
+{
+public:
+	DialogBenzoAcquireElement();
+	virtual ~DialogBenzoAcquireElement();
+
+	virtual bool Load(const rapidjson::Value& elementValue) override;
+	virtual bool Setup() override;
+	virtual bool Shutdown() override;
+	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) override;
+
+	int GetHeartToBenzoExchanbgeRate(const std::string& benzoName);
+
+	std::string sceneObjName;
+};
