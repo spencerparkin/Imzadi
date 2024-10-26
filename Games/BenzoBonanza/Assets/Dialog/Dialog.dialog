@@ -117,7 +117,7 @@
                 {
                     "type": "basic",
                     "speaker": "Alice",
-                    "text": "Then what's gotten into you?!"
+                    "text": "What?!  You made me collect all those stupid meds and you don't even need'em?!  Ugh!....  Okay, fine.  So what's your deal, anyway."
                 },
                 {
                     "type": "basic",
@@ -127,12 +127,12 @@
                 {
                     "type": "basic",
                     "speaker": "Alice",
-                    "text": "Uh...I've won the game?  Where's the end-game cinematic?!  Where are all of the particle-based fireworks?!  This game sucks!"
+                    "text": "Uh...I've won the game?  Where's the end-game cinematic?!  Where are all of the particle-based fireworks?!  Where's the final boss battle?!!  This game sucks!!!"
                 },
                 {
                     "type": "basic",
                     "speaker": "Spencer",
-                    "text": "What did you expect?  It was written by an idiot that no in the gaming industry will hire, and who works a dead-end job writing software no one gives a rat's butt about."
+                    "text": "What did you expect?  It was written by an idiot that no one in the gaming industry will hire, and who works a dead-end job writing software no one gives a rat's butt about."
                 },
                 {
                     "type": "basic",
@@ -238,7 +238,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "Really, they could ace the test, but I'm going to just ghost them anyway, especially if they're not diverse."
+                    "text": "Really, they could ace the test, but I'm just going to ghost them anyway, especially if they're not diverse."
                 }
             ]
         },
@@ -292,12 +292,17 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "What if I turned gay?  Would it then be okay for me to live?"
+                    "text": "Wait!  What if I turned gay?  Would it then be okay for me to live?"
                 },
                 {
                     "type": "basic",
                     "speaker": "Alice",
                     "text": "Sure, Bob.  But only if you really mean it."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Few!  Crisis averted!"
                 }
             ]
         },
@@ -330,7 +335,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "Wow, that makes you incredibly diverse, and special, Alice.  If I get a resume that doesn't specify personal pronouns, I throw it in the trash immediately."
+                    "text": "Wow, that makes zou incredibly diverse, and special, Alice.  If I get a resume that doesn't specify personal pronouns, I throw it in the trash immediately."
                 }
             ]
         },
@@ -407,7 +412,7 @@
                 {
                     "type": "basic",
                     "speaker": "Alice",
-                    "text": "Why, Bob, I'd love to!  It's not like when you took out the loan that you were promising to pay the money back or anything like that, because that's just non-sense!"
+                    "text": "Why Bob, I'd love to!  It's not like when you took out the loan that you were promising to pay the money back or anything like that, because that's just non-sense!"
                 },
                 {
                     "type": "basic",
@@ -638,7 +643,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "I'm sorry!"
+                    "text": "I'm sorry!  I didn't mean it!  <sniffle-sniffle>  I think I'm gunna cry now! .... Waaaaaaaaaaaaaaaaaaaaaaaaaa!"
                 }
             ]
         },
@@ -677,7 +682,7 @@
                 {
                     "type": "basic",
                     "speaker": "Bob",
-                    "text": "I mean, who I want to be in bed as, or in bed with, changes all the time.  It's like a roller coaster!"
+                    "text": "I mean, who I want to be in bed *as*, or in bed *with*, changes all the time.  It's like a roller coaster!"
                 },
                 {
                     "type": "basic",
@@ -706,7 +711,7 @@
                 {
                     "type": "basic",
                     "speaker": "Alice",
-                    "text": "Sigh....yeah, I guess so.  It's the only way to win this stupid game."
+                    "text": "<Sigh>....yeah, I guess so.  It's the only way to win this stupid game."
                 },
                 {
                     "type": "basic",
@@ -717,6 +722,210 @@
                     "type": "basic",
                     "speaker": "Alice",
                     "text": "You're right, Bob.  But it's not really up to me.  It's up to the player."
+                }
+            ]
+        },
+        "bob_convo_15": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Alice, if I'm being inclusive, what does that mean exactly?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "It means you must agree with all of my woke ideas.  Otherwise, I'll feel excluded."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "But what about diversity of thought?  I thought you would value that."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "What?!  No!  Diversity of *skin* color, Bob.  Ha!  Diversity of thought...you're an idiot."
+                }
+            ]
+        },
+        "bob_convo_16": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "I voted for Trump."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "You did what?!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Uh... I voted for Trump?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Yeah.  That's what I thought you said."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "So did I.  Kamala is just terrible."
+                }
+            ]
+        },
+        "bob_convo_17": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Love is love, Alice."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Impecable logic there, Bob.  Truely inspiring."
+                }
+            ]
+        },
+        "bob_convo_18": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Morality matters, Alice."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Uh...No it doesn't."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Why not?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "To each their own, Bob.  And besides, morality is an out-dated concept anyway.  Get with the times!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "So a sense of right and wrong about anything doesn't matter?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Nope!  Soon, every conceivable action a person could take will become socially acceptable.  And once that happens, the world will finally be free, Bob!  Finally free!!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Come on, Alice.  You have to draw the line somewhere.  Isn't there at least one thing you'd consider as being inappropriate now that always will be?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Only in a world with unreasonble restrictions, Bob."
+                }
+            ]
+        },
+        "bob_convo_19": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Do you believe in free will, Alice?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Of course not!  If you could measure the position and velocity of all atoms in the universe at a single moment in time, then you could predict the future."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Okay, but what does that have to do with free will?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Bob!  Your actions are completely deterministic!  Your notion of being able to choose is a delusion."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Hmmm...  So does that mean that there's no accountability?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Nope!  None whatsoever."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "<Smack!>"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Agh!  Why did you hit me, Bob?!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "The big bang made me do it, Alice.  It's not my fault!"
+                }
+            ]
+        },
+        "bob_convo_20": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Diversity is our strength, Alice!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "It sure is, Bob.  Optimizing your workforce is all about making sure everyone is different in ways that have nothing to do with whatever it is that your company does."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Indeed, Alice.  I take great comfort in knowing, for example, that I was hired because of the way I look, and not for my qualifications."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Oh, you weren't hired for that reason, Bob."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Oh?  Then why was I hired?"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "You know what... I forgot.  But we need to fire you, because you have too much priveledge."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "What?!  No!  I need this job!"
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Sorry, Bob.  Get out of here!  Go oppress someone else!"
                 }
             ]
         }
