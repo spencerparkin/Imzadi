@@ -486,7 +486,11 @@ DialogBenzoAcquireElement::DialogBenzoAcquireElement()
 		Imzadi::TextRenderObject::Flag::DRAW_BACKGROUND |
 		Imzadi::TextRenderObject::Flag::MULTI_LINE;
 
-	std::string text = std::format("Wow, you collected {} pills!  At the going rate for each pill type, I can give you {} hearts!", totalPills, totalHearts);
+	std::string text = std::format("Wow, you collected {} {}!  At the going rate for each pill type, I can give you {} {}!",
+		totalPills,
+		((totalPills > 1) ? "pills" : "pill"),
+		totalHearts,
+		((totalHearts > 1) ? "hearts": "heart"));
 
 	auto textRenderObject = new Imzadi::TextRenderObject();
 	textRenderObject->SetFont("Roboto_Regular");
