@@ -42,6 +42,7 @@
     "skeleton": "Models\\Cue\\Cue.skeleton",
     "skin_weights": "Models\\Cue\\Cue.skin_weights",
     "animations": [
-        "Animations/CueIdle.animation"
+        "Animations\\CueIdle.animation",
+        "Animations\\CueRun.animation"
     ]
 }

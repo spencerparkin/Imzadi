@@ -32,16 +32,17 @@ namespace Imzadi
 			std::unordered_map<std::string, std::string> configMap;
 		};
 
-		const std::vector<std::string>& GetModelFilesArray() { return this->modelFilesArray; }
-		const std::vector<std::string>& GetCollisionFilesArray() { return this->collisionFilesArray; }
-		const std::vector<std::string>& GetMovingPlatformFilesArray() { return this->movingPlatformFilesArray; }
-		const std::vector<std::string>& GetWarpTunnelFilesArray() { return this->warpTunnelFilesArray; }
-		const std::vector<std::string>& GetTriggerBoxFilesArray() { return this->triggerBoxFilesArray; }
-		const std::vector<NPC*>& GetNPCArray() { return this->npcArray; }
-		const std::string& GetSkyDomeFile() { return this->skyDomeFile; }
-		const std::string& GetCubeTextureFile() { return this->cubeTextureFile; }
-		const Vector3& GetPlayerStartPosition() { return this->playerStartPosition; }
-		const Quaternion& GetPlayerStartOrientation() { return this->playerStartOrientation; }
+		const std::vector<std::string>& GetModelFilesArray() const { return this->modelFilesArray; }
+		const std::vector<std::string>& GetCollisionFilesArray() const { return this->collisionFilesArray; }
+		const std::vector<std::string>& GetMovingPlatformFilesArray() const { return this->movingPlatformFilesArray; }
+		const std::vector<std::string>& GetWarpTunnelFilesArray() const { return this->warpTunnelFilesArray; }
+		const std::vector<std::string>& GetTriggerBoxFilesArray() const { return this->triggerBoxFilesArray; }
+		const std::vector<NPC*>& GetNPCArray() const { return this->npcArray; }
+		const std::string& GetSkyDomeFile() const { return this->skyDomeFile; }
+		const std::string& GetCubeTextureFile() const { return this->cubeTextureFile; }
+		const std::string& GetNavGraphFile() const { return this->navGraphFile; }
+		const Vector3& GetPlayerStartPosition() const { return this->playerStartPosition; }
+		const Quaternion& GetPlayerStartOrientation() const { return this->playerStartOrientation; }
 
 	private:
 		std::vector<std::string> modelFilesArray;
@@ -52,6 +53,7 @@ namespace Imzadi
 		std::vector<NPC*> npcArray;
 		std::string skyDomeFile;
 		std::string cubeTextureFile;
+		std::string navGraphFile;
 		Vector3 playerStartPosition;
 		Quaternion playerStartOrientation;
 	};

@@ -77,6 +77,9 @@ LevelData::LevelData()
 	if (jsonDoc.HasMember("cube_texture") && jsonDoc["cube_texture"].IsString())
 		this->cubeTextureFile = jsonDoc["cube_texture"].GetString();
 
+	if (jsonDoc.HasMember("nav_graph") && jsonDoc["nav_graph"].IsString())
+		this->navGraphFile = jsonDoc["nav_graph"].GetString();
+
 	this->triggerBoxFilesArray.clear();
 	if (jsonDoc.HasMember("trigger_boxes") && !this->LoadStringArray(jsonDoc["trigger_boxes"], this->triggerBoxFilesArray))
 	{
@@ -143,6 +146,9 @@ LevelData::LevelData()
 	this->warpTunnelFilesArray.clear();
 	this->triggerBoxFilesArray.clear();
 	this->npcArray.clear();
+	this->skyDomeFile = "";
+	this->cubeTextureFile = "";
+	this->navGraphFile = "";
 
 	return true;
 }

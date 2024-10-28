@@ -5,6 +5,7 @@
 #include "EventSystem.h"
 #include "Entity.h"
 #include "Log.h"
+#include "Entities/Pickup.h"
 
 //------------------------------------ DialogData ------------------------------------
 
@@ -68,6 +69,8 @@ DialogData::DialogData()
 				element.Set(new DialogChoiceElement());
 			else if (elementType == "acquire")
 				element.Set(new DialogAcquireElement());
+			else if (elementType == "benzo_acquire")
+				element.Set(new DialogBenzoAcquireElement());
 			else
 			{
 				IMZADI_LOG_ERROR("Did not recognoze dialog element type: %s", elementType.c_str());
@@ -419,6 +422,126 @@ DialogAcquireElement::DialogAcquireElement()
 /*virtual*/ bool DialogAcquireElement::Tick(std::string& nextSequence, int& nextSequencePosition)
 {
 	return false;
+}
+
+//------------------------------------ DialogBenzoAcquireElement ------------------------------------
+
+DialogBenzoAcquireElement::DialogBenzoAcquireElement()
+{
+}
+
+/*virtual*/ DialogBenzoAcquireElement::~DialogBenzoAcquireElement()
+{
+}
+
+/*virtual*/ bool DialogBenzoAcquireElement::Load(const rapidjson::Value& elementValue)
+{
+	if (!DialogElement::Load(elementValue))
+		return false;
+
+	return true;
+}
+
+/*virtual*/ bool DialogBenzoAcquireElement::Setup()
+{
+	if (!DialogElement::Setup())
+		return false;
+
+	Imzadi::Reference<Imzadi::Entity> foundEntity;
+	if (!Imzadi::Game::Get()->FindEntityByName(this->speaker, foundEntity))
+		return false;
+
+	auto gameApp = (GameApp*)Imzadi::Game::Get();
+	GameProgress* gameProgress = gameApp->GetGameProgress();
+
+	int totalHearts = 0;
+	int totalPills = 0;
+	std::set<std::string> benzoSet;
+	for (auto pair : gameProgress->GetInventoryMap())
+	{
+		if (BenzoPickup::IsBenzoName(pair.first))
+		{
+			benzoSet.insert(pair.first);
+			int rate = this->GetHeartToBenzoExchanbgeRate(pair.first);
+			totalHearts += rate * pair.second;
+			totalPills += pair.second;
+		}
+	}
+
+	for (const std::string& benzoName : benzoSet)
+		gameProgress->SetPossessedItemCount(benzoName, 0);
+
+	int heartCount = gameProgress->GetNumLives();
+	gameProgress->SetNumLives(heartCount + totalHearts);
+
+	Imzadi::Transform transform;
+	foundEntity->GetTransform(transform);
+	transform.matrix.SetIdentity();
+	transform.matrix.SetUniformScale(20.0);
+
+	uint32_t flags =
+		Imzadi::TextRenderObject::Flag::ALWAYS_FACING_CAMERA |
+		Imzadi::TextRenderObject::Flag::ALWAYS_ON_TOP |
+		Imzadi::TextRenderObject::Flag::CENTER_JUSTIFY |
+		Imzadi::TextRenderObject::Flag::DRAW_BACKGROUND |
+		Imzadi::TextRenderObject::Flag::MULTI_LINE;
+
+	std::string text = std::format("Wow, you collected {} {}!  At the going rate for each pill type, I can give you {} {}!",
+		totalPills,
+		((totalPills > 1) ? "pills" : "pill"),
+		totalHearts,
+		((totalHearts > 1) ? "hearts" : "heart"));
+
+	auto textRenderObject = new Imzadi::TextRenderObject();
+	textRenderObject->SetFont("Roboto_Regular");
+	textRenderObject->SetFlags(flags);
+	textRenderObject->SetText(std::format("{}: {} (Press \"A\".)", this->speaker.c_str(), text.c_str()));
+	textRenderObject->SetForegroundColor(Imzadi::Vector3(1.0, 1.0, 1.0));
+	textRenderObject->SetBackgroundColor(Imzadi::Vector3(0.0, 0.0, 0.0));
+	textRenderObject->SetTransform(transform);
+	Imzadi::Game::Get()->GetScene()->AddRenderObject(textRenderObject);
+	this->sceneObjName = textRenderObject->GetName();
+
+	return true;
+}
+
+int DialogBenzoAcquireElement::GetHeartToBenzoExchanbgeRate(const std::string& benzoName)
+{
+	if (benzoName == "Ativan")
+		return 1;
+	else if (benzoName == "Klonopin")
+		return 2;
+	else if (benzoName == "Librium")
+		return 3;
+	else if (benzoName == "Holcion")
+		return 2;
+	else if (benzoName == "Xanax")
+		return 5;
+
+	return 1;
+}
+
+/*virtual*/ bool DialogBenzoAcquireElement::Shutdown()
+{
+	DialogElement::Shutdown();
+
+	Imzadi::Game::Get()->GetScene()->RemoveRenderObject(this->sceneObjName);
+	return true;
+}
+
+/*virtual*/ bool DialogBenzoAcquireElement::Tick(std::string& nextSequence, int& nextSequencePosition)
+{
+	Imzadi::Input* controller = Imzadi::Game::Get()->GetController("DialogSystem");
+	if (!controller)
+		return false;
+
+	if (controller->ButtonPressed(Imzadi::Button::A_BUTTON, true))
+	{
+		nextSequencePosition++;
+		return false;
+	}
+
+	return true;
 }
 
 //------------------------------------ DialogSequence ------------------------------------

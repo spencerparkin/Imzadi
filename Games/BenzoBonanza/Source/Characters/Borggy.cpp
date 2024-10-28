@@ -18,6 +18,7 @@ Borggy::Borggy()
 	this->meanderingMoveSpeed = 10.0;
 	this->attackMoveSpeed = 20.0;
 	this->assimulatedHuman = false;
+	this->canRestart = false;
 }
 
 /*virtual*/ Borggy::~Borggy()

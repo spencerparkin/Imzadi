@@ -4,6 +4,7 @@
 #include "Characters/Spencer.h"
 #include "Characters/Borggy.h"
 #include "Characters/Bob.h"
+#include "Characters/Cue.h"
 #include "Assets/GameLevelData.h"
 #include "Entities/Pickup.h"
 #include "Entities/ZipLineEntity.h"
@@ -103,7 +104,8 @@ GameLevel::GameLevel()
 	Imzadi::Game* game = Imzadi::Game::Get();
 
 	if (npc->type == "bob" ||
-		npc->type == "borg")
+		npc->type == "borg" ||
+		npc->type == "cue")
 	{
 		Character* character = nullptr;
 
@@ -111,12 +113,13 @@ GameLevel::GameLevel()
 			character = game->SpawnEntity<Borggy>();
 		else if (npc->type == "bob")
 			character = game->SpawnEntity<Bob>();
+		else if (npc->type == "cue")
+			character = game->SpawnEntity<Cue>();
 
 		if (character)
 		{
 			character->SetRestartLocation(npc->startPosition);
 			character->SetRestartOrientation(npc->startOrientation);
-			character->SetCanRestart(false);
 		}
 	}
 	else if (

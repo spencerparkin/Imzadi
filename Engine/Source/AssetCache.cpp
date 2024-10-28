@@ -16,6 +16,7 @@
 #include "Assets/SkyDome.h"
 #include "Assets/TriggerBoxData.h"
 #include "Assets/Audio.h"
+#include "Assets/NavGraph.h"
 #include "Math/Angle.h"
 #include "Log.h"
 #include "Game.h"
@@ -159,6 +160,8 @@ std::string AssetCache::MakeKey(const std::string& assetFile)
 		return new Audio();
 	else if (ext == ".song")
 		return new MidiSong();
+	else if (ext == ".nav_graph")
+		return new NavGraph();
 
 	return nullptr;
 }

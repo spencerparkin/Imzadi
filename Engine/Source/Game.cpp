@@ -724,6 +724,13 @@ void Game::AdvanceEntities(TickPass tickPass)
 				this->ToggleConsole();
 			else if (wParam == VK_F8)
 				this->debugDrawVisibilityBoxes = !debugDrawVisibilityBoxes;
+			else if (wParam == VK_F9)
+			{
+				std::vector<Level*> foundLevelsArray;
+				this->FindAllEntitiesOfType<Level>(foundLevelsArray);
+				for (auto level : foundLevelsArray)
+					level->debugDrawNavGraph = !level->debugDrawNavGraph;
+			}
 			break;
 		}
 		case WM_INPUT:

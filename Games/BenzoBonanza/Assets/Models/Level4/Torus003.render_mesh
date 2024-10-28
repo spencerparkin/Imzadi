@@ -1,0 +1,39 @@
+{
+    "primitive_type": "TRIANGLE_LIST",
+    "shader": "Shaders/Standard.shader",
+    "shadow_shader": "Shaders/StandardShadow.shader",
+    "index_buffer": "Models\\Level4\\Torus003_Indices.buffer",
+    "vertex_buffer": "Models\\Level4\\Torus003_Vertices.buffer",
+    "name": "Torus003",
+    "texture": "Textures\\Spiral.texture",
+    "object_to_world": {
+        "matrix": [
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0,
+            0.0,
+            0.0,
+            0.0,
+            1.0
+        ],
+        "translation": {
+            "x": -232.2628631591797,
+            "y": -7.858905792236328,
+            "z": 2.552734375
+        }
+    },
+    "bounding_box": {
+        "min": {
+            "x": -4.755282878875732,
+            "y": -0.9749280214309692,
+            "z": -5.0
+        },
+        "max": {
+            "x": 4.755282878875732,
+            "y": 0.974928081035614,
+            "z": 4.0450849533081059
+        }
+    }
+}

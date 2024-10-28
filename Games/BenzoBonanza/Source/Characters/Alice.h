@@ -4,10 +4,12 @@
 #include "Entities/TriggerBox.h"
 #include "Action.h"
 #include "RenderObjects/TextRenderObject.h"
+#include "Assets/NavGraph.h"
 #include "Collision/Query.h"
 #include "Entities/FreeCam.h"
 
 #define MAX_PLATFORM_LANDING_SPEED		60.0
+//#define AUTHOR_NAV_GRAPH_CAPABILITY
 
 class Pickup;
 
@@ -120,10 +122,13 @@ private:
 	};
 
 	uint32_t cameraHandle;
-	double maxMoveSpeed;
 	Imzadi::EventListenerHandle triggerBoxListenerHandle;
 	Imzadi::EventListenerHandle freeCamListenerHandle;
 	Imzadi::ActionManager actionManager;
 	Imzadi::Collision::TaskID rayCastQueryTaskID;
 	Imzadi::Collision::TaskID entityOverlapQueryTaskID;
+#if defined AUTHOR_NAV_GRAPH_CAPABILITY
+	bool authoringNavGraph;
+	Imzadi::Reference<Imzadi::NavGraph::Node> currentNode;
+#endif //AUTHOR_NAV_GRAPH_CAPABILITY
 };

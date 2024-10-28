@@ -186,11 +186,10 @@ SpeedBoostPickup::SpeedBoostPickup()
 
 /*virtual*/ void SpeedBoostPickup::Collect()
 {
-	// TODO: Write this.  Maybe there should be a class attached to the actor that
-	//       returns certain parameters of how it behaves.  E.g., how high it can
-	//       jump, how fast it runs, etc.  We could then generalize the idea of a
-	//       modifier being applied to the actor which has a life-time and can temporarily
-	//       inhance what values come out of the said class.
+	auto game = (GameApp*)Imzadi::Game::Get();
+	GameProgress* progress = game->GetGameProgress();
+	uint32_t count = progress->GetPossessedItemCount("booster");
+	progress->SetPossessedItemCount("booster", count + 1);
 
 	Pickup::Collect();
 }

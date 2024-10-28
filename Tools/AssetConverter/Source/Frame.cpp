@@ -182,7 +182,8 @@ void Frame::OnConvertAsset(wxCommandEvent& event)
 			{"Collision", Converter::Flag::MAKE_COLLISION},
 			{"Compress Collision", Converter::Flag::COMPRESS_COLLISION},
 			{"Sky Dome", Converter::Flag::CONVERT_SKYDOME},
-			{"Center Obj. Space at Origin", Converter::Flag::CENTER_OBJ_SPACE_AT_ORIGIN}
+			{"Center Obj. Space at Origin", Converter::Flag::CENTER_OBJ_SPACE_AT_ORIGIN},
+			{"Nav. Graph", Converter::Flag::MAKE_NAV_GRAPH}
 		};
 
 		if (!this->FlagsFromDialog("Import what (and how) across all chosen export files?", flagChoiceArray, converterFlags))
