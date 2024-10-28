@@ -988,6 +988,25 @@
                     "text": "Sorry, Bob.  Get out of here!  Go oppress someone else!"
                 }
             ]
+        },
+        "bob_convo_21": {
+            "sequence": [
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Alice, we need to raise taxes and give people free money."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Alice",
+                    "text": "Oh, I totally agree, Bob.  The goal here, of course, is to stop people from working.  Work doesn't make people happy."
+                },
+                {
+                    "type": "basic",
+                    "speaker": "Bob",
+                    "text": "Indeed.  People are going to be happier if their lives are controlled by the government and they can just stay home all day snorting benzo dust."
+                }
+            ]
         }
     }
 }

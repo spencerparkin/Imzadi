@@ -490,7 +490,7 @@ DialogBenzoAcquireElement::DialogBenzoAcquireElement()
 		totalPills,
 		((totalPills > 1) ? "pills" : "pill"),
 		totalHearts,
-		((totalHearts > 1) ? "hearts": "heart"));
+		((totalHearts > 1) ? "hearts" : "heart"));
 
 	auto textRenderObject = new Imzadi::TextRenderObject();
 	textRenderObject->SetFont("Roboto_Regular");
