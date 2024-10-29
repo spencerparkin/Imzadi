@@ -462,7 +462,7 @@ DialogBenzoAcquireElement::DialogBenzoAcquireElement()
 		if (BenzoPickup::IsBenzoName(pair.first))
 		{
 			benzoSet.insert(pair.first);
-			int rate = this->GetHeartToBenzoExchanbgeRate(pair.first);
+			int rate = this->GetHeartToBenzoExchangeRate(pair.first);
 			totalHearts += rate * pair.second;
 			totalPills += pair.second;
 		}
@@ -505,7 +505,7 @@ DialogBenzoAcquireElement::DialogBenzoAcquireElement()
 	return true;
 }
 
-int DialogBenzoAcquireElement::GetHeartToBenzoExchanbgeRate(const std::string& benzoName)
+int DialogBenzoAcquireElement::GetHeartToBenzoExchangeRate(const std::string& benzoName)
 {
 	if (benzoName == "Ativan")
 		return 1;
@@ -515,8 +515,10 @@ int DialogBenzoAcquireElement::GetHeartToBenzoExchanbgeRate(const std::string& b
 		return 3;
 	else if (benzoName == "Holcion")
 		return 2;
-	else if (benzoName == "Xanax")
+	else if (benzoName == "Xanax" || benzoName == "Valium")
 		return 5;
+	else if (benzoName == "Restoril")
+		return 2;
 
 	return 1;
 }
