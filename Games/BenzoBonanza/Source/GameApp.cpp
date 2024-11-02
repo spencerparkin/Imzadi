@@ -79,8 +79,7 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 
 bool GameApp::GetGameAssetPath(std::filesystem::path& gameAssetPath)
 {
-	gameAssetPath = R"(E:\ENG_DEV\Imzadi\Games\BenzoBonanza\Assets)";	// TODO: Need to not hard-code a path here.
-	return true;
+	return Imzadi::AssetCache::ResolvePathRelativeToExecutable(R"(Games\BenzoBonanza\Assets)", gameAssetPath);
 }
 
 bool GameApp::GetGameSavePath(std::filesystem::path& gameSavePath)

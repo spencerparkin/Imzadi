@@ -75,9 +75,38 @@ bool AssetCache::ResolveAssetPath(std::string& assetFile)
 	return false;
 }
 
+/*static*/ bool AssetCache::ResolvePathRelativeToExecutable(const std::filesystem::path& givenPath, std::filesystem::path& resolvedPath)
+{
+	if (givenPath.is_absolute())
+		resolvedPath = givenPath;
+	else
+	{
+		char fileName[MAX_PATH];
+		::GetModuleFileNameA(NULL, fileName, sizeof(fileName));
+
+		std::filesystem::path basePath(fileName);
+		basePath = basePath.parent_path();
+
+		while (std::distance(basePath.begin(), basePath.end()) > 0)
+		{
+			resolvedPath = basePath / givenPath;
+			if (std::filesystem::exists(resolvedPath))
+				break;
+
+			basePath = basePath.parent_path();
+		}
+	}
+
+	return std::filesystem::exists(resolvedPath);
+}
+
 void AssetCache::AddAssetFolder(const std::string& assetFolder)
 {
-	this->assetFolderArray.push_back(std::filesystem::path(assetFolder));
+	std::filesystem::path givenFolder(assetFolder);
+	std::filesystem::path resolvedFolder;
+	this->ResolvePathRelativeToExecutable(givenFolder, resolvedFolder);
+	IMZADI_ASSERT(std::filesystem::exists(resolvedFolder));
+	this->assetFolderArray.push_back(resolvedFolder);
 }
 
 void AssetCache::RemoveAssetFolder(const std::string& assetFolder)
@@ -88,7 +117,7 @@ void AssetCache::RemoveAssetFolder(const std::string& assetFolder)
 	{
 		std::filesystem::path& existingFolder = this->assetFolderArray[i];
 
-		if (existingFolder == assetFolder)
+		if (existingFolder == givenFolder)
 		{
 			if (i < (signed)this->assetFolderArray.size() - 1)
 				this->assetFolderArray[i] = this->assetFolderArray[this->assetFolderArray.size() - 1];

@@ -109,7 +109,7 @@ Game::Game(HINSTANCE instance)
 	if (!this->assetCache)
 		this->assetCache.Set(new AssetCache());
 
-	this->assetCache->AddAssetFolder(R"(E:\ENG_DEV\Imzadi\Engine\Assets)");	// TODO: Need to not hard-code a path here.
+	this->assetCache->AddAssetFolder(R"(Engine\Assets)");
 
 	this->scene.Set(new Scene());
 	this->debugLines.Set(new DebugLines());

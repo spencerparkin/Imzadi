@@ -61,11 +61,22 @@ namespace Imzadi
 
 		/**
 		 * Resolve the given path into a fully qualified path, if it isn't already such a path.
+		 * This is done by completing a relative path with the absolute base-paths stored in this cache.
 		 *
 		 * @param[in, out] assetFile This is a string holding the path to resolve.
 		 * @return True is returned if the path was successfully resolved; false, otherwise.
 		 */
 		bool ResolveAssetPath(std::string& assetFile);
+
+		/**
+		 * Resolve the given path into a fully qualified path, if it isn't already such a path.
+		 * This is done by walking up the directory tree, starting at the location of the currently running executable file.
+		 * 
+		 * @param[in] givenPath This is the path to resolve.
+		 * @param[out] resolvedPath This will hold the resolved path as an absolute path.
+		 * @return True is returned if the path was successfully resolved; false, otherwise.
+		 */
+		static bool ResolvePathRelativeToExecutable(const std::filesystem::path& givenPath, std::filesystem::path& resolvedPath);
 
 		/**
 		 * Add a location where assets can be found.
