@@ -2,6 +2,8 @@
 #include "GameLevel.h"
 #include "CustomAssetCache.h"
 #include "Log.h"
+#include <ShlObj_core.h>
+#include <codecvt>
 
 GameApp::GameApp(HINSTANCE instance) : Game(instance)
 {
@@ -37,11 +39,7 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 	if (!Game::PostInit())
 		return false;
 
-	std::filesystem::path gameAssetPath;
-	if (!this->GetGameAssetPath(gameAssetPath))
-		return false;
-
-	this->assetCache->AddAssetFolder(gameAssetPath.string());
+	this->assetCache->AddAssetFolder(R"(Games\BenzoBonanza\Assets)");
 
 	std::filesystem::path gameSavePath;
 	if (!this->GetGameSavePath(gameSavePath))
@@ -77,40 +75,20 @@ GameApp::GameApp(HINSTANCE instance) : Game(instance)
 	return true;
 }
 
-bool GameApp::GetGameAssetPath(std::filesystem::path& gameAssetPath)
-{
-	gameAssetPath = R"(E:\ENG_DEV\Imzadi\Games\BenzoBonanza\Assets)";	// TODO: Need to not hard-code a path here.
-	return true;
-}
-
 bool GameApp::GetGameSavePath(std::filesystem::path& gameSavePath)
 {
-	std::filesystem::path gameAssetPath;
-	if (!this->GetGameAssetPath(gameAssetPath))
+	PWSTR pathPtr = nullptr;
+	if (SHGetKnownFolderPath(FOLDERID_LocalAppData, 0, NULL, &pathPtr) != S_OK)
 		return false;
 
-	std::filesystem::path gameSaveFolder = gameAssetPath / "Progress";
+	std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+	std::string userFolder = converter.to_bytes(pathPtr);
+	std::filesystem::path userFolderPath(userFolder);
+	std::filesystem::path gameSaveFolder = userFolderPath / "BenzoBonanza";
 	if (!std::filesystem::exists(gameSaveFolder) && !std::filesystem::create_directory(gameSaveFolder))
 		return false;
 
-	std::string userName;
-	char userNameBuffer[512];
-	DWORD userNameBufferSize = sizeof(userNameBuffer);
-	if (::GetUserNameA(userNameBuffer, &userNameBufferSize))
-		userName = userNameBuffer;
-	else
-		userName = "Anonymous";
-
-	while (true)
-	{
-		size_t i = userName.find('.');
-		if (i == std::string::npos)
-			break;
-
-		userName = userName.replace(i, 1, "_");
-	}
-
-	gameSavePath = gameSaveFolder / std::format("{}.progress", userName.c_str());
+	gameSavePath = gameSaveFolder / "BenzoBonanza.progress";
 	return true;
 }
 

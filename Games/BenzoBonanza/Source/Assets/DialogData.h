@@ -107,7 +107,7 @@ public:
 	virtual bool Shutdown() override;
 	virtual bool Tick(std::string& nextSequence, int& nextSequencePosition) override;
 
-	int GetHeartToBenzoExchanbgeRate(const std::string& benzoName);
+	int GetHeartToBenzoExchangeRate(const std::string& benzoName);
 
 	std::string sceneObjName;
 };
