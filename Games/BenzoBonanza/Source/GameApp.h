@@ -26,7 +26,6 @@ public:
 private:
 	void PerformLevelTransition(const std::string& nextLevel);
 
-	bool GetGameAssetPath(std::filesystem::path& gameAssetPath);
 	bool GetGameSavePath(std::filesystem::path& gameSavePath);
 
 	DialogSystem dialogSystem;
