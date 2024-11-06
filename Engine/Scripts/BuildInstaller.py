@@ -5,8 +5,6 @@ import argparse
 
 from Utils import run_shell_proc
 
-# TODO: Can't write progress file to install directory using MSIX.  Change the game so that it uses local app data store.
-
 manifest_xml_format = """<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
