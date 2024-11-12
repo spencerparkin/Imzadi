@@ -5,8 +5,6 @@ import argparse
 
 from Utils import run_shell_proc
 
-# TODO: Can't write progress file to install directory using MSIX.  Change the game so that it uses local app data store.
-
 manifest_xml_format = """<?xml version="1.0" encoding="utf-8"?>
 <Package
   xmlns="http://schemas.microsoft.com/appx/manifest/foundation/windows10"
@@ -55,6 +53,7 @@ if __name__ == '__main__':
     parser.add_argument('--win_version', help='Specify the windows version to use to locate the makeappx.exe tool.')
     parser.add_argument('--display_name', help='This is the name of the game, potentially with spaces.')
     parser.add_argument('--description', help='This is a description of the game in one sentence.')
+    parser.add_argument('--sign', help='Sign the MSIX with a certificate used for debug purposes.', action='store_true')
     args = parser.parse_args()
 
     # Locate the tool that's used to make the MSIX files.
@@ -148,3 +147,26 @@ if __name__ == '__main__':
     # Do some clean-up.
     os.remove(mapping_file)
     os.remove(manifest_file)
+
+    # If requested, sign the MSIX file for development purposes.
+    if args.sign:
+        sign_tool_exe = r'C:\Program Files (x86)\Windows Kits\10\bin\%s\x64\signtool.exe' % win_version
+        if not os.path.exists(sign_tool_exe):
+            raise Exception('No sign tool found.  Looked for it here: ' + sign_tool_exe)
+        certificate_path = os.path.join(root_folder, 'certificate.pfx')
+        if not os.path.exists(certificate_path):
+            raise Exception('No debug certificate found.  Looked for it here: ' + certificate_path)
+        cmd_parts = [
+            '"%s"' % sign_tool_exe,
+            'sign',
+            '/fd',
+            'SHA256',
+            '/a',
+            '/f',
+            certificate_path,
+            '/p',
+            'StarTrek1701',
+            os.path.join(root_folder, '%s.msix' % args.game)
+        ]
+        cmd_text = ' '.join(cmd_parts)
+        run_shell_proc(cmd_text)
